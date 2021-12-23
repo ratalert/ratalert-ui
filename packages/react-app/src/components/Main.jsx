@@ -8,13 +8,16 @@ import {
   Card,
   Row,
   Col,
-  Slider,
   InputNumber,
   Skeleton,
   Progress,
+  Spin,
+  Menu,
+  Slider,
 } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 import { useEventListener } from "eth-hooks/events/useEventListener";
+import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
 import {
   useBalance,
@@ -24,10 +27,18 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
-const APIURL = "http://localhost:8000/subgraphs/name/ChefRat";
+const APIURL = `${process.env.REACT_APP_GRAPH_URI}/subgraphs/name/ChefRat`;
+
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { renderNotification } from "../helpers";
+import {
+  DashboardOutlined,
+  OrderedListOutlined,
+  FileTextOutlined,
+  MenuUnfoldOutlined,
+  MenuFoldOutlined,
+} from '@ant-design/icons';
 
 class Main extends React.Component {
   constructor(props) {
@@ -46,12 +57,26 @@ class Main extends React.Component {
       totalCooksStaked: 0,
       mintAmount: 1,
       loading: true,
-      noAddressLoaded: false,
+      noAddressLoaded: true,
+      dataLoaded: false,
+      collapsed: true,
     };
     this.nftProfit = 0;
   }
 
-  componentDidUpdate(prevProps) {}
+  componentDidUpdate(prevProps) {
+    if (this.props.address && !prevProps.address) {
+      this.setState({
+        loading: false
+      });
+    }
+  }
+
+  toggle() {
+    this.setState({
+      collapsed: !this.state.collapsed,
+    });
+  };
 
   onChangeAmount(mintAmount) {
     if (mintAmount >= 1 && mintAmount <= 10) {
@@ -162,6 +187,7 @@ class Main extends React.Component {
     this.setState({
       loading: false,
       nonStakedGraph: result1,
+      dataLoaded: true,
       stakedGraph: result2,
       stakedNfts,
       unstakedNfts,
@@ -242,14 +268,16 @@ class Main extends React.Component {
           }, 10000);
         }
       });
-    }, 1000);
+    }, 10000);
 
     window.addEventListener("resize", this.handleResize);
     setTimeout(() => {
       if (!this.props.address) {
-        this.setState({ noAddressLoaded: true });
+        this.setState({ noAddressLoaded: true, loading: false });
+      } else {
+        this.setState({ loading: false, noAddressLoaded: false });
       }
-    }, 500);
+    }, 2800);
     this.fetchGraph();
   }
 
@@ -285,11 +313,28 @@ class Main extends React.Component {
       });
       renderNotification("info", `${amount} mint(s) requested`, "");
     } catch (e) {
+      const regExp = /\"message\":\"(.+?)\"/;
+      const d = e.message.match(regExp);
+      if (d && d[1]) {
+        e.message = d[1];
+      }
+
       renderNotification("error", "Error", e.message);
     }
   }
 
   renderMintContent() {
+    if (!this.state.dataLoaded) {
+      return (
+        <Card size="small" title="Minting">
+          <Row>
+            <Col span={24} style={{ textAlign: "center" }}>
+              <Spin/>
+            </Col>
+          </Row>
+        </Card>
+      )
+    }
     return (
       <Card size="small" title="Minting">
         <Row>
@@ -347,9 +392,6 @@ class Main extends React.Component {
   }
 
   renderNFTInfo(attributes, img) {
-    /*
-
-      */
     return (
       <div style={{ width: "300px" }}>
         <Row>
@@ -439,6 +481,13 @@ class Main extends React.Component {
     });
     nft.sort((a, b) => a.name - b.name);
     this.nftProfit = 0;
+
+    if (!this.state.dataLoaded) {
+      return (
+        <Spin/>
+      )
+    }
+
     return (
       <Row>
         {nft.map(c => (
@@ -527,7 +576,7 @@ class Main extends React.Component {
 
   renderApprovalButton() {
     return (
-      <Button type={"default"} onClick={this.setApprovalForAll.bind(this)}>
+      <Button className="web3Button" type={"default"} onClick={this.setApprovalForAll.bind(this)}>
         Authorize
       </Button>
     );
@@ -622,7 +671,7 @@ class Main extends React.Component {
 
   renderStakeAllButton() {
     return (
-      <Button type={"primary"} onClick={this.stakeAll.bind(this)}>
+      <Button className="web3Button" type={"primary"} onClick={this.stakeAll.bind(this)}>
         Stake all
       </Button>
     );
@@ -631,11 +680,12 @@ class Main extends React.Component {
   renderStakeButton(selectedToStakeNfts) {
     return (
       <Button
+        className="web3Button"
         type={"primary"}
         disabled={selectedToStakeNfts.length === 0}
         onClick={this.stake.bind(this, selectedToStakeNfts)}
       >
-        Stake {selectedToStakeNfts.length} selected
+        Stake {selectedToStakeNfts.length} NFTs
       </Button>
     );
   }
@@ -643,42 +693,33 @@ class Main extends React.Component {
   renderUnStakeButton(selectedToUnStakeNfts) {
     return (
       <Button
+        className="web3Button"
         type={"default"}
         disabled={selectedToUnStakeNfts.length === 0}
         onClick={this.unstake.bind(this, selectedToUnStakeNfts)}
       >
-        Unstake {selectedToUnStakeNfts.length} selected
+        Unstake {selectedToUnStakeNfts.length} NFTs
       </Button>
     );
   }
 
   renderUnStakeAllButton() {
     return (
-      <Button type={"default"} onClick={this.unstakeAll.bind(this)}>
+      <Button className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
         Unstake all
       </Button>
     );
   }
 
-  renderButtons() {
-    const selectedToStakeNfts = [];
-    const selectedToUnStakeNfts = [];
-    Object.keys(this.state.selectedNfts).map(n => {
-      if (
-        this.state.selectedNfts[n] &&
-        this.state.selectedNfts[n]["status"] === true &&
-        this.state.selectedNfts[n]["staked"] === 0
-      ) {
-        selectedToStakeNfts.push(parseInt(n));
-      }
-      if (
-        this.state.selectedNfts[n] &&
-        this.state.selectedNfts[n]["status"] === true &&
-        this.state.selectedNfts[n]["staked"] === 1
-      ) {
-        selectedToUnStakeNfts.push(parseInt(n));
-      }
-    });
+  renderClaimButton() {
+    return (
+      <Button className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
+        Claim $FFOOD
+      </Button>
+    );
+  }
+
+  renderLegend() {
     return (
       <div>
         <Row>
@@ -718,25 +759,87 @@ class Main extends React.Component {
             Total $FFOOD not claimed: {this.nftProfit.toFixed(2)}
           </Col>
         </Row>
-        <Row>
-          <Col xxl={4} lg={7} md={7} sm={8}>
-            {this.renderApprovalButton()}
-          </Col>
-          <Col xxl={4} lg={7} md={7} sm={5}>
-            {this.renderStakeAllButton()}
-          </Col>
-          <Col xxl={6} lg={10} md={10} sm={8}>
-            {this.renderStakeButton(selectedToStakeNfts)}
-          </Col>
-          <Col xxl={6} lg={10} md={10} sm={8}>
-            {this.renderUnStakeButton(selectedToUnStakeNfts)}
-          </Col>
-          <Col xxl={4} lg={5} md={6} sm={8}>
-            {this.renderUnStakeAllButton()}
-          </Col>
-        </Row>
       </div>
-    );
+      );
+  }
+
+  renderButtons() {
+    const selectedToStakeNfts = [];
+    const selectedToUnStakeNfts = [];
+    Object.keys(this.state.selectedNfts).map(n => {
+      if (
+        this.state.selectedNfts[n] &&
+        this.state.selectedNfts[n]["status"] === true &&
+        this.state.selectedNfts[n]["staked"] === 0
+      ) {
+        selectedToStakeNfts.push(parseInt(n));
+      }
+      if (
+        this.state.selectedNfts[n] &&
+        this.state.selectedNfts[n]["status"] === true &&
+        this.state.selectedNfts[n]["staked"] === 1
+      ) {
+        selectedToUnStakeNfts.push(parseInt(n));
+      }
+    });
+
+    if ((window.innerWidth >= 768) && (window.innerWidth <= 1020)) {
+      return (
+        <div>
+          <Row>
+            <Col span="12">
+              {this.renderApprovalButton()}
+            </Col>
+            <Col span="12">
+              {this.renderStakeAllButton()}
+            </Col>
+          </Row>
+          <Row style={{paddingTop: '15px'}}>
+            <Col span="12">
+              {this.renderStakeButton(selectedToStakeNfts)}
+            </Col>
+            <Col span="12">
+              {this.renderUnStakeButton(selectedToUnStakeNfts)}
+            </Col>
+          </Row>
+          <Row style={{paddingTop: '15px'}}>
+            <Col span="12">
+              {this.renderUnStakeAllButton()}
+            </Col>
+            <Col span="12">
+              {this.renderClaimButton()}
+            </Col>
+          </Row>
+        </div>
+      );
+    }
+
+      return (
+        <div>
+          <Row>
+            <Col span="8">
+              {this.renderApprovalButton()}
+            </Col>
+            <Col span="8">
+              {this.renderStakeAllButton()}
+            </Col>
+            <Col span="8">
+              {this.renderStakeButton(selectedToStakeNfts)}
+            </Col>
+          </Row>
+          <Row style={{paddingTop: '15px'}}>
+            <Col span="8">
+              {this.renderUnStakeButton(selectedToUnStakeNfts)}
+            </Col>
+            <Col span="8">
+              {this.renderUnStakeAllButton()}
+            </Col>
+            <Col span="8">
+              {this.renderClaimButton()}
+            </Col>
+          </Row>
+        </div>
+      );
   }
 
   renderNACard(title) {
@@ -758,15 +861,148 @@ class Main extends React.Component {
           {!this.state.loading ? this.renderStaked() : <Skeleton />}
         </Card>
 
-        <Card size="small">{this.renderButtons()}</Card>
+        <Card size="small">
+        { this.renderLegend() }
+        { this.renderButtons() }
+        </Card>
       </Card>
     );
   }
 
-  render() {
+  async addToken() {
+    const tokenAddress = this.props.readContracts.FastFood.address;
+    const tokenSymbol = 'FFOOD';
+    const tokenDecimals = 18;
+    const tokenImage = 'http://placekitten.com/200/300';
+
+    try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+      const wasAdded = await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+          options: {
+            address: tokenAddress, // The address that the token is at.
+            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+            decimals: tokenDecimals, // The number of decimals in the token
+            image: tokenImage, // A string url of the token logo
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  renderIcons() {
+    if (!this.state.collapsed) {
+      return (
+        <div></div>
+      );
+    }
+    return (
+      <div className="icons">
+        <img width={32} src="https://cdn-icons-png.flaticon.com/512/2922/2922037.png" style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}} onClick={this.addToken.bind(this)}/>
+        <a target="_new"
+          href={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=${this.props.readContracts.FastFood && this.props.readContracts.FastFood.address ? this.props.readContracts.FastFood.address : null}`}
+            >
+          <img width={32} src="https://cryptologos.cc/logos/uniswap-uni-logo.png?v=014" style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}}/>
+        </a>
+        <a href="https://opensea.io/" target="_new">
+          <img width={32} src="https://user-images.githubusercontent.com/35243/140804979-0ef11e0d-d527-43c1-93cb-0f48d1aec542.png"
+            style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}}
+          />
+        </a>
+      </div>
+    );
+  };
+
+  renderStats() {
+    if (!this.state.dataLoaded) {
+      return (
+        <Row>
+          <Col span={24} style={{ textAlign: "center" }}>
+            <Spin/>
+          </Col>
+        </Row>
+      )
+    }
+
+    return (
+      <Row>
+        <Col span={12}>Total rats</Col>
+        <Col span={12}>{this.props.stats.rats}</Col>
+        <Col span={12}>Total rats staked</Col>
+        <Col span={12}>{this.props.stats.ratsStaked}</Col>
+        <Col span={12}>Total chefs</Col>
+        <Col span={12}>{this.props.stats.chefs}</Col>
+        <Col span={12}>Total chefs staked</Col>
+        <Col span={12}>{this.props.stats.chefsStaked}</Col>
+        <Col span={12}>Total $FFOOD claimed</Col>
+        <Col span={12}>{this.props.stats.tokensClaimed}</Col>
+      </Row>
+    )
+  }
+
+  renderMobileMenu() {
+    if (window.innerWidth <= 930) {
+      if (this.state.collapsed) {
+        return (
+          <div></div>
+        )
+      }
+      return (
+        <Sider theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
+         <div className="logo" />
+          <Menu mode="inline" defaultSelectedKeys={['1']}>
+            <Menu.Item style={{marginRight: '0px'}} icon={<DashboardOutlined />} key={1}>Game</Menu.Item>
+            <Menu.Item icon={<OrderedListOutlined />} key={2}>Leaderboard</Menu.Item>
+            <Menu.Item icon={<FileTextOutlined />} key={3}>Whitepaper</Menu.Item>
+          </Menu>
+        </Sider>
+      )
+    }
+  }
+
+  renderMenu() {
+    if (window.innerWidth <= 930) {
+      return (
+        <div>
+        {
+          this.state.collapsed ?
+          <MenuUnfoldOutlined className="trigger" onClick={this.toggle.bind(this)}/>
+          : <MenuFoldOutlined className="trigger" onClick={this.toggle.bind(this)}/>
+        }
+        </div>
+      );
+    }
+    return (
+      <div>
+        <Menu mode="horizontal" defaultSelectedKeys={['1']}>
+          <Menu.Item icon={<DashboardOutlined />} key={1}>Game</Menu.Item>
+          <Menu.Item icon={<OrderedListOutlined />} key={2}>Leaderboard</Menu.Item>
+          <Menu.Item icon={<FileTextOutlined />} key={3}>Whitepaper</Menu.Item>
+        </Menu>
+      </div>
+    );
+  }
+
+  renderExtra() {
+
+    return (
+      <div>
+        { this.renderIcons() }
+        { this.state.collapsed ? this.props.data : null}
+      </div>
+    )
+  }
+
+  renderGame() {
     return (
       <Layout>
-        <PageHeader ghost={false} title="Rat Alert" subTitle="the newest NFT game" extra={this.props.data}></PageHeader>
+        { this.renderMobileMenu() }
+        <Layout>
+        <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
         <Content>
           <Row style={{ height: "100%" }}>
             <Col md={12} xs={24}>
@@ -783,18 +1019,7 @@ class Main extends React.Component {
                     {this.props.balanceContent}
                   </Card>
                   <Card size="small" title="Game Stats" style={{ marginTop: "25px" }}>
-                    <Row>
-                      <Col span={12}>Total rats</Col>
-                      <Col span={12}>{this.props.stats.rats}</Col>
-                      <Col span={12}>Total rats staked</Col>
-                      <Col span={12}>{this.props.stats.ratsStaked}</Col>
-                      <Col span={12}>Total chefs</Col>
-                      <Col span={12}>{this.props.stats.chefs}</Col>
-                      <Col span={12}>Total chefs staked</Col>
-                      <Col span={12}>{this.props.stats.chefsStaked}</Col>
-                      <Col span={12}>Total $FFOOD claimed</Col>
-                      <Col span={12}>{this.props.stats.tokensClaimed}</Col>
-                    </Row>
+                    { this.renderStats() }
                   </Card>
                   <Card size="small" title="Info" style={{ marginTop: "25px" }}>
                     <Row>
@@ -836,8 +1061,48 @@ class Main extends React.Component {
           </Row>
         </Content>
         <Footer>Footer</Footer>
+        </Layout>
       </Layout>
     );
+  }
+
+  renderSplash() {
+    return (
+      <Layout>
+      <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
+        <Content>
+          <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
+            <Col span={24}>
+            Splash screen
+            </Col>
+          </Row>
+        </Content>
+      </Layout>
+    );
+  }
+
+  render() {
+    if (this.state.loading) {
+      return (
+        <Layout>
+          <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
+          <Content>
+            <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
+              <Col span={24}>
+              <Spin size="large"/>
+              </Col>
+            </Row>
+          </Content>
+        </Layout>
+      );
+    } else {
+      if (this.props.address) {
+        return this.renderGame();
+      } else {
+        return this.renderSplash();
+      }
+
+    }
   }
 }
 

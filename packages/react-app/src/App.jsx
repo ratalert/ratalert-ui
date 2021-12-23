@@ -165,13 +165,14 @@ function App(props) {
     async function getAddress() {
       if (userSigner) {
         const newAddress = await userSigner.getAddress();
-        if (!userSigner.address) {
+        // if (!userSigner.address) {
           setAddress(newAddress);
-        }
+        //}
       }
     }
     getAddress();
   }, [userSigner]);
+
 
   // You can warn the user if you would like them to be on a specific network
   const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
@@ -499,6 +500,30 @@ function App(props) {
 
   const balanceContent = renderTokenBalances();
 
+
+
+  const accountData = [<div className="account"><Row><Col>
+
+    </Col>
+    <Col>
+    <Account
+      address={address}
+      localProvider={localProvider}
+      userSigner={userSigner}
+      mainnetProvider={mainnetProvider}
+      price={price}
+      web3Modal={web3Modal}
+      loadWeb3Modal={loadWeb3Modal}
+      logoutOfWeb3Modal={logoutOfWeb3Modal}
+      blockExplorer={blockExplorer}
+      setAddress={setAddress}
+    />
+    </Col>
+    </Row>
+    </div>
+  ];
+
+
   return (
     <div className="App">
       {networkDisplay}
@@ -506,17 +531,7 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             <Main
-              data=<Account
-                address={address}
-                localProvider={localProvider}
-                userSigner={userSigner}
-                mainnetProvider={mainnetProvider}
-                price={price}
-                web3Modal={web3Modal}
-                loadWeb3Modal={loadWeb3Modal}
-                logoutOfWeb3Modal={logoutOfWeb3Modal}
-                blockExplorer={blockExplorer}
-              />
+              data={accountData}
               stakeContent={stakeContent}
               balanceContent={balanceContent}
               tx={tx}

@@ -50,6 +50,7 @@ export default function Account({
   loadWeb3Modal,
   logoutOfWeb3Modal,
   blockExplorer,
+  setAddress
 }) {
   const modalButtons = [];
   if (web3Modal) {
@@ -78,6 +79,11 @@ export default function Account({
           Connect
         </Button>,
       );
+      const urlParams = new URLSearchParams(window.location.search);
+      const addr = urlParams.get('addr');
+      if (addr) {
+        setAddress(addr);
+      }
     }
   }
 
@@ -90,7 +96,7 @@ export default function Account({
       {address ? (
         <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
       ) : (
-        "Connecting..."
+        ''
       )}
     </span>
   );
