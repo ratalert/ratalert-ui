@@ -528,16 +528,6 @@
                 },
                 {
                   "internalType": "uint8",
-                  "name": "body",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "head",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
                   "name": "ears",
                   "type": "uint8"
                 },
@@ -564,6 +554,26 @@
                 {
                   "internalType": "uint8",
                   "name": "feet",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "insanity",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "skill",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "intelligence",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "fatness",
                   "type": "uint8"
                 }
               ],
@@ -659,6 +669,78 @@
                   "internalType": "uint256",
                   "name": "tokenId",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "increment",
+                  "type": "int8"
+                }
+              ],
+              "name": "updateInsanity",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "increment",
+                  "type": "int8"
+                }
+              ],
+              "name": "updateSkill",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "increment",
+                  "type": "int8"
+                }
+              ],
+              "name": "updateIntelligence",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "increment",
+                  "type": "int8"
+                }
+              ],
+              "name": "updateFatness",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
                 }
               ],
               "name": "tokenURI",
@@ -692,16 +774,6 @@
                     },
                     {
                       "internalType": "uint8",
-                      "name": "body",
-                      "type": "uint8"
-                    },
-                    {
-                      "internalType": "uint8",
-                      "name": "head",
-                      "type": "uint8"
-                    },
-                    {
-                      "internalType": "uint8",
                       "name": "ears",
                       "type": "uint8"
                     },
@@ -729,6 +801,26 @@
                       "internalType": "uint8",
                       "name": "feet",
                       "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "insanity",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "skill",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "intelligence",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "fatness",
+                      "type": "uint8"
                     }
                   ],
                   "internalType": "struct IChefRat.ChefRatStruct",
@@ -753,6 +845,52 @@
               "stateMutability": "view",
               "type": "function",
               "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "getController",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "addController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "removeController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
             }
           ]
         },
@@ -887,6 +1025,34 @@
                   "internalType": "uint256",
                   "name": "",
                   "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "DAILY_INSANITY_RATE",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "DAILY_SKILL_RATE",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
                 }
               ],
               "stateMutability": "view",

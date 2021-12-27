@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Address, Balance, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch, Main } from "./components";
+import { Account, Address, Balance, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch, Main, Leaderboard, RatMenu, Whitepaper} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import BigNumber from "bignumber";
@@ -40,6 +40,7 @@ const NETWORKCHECK = true;
 // 🛰 providers
 if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
 // const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
+//console.log(mainnetProvider);
 // const mainnetProvider = new InfuraProvider("mainnet",INFURA_ID);
 //
 // attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
@@ -206,8 +207,8 @@ function App(props) {
   // const mainnetContracts = useContractLoader(mainnetProvider, contractConfig);
 
   // If you want to call a function on a new block
-  useOnBlock(localProvider, () => {
-    //  console.log(`⛓ A new mainnet block is here: ${localProvider._lastBlockNumber}`);
+  useOnBlock(mainnetProvider, () => {
+  //    console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
   });
 
   let myMainnetDAIBalance = 0;
@@ -523,6 +524,9 @@ function App(props) {
     </div>
   ];
 
+  const getCollapsed = (collapsed) => {
+    return collapsed;
+  }
 
   return (
     <div className="App">
@@ -530,9 +534,16 @@ function App(props) {
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
-            <Main
+            <RatMenu
+            data={accountData}
+            tx={tx}
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            address={address}
+            provider={localProvider}
+            active={1}
+            content={<Main
               data={accountData}
-              stakeContent={stakeContent}
               balanceContent={balanceContent}
               tx={tx}
               readContracts={readContracts}
@@ -540,17 +551,50 @@ function App(props) {
               address={address}
               provider={localProvider}
               stats={stats}
+            />}
             />
           </Route>
-          <Route path="/contracts">
-            <Contract
-              name="Staker"
-              signer={userSigner}
-              provider={localProvider}
+          <Route path="/leaderboard">
+            <RatMenu
+              data={accountData}
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
               address={address}
-              blockExplorer={blockExplorer}
-              contractConfig={contractConfig}
-            />
+              provider={localProvider}
+              active={2}
+              content={<Leaderboard
+                data={accountData}
+                balanceContent={balanceContent}
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                stats={stats}
+                />}
+              />
+          </Route>
+          <Route path="/whitepaper">
+            <RatMenu
+              data={accountData}
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={3}
+              content={<Whitepaper
+                data={accountData}
+                balanceContent={balanceContent}
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                stats={stats}
+                />}
+              />
           </Route>
         </Switch>
       </BrowserRouter>

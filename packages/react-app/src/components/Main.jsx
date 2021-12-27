@@ -12,10 +12,13 @@ import {
   Skeleton,
   Progress,
   Spin,
-  Menu,
   Slider,
+  Radio,
 } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
+
+const univ3prices = require('@thanpolas/univ3prices');
+import Decimal from 'decimal.js';
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
@@ -28,7 +31,6 @@ import {
   useUserProviderAndSigner,
 } from "eth-hooks";
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}/subgraphs/name/ChefRat`;
-
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { renderNotification } from "../helpers";
@@ -36,9 +38,10 @@ import {
   DashboardOutlined,
   OrderedListOutlined,
   FileTextOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
+  CaretLeftOutlined,
+  CaretRightOutlined,
 } from '@ant-design/icons';
+
 
 class Main extends React.Component {
   constructor(props) {
@@ -59,9 +62,27 @@ class Main extends React.Component {
       loading: true,
       noAddressLoaded: true,
       dataLoaded: false,
-      collapsed: true,
+      pairs: {},
+      currency: 'ETH',
     };
     this.nftProfit = 0;
+  }
+
+  setCurrency(val) {
+    if ( (val.target.value === 'ETH') || (val.target.value === 'WOOL') || (val.target.value === 'GP') ) {
+      this.setState({currency: val.target.value})
+    }
+  }
+
+  getMintPrice() {
+    switch (this.state.currency) {
+      case 'ETH':
+        return this.props.stats.mintPrice;
+      case 'WOOL':
+          return parseInt(this.state.pairs['WOOL/WETH'] * this.props.stats.mintPrice);
+      case 'GP':
+          return parseInt(this.state.pairs['GP/WETH'] * this.props.stats.mintPrice);
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -72,18 +93,50 @@ class Main extends React.Component {
     }
   }
 
-  toggle() {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
-
   onChangeAmount(mintAmount) {
     if (mintAmount >= 1 && mintAmount <= 10) {
       this.setState({ mintAmount });
-    } else {
+    }
+    if (mintAmount > 10) {
+      this.setState({ mintAmount: 10 });
+    }
+    if (mintAmount < 1) {
       this.setState({ mintAmount: 1 });
     }
+  }
+
+  async getUniswapprice() {
+    // "1.00212"
+  }
+
+  async fetchFromUniswap(pair1, pair2, contract1, contract2) {
+    const url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3';
+
+    const query = `{
+	pools(first:1, where:
+    {
+      token0:"${contract1}",
+      token1:"${contract2}"
+    }
+  )
+  {
+    id, sqrtPrice,
+    token0 { id, symbol, decimals },
+    token1 {id, symbol, decimals},
+    liquidity, tick
+  }
+}`;
+
+    const results = await request(url, query);
+    const pools = results.pools;
+
+
+    const price = univ3prices([pools[0].token0.decimals, pools[0].token0.decimals], pools[0].sqrtPrice).toAuto();
+    const price2 = univ3prices.tickPrice([pools[0].token0.decimals, pools[0].token0.decimals], pools[0].tick).toAuto();
+
+    const pairs = this.state.pairs;
+    pairs[`${pair1}/${pair2}`] = parseInt(price2).toFixed(8);
+    this.setState({pairs});
   }
 
   async fetchGraph() {
@@ -98,7 +151,9 @@ class Main extends React.Component {
     const query1 = `{ chefRats(where: {
           owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
-          id, staked, owner,stakedTimestamp, URI,
+          id, staked, owner,stakedTimestamp, URI, type,
+          insanity,  skill,
+          intelligence, fatness,
         }
       }`;
 
@@ -106,6 +161,10 @@ class Main extends React.Component {
           stakingOwner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
           id, staked, owner,stakedTimestamp, URI,
+          type,
+          insanity, skill,
+          intelligence,
+          fatness,
         }
       }`;
 
@@ -200,76 +259,13 @@ class Main extends React.Component {
 
     setTimeout(async () => {
       this.fetchGraph();
+      this.fetchFromUniswap('WOOL', 'WETH', '0x8355dbe8b0e275abad27eb843f3eaf3fc855e525', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // WOOL-WETH
+      this.fetchFromUniswap('GP', 'WETH','0x38ec27c6f05a169e7ed03132bca7d0cfee93c2c5', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // GP-WETH
     }, 3000);
-  }
 
-  decToHex(dec) {
-    return (+dec).toString(16);
-  }
-
-  async getNFTObject(id) {
-    const hex = `0x${this.decToHex(id)}`;
-    const query = `{
-        chefRat(id:"${hex}") {
-          id, URI
-        }
-      }`;
-    const result = await request(APIURL, query);
-    if (result.chefRat) {
-      const URI = result.chefRat.URI;
-      const base64 = URI.split(",");
-      const decoded = atob(base64[1]);
-      const json = JSON.parse(decoded);
-      return { image: json.image, name: json.name };
-    }
-    return { image: "", name: "" };
   }
 
   async componentWillMount() {
-    setTimeout(async () => {
-      const filter = {
-        address: this.props.readContracts.ChefRat.address,
-        topics: [
-          // the name of the event, parnetheses containing the data type of each event, no spaces
-          ethers.utils.id("Transfer(address,address,uint256)"),
-        ],
-      };
-      let format = ["address", "address", "uint256"];
-
-      this.props.provider.on(filter, async data => {
-        data.topics.shift();
-
-        let i = 0;
-        const decoded = [];
-        data.topics.map(v => {
-          const tmp = ethers.utils.defaultAbiCoder.decode([format[i]], v);
-          i += 1;
-          decoded.push(tmp);
-        });
-
-        if (
-          decoded[1] &&
-          decoded[0] &&
-          decoded[1].toString() === this.props.address &&
-          decoded[0].toString() === "0x0000000000000000000000000000000000000000"
-        ) {
-          setTimeout(async () => {
-            const { name, image } = await this.getNFTObject(decoded[2]);
-            if (image) {
-              renderNotification(
-                "info",
-                "NFT minted",
-                <div>
-                  <img style={{ paddingRight: "10px" }} width={50} src={image} />
-                  <b>{name}</b> has been minted
-                </div>,
-              );
-            }
-          }, 10000);
-        }
-      });
-    }, 10000);
-
     window.addEventListener("resize", this.handleResize);
     setTimeout(() => {
       if (!this.props.address) {
@@ -279,6 +275,8 @@ class Main extends React.Component {
       }
     }, 2800);
     this.fetchGraph();
+
+    this.getUniswapprice();
   }
 
   componentWillUnmount() {
@@ -305,11 +303,18 @@ class Main extends React.Component {
     try {
       const amount = this.state.mintAmount;
       const sum = amount * 0.1;
+      let gasLimit;
+      if (amount === 1) {
+        gasLimit = 160000;
+      } else {
+        gasLimit = amount * 140000;
+      }
+
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
       const result = await this.props.writeContracts.ChefRat.mint(amount, {
         from: this.props.address,
         value: ethers.utils.parseEther(sum.toString()),
-        gasLimit: amount * 250000,
+        gasLimit,
       });
       renderNotification("info", `${amount} mint(s) requested`, "");
     } catch (e) {
@@ -335,42 +340,74 @@ class Main extends React.Component {
         </Card>
       )
     }
+    const mintPrice = this.getMintPrice();
     return (
       <Card size="small" title="Minting">
-        <Row>
-          <Col span={24} style={{ textAlign: "center" }}>
-            <b>Price per NFT: {this.props.stats.mintPrice} ETH</b>
-          </Col>
-        </Row>
+
         <Row></Row>
         <Row>
-          <Col span={24} style={{ textAlign: "center" }}>
+          <Col span={8}/>
+          <Col span={16} style={{ textAlign: "left" }}>
             Select how many NFTs you want to mint:
           </Col>
         </Row>
         <Row>
-          <Col span={4} />
+          <Col span={10} />
           <Col span={12}>
-            <Slider
-              min={1}
-              max={10}
-              onChange={this.onChangeAmount.bind(this)}
-              value={typeof this.state.mintAmount === "number" ? this.state.mintAmount : 0}
-            />
+            <Row>
+              <Col span={3}>
+                <CaretLeftOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount - 1)} style={{cursor: 'pointer', fontSize: '32px'}}/>
+              </Col>
+              <Col span={3}>
+              <InputNumber
+                min={1}
+                max={10}
+                style={{ width: '40px' }}
+                value={this.state.mintAmount}
+                onChange={this.onChangeAmount.bind(this)}
+              />
+              </Col>
+              <Col span={3}>
+                <CaretRightOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '32px'}}/>
+              </Col>
+            </Row>
           </Col>
           <Col span={4}>
-            <InputNumber
-              min={1}
-              max={10}
-              style={{ margin: "0 16px" }}
-              value={this.state.mintAmount}
-              onChange={this.onChangeAmount.bind(this)}
-            />
+
           </Col>
         </Row>
         <Row>
-          <Col span={6} />
-          <Col span={6} style={{ textAlign: "center" }}>
+          <Col span={8}/>
+          <Col span={16} style={{ textAlign: "left" }}>
+            Select currency for payment:
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}/>
+          <Col span={16} style={{ textAlign: "left" }}>
+          <Radio.Group onChange={this.setCurrency.bind(this)} value={this.state.currency} buttonStyle="solid">
+            <Radio.Button value="ETH">$ETH</Radio.Button>
+            <Radio.Button disabled={this.state.pairs['WOOL/WETH'] > 0 ? false : true} value="WOOL">$WOOL</Radio.Button>
+            <Radio.Button disabled={this.state.pairs['GP/WETH'] > 0 ? false : true} value="GP">$GP</Radio.Button>
+          </Radio.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}/>
+          <Col span={12} style={{ textAlign: "left" }}>
+            <b>Price per NFT: { mintPrice } { this.state.currency }</b>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={8}/>
+          <Col span={12} style={{ textAlign: "left" }}>
+            <b>Total: { Decimal(mintPrice).times(this.state.mintAmount).toString() } { this.state.currency }</b>
+          </Col>
+        </Row>
+
+        <Row  style={{ paddingTop: "25px" }}>
+          <Col span={8} />
+          <Col span={3} style={{ textAlign: "center" }}>
             Gen {this.props.stats.minted > this.props.stats.paidTokens ? 1 : 0}
           </Col>
           <Col span={8} style={{ textAlign: "center" }}>
@@ -381,10 +418,25 @@ class Main extends React.Component {
           </Col>
         </Row>
         <Row style={{ paddingTop: "25px" }}>
-          <Col span="24" style={{ textAlign: "center" }}>
+          <Col span={6}/>
+          <Col span="6" style={{ textAlign: "center" }}>
             <Button type="primary" onClick={this.mint.bind(this)} style={{ textAlign: "center" }}>
               Mint
             </Button>
+          </Col>
+          <Col span="6" style={{ textAlign: "center" }}>
+            <Button type="primary" onClick={this.mint.bind(this)} style={{ textAlign: "center" }}>
+              Mint & Stake
+            </Button>
+          </Col>
+          <Col span={6}/>
+        </Row>
+        <Row>
+          <Col span={6}/>
+          <Col span="6" style={{ textAlign: "center" }}>
+          </Col>
+          <Col span="6" style={{ textAlign: "center" }}>
+            (saves gas costs)
           </Col>
         </Row>
       </Card>
@@ -392,6 +444,11 @@ class Main extends React.Component {
   }
 
   renderNFTInfo(attributes, img) {
+    const hash = {};
+    attributes.map((m) => {
+      hash[m.trait_type] = m.value;
+    });
+
     return (
       <div style={{ width: "300px" }}>
         <Row>
@@ -407,22 +464,28 @@ class Main extends React.Component {
         <Row>
           <Col span={12}>{attributes[0].value === "Chef" ? "Skill level" : "Intelligence"}</Col>
           <Col span={12}>
-            <Progress strokeColor={attributes[0].value === "Chef" ? "green" : "orange"} percent={33} status="active" />
+            <Progress
+            strokeColor={attributes[0].value === "Chef" ? "green" : "orange"}
+            percent={ attributes[0].value === "Chef" ? hash['Skill percentage'] : hash['Intelligence percentage'] }
+            status="active" />
           </Col>
         </Row>
         <Row>
           <Col span={12}>{attributes[0].value === "Chef" ? "Skill status" : "Intelligence status"}</Col>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Guru" : "Normal"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? hash['Skill'] : hash["Intelligence"]}</Col>
         </Row>
         <Row>
           <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Fatness level"}</Col>
           <Col span={12}>
-            <Progress strokeColor={attributes[0].value === "Chef" ? "blue" : "brown"} percent={66} status="active" />
+            <Progress
+              strokeColor={attributes[0].value === "Chef" ? "blue" : "brown"}
+              percent={ attributes[0].value === "Chef" ? hash['Insanity percentage'] : hash['Fatness percentage'] }
+              status="active" />
           </Col>
         </Row>
         <Row>
           <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Fatness status"}</Col>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insane" : "Fat"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? hash['Insanity'] : hash['Fatness']}</Col>
         </Row>
 
         <Row>
@@ -430,15 +493,28 @@ class Main extends React.Component {
             <b>Attributes</b>
           </Col>
         </Row>
-        {attributes.map(key => (
-          <Row>
-            <Col span={12}>{key.trait_type}</Col>
-            <Col span={12}>{key.value}</Col>
-          </Row>
-        ))}
+
+        { attributes.map( (key) => (
+
+              <div>
+              {
+                key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
+                key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
+                key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
+                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage'
+                ?
+              <Row>
+                <Col span={12}>{key.trait_type}</Col>
+                <Col span={12}>{key.value}</Col>
+              </Row> : null }
+              </div>
+            )
+        )}
       </div>
     );
   }
+
+
 
   renderNFT(type, staked = 0) {
     const nft = [];
@@ -456,6 +532,10 @@ class Main extends React.Component {
           const base64 = r.URI.split(",");
           const decoded = atob(base64[1]);
           const json = JSON.parse(decoded);
+          const hash = {};
+          json.attributes.map((m) => {
+            hash[m.trait_type] = m.value;
+          });
           if (type !== null && json.name && json.attributes[0].value === type && r.staked == staked) {
             nft.push({
               name: parseInt(r.id, 16),
@@ -464,6 +544,14 @@ class Main extends React.Component {
               image: json.image,
               type,
               attributes: json.attributes,
+              insanity: hash['Insanity'],
+              insanityLevel: hash['Insanity percentage'],
+              skill: hash['Skill'],
+              skillLevel: hash['Skill percentage'],
+              intelligence: hash['Intelligence'],
+              intelligenceLevel: hash['Intelligence percentage'],
+              fatness: hash['Fatness'],
+              fatnessLevel: hash['Fatness percentage'],
             });
           }
           if (type === null && json.name && r.staked == staked) {
@@ -474,6 +562,14 @@ class Main extends React.Component {
               timestamp: parseInt(r.stakedTimestamp),
               type: json.attributes[0].value,
               attributes: json.attributes,
+              insanity: hash['Insanity'],
+              insanityLevel: hash['Insanity percentage'],
+              skill: hash['Skill'],
+              skillLevel: hash['Skill percentage'],
+              intelligence: hash['Intelligence'],
+              intelligenceLevel: hash['Intelligence percentage'],
+              fatness: hash['Fatness'],
+              fatnessLevel: hash['Fatness percentage'],
             });
           }
         }
@@ -508,11 +604,16 @@ class Main extends React.Component {
               </Popover>
               <Progress
                 strokeColor={c.type === "Chef" ? "green" : "orange"}
-                percent={33}
+                percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
                 size="small"
                 status="active"
               />
-              <Progress strokeColor={c.type === "Chef" ? "blue" : "brown"} percent={66} size="small" status="active" />
+              <Progress
+              strokeColor={c.type === "Chef" ? "blue" : "brown"}
+              percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
+              size="small"
+              status="active"
+               />
               {c.timestamp > 0 ? (
                 <p style={{ fontSize: "11px" }}>{this.renderNftProfit(c.type, c.timestamp)} $FFOOD</p>
               ) : null}
@@ -894,29 +995,6 @@ class Main extends React.Component {
     }
   }
 
-  renderIcons() {
-    if (!this.state.collapsed) {
-      return (
-        <div></div>
-      );
-    }
-    return (
-      <div className="icons">
-        <img width={32} src="https://cdn-icons-png.flaticon.com/512/2922/2922037.png" style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}} onClick={this.addToken.bind(this)}/>
-        <a target="_new"
-          href={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=${this.props.readContracts.FastFood && this.props.readContracts.FastFood.address ? this.props.readContracts.FastFood.address : null}`}
-            >
-          <img width={32} src="https://cryptologos.cc/logos/uniswap-uni-logo.png?v=014" style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}}/>
-        </a>
-        <a href="https://opensea.io/" target="_new">
-          <img width={32} src="https://user-images.githubusercontent.com/35243/140804979-0ef11e0d-d527-43c1-93cb-0f48d1aec542.png"
-            style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}}
-          />
-        </a>
-      </div>
-    );
-  };
-
   renderStats() {
     if (!this.state.dataLoaded) {
       return (
@@ -944,66 +1022,8 @@ class Main extends React.Component {
     )
   }
 
-  renderMobileMenu() {
-    if (window.innerWidth <= 930) {
-      if (this.state.collapsed) {
-        return (
-          <div></div>
-        )
-      }
-      return (
-        <Sider theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
-         <div className="logo" />
-          <Menu mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item style={{marginRight: '0px'}} icon={<DashboardOutlined />} key={1}>Game</Menu.Item>
-            <Menu.Item icon={<OrderedListOutlined />} key={2}>Leaderboard</Menu.Item>
-            <Menu.Item icon={<FileTextOutlined />} key={3}>Whitepaper</Menu.Item>
-          </Menu>
-        </Sider>
-      )
-    }
-  }
-
-  renderMenu() {
-    if (window.innerWidth <= 930) {
-      return (
-        <div>
-        {
-          this.state.collapsed ?
-          <MenuUnfoldOutlined className="trigger" onClick={this.toggle.bind(this)}/>
-          : <MenuFoldOutlined className="trigger" onClick={this.toggle.bind(this)}/>
-        }
-        </div>
-      );
-    }
-    return (
-      <div>
-        <Menu mode="horizontal" defaultSelectedKeys={['1']}>
-          <Menu.Item icon={<DashboardOutlined />} key={1}>Game</Menu.Item>
-          <Menu.Item icon={<OrderedListOutlined />} key={2}>Leaderboard</Menu.Item>
-          <Menu.Item icon={<FileTextOutlined />} key={3}>Whitepaper</Menu.Item>
-        </Menu>
-      </div>
-    );
-  }
-
-  renderExtra() {
-
-    return (
-      <div>
-        { this.renderIcons() }
-        { this.state.collapsed ? this.props.data : null}
-      </div>
-    )
-  }
-
   renderGame() {
     return (
-      <Layout>
-        { this.renderMobileMenu() }
-        <Layout>
-        <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
-        <Content>
           <Row style={{ height: "100%" }}>
             <Col md={12} xs={24}>
               <Row>
@@ -1059,41 +1079,27 @@ class Main extends React.Component {
               </Row>
             </Col>
           </Row>
-        </Content>
-        <Footer>Footer</Footer>
-        </Layout>
-      </Layout>
     );
   }
 
   renderSplash() {
     return (
-      <Layout>
-      <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
-        <Content>
           <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
             <Col span={24}>
             Splash screen
             </Col>
           </Row>
-        </Content>
-      </Layout>
     );
   }
 
   render() {
     if (this.state.loading) {
       return (
-        <Layout>
-          <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
-          <Content>
             <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
               <Col span={24}>
               <Spin size="large"/>
               </Col>
             </Row>
-          </Content>
-        </Layout>
       );
     } else {
       if (this.props.address) {
