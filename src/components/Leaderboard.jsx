@@ -9,6 +9,8 @@ import {
   Progress,
   Popover,
 } from "antd";
+import { useEventListener } from "eth-hooks/events/useEventListener";
+
 import {
   useBalance,
   useContractLoader,
@@ -19,7 +21,6 @@ import {
 } from "eth-hooks";
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
-import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
 import Address from "./Address";

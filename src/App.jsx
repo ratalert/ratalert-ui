@@ -32,7 +32,17 @@ import Authereum from "authereum";
 import humanizeDuration from "humanize-duration";
 
 const { ethers } = require("ethers");
-const targetNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+
+let targetNetwork;
+if (process.env.REACT_APP_ETH_ENV === 'local') {
+  targetNetwork = NETWORKS.localhost;
+} else if (process.env.REACT_APP_ETH_ENV === 'mainnet') {
+  targetNetwork = NETWORKS.mainnet;
+} else if (process.env.REACT_APP_ETH_ENV === 'rinkeby') {
+  targetNetwork = NETWORKS.rinkeby;
+} else {
+  targetNetwork = NETWORKS.localhost;
+}
 
 const DEBUG = false;
 const NETWORKCHECK = true;
