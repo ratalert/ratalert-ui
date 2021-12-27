@@ -3,7 +3,6 @@ import React from "react";
 import { useThemeSwitcher } from "react-css-theme-switcher";
 import Address from "./Address";
 import Balance from "./Balance";
-import Wallet from "./Wallet";
 
 /*
   ~ What it does? ~

@@ -7,10 +7,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Address, Balance, Contract, Faucet, GasGauge, Header, Ramp, ThemeSwitch, Main, Leaderboard, RatMenu, Whitepaper} from "./components";
+import { Account, Address, Balance, Contract, GasGauge, Header, Ramp, ThemeSwitch, Main, Leaderboard, RatMenu, Whitepaper} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
-import BigNumber from "bignumber";
 import {
   useBalance,
   useContractLoader,
@@ -20,16 +19,12 @@ import {
   useUserProviderAndSigner,
 } from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
-import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
-// import Hints from "./Hints";
-import { ExampleUI, Hints, Subgraph } from "./views";
 
 import { useContractConfig } from "./hooks";
 
-import Portis from "@portis/web3";
+// import Portis from "@portis/web3";
 import Fortmatic from "fortmatic";
-import Authereum from "authereum";
-import humanizeDuration from "humanize-duration";
+// import Authereum from "authereum";
 
 const { ethers } = require("ethers");
 
@@ -107,6 +102,7 @@ const web3Modal = new Web3Modal({
         },
       },
     },
+/*
     portis: {
       display: {
         logo: "https://user-images.githubusercontent.com/9419140/128913641-d025bc0c-e059-42de-a57b-422f196867ce.png",
@@ -118,6 +114,7 @@ const web3Modal = new Web3Modal({
         id: "568e0153-79c2-459b-8ed4-202639056bb5",
       },
     },
+    */
     fortmatic: {
       package: Fortmatic, // required
       options: {
@@ -136,9 +133,11 @@ const web3Modal = new Web3Modal({
         return provider;
       },
     },
+/*
     authereum: {
       package: Authereum, // required
     },
+    */
   },
 });
 
@@ -164,7 +163,7 @@ function App(props) {
   };
 
   /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
+  // const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
 
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
@@ -507,12 +506,7 @@ function App(props) {
       </Row>
     </div>
   );
-  const data2 = ethers.BigNumber.from("1");
-
   const balanceContent = renderTokenBalances();
-
-
-
   const accountData = [<div className="account"><Row><Col>
 
     </Col>
@@ -522,7 +516,7 @@ function App(props) {
       localProvider={localProvider}
       userSigner={userSigner}
       mainnetProvider={mainnetProvider}
-      price={price}
+      price={0}
       web3Modal={web3Modal}
       loadWeb3Modal={loadWeb3Modal}
       logoutOfWeb3Modal={logoutOfWeb3Modal}
