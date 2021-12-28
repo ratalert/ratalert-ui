@@ -1,0 +1,553 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Static app UI on CloudFront",
+
+  "Parameters": {
+    "ServiceName": {
+      "Description": "The service's name",
+      "Type": "String"
+    },
+    "Environment": {
+      "Description": "The service's environment",
+      "Type": "String",
+      "AllowedValues": [ "int", "test", "prod" ],
+      "Default": "prod"
+    },
+    "ServiceDomain": {
+      "Description": "The app's domain",
+      "Type": "String"
+    },
+    "CFSkeletonStackName": {
+      "Description": "CloudFormation skeleton stack name",
+      "Type": "String",
+      "Default": "skeleton"
+    },
+    "CFSslStackName": {
+      "Description": "CloudFormation SSL stack name",
+      "Type": "String",
+      "Default": "ssl"
+    },
+    "CloudFrontKeyPairId": {
+      "Description": "Signed key key pair ID",
+      "Type": "String",
+      "NoEcho": true
+    },
+    "CloudFrontPolicy": {
+      "Description": "Signed key policy",
+      "Type": "String",
+      "NoEcho": true
+    },
+    "CloudFrontSignature": {
+      "Description": "Signed key signature",
+      "Type": "String",
+      "NoEcho": true
+    },
+    "Protected": {
+      "Description": "Enable signed cookie protection?",
+      "Type": "String",
+      "AllowedValues": [ "true", "false" ],
+      "Default": "false"
+    },
+    "EnableLambdaEdgeOriginRequest": {
+      "Description": "Enable Lambda Edge origin request function?",
+      "Type": "String",
+      "AllowedValues": [ "true", "false" ],
+      "Default": "false"
+    },
+    "EnableLambdaEdgeOriginResponse": {
+      "Description": "Enable Lambda Edge origin response function?",
+      "Type": "String",
+      "AllowedValues": [ "true", "false" ],
+      "Default": "false"
+    },
+    "EnableLambdaEdgeViewerRequest": {
+      "Description": "Enable Lambda Edge viewer request function?",
+      "Type": "String",
+      "AllowedValues": [ "true", "false" ],
+      "Default": "false"
+    },
+    "EnableLambdaEdgeViewerResponse": {
+      "Description": "Enable Lambda Edge viewer response function?",
+      "Type": "String",
+      "AllowedValues": [ "true", "false" ],
+      "Default": "false"
+    }
+  },
+
+  "Mappings": {
+    "ServiceParameters": {
+      "int": {
+        "BucketSubDomain": "int.",
+        "DefaultTTL": 3600,
+        "MinTTL": 300,
+        "MaxTTL": 86400,
+        "DefaultTTLIndex": 180,
+        "MinTTLIndex": 30,
+        "MaxTTLIndex": 600
+      },
+      "test": {
+        "BucketSubDomain": "test.",
+        "DefaultTTL": 3600,
+        "MinTTL": 300,
+        "MaxTTL": 86400,
+        "DefaultTTLIndex": 180,
+        "MinTTLIndex": 30,
+        "MaxTTLIndex": 600
+      },
+      "prod": {
+        "BucketSubDomain": "",
+        "DefaultTTL": 3600,
+        "MinTTL": 300,
+        "MaxTTL": 86400,
+        "DefaultTTLIndex": 180,
+        "MinTTLIndex": 30,
+        "MaxTTLIndex": 600
+      }
+    }
+  },
+
+  "Conditions": {
+    "EnableLambdaEdgeOriginRequest": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeOriginRequest" }, "true" ] },
+    "EnableLambdaEdgeOriginResponse": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeOriginResponse" }, "true" ] },
+    "EnableLambdaEdgeViewerRequest": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeViewerRequest" }, "true" ] },
+    "EnableLambdaEdgeViewerResponse": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeViewerResponse" }, "true" ] },
+    "Protected": { "Fn::Equals": [ { "Ref": "Protected" }, "true" ] }
+  },
+
+  "Resources": {
+    "S3AppBucket": {
+      "Type": "AWS::S3::Bucket",
+      "DeletionPolicy" : "Delete",
+      "Properties": {
+        "BucketName": { "Fn::Join": ["", [{ "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
+        "AccessControl": "Private",
+        "WebsiteConfiguration": {
+          "IndexDocument": "index.html"
+        },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "S3LogsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "AccessControl": "Private",
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "LambdaEdgeRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com",
+                  "edgelambda.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"]
+      }
+    },
+
+    "LambdaEdgeOriginRequest": {
+      "Type" : "AWS::Lambda::Function",
+      "Condition": "EnableLambdaEdgeOriginRequest",
+      "Properties": {
+        "Description" : "Adds Basic Auth header",
+        "Role": { "Fn::GetAtt" : ["LambdaEdgeRole", "Arn"] },
+        "Runtime": "nodejs12.x",
+        "Handler": "index.handler",
+        "Timeout": "2",
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            ""
+          ]]}
+        },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "LambdaEdgeOriginRequestVersion" : {
+      "Type" : "AWS::Lambda::Version",
+      "Condition": "EnableLambdaEdgeOriginRequest",
+      "Properties" : {
+        "FunctionName" : { "Ref" : "LambdaEdgeOriginRequest" }
+      }
+    },
+
+    "LambdaEdgeOriginResponse": {
+      "Type" : "AWS::Lambda::Function",
+      "Condition": "EnableLambdaEdgeOriginResponse",
+      "Properties": {
+        "Description" : "Adds Basic Auth header",
+        "Role": { "Fn::GetAtt" : ["LambdaEdgeRole", "Arn"] },
+        "Runtime": "nodejs12.x",
+        "Handler": "index.handler",
+        "Timeout": "2",
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            ""
+          ]]}
+        },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "LambdaEdgeOriginResponseVersion" : {
+      "Type" : "AWS::Lambda::Version",
+      "Condition": "EnableLambdaEdgeOriginResponse",
+      "Properties" : {
+        "FunctionName" : { "Ref" : "LambdaEdgeOriginResponse" }
+      }
+    },
+
+    "LambdaEdgeViewerRequest": {
+      "Type" : "AWS::Lambda::Function",
+      "Condition": "EnableLambdaEdgeViewerRequest",
+      "Properties": {
+        "Description" : "Adds Basic Auth header",
+        "Role": { "Fn::GetAtt" : ["LambdaEdgeRole", "Arn"] },
+        "Runtime": "nodejs12.x",
+        "Handler": "index.handler",
+        "Timeout": "2",
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            ""
+          ]]}
+        },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "LambdaEdgeViewerRequestVersion" : {
+      "Type" : "AWS::Lambda::Version",
+      "Condition": "EnableLambdaEdgeViewerRequest",
+      "Properties" : {
+        "FunctionName" : { "Ref" : "LambdaEdgeViewerRequest" }
+      }
+    },
+
+    "LambdaEdgeViewerResponse": {
+      "Type" : "AWS::Lambda::Function",
+      "Condition": "EnableLambdaEdgeViewerResponse",
+      "Properties": {
+        "Description" : "Adds Basic Auth header",
+        "Role": { "Fn::GetAtt" : ["LambdaEdgeRole", "Arn"] },
+        "Runtime": "nodejs12.x",
+        "Handler": "index.handler",
+        "Timeout": "2",
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            ""
+          ]]}
+        },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "LambdaEdgeViewerResponseVersion" : {
+      "Type" : "AWS::Lambda::Version",
+      "Condition": "EnableLambdaEdgeViewerResponse",
+      "Properties" : {
+        "FunctionName" : { "Ref" : "LambdaEdgeViewerResponse" }
+      }
+    },
+
+    "LambdaEdgeRestrictViewerAccess": {
+      "Type" : "AWS::Lambda::Function",
+      "Condition": "Protected",
+      "Properties": {
+        "Description" : "Adds Basic Auth header",
+        "Role": { "Fn::GetAtt" : ["LambdaEdgeRole", "Arn"] },
+        "Runtime": "nodejs12.x",
+        "Handler": "index.handler",
+        "Timeout": "2",
+        "Code": {
+          "ZipFile": { "Fn::Join": ["\n", [
+            "exports.handler = (event, context, callback) => {",
+            "  const request = event.Records[0].cf.request;",
+            "  const response = event.Records[0].cf.response;",
+            "  const query = request.querystring;",
+            "  if (query) {",
+            "    const [key, val] = query.split('=');",
+            "    if (val) {",
+            "      const word = val.charAt(3) + val.charAt(7) + val.charAt(11) + val.charAt(15);",
+            "      if (word.toLowerCase() === 'moon') {",
+            "        response.headers['set-cookie'] = [{",
+            "          key: 'Set-Cookie',",
+            "          value: [",
+            { "Fn::Join": ["", ["            'CloudFront-Key-Pair-Id=", { "Ref": "CloudFrontKeyPairId" }, "; Path=/',"]] },
+            { "Fn::Join": ["", ["            'CloudFront-Policy=", { "Ref": "CloudFrontPolicy" }, "; Path=/',"]] },
+            { "Fn::Join": ["", ["            'CloudFront-Signature=", { "Ref": "CloudFrontSignature" }, "; Path=/',"]] },
+            "          ],",
+            "        }];",
+            "      }",
+            "    }",
+            "  }",
+            "  callback(null, response);",
+            "};",
+            ""
+          ]]}
+        },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Environment", "Value": { "Ref": "Environment" } },
+          { "Key": "Application", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+
+    "LambdaEdgeRestrictViewerAccessVersion" : {
+      "Type" : "AWS::Lambda::Version",
+      "Condition": "Protected",
+      "Properties" : {
+        "FunctionName" : { "Ref" : "LambdaEdgeRestrictViewerAccess" }
+      }
+    },
+
+    "CloudFrontOriginAccessIdentity": {
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+      "Properties": {
+        "CloudFrontOriginAccessIdentityConfig": {
+          "Comment": { "Fn::Join": ["", ["access-identity-", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }, ".s3.amazonaws.com"]] }
+        }
+      }
+    },
+
+    "CloudFrontDistribution": {
+      "Type": "AWS::CloudFront::Distribution",
+      "Properties": {
+        "DistributionConfig": {
+          "Comment": { "Fn::Join": ["", [{ "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
+          "Aliases": [
+            { "Fn::Join": ["", [{ "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] }
+          ],
+          "Enabled": true,
+          "DefaultRootObject": "index.html",
+          "PriceClass": "PriceClass_All",
+          "CustomErrorResponses": [
+            {
+              "ErrorCachingMinTTL": 30,
+              "ErrorCode": 404,
+              "ResponseCode": "200",
+              "ResponsePagePath": "/index.html"
+            }
+          ],
+          "DefaultCacheBehavior": {
+            "TargetOriginId": { "Fn::Join": ["", ["S3-", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": ["HEAD", "GET"],
+            "CachedMethods": ["HEAD", "GET"],
+            "MinTTL": { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "MinTTL" ] },
+            "MaxTTL": { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "MaxTTL" ] },
+            "DefaultTTL": { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "DefaultTTL" ] },
+            "Compress": true,
+            "TrustedSigners": { "Fn::If": [ "Protected", ["self"], { "Ref" : "AWS::NoValue" } ] },
+            "ForwardedValues": {
+              "QueryString": false,
+              "Cookies": {
+                "Forward": "all"
+              }
+            },
+            "LambdaFunctionAssociations": [
+              { "Fn::If": [ "EnableLambdaEdgeOriginRequest", {
+                "EventType": "origin-request",
+                "LambdaFunctionARN": { "Ref": "LambdaEdgeOriginRequestVersion" }
+              }, { "Ref" : "AWS::NoValue" } ] },
+              { "Fn::If": [ "EnableLambdaEdgeOriginResponse", {
+                "EventType": "origin-response",
+                "LambdaFunctionARN": { "Ref": "LambdaEdgeOriginResponseVersion" }
+              }, { "Ref" : "AWS::NoValue" } ] },
+              { "Fn::If": [ "EnableLambdaEdgeViewerRequest", {
+                "EventType": "viewer-request",
+                "LambdaFunctionARN": { "Ref": "LambdaEdgeViewerRequestVersion" }
+              }, { "Ref" : "AWS::NoValue" } ] },
+              { "Fn::If": [ "EnableLambdaEdgeViewerResponse", {
+                "EventType": "viewer-response",
+                "LambdaFunctionARN": { "Ref": "LambdaEdgeViewerResponseVersion" }
+              }, { "Ref" : "AWS::NoValue" } ] }
+            ]
+          },
+          "CacheBehaviors": [
+            {
+              "PathPattern": "/index.html",
+              "TargetOriginId": { "Fn::Join": ["", ["S3-", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
+              "ViewerProtocolPolicy": "redirect-to-https",
+              "AllowedMethods": ["HEAD", "GET"],
+              "CachedMethods": ["HEAD", "GET"],
+              "MinTTL": { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "MinTTLIndex" ] },
+              "MaxTTL": { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "MaxTTLIndex" ] },
+              "DefaultTTL": { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "DefaultTTLIndex" ] },
+              "Compress": true,
+              "TrustedSigners": { "Fn::If": [ "Protected", ["self"], { "Ref" : "AWS::NoValue" } ] },
+              "ForwardedValues": {
+                "QueryString": false,
+                "Cookies": {
+                  "Forward": "all"
+                }
+              },
+              "LambdaFunctionAssociations": [
+                { "Fn::If": [ "EnableLambdaEdgeOriginRequest", {
+                  "EventType": "origin-request",
+                  "LambdaFunctionARN": { "Ref": "LambdaEdgeOriginRequestVersion" }
+                }, { "Ref" : "AWS::NoValue" } ] },
+                { "Fn::If": [ "EnableLambdaEdgeOriginResponse", {
+                  "EventType": "origin-response",
+                  "LambdaFunctionARN": { "Ref": "LambdaEdgeOriginResponseVersion" }
+                }, { "Ref" : "AWS::NoValue" } ] },
+                { "Fn::If": [ "EnableLambdaEdgeViewerRequest", {
+                  "EventType": "viewer-request",
+                  "LambdaFunctionARN": { "Ref": "LambdaEdgeViewerRequestVersion" }
+                }, { "Ref" : "AWS::NoValue" } ] },
+                { "Fn::If": [ "EnableLambdaEdgeViewerResponse", {
+                  "EventType": "viewer-response",
+                  "LambdaFunctionARN": { "Ref": "LambdaEdgeViewerResponseVersion" }
+                }, { "Ref" : "AWS::NoValue" } ] }
+              ]
+            },
+            {
+              "PathPattern": "/invite.html",
+              "TargetOriginId": { "Fn::Join": ["", ["S3-", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
+              "ViewerProtocolPolicy": "redirect-to-https",
+              "AllowedMethods": ["HEAD", "GET"],
+              "CachedMethods": ["HEAD", "GET"],
+              "MinTTL": 0,
+              "MaxTTL": 0,
+              "DefaultTTL": 0,
+              "Compress": true,
+              "ForwardedValues": {
+                "QueryString": true,
+                "QueryStringCacheKeys": ["code"],
+                "Cookies": {
+                  "Forward": "none"
+                }
+              },
+              "LambdaFunctionAssociations": [
+                { "Fn::If": [ "Protected", {
+                  "EventType": "viewer-response",
+                  "LambdaFunctionARN": { "Ref": "LambdaEdgeRestrictViewerAccessVersion" }
+                }, { "Ref" : "AWS::NoValue" } ] }
+              ]
+            }
+          ],
+          "HttpVersion": "http2",
+          "Origins": [{
+            "Id": { "Fn::Join": ["", ["S3-", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
+            "DomainName": { "Fn::GetAtt": [ "S3AppBucket", "DomainName" ] },
+            "S3OriginConfig": {
+              "OriginAccessIdentity" : { "Fn::Join": ["/", ["origin-access-identity", "cloudfront", { "Ref": "CloudFrontOriginAccessIdentity" }]] }
+            }
+          }],
+          "Logging": {
+            "Bucket": { "Fn::GetAtt": [ "S3LogsBucket", "DomainName" ] },
+            "Prefix": { "Fn::Join": ["", ["arn:aws:s3:::", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] }
+          },
+          "ViewerCertificate": {
+            "MinimumProtocolVersion": "TLSv1",
+            "AcmCertificateArn": { "Fn::ImportValue": { "Fn::Sub": "${CFSslStackName}-SSLCertificate" } },
+            "SslSupportMethod": "sni-only"
+          }
+        }
+      }
+    },
+
+    "S3AppBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": { "Ref": "S3AppBucket" },
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "ProxyS3Policy",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action": "s3:GetObject",
+              "Resource": [
+                { "Fn::Join": ["", ["arn:aws:s3:::", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }, "/*"]] },
+                { "Fn::Join": ["", ["arn:aws:s3:::", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] }
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "aws:sourceVpce": { "Fn::ImportValue": { "Fn::Sub": "${CFSkeletonStackName}-S3VPCEndpoint" } }
+                }
+              }
+            },
+            {
+              "Sid": "CloudFrontS3Policy",
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": { "Fn::Join": ["", ["arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ", { "Ref": "CloudFrontOriginAccessIdentity" } ]] }
+              },
+              "Action": "s3:GetObject",
+              "Resource": { "Fn::Join": ["", ["arn:aws:s3:::", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }, "/*"]] }
+            }
+          ]
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+    "CloudFrontOriginAccessIdentity": {
+      "Description": "ID of the Origin Access Identity",
+      "Value": { "Ref": "CloudFrontOriginAccessIdentity" },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-CloudFrontOriginAccessIdentity" } }
+    },
+    "CloudFrontDistribution": {
+      "Description": "Distribution ID of the CloudFront distribution",
+      "Value": { "Ref": "CloudFrontDistribution" },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-CloudFrontDistribution" } }
+    },
+    "CloudFrontDistributionDomain": {
+      "Description": "CDN domain of the CloudFront distribution",
+      "Value": { "Fn::GetAtt": [ "CloudFrontDistribution", "DomainName" ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-CloudFrontDistributionDomain" } }
+    },
+    "S3AppBucket": {
+      "Description": "Name of the S3 App Bucket",
+      "Value": { "Ref": "S3AppBucket" },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-S3AppBucket" } }
+    },
+    "S3AppBucketArn": {
+      "Description": "ARN of the S3 App Bucket",
+      "Value": { "Fn::GetAtt": [ "S3AppBucket", "Arn" ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-S3AppBucketArn" } }
+    }
+  }
+}

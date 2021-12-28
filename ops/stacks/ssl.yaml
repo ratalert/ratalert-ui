@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: SSL Certificate
+
+Parameters:
+  ServiceName:
+    Description: Service name
+    Type: String
+  DomainName:
+    Description: Main domain name
+    Type: String
+
+Resources:
+  SSLCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      SubjectAlternativeNames:
+        - !Join ['.', ['*', !Ref DomainName]]
+      ValidationMethod: DNS
+      Tags:
+        - Key: Stack
+          Value: !Ref 'AWS::StackName'
+        - Key: Application
+          Value: !Ref ServiceName
+
+Outputs:
+  SSLCertificate:
+    Description: Certificate ARN for the domain
+    Value: !Ref SSLCertificate
+    Export:
+      Name: !Sub '${AWS::StackName}-SSLCertificate'

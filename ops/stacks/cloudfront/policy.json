@@ -1,0 +1,12 @@
+{
+  "Statement":[
+    {
+      "Resource":"https://_DOMAIN_/*",
+      "Condition":{
+        "DateLessThan":{
+          "AWS:EpochTime": 2000000000
+        }
+      }
+    }
+  ]
+}

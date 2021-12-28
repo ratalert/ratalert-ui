@@ -1,0 +1,567 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+
+  "Description": "Operations Skeleton",
+
+  "Parameters": {
+    "ServiceName": {
+      "Description": "Service name",
+      "Type": "String",
+      "MinLength": "1"
+    },
+    "HighAvailability": {
+      "Description": "Use multiple AZs?",
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [ "false", "true" ],
+      "ConstraintDescription": "Must be one of the following: false | true"
+    },
+    "NumberOfBastions": {
+      "Description": "Number of bastions",
+      "Type": "Number",
+      "Default": 0,
+      "AllowedValues": [ 0, 1, 2 ],
+      "ConstraintDescription": "Must be one of the following: 0 | 1 | 2"
+    },
+    "CIDRBlockForVPC": {
+      "Description": "CIDR block for the VPC",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "10.0.0.0/16",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "Must be a valid IP CIDR range of the form x.x.x.x/x."
+    },
+    "SubnetBlocksForEC2": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.0.0/20, 10.0.16.0/20"
+    },
+    "SubnetBlocksForEC2Public": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.32.0/20, 10.0.48.0/20"
+    },
+    "SubnetBlocksForELB": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.64.0/19, 10.0.96.0/19"
+    },
+    "SubnetBlocksForLambda": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.160.0/19, 10.0.192.0/19"
+    },
+    "SubnetBlocksForRDS": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.128.0/23, 10.0.130.0/23"
+    },
+    "SubnetBlocksForELC": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.132.0/23, 10.0.134.0/23"
+    },
+    "SubnetBlocksForMGMT": {
+      "Description": "Comma-delimited list of two CIDR blocks",
+      "Type": "CommaDelimitedList",
+      "Default": "10.0.250.0/24, 10.0.251.0/24"
+    },
+    "MGMTIngress": {
+      "Description": "CIDR block for the management network",
+      "Type": "String",
+      "MinLength": "9",
+      "MaxLength": "18",
+      "Default": "127.0.0.1/32",
+      "AllowedPattern": "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "ConstraintDescription": "Must be a valid IP CIDR range of the form x.x.x.x/x."
+    }
+  },
+
+  "Conditions": {
+    "HighAvailability": { "Fn::Equals": [ { "Ref": "HighAvailability" }, "true" ] }
+  },
+
+  "Resources": {
+    "VPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true",
+        "CidrBlock" : { "Ref": "CIDRBlockForVPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Ref": "ServiceName" } }
+        ]
+      }
+    },
+    "SubnetEC2A": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForEC2" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "ec2", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetEC2B": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForEC2" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "ec2", "b" ] ] } }
+        ]
+      }
+    },
+    "SubnetEC2APublic": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForEC2Public" } ] },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "ec2public", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetEC2BPublic": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForEC2Public" } ] },
+        "MapPublicIpOnLaunch": true,
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "ec2public", "b" ] ] } }
+        ]
+      }
+    },
+    "SubnetELBA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForELB" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "elb", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetELBB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForELB" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "elb", "b" ] ] } }
+        ]
+      }
+    },
+    "SubnetLambdaA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForLambda" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "lambda", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetLambdaB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForLambda" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "lambda", "b" ] ] } }
+        ]
+      }
+    },
+    "SubnetRDSA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForRDS" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "rds", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetRDSB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForRDS" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "rds", "b" ] ] } }
+        ]
+      }
+    },
+    "SubnetELCA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForELC" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "elc", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetELCB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForELC" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "elc", "b" ] ] } }
+        ]
+      }
+    },
+    "SubnetMGMTA": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "0", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "0", { "Ref": "SubnetBlocksForMGMT" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "mgmt", "a" ] ] } }
+        ]
+      }
+    },
+    "SubnetMGMTB": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "AvailabilityZone": { "Fn::Select": [ "1", { "Fn::GetAZs": { "Ref": "AWS::Region" } } ] },
+        "CidrBlock": { "Fn::Select": [ "1", { "Ref": "SubnetBlocksForMGMT" } ] },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "mgmt", "b" ] ] } }
+        ]
+      }
+    },
+    "PrivateRouteTableA": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "private", "rtb", "a" ] ] } }
+        ]
+      }
+    },
+    "PrivateRouteTableB": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "private", "rtb", "b" ] ] } }
+        ]
+      }
+    },
+    "PublicRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "public", "rtb" ] ] } }
+        ]
+      }
+    },
+    "SubnetEC2ARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetEC2A" },
+        "RouteTableId": { "Ref": "PrivateRouteTableA" }
+      }
+    },
+    "SubnetEC2BRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetEC2B" },
+        "RouteTableId": { "Ref": "PrivateRouteTableB" }
+      }
+    },
+    "SubnetEC2APublicRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetEC2APublic" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "SubnetEC2BPublicRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetEC2BPublic" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "SubnetELBARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetELBA" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "SubnetELBBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetELBB" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "SubnetLambdaARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetLambdaA" },
+        "RouteTableId": { "Ref": "PrivateRouteTableA" }
+      }
+    },
+    "SubnetLambdaBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetLambdaB" },
+        "RouteTableId": { "Ref": "PrivateRouteTableB" }
+      }
+    },
+    "SubnetRDSARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetRDSA" },
+        "RouteTableId": { "Ref": "PrivateRouteTableA" }
+      }
+    },
+    "SubnetRDSBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetRDSB" },
+        "RouteTableId": { "Ref": "PrivateRouteTableB" }
+      }
+    },
+    "SubnetELCARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetELCA" },
+        "RouteTableId": { "Ref": "PrivateRouteTableA" }
+      }
+    },
+    "SubnetELCBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetELCB" },
+        "RouteTableId": { "Ref": "PrivateRouteTableB" }
+      }
+    },
+    "SubnetMGMTARouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetMGMTA" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "SubnetMGMTBRouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": { "Ref": "SubnetMGMTB" },
+        "RouteTableId": { "Ref": "PublicRouteTable" }
+      }
+    },
+    "S3VPCEndpoint": {
+      "Type": "AWS::EC2::VPCEndpoint",
+      "DependsOn": [
+        "PublicRouteTable"
+      ],
+      "Properties": {
+        "VpcId": { "Ref": "VPC" },
+        "ServiceName": { "Fn::Join": [ "", [ "com.amazonaws.", { "Ref": "AWS::Region" }, ".s3" ] ] },
+        "RouteTableIds": [
+          { "Ref": "PrivateRouteTableA" },
+          { "Fn::If": [ "HighAvailability", { "Ref": "PrivateRouteTableB" }, { "Ref" : "AWS::NoValue" } ] },
+          { "Ref": "PublicRouteTable" }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Action": "*",
+            "Effect": "Allow",
+            "Resource": "*",
+            "Principal": "*"
+          }]
+        }
+      }
+    },
+    "SecurityGroupPublic": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": [ " ", [ { "Ref": "ServiceName" }, "public segment" ] ] },
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [{
+          "IpProtocol": "tcp",
+          "CidrIp": "0.0.0.0/0",
+          "FromPort": "443",
+          "ToPort": "443"
+        }],
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "public", "sg" ] ] } }
+        ]
+      }
+    },
+    "SecurityGroupMGMT": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": [ " ", [ { "Ref": "ServiceName" }, "management segment" ] ] },
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [{
+          "IpProtocol": "tcp",
+          "CidrIp": { "Ref": "MGMTIngress" },
+          "FromPort": "22",
+          "ToPort": "22"
+        }, {
+          "IpProtocol": "tcp",
+          "CidrIp": { "Ref": "MGMTIngress" },
+          "FromPort": "443",
+          "ToPort": "443"
+        }],
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "mgmt", "sg" ] ] } }
+        ]
+      }
+    },
+    "SecurityGroupService": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": [ " ", [ { "Ref": "ServiceName" }, "service segment" ] ] },
+        "VpcId": { "Ref": "VPC" },
+        "SecurityGroupIngress": [{
+          "IpProtocol": "tcp",
+          "SourceSecurityGroupId": { "Ref": "SecurityGroupMGMT" },
+          "FromPort": "22",
+          "ToPort": "22"
+        }],
+        "Tags": [
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "service", "sg" ] ] } }
+        ]
+      }
+    },
+    "SecurityGroupRemoteWorker": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": { "Fn::Join": [ " ", [ { "Ref": "ServiceName" }, "remote worker segment" ] ] },
+        "VpcId": { "Ref": "VPC" },
+        "Tags": [
+          { "Key": "remoteWorker", "Value": "22" },
+          { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
+          { "Key": "Name", "Value": { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "remote", "worker", "sg" ] ] } }
+        ]
+      }
+    }
+  },
+
+  "Outputs": {
+    "VPC": {
+      "Description": "VPC ID",
+      "Value": { "Ref": "VPC" },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-VPC" } }
+    },
+    "SubnetsForEC2": {
+      "Description": "Subnet IDs of the EC2 environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetEC2A" }, { "Ref": "SubnetEC2B" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForEC2" } }
+    },
+    "SubnetsForEC2Public": {
+      "Description": "Subnet IDs of the public EC2 environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetEC2APublic" }, { "Ref": "SubnetEC2BPublic" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForEC2Public" } }
+    },
+    "SubnetsForELB": {
+      "Description": "Subnet IDs of the ELB environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetELBA" }, { "Ref": "SubnetELBB" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForELB" } }
+    },
+    "SubnetsForLambda": {
+      "Description": "Subnet IDs of the Lambda environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetLambdaA" }, { "Ref": "SubnetLambdaB" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForLambda" } }
+    },
+    "SubnetsForRDS": {
+      "Description": "Subnet IDs of the RDS environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetRDSA" }, { "Ref": "SubnetRDSB" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForRDS" } }
+    },
+    "SubnetsForELC": {
+      "Description": "Subnet IDs of the ELC environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetELCA" }, { "Ref": "SubnetELCB" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForELC" } }
+    },
+    "SubnetsForMGMT": {
+      "Description": "Subnet IDs of the MGMT environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "SubnetMGMTA" }, { "Ref": "SubnetMGMTB" } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SubnetsForMGMT" } }
+    },
+    "S3VPCEndpoint": {
+      "Description": "VPC Endpoint of the environment VPC",
+      "Value": { "Ref": "S3VPCEndpoint" },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-S3VPCEndpoint" } }
+    },
+    "SecurityGroupMGMT": {
+      "Description": "security group to be assigned to services, for granting access from the mgmt environment",
+      "Value": { "Fn::GetAtt": [ "SecurityGroupMGMT", "GroupId" ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SecurityGroupMGMT" } }
+    },
+    "SecurityGroupPublic": {
+      "Description": "security group to be assigned to ELBs for granting http(s) access from the public internet",
+      "Value": { "Fn::GetAtt": [ "SecurityGroupPublic", "GroupId" ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SecurityGroupPublic" } }
+    },
+    "SecurityGroupService": {
+      "Description": "security group to be assigned to EC2 instances for granting access from the ELB SG and the MGMT SG",
+      "Value": { "Fn::GetAtt": [ "SecurityGroupService", "GroupId" ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SecurityGroupService" } }
+    },
+    "SecurityGroupRemoteWorker": {
+      "Description": "security group to be assigned to services, for granting access for remote workers",
+      "Value": { "Fn::GetAtt": [ "SecurityGroupRemoteWorker", "GroupId" ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-SecurityGroupRemoteWorker" } }
+    },
+    "PrivateRouteTables": {
+      "Description": "route tables assigned to service ec2 environment",
+      "Value": { "Fn::Join": [ ",", [ { "Ref": "PrivateRouteTableA" }, { "Fn::If": [ "HighAvailability", { "Ref": "PrivateRouteTableB" }, { "Ref" : "AWS::NoValue" } ] } ] ] },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-PrivateRouteTables" } }
+    },
+    "MGMTIngress": {
+      "Description": "CIDR block for the management network",
+      "Value": { "Ref": "MGMTIngress" },
+      "Export": { "Name": { "Fn::Sub": "${AWS::StackName}-MGMTIngress" } }
+    }
+  }
+}
