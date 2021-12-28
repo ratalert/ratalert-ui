@@ -30,7 +30,7 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
-const APIURL = `${process.env.REACT_APP_GRAPH_URI}/subgraphs/name/ChefRat`;
+const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { renderNotification } from "../helpers";
