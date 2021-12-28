@@ -1,5 +1,4 @@
 import React from "react";
-import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
@@ -12,8 +11,6 @@ const themes = {
 const prevTheme = window.localStorage.getItem("theme");
 
 ReactDOM.render(
-    <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "light"}>
-      <App/>
-    </ThemeSwitcherProvider>,
+  <App/>,
   document.getElementById("root"),
 );

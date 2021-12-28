@@ -1,13 +1,9 @@
-import WalletConnectProvider from "@walletconnect/web3-provider";
-//import Torus from "@toruslabs/torus-embed"
-import WalletLink from "walletlink";
 import { Alert, Button, Col, Menu, Row, List } from "antd";
 import "antd/dist/antd.css";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
-import Web3Modal from "web3modal";
 import "./App.css";
-import { Account, Address, Balance, Contract, GasGauge, Header, Ramp, ThemeSwitch, Main, Leaderboard, RatMenu, Whitepaper} from "./components";
+import { Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import {
@@ -23,7 +19,7 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 import { useContractConfig } from "./hooks";
 
 // import Portis from "@portis/web3";
-import Fortmatic from "fortmatic";
+// import Fortmatic from "fortmatic";
 // import Authereum from "authereum";
 
 const { ethers } = require("ethers");
@@ -74,17 +70,15 @@ const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUr
 const blockExplorer = targetNetwork.blockExplorer;
 
 // Coinbase walletLink init
-const walletLink = new WalletLink({
-  appName: "coinbase",
-});
 
 // WalletLink provider
-const walletLinkProvider = walletLink.makeWeb3Provider(`https://mainnet.infura.io/v3/${INFURA_ID}`, 1);
+// const walletLinkProvider = walletLink.makeWeb3Provider(`https://mainnet.infura.io/v3/${INFURA_ID}`, 1);
 
 // Portis ID: 6255fb2b-58c8-433b-a2c9-62098c05ddc9
 /*
   Web3 modal helps us "connect" external wallets:
 */
+/*
 const web3Modal = new Web3Modal({
   network: "mainnet", // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
   cacheProvider: true, // optional
@@ -102,7 +96,7 @@ const web3Modal = new Web3Modal({
         },
       },
     },
-/*
+    /*
     portis: {
       display: {
         logo: "https://user-images.githubusercontent.com/9419140/128913641-d025bc0c-e059-42de-a57b-422f196867ce.png",
@@ -115,12 +109,14 @@ const web3Modal = new Web3Modal({
       },
     },
     */
+/*
     fortmatic: {
       package: Fortmatic, // required
       options: {
         key: "pk_live_28DBBBB282AFDED0", // required
       },
     },
+
     "custom-walletlink": {
       display: {
         logo: "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
@@ -133,13 +129,16 @@ const web3Modal = new Web3Modal({
         return provider;
       },
     },
+    */
 /*
     authereum: {
       package: Authereum, // required
     },
     */
+/*
   },
 });
+*/
 
 function App(props) {
   const mainnetProvider =
@@ -152,6 +151,7 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
 
+/*
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
     if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
@@ -161,7 +161,7 @@ function App(props) {
       window.location.reload();
     }, 1);
   };
-
+*/
   /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
   // const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
 
@@ -410,6 +410,7 @@ function App(props) {
     );
   }
 
+/*
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
     setInjectedProvider(new ethers.providers.Web3Provider(provider));
@@ -433,7 +434,7 @@ function App(props) {
       loadWeb3Modal();
     }
   }, [loadWeb3Modal]);
-
+*/
   const [route, setRoute] = useState();
   useEffect(() => {
     setRoute(window.location.pathname);
@@ -507,26 +508,6 @@ function App(props) {
     </div>
   );
   const balanceContent = renderTokenBalances();
-  const accountData = [<div className="account"><Row><Col>
-
-    </Col>
-    <Col>
-    <Account
-      address={address}
-      localProvider={localProvider}
-      userSigner={userSigner}
-      mainnetProvider={mainnetProvider}
-      price={0}
-      web3Modal={web3Modal}
-      loadWeb3Modal={loadWeb3Modal}
-      logoutOfWeb3Modal={logoutOfWeb3Modal}
-      blockExplorer={blockExplorer}
-      setAddress={setAddress}
-    />
-    </Col>
-    </Row>
-    </div>
-  ];
 
   const getCollapsed = (collapsed) => {
     return collapsed;
@@ -539,15 +520,19 @@ function App(props) {
         <Switch>
           <Route exact path="/">
             <RatMenu
-            data={accountData}
             tx={tx}
             readContracts={readContracts}
             writeContracts={writeContracts}
             address={address}
             provider={localProvider}
+            userSigner={userSigner}
+            mainnetProvider={mainnetProvider}
+            blockExplorer={blockExplorer}
+            setAddress={setAddress}
+            setInjectedProvider={setInjectedProvider}
+            injectedProvider={injectedProvider}
             active={1}
             content={<Main
-              data={accountData}
               balanceContent={balanceContent}
               tx={tx}
               readContracts={readContracts}
@@ -560,7 +545,6 @@ function App(props) {
           </Route>
           <Route path="/leaderboard">
             <RatMenu
-              data={accountData}
               tx={tx}
               readContracts={readContracts}
               writeContracts={writeContracts}
@@ -568,7 +552,6 @@ function App(props) {
               provider={localProvider}
               active={2}
               content={<Leaderboard
-                data={accountData}
                 balanceContent={balanceContent}
                 tx={tx}
                 readContracts={readContracts}
@@ -581,7 +564,6 @@ function App(props) {
           </Route>
           <Route path="/whitepaper">
             <RatMenu
-              data={accountData}
               tx={tx}
               readContracts={readContracts}
               writeContracts={writeContracts}
@@ -589,7 +571,6 @@ function App(props) {
               provider={localProvider}
               active={3}
               content={<Whitepaper
-                data={accountData}
                 balanceContent={balanceContent}
                 tx={tx}
                 readContracts={readContracts}

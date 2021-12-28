@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect, useState, Suspense } from "react";
 import {
   PageHeader,
   Button,
@@ -19,6 +19,10 @@ const { Header, Footer, Sider, Content } = Layout;
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
+import Loadable from "react-loadable"
+
+const Account = React.lazy(() => import('./Account'));
+
 import {
   useBalance,
   useContractLoader,
@@ -48,7 +52,9 @@ class RatMenu extends React.Component {
     this.state = {
       windowHeight: window.innerHeight - 235,
       collapsed: true,
+      web3Loaded: false,
     };
+    this.Account = null;
     this.nftProfit = 0;
   }
 
@@ -230,11 +236,59 @@ class RatMenu extends React.Component {
     );
   }
 
+  getAccountData() {
+    let Account;
+    const Loading = props => {
+      if (props.error) {
+        return <div>Error!</div>;
+      } else {
+        return <div>Loading...</div>;
+      }
+    };
+    if (!this.state.web3Loaded) {
+      this.Account = Loadable({
+        loader: () => import("./Account" /* webpackChunkName: "web3" */),
+        loading: Loading
+      });
+
+      this.setState({web3Loaded: true});
+    }
+
+    if (this.Account) {
+      Account = this.Account;
+    }
+
+    return (
+      <div className="account"><Row><Col>
+        </Col>
+        <Col>
+        <Suspense fallback={<div>Loading...</div>}>
+        <Account
+          address={this.props.address}
+          localProvider={this.props.provider}
+          userSigner={this.props.userSigner}
+          mainnetProvider={this.props.mainnetProvider}
+          price={0}
+          blockExplorer={this.props.blockExplorer}
+          setAddress={this.props.setAddress}
+          setInjectedProvider={this.props.setInjectedProvider}
+          injectedProvider={this.props.injectedProvider}
+        />
+        </Suspense>
+
+        </Col>
+        </Row>
+        </div>
+    );
+  };
+
   renderExtra() {
     return (
       <div>
         { this.renderIcons() }
-        { this.state.collapsed ? this.props.data : null}
+        { this.state.collapsed ?
+          !this.state.web3Loaded ? this.getAccountData() : this.getAccountData()
+          : null}
       </div>
     )
   }

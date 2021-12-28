@@ -1,42 +1,32 @@
 import { Button } from "antd";
-import React from "react";
-import { useThemeSwitcher } from "react-css-theme-switcher";
+import React, { useCallback, useEffect, useState } from "react";
 import Address from "./Address";
 import Balance from "./Balance";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+import { INFURA_ID, NETWORK, NETWORKS } from "../constants";
 
-/*
-  ~ What it does? ~
+const { ethers } = require("ethers");
 
-  Displays an Address, Balance, and Wallet as one Account component,
-  also allows users to log in to existing accounts and log out
-
-  ~ How can I use? ~
-
-  <Account
-    address={address}
-    localProvider={localProvider}
-    userProvider={userProvider}
-    mainnetProvider={mainnetProvider}
-    price={price}
-    web3Modal={web3Modal}
-    loadWeb3Modal={loadWeb3Modal}
-    logoutOfWeb3Modal={logoutOfWeb3Modal}
-    blockExplorer={blockExplorer}
-  />
-
-  ~ Features ~
-
-  - Provide address={address} and get balance corresponding to the given address
-  - Provide localProvider={localProvider} to access balance on local network
-  - Provide userProvider={userProvider} to display a wallet
-  - Provide mainnetProvider={mainnetProvider} and your address will be replaced by ENS name
-              (ex. "0xa870" => "user.eth")
-  - Provide price={price} of ether and get your balance converted to dollars
-  - Provide web3Modal={web3Modal}, loadWeb3Modal={loadWeb3Modal}, logoutOfWeb3Modal={logoutOfWeb3Modal}
-              to be able to log in/log out to/from existing accounts
-  - Provide blockExplorer={blockExplorer}, click on address and get the link
-              (ex. by default "https://etherscan.io/" or for xdai "https://blockscout.com/poa/xdai/")
-*/
+const web3Modal = new Web3Modal({
+  network: "mainnet", // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
+  cacheProvider: true, // optional
+  theme: "light", // optional. Change to "dark" for a dark theme.
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        bridge: "https://polygon.bridge.walletconnect.org",
+        infuraId: INFURA_ID,
+        rpc: {
+          1: `https://mainnet.infura.io/v3/${INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
+          42: `https://kovan.infura.io/v3/${INFURA_ID}`,
+          100: "https://dai.poa.network", // xDai
+        },
+      },
+    },
+  }
+});
 
 export default function Account({
   address,
@@ -45,12 +35,97 @@ export default function Account({
   mainnetProvider,
   price,
   minimized,
+  blockExplorer,
+/*
   web3Modal,
   loadWeb3Modal,
   logoutOfWeb3Modal,
-  blockExplorer,
-  setAddress
+  */
+  setAddress,
+  setInjectedProvider,
+  injectedProvider,
 }) {
+
+
+
+      /*
+      portis: {
+        display: {
+          logo: "https://user-images.githubusercontent.com/9419140/128913641-d025bc0c-e059-42de-a57b-422f196867ce.png",
+          name: "Portis",
+          description: "Connect to Portis App",
+        },
+        package: Portis,
+        options: {
+          id: "568e0153-79c2-459b-8ed4-202639056bb5",
+        },
+      },
+      */
+  /*
+      fortmatic: {
+        package: Fortmatic, // required
+        options: {
+          key: "pk_live_28DBBBB282AFDED0", // required
+        },
+      },
+
+      "custom-walletlink": {
+        display: {
+          logo: "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
+          name: "Coinbase",
+          description: "Connect to Coinbase Wallet (not Coinbase App)",
+        },
+        package: walletLinkProvider,
+        connector: async (provider, _options) => {
+          await provider.enable();
+          return provider;
+        },
+      },
+      */
+  /*
+      authereum: {
+        package: Authereum, // required
+      },
+    },
+*/
+
+  const loadWeb3Modal = useCallback(async () => {
+    console.log('Starting connect');
+    const provider = await web3Modal.connect();
+    console.log('PROVIDER', provider);
+    setInjectedProvider(new ethers.providers.Web3Provider(provider));
+
+    provider.on("chainChanged", chainId => {
+      setInjectedProvider(new ethers.providers.Web3Provider(provider));
+    });
+
+    provider.on("accountsChanged", () => {
+      setInjectedProvider(new ethers.providers.Web3Provider(provider));
+    });
+
+    // Subscribe to session disconnection
+    provider.on("disconnect", (code, reason) => {
+      logoutOfWeb3Modal();
+    });
+  }, [setInjectedProvider]);
+
+  const logoutOfWeb3Modal = async () => {
+    await web3Modal.clearCachedProvider();
+    if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
+      await injectedProvider.provider.disconnect();
+    }
+    setTimeout(() => {
+      window.location.reload();
+    }, 1);
+  };
+
+  useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      loadWeb3Modal();
+    }
+  }, [loadWeb3Modal]);
+
+
   const modalButtons = [];
   if (web3Modal) {
     if (web3Modal.cachedProvider) {
@@ -86,7 +161,6 @@ export default function Account({
     }
   }
 
-  const { currentTheme } = useThemeSwitcher();
 
   const display = minimized ? (
     ""

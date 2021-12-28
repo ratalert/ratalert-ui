@@ -24,17 +24,15 @@
     "dotenv": "^8.2.0",
     "eth-hooks": "2.3.16",
     "ethers": "^5.4.1",
-    "fortmatic": "^2.2.1",
     "graphql": "^16.2.0",
     "graphql-request": "^3.7.0",
     "postcss": "^8.2.6",
     "react": "^17.0.2",
     "react-blockies": "^1.4.1",
     "react-dom": "^17.0.2",
+    "react-loadable": "^5.5.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.0",
-    "walletlink": "^2.1.5",
-    "web3": "^1.6.1",
     "web3modal": "^1.9.1"
   },
   "devDependencies": {
