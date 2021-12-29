@@ -106,7 +106,7 @@
 
 @media only screen and (min-width: 769px) {
   .web3Button {
-    width: 120px;
+    width: 200px;
     font-size: 10px;
   }
   .web3Button span {
@@ -117,7 +117,7 @@
 
 @media only screen and (min-width: 800px) {
   .web3Button {
-    width: 140px;
+    width: 230px;
   }
 }
 
@@ -125,49 +125,49 @@
 
 @media only screen and (min-width: 900px) {
   .web3Button {
-    width: 150px;
+    width: 250px;
   }
 }
 
 @media only screen and (min-width: 1000px) {
   .web3Button {
-    width: 170px;
+    width: 270px;
   }
 }
 
 
 @media only screen and (min-width: 1020px) {
   .web3Button {
-    width: 120px;
+    width: 200px;
   }
 }
 
 
 @media only screen and (min-width: 1100px) {
   .web3Button {
-    width: 130px;
+    width: 250px;
   }
 }
 
 @media only screen and (min-width: 1200px) {
   .web3Button {
-    width: 140px;
+    width: 250px;
   }
 }
 @media only screen and (min-width: 1300px) {
   .web3Button {
-    width: 160px;
+    width: 250px;
   }
 }
 
 @media only screen and (min-width: 1400px) {
   .web3Button {
-    width: 170px;
+    width: 300px;
   }
 }
 
 @media only screen and (min-width: 1500px) {
   .web3Button {
-    width: 180px;
+    width: 350px;
   }
 }

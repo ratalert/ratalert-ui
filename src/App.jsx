@@ -156,6 +156,8 @@ let stats = {
   mintPrice: 0,
 };
 let lastCall = 0;
+let startTime = Math.round(new Date().getTime() / 1000);
+
 let fFoodBalance = 0;
 function App(props) {
   const mainnetProvider =
@@ -180,20 +182,23 @@ function App(props) {
     if (lastCall === 0) {
       lastCall = Math.round(new Date().getTime() / 1000);
     }
-    if (lastCall !== 0) {
-      const diff = Math.round(new Date().getTime() / 1000) - lastCall;
-      console.log('Diff since last call:', diff);
-      if (diff <= 120) {
-          console.log('Blocking new call');
 
-          return stats;
+    const timeSinceStart = Math.round(new Date().getTime() / 1000) - startTime;
+    console.log('Time since start', timeSinceStart);
+    if (timeSinceStart >= 30) {
+      if (lastCall !== 0) {
+        const diff = Math.round(new Date().getTime() / 1000) - lastCall;
+        console.log('Diff since last call:', diff);
+        if (diff <= 10) {
+            console.log('Blocking new call');
+            return stats;
+        }
       }
     }
 
     lastCall = Math.round(new Date().getTime() / 1000);
 
     fFoodBalance = useContractReader(readContracts, "FastFood", "balanceOf", [address]);
-
     const minted = useContractReader(readContracts, "ChefRat", "minted");
     let totalSupply = useContractReader(readContracts, "ChefRat", "MAX_TOKENS");
     let paidTokens = useContractReader(readContracts, "ChefRat", "PAID_TOKENS");
@@ -280,7 +285,8 @@ function App(props) {
   const readContracts = useContractLoader(localProvider, contractConfig);
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
 
-  stats = loadDataFromChain();
+  loadDataFromChain();
+  console.log('Loaded:', stats);
 
   useEffect(() => {
       console.log('Setting ETH call true');

@@ -47,6 +47,7 @@ import {
 class Main extends React.Component {
   constructor(props) {
     super(props);
+    this.kitchenRef = {};
     this.state = {
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { chefRats: [] },
@@ -78,7 +79,7 @@ class Main extends React.Component {
   getMintPrice() {
     let mintPrice = 0;
     if (this.props.stats && this.props.stats.mintPrice) {
-      mintPrice = 0;
+      mintPrice = this.props.stats.mintPrice;
     }
     switch (this.state.currency) {
       case 'ETH':
@@ -388,14 +389,15 @@ class Main extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={8}/>
-          <Col span={16} style={{ textAlign: "left" }}>
+          <Col span={0}/>
+          <Col span={24} style={{ textAlign: "center" }}>
           <Radio.Group onChange={this.setCurrency.bind(this)} value={this.state.currency} buttonStyle="solid">
             <Radio.Button value="ETH">$ETH</Radio.Button>
             <Radio.Button disabled={this.state.pairs['WOOL/WETH'] > 0 ? false : true} value="WOOL">$WOOL</Radio.Button>
             <Radio.Button disabled={this.state.pairs['GP/WETH'] > 0 ? false : true} value="GP">$GP</Radio.Button>
           </Radio.Group>
           </Col>
+          <Col span={8}/>
         </Row>
         <Row>
           <Col span={8}/>
@@ -589,44 +591,100 @@ class Main extends React.Component {
       )
     }
 
+    let nftsPerRow = 0;
+    let offset = 0;
+    let minimumNftsPerRow = 3;
+
+    if (staked) {
+      // Is in a kitchen
+      offset = 290;
+      minimumNftsPerRow = 2;
+    } else {
+      offset = 100;
+    }
+
+    let availableSpace = window.innerWidth - offset;
+    availableSpace = availableSpace * 0.65;
+    nftsPerRow = parseInt(availableSpace / 122);
+    if (nftsPerRow < minimumNftsPerRow) {
+      nftsPerRow = minimumNftsPerRow;
+    }
+
+
+    const numberOfRows = parseInt(nft.length / nftsPerRow);
+    const rows = [];
+    for (let i=0;i <= numberOfRows; i += 1) {
+        const rowNFTs = [];
+        for (let j = 0; j < nftsPerRow; j += 1) {
+          const temp = nft.shift();
+          if (temp) {
+            rowNFTs.push(temp);
+          }
+
+        }
+        rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
+    }
+
+
+    return (
+      <div>
+        { rows }
+      </div>
+    );
+  }
+
+  renderNFTRow(i, nftsPerRow, nft, staked, type) {
     return (
       <Row>
-        {nft.map(c => (
-          <Col md={7} xl={3} lg={4} style={{ padding: "5px" }}>
-            <div
-              onClick={() => this.selectNFT(this, c.name, staked)}
-              className={
-                this.state.selectedNfts &&
-                this.state.selectedNfts[c.name] &&
-                this.state.selectedNfts[c.name]["status"] === true
-                  ? "nftSelected nft"
-                  : "nftNotSelected nft"
-              }
-            >
-              #{c.name}
-              <Popover mouseEnterDelay={1} content={this.renderNFTInfo(c.attributes, c.image)} title={c.description}>
-                <img src={c.image} />
-              </Popover>
-              <Progress
-                strokeColor={c.type === "Chef" ? "green" : "orange"}
-                percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
-                size="small"
-                status="active"
-              />
-              <Progress
-              strokeColor={c.type === "Chef" ? "blue" : "brown"}
-              percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
-              size="small"
-              status="active"
-               />
-              {c.timestamp > 0 ? (
-                <p style={{ fontSize: "11px" }}>{this.renderNftProfit(c.type, c.timestamp)} $FFOOD</p>
-              ) : null}
-            </div>
-          </Col>
-        ))}
+        <Col span={24}>
+          <Row style={{marginLeft: '10px', marginRight: '10px'}}>
+          {nft.map(c => {
+            return this.renderNFTColumn(c, staked);
+          })}
+          </Row>
+        </Col>
       </Row>
-    );
+    )
+  }
+
+  renderNFTColumn(c, staked) {
+    if (!c || !c.name) {
+      return <div>&nbsp;</div>
+    }
+    return (
+      <span style={{ width: "120px", marginRight: "20px"}}>
+        <div
+          onClick={() => this.selectNFT(this, c.name, staked)}
+          className={
+            this.state.selectedNfts &&
+            this.state.selectedNfts[c.name] &&
+            this.state.selectedNfts[c.name]["status"] === true
+              ? "nftSelected nft"
+              : "nftNotSelected nft"
+          }
+        >
+          <div>#{c.name}</div>
+          <Popover mouseEnterDelay={1} content={this.renderNFTInfo(c.attributes, c.image)} title={c.description}>
+            <img width={100} src={c.image} />
+          </Popover>
+          <Progress
+            strokeColor={c.type === "Chef" ? "green" : "orange"}
+            percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
+            size="small"
+            status="active"
+          />
+          <Progress
+          strokeColor={c.type === "Chef" ? "blue" : "brown"}
+          percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
+          size="small"
+          status="active"
+           />
+          {c.timestamp > 0 ? (
+            <p style={{ fontSize: "11px" }}>{this.renderNftProfit(c.type, c.timestamp)} $FFOOD</p>
+          ) : null}
+        </div>
+      </span>
+    )
   }
 
   renderNftProfit(type, timestamp) {
@@ -961,11 +1019,46 @@ class Main extends React.Component {
   renderNfts() {
     return (
       <Card size="small" title="My NFTs">
-        <Card size="small">{!this.state.loading ? this.renderRats() : <Skeleton />}</Card>
-        <Card size="small">{!this.state.loading ? this.renderChefs() : <Skeleton />}</Card>
-        <Card size="small" title="Stake">
-          {!this.state.loading ? this.renderStaked() : <Skeleton />}
+        <Card size="small" style={{background: '#CCCCCC', height: '100px'}}>
+        Roof
         </Card>
+        <Card size="small">
+          <Row>
+            <Col style={{width: '180px', border: '1px solid #000000'}}>
+              Le stake ***
+            </Col>
+            <Col span="22">
+
+            </Col>
+          </Row>
+        </Card>
+        <Card size="small">
+          <Row>
+            <Col style={{width: '180px', border: '1px solid #000000'}}>
+              Stake house
+            </Col>
+            <Col span={22}>
+            </Col>
+          </Row>
+        </Card>
+        <Card size="small">
+          <Row>
+            <Col style={{width: '180px', border: '1px solid #000000'}}>
+              McStake
+            </Col>
+            <Col style={{border: '1px solid #000000', marginLeft: '20px'}}>
+              {!this.state.loading ? this.renderStaked() : <Skeleton />}
+            </Col>
+          </Row>
+        </Card>
+        <Card size="small">{!this.state.loading ? this.renderChefs() : <Skeleton />}</Card>
+        <Card size="small" style={{background: '#CCCCCC', height: '30px'}}>
+          Ground
+        </Card>
+
+        <Card size="small">{!this.state.loading ? this.renderRats() : <Skeleton />}</Card>
+
+
 
         <Card size="small">
         { this.renderLegend() }
@@ -1030,16 +1123,17 @@ class Main extends React.Component {
   renderGame() {
     return (
           <Row style={{ height: "100%" }}>
-            <Col md={12} xs={24}>
+            <Col md={24} xs={24}>
               <Row>
                 <Col md={2} xs={1} />
-                <Col md={22} xs={22}>
+                <Col md={20} xs={20}>
                   {this.props.address ? this.renderMintContent() : this.renderNACard("Mint")}
                 </Col>
+                <Col md={2} xs={1} />
               </Row>
               <Row>
                 <Col md={2} xs={1} />
-                <Col span={22}>
+                <Col span={20}>
                   <Card size="small" title="My balances" style={{ marginTop: "25px" }}>
                     {this.props.balanceContent}
                   </Card>
@@ -1075,8 +1169,8 @@ class Main extends React.Component {
                 <Col span={2} />
               </Row>
             </Col>
-            <Col md={12} xs={24}>
-              <Row className="mobileRow">
+            <Col md={24} xs={24}>
+              <Row style={{ marginTop: "25px" }}>
                 <Col md={2} xs={1} />
                 <Col md={20} xs={22}>
                   {this.props.address ? this.renderNfts() : this.renderNACard("Your NFTs")}
