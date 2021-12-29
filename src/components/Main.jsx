@@ -31,6 +31,7 @@ import {
   useUserProviderAndSigner,
 } from "eth-hooks";
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
+console.log('APIURL:', APIURL);
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { renderNotification } from "../helpers";
@@ -75,13 +76,17 @@ class Main extends React.Component {
   }
 
   getMintPrice() {
+    let mintPrice = 0;
+    if (this.props.stats && this.props.stats.mintPrice) {
+      mintPrice = 0;
+    }
     switch (this.state.currency) {
       case 'ETH':
-        return this.props.stats.mintPrice;
+        return mintPrice;
       case 'WOOL':
-          return parseInt(this.state.pairs['WOOL/WETH'] * this.props.stats.mintPrice);
+          return parseInt(this.state.pairs['WOOL/WETH'] * mintPrice);
       case 'GP':
-          return parseInt(this.state.pairs['GP/WETH'] * this.props.stats.mintPrice);
+          return parseInt(this.state.pairs['GP/WETH'] * mintPrice);
     }
   }
 

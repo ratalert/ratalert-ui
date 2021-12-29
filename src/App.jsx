@@ -35,7 +35,8 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
   targetNetwork = NETWORKS.localhost;
 }
 
-const DEBUG = false;
+console.log('TARGETNETWORK', targetNetwork);
+const DEBUG = true;
 const NETWORKCHECK = true;
 
 // 🛰 providers
@@ -139,7 +140,23 @@ const web3Modal = new Web3Modal({
   },
 });
 */
-
+let stats = {
+  minted: 0,
+  totalSupply: 0,
+  rats: 0,
+  chefs: 0,
+  ratsStaked: 0,
+  chefsStaked: 0,
+  tokensClaimed: 0,
+  paidTokens: 0,
+  dailyFFoodRate: 0,
+  minimumToExit: 0,
+  ratTax: 0,
+  maxSupply: 0,
+  mintPrice: 0,
+};
+let lastCall = 0;
+let fFoodBalance = 0;
 function App(props) {
   const mainnetProvider =
     poktMainnetProvider && poktMainnetProvider._isProvider
@@ -151,25 +168,92 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
 
-/*
-  const logoutOfWeb3Modal = async () => {
-    await web3Modal.clearCachedProvider();
-    if (injectedProvider && injectedProvider.provider && typeof injectedProvider.provider.disconnect == "function") {
-      await injectedProvider.provider.disconnect();
-    }
-    setTimeout(() => {
-      window.location.reload();
-    }, 1);
-  };
-*/
-  /* 💵 This hook will get the price of ETH from 🦄 Uniswap: */
-  // const price = useExchangeEthPrice(targetNetwork, mainnetProvider);
+  const [ethCallAllowed, setEthCallAllowed] = useState(false);
 
-  /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
+
   const gasPrice = useGasPrice(targetNetwork, "fast");
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
   const userSigner = userProviderAndSigner.signer;
+
+  async function loadDataFromChain() {
+    if (lastCall === 0) {
+      lastCall = Math.round(new Date().getTime() / 1000);
+    }
+    if (lastCall !== 0) {
+      const diff = Math.round(new Date().getTime() / 1000) - lastCall;
+      console.log('Diff since last call:', diff);
+      if (diff <= 120) {
+          console.log('Blocking new call');
+
+          return stats;
+      }
+    }
+
+    lastCall = Math.round(new Date().getTime() / 1000);
+
+    fFoodBalance = useContractReader(readContracts, "FastFood", "balanceOf", [address]);
+
+    const minted = useContractReader(readContracts, "ChefRat", "minted");
+    let totalSupply = useContractReader(readContracts, "ChefRat", "MAX_TOKENS");
+    let paidTokens = useContractReader(readContracts, "ChefRat", "PAID_TOKENS");
+
+    let mintPrice = useContractReader(readContracts, "ChefRat", "MINT_PRICE");
+    if (!mintPrice) {
+      mintPrice = 0;
+    }
+    const rats = useContractReader(readContracts, "ChefRat", "numRats");
+    const chefs = useContractReader(readContracts, "ChefRat", "numChefs");
+
+    let dailyFFoodRate = useContractReader(readContracts, "KitchenPack", "DAILY_FFOOD_RATE");
+    if (!dailyFFoodRate) {
+      dailyFFoodRate = 0;
+    }
+
+    let minimumToExit = useContractReader(readContracts, "KitchenPack", "MINIMUM_TO_EXIT");
+    if (!minimumToExit) {
+      minimumToExit = 0;
+    }
+
+    let ratTax = useContractReader(readContracts, "KitchenPack", "FFOOD_CLAIM_TAX_PERCENTAGE");
+    if (!ratTax) {
+      ratTax = 0;
+    }
+
+    let maxSupply = useContractReader(readContracts, "KitchenPack", "FFOOD_MAX_SUPPLY");
+    if (!maxSupply) {
+      maxSupply = 0;
+    }
+
+    let ratsStaked = useContractReader(readContracts, "KitchenPack", "totalRatsStaked");
+    if (!ratsStaked) {
+      ratsStaked = 0;
+    }
+    let chefsStaked = useContractReader(readContracts, "KitchenPack", "totalChefsStaked");
+    if (!chefsStaked) {
+      chefsStaked = 0;
+    }
+    let tokensClaimed = useContractReader(readContracts, "KitchenPack", "totalFastFoodEarned");
+    if (!tokensClaimed) {
+      tokensClaimed = 0;
+    }
+    stats = {
+      minted,
+      totalSupply: parseInt(totalSupply) || 0,
+      rats,
+      chefs,
+      ratsStaked: parseInt(ratsStaked),
+      chefsStaked: parseInt(chefsStaked),
+      tokensClaimed: parseFloat(ethers.utils.formatEther(tokensClaimed)).toFixed(8),
+      paidTokens: parseInt(paidTokens),
+      dailyFFoodRate: parseInt(ethers.utils.formatEther(dailyFFoodRate)),
+      minimumToExit: parseInt(minimumToExit),
+      ratTax: parseInt(ratTax),
+      maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
+      mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
+    };
+    return stats;
+  }
 
   useEffect(() => {
     async function getAddress() {
@@ -184,147 +268,25 @@ function App(props) {
   }, [userSigner]);
 
 
-  // You can warn the user if you would like them to be on a specific network
   const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
   const selectedChainId =
     userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
 
-  // For more hooks, check out 🔗eth-hooks at: https://www.npmjs.com/package/eth-hooks
-
-  // The transactor wraps transactions and provides notificiations
   const tx = Transactor(userSigner, gasPrice);
-
-  // Faucet Tx can be used to send funds from the faucet
   const faucetTx = Transactor(localProvider, gasPrice);
-
-  // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
-
-  // Just plug in different 🛰 providers to get your balance on different chains:
   const yourMainnetBalance = useBalance(mainnetProvider, address);
-
   const contractConfig = useContractConfig();
-
-  // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider, contractConfig);
-
-  // If you want to make 🔐 write transactions to your contracts, use the userSigner:
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
-  // EXTERNAL CONTRACT EXAMPLE:
-  //
-  // If you want to bring in the mainnet DAI contract it would look like:
-  // const mainnetContracts = useContractLoader(mainnetProvider, contractConfig);
 
-  // If you want to call a function on a new block
-  useOnBlock(mainnetProvider, () => {
-  //    console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
-  });
+  stats = loadDataFromChain();
 
-  let myMainnetDAIBalance = 0;
-  let fFoodBalance = 0;
-  fFoodBalance = useContractReader(readContracts, "FastFood", "balanceOf", [address]);
-
-  const minted = useContractReader(readContracts, "ChefRat", "minted");
-  let totalSupply = useContractReader(readContracts, "ChefRat", "MAX_TOKENS");
-  let paidTokens = useContractReader(readContracts, "ChefRat", "PAID_TOKENS");
-
-  let mintPrice = useContractReader(readContracts, "ChefRat", "MINT_PRICE");
-  if (!mintPrice) {
-    mintPrice = 0;
-  }
-  const rats = useContractReader(readContracts, "ChefRat", "numRats");
-  const chefs = useContractReader(readContracts, "ChefRat", "numChefs");
-
-  let dailyFFoodRate = useContractReader(readContracts, "KitchenPack", "DAILY_FFOOD_RATE");
-  if (!dailyFFoodRate) {
-    dailyFFoodRate = 0;
-  }
-
-  let minimumToExit = useContractReader(readContracts, "KitchenPack", "MINIMUM_TO_EXIT");
-  if (!minimumToExit) {
-    minimumToExit = 0;
-  }
-
-  let ratTax = useContractReader(readContracts, "KitchenPack", "FFOOD_CLAIM_TAX_PERCENTAGE");
-  if (!ratTax) {
-    ratTax = 0;
-  }
-
-  let maxSupply = useContractReader(readContracts, "KitchenPack", "FFOOD_MAX_SUPPLY");
-  if (!maxSupply) {
-    maxSupply = 0;
-  }
-
-  let ratsStaked = useContractReader(readContracts, "KitchenPack", "totalRatsStaked");
-  if (!ratsStaked) {
-    ratsStaked = 0;
-  }
-  let chefsStaked = useContractReader(readContracts, "KitchenPack", "totalChefsStaked");
-  if (!chefsStaked) {
-    chefsStaked = 0;
-  }
-  let tokensClaimed = useContractReader(readContracts, "KitchenPack", "totalFastFoodEarned");
-  if (!tokensClaimed) {
-    tokensClaimed = 0;
-  }
-  const stats = {
-    minted,
-    totalSupply: parseInt(totalSupply) || 0,
-    rats,
-    chefs,
-    ratsStaked: parseInt(ratsStaked),
-    chefsStaked: parseInt(chefsStaked),
-    tokensClaimed: parseFloat(ethers.utils.formatEther(tokensClaimed)).toFixed(8),
-    paidTokens: parseInt(paidTokens),
-    dailyFFoodRate: parseInt(ethers.utils.formatEther(dailyFFoodRate)),
-    minimumToExit: parseInt(minimumToExit),
-    ratTax: parseInt(ratTax),
-    maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
-    mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
-  };
-
-  const myMainnetDAIBalance2 = 0;
-  const stakerContractBalance = 0;
-  const threshold = 0;
-  const balanceStaked = 0;
-
-  const timeLeft = 0;
-  const complete = false;
-  const exampleExternalContractBalance = useBalance(
-    localProvider,
-    readContracts && readContracts.ExampleExternalContract ? readContracts.ExampleExternalContract.address : null,
-  );
-
-  let completeDisplay = "";
-  if (complete) {
-    completeDisplay = (
-      <div style={{ padding: 64, backgroundColor: "#eeffef", fontWeight: "bolder" }}>
-        🚀 🎖 👩‍🚀 - Staking App triggered `ExampleExternalContract` -- 🎉 🍾 🎊
-      </div>
-    );
-  }
-
-  /*
-  const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
-  console.log("🏷 Resolved austingriffith.eth as:", addressFromENS)
-  */
-
-  //
-  // 🧫 DEBUG 👨🏻‍🔬
-  //
   useEffect(() => {
-    if (
-      DEBUG &&
-      mainnetProvider &&
-      address &&
-      selectedChainId &&
-      yourLocalBalance &&
-      yourMainnetBalance &&
-      readContracts &&
-      writeContracts
-    ) {
-    }
-  }, [mainnetProvider, address, selectedChainId, yourLocalBalance, yourMainnetBalance, readContracts, writeContracts]);
+      console.log('Setting ETH call true');
+      // setEthCallAllowed(true);
+  }, [setEthCallAllowed]);
+
 
   let networkDisplay = "";
   if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
