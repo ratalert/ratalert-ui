@@ -311,9 +311,9 @@ class Main extends React.Component {
       const sum = amount * 0.1;
       let gasLimit;
       if (amount === 1) {
-        gasLimit = 160000;
+        gasLimit = 200000;
       } else {
-        gasLimit = amount * 140000;
+        gasLimit = amount * 200000;
       }
 
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
@@ -460,7 +460,7 @@ class Main extends React.Component {
       <div style={{ width: "300px" }}>
         <Row>
           <Col span={24}>
-            <img width={100} src={img} />
+            <img width={200} src={img} />
           </Col>
         </Row>
         <Row>
@@ -505,10 +505,10 @@ class Main extends React.Component {
 
               <div>
               {
-                key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
-                key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
-                key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
-                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage'
+                key.trait_type !== 'Insanity1' && key.trait_type !== 'Insanity percentage1' &&
+                key.trait_type !== 'Skill1' && key.trait_type !== 'Skill percentage1' &&
+                key.trait_type !== 'Intelligence1' && key.trait_type !== 'Intelligence percentage1' &&
+                key.trait_type !== 'Fatness1' && key.trait_type !== 'Fatness percentage1'
                 ?
               <Row>
                 <Col span={12}>{key.trait_type}</Col>
@@ -1126,14 +1126,14 @@ class Main extends React.Component {
             <Col md={24} xs={24}>
               <Row>
                 <Col md={2} xs={1} />
-                <Col md={20} xs={20}>
+                <Col md={20} xs={22}>
                   {this.props.address ? this.renderMintContent() : this.renderNACard("Mint")}
                 </Col>
                 <Col md={2} xs={1} />
               </Row>
               <Row>
                 <Col md={2} xs={1} />
-                <Col span={20}>
+                <Col md={20} xs={22}>
                   <Card size="small" title="My balances" style={{ marginTop: "25px" }}>
                     {this.props.balanceContent}
                   </Card>

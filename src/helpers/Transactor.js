@@ -34,6 +34,7 @@ export function Transactor(providerOrSigner, gasPrice, etherscan) {
         options = {
           system: "ethereum",
           networkId: network.chainId,
+           dappId: BLOCKNATIVE_DAPPID,
           // darkMode: Boolean, // (default: false)
           transactionHandler: txInformation => {
             if (DEBUG) console.log("HANDLE TX", txInformation);
@@ -163,6 +164,16 @@ export function renderNotification(type, msg, description) {
   let notify = null;
   const options = {
     system: "ethereum",
+    dappId: BLOCKNATIVE_DAPPID,
+    networkId: 1,
+    // darkMode: Boolean, // (default: false)
+    transactionHandler: txInformation => {
+      if (DEBUG) console.log("HANDLE TX", txInformation);
+      const possibleFunction = callbacks[txInformation.transaction.hash];
+      if (typeof possibleFunction === "function") {
+        possibleFunction(txInformation.transaction);
+      }
+    },
   };
 
   notify = Notify(options);
