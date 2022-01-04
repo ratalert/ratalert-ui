@@ -1,0 +1,71 @@
+@import "reset.css";
+@font-face {
+    font-family: eightbit;
+    src: url(8bit-wonder-nominal.woff);
+}
+body {
+    background: #e3d6b6;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+div#top, div#bottom {
+    margin: 0;
+    padding: 0;
+}
+div#top {
+    background: #fff;
+}
+header {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 10px;
+    position: relative;
+}
+div#bottom div {
+    margin: 0 10px;
+}
+main {
+    max-width: 580px;
+    margin: 50px auto 0 auto;
+    background: #eae0c7;
+    padding: 40px;
+}
+img#logo {
+    margin: 80px 0 8px 0;
+}
+h2 {
+    background-color: #d8cba9;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-family: eightbit, Helvetica, sans-serif;
+    padding: 2px 5px 5px 5px;
+}
+h3 {
+    font-weight: bold;
+    margin-bottom: 20px;
+    font-family: eightbit, Helvetica, sans-serif;
+}
+#images {
+    text-align: center;
+}
+img#rat {
+    width: 64px;
+    position: relative;
+    top: 20px;
+}
+img#chef {
+    width: 152px;
+    position: relative;
+    top: 30px;
+}
+hr {
+    position: absolute;
+    height: 2px;
+    border-width: 0;
+    background-color: #e3d6b6;
+    bottom: 10px;
+    left: 40px;
+    right: 40px;
+}
