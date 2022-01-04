@@ -21,7 +21,12 @@ const univ3prices = require('@thanpolas/univ3prices');
 import Decimal from 'decimal.js';
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
-import { request, gql } from "graphql-request";
+import { GraphQLClient, gql } from 'graphql-request'
+
+
+
+import { contracts } from '../contracts/contracts.js';
+import config from '../config.js';
 import {
   useBalance,
   useContractLoader,
@@ -31,7 +36,17 @@ import {
   useUserProviderAndSigner,
 } from "eth-hooks";
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
-console.log('APIURL:', APIURL);
+
+const graphQLClient = new GraphQLClient(APIURL, {
+    mode: 'cors',
+});
+
+const uniswapGraph = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3';
+const uniswapClient = new GraphQLClient(uniswapGraph, {
+    mode: 'cors',
+});
+
+
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { renderNotification } from "../helpers";
@@ -47,7 +62,6 @@ import {
 class Main extends React.Component {
   constructor(props) {
     super(props);
-    this.kitchenRef = {};
     this.state = {
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { chefRats: [] },
@@ -66,6 +80,21 @@ class Main extends React.Component {
       dataLoaded: false,
       pairs: {},
       currency: 'ETH',
+      stats: {
+        minted: 0,
+        totalSupply: 0,
+        rats: 0,
+        chefs: 0,
+        ratsStaked: 0,
+        chefsStaked: 0,
+        tokensClaimed: 0,
+        paidTokens: 0,
+        dailyFFoodRate: 0,
+        minimumToExit: 0,
+        ratTax: 0,
+        maxSupply: 0,
+        mintPrice: 0,
+      },
     };
     this.nftProfit = 0;
   }
@@ -78,8 +107,8 @@ class Main extends React.Component {
 
   getMintPrice() {
     let mintPrice = 0;
-    if (this.props.stats && this.props.stats.mintPrice) {
-      mintPrice = this.props.stats.mintPrice;
+    if (this.state.stats && this.state.stats.mintPrice) {
+      mintPrice = this.state.stats.mintPrice;
     }
     switch (this.state.currency) {
       case 'ETH':
@@ -116,7 +145,6 @@ class Main extends React.Component {
   }
 
   async fetchFromUniswap(pair1, pair2, contract1, contract2) {
-    const url = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3';
 
     const query = `{
 	pools(first:1, where:
@@ -133,7 +161,7 @@ class Main extends React.Component {
   }
 }`;
 
-    const results = await request(url, query);
+    const results = await uniswapClient.request(query);
     const pools = results.pools;
 
 
@@ -174,8 +202,8 @@ class Main extends React.Component {
         }
       }`;
 
-    const result1 = await request(APIURL, query1);
-    const result2 = await request(APIURL, query2);
+    const result1 = await graphQLClient.request(query1);
+    const result2 = await graphQLClient.request(query2);
     let totalRats = 0;
     let totalChefs = 0;
     let totalRatsStaked = 0;
@@ -285,6 +313,10 @@ class Main extends React.Component {
     this.getUniswapprice();
   }
 
+  async componentDidMount() {
+    this.getChainStats();
+  }
+
   componentWillUnmount() {
     window.removeEventListener("resize", this.handleResize);
   }
@@ -308,7 +340,11 @@ class Main extends React.Component {
   async mint() {
     try {
       const amount = this.state.mintAmount;
-      const sum = amount * 0.1;
+      let mintPrice = 0;
+      if (this.state.stats && this.state.stats.mintPrice) {
+        mintPrice = parseFloat(this.state.stats.mintPrice);
+      }
+      const sum = amount * mintPrice;
       let gasLimit;
       if (amount === 1) {
         gasLimit = 200000;
@@ -316,12 +352,15 @@ class Main extends React.Component {
         gasLimit = amount * 200000;
       }
 
+
+      const result = await this.props.tx(
+        this.props.writeContracts.ChefRat.mint(amount, {
+          from: this.props.address,
+          value: ethers.utils.parseEther(sum.toString()),
+          gasLimit,
+        }),
+      );
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
-      const result = await this.props.writeContracts.ChefRat.mint(amount, {
-        from: this.props.address,
-        value: ethers.utils.parseEther(sum.toString()),
-        gasLimit,
-      });
       renderNotification("info", `${amount} mint(s) requested`, "");
     } catch (e) {
       const regExp = /\"message\":\"(.+?)\"/;
@@ -332,6 +371,86 @@ class Main extends React.Component {
 
       renderNotification("error", "Error", e.message);
     }
+  }
+
+  async getChainStats() {
+    const chainId = this.props.chainId;
+    let networkName;
+    if (chainId === 1337) {
+      networkName = 'localhost';
+    } else if (chainId === 4) {
+      networkName = 'rinkeby';
+    }
+    else {
+      networkName = 'mainnet';
+    }
+    const chefRatContract = new ethers.Contract(config[networkName].ChefRat,
+      contracts[chainId][networkName].contracts.ChefRat.abi, this.props.provider);
+    const kitchenPackContract = new ethers.Contract(config[networkName].KitchenPack,
+        contracts[chainId][networkName].contracts.KitchenPack.abi, this.props.provider);
+
+    const minted = await chefRatContract.minted();
+    let totalSupply = await chefRatContract.MAX_TOKENS();
+    let paidTokens = await chefRatContract.PAID_TOKENS();
+    let mintPrice = await chefRatContract.MINT_PRICE();
+    if (!mintPrice) {
+      mintPrice = 0;
+    }
+    const rats = await chefRatContract.numRats();
+    const chefs = await chefRatContract.numChefs();
+
+    let dailyFFoodRate = await kitchenPackContract.DAILY_FFOOD_RATE();
+    if (!dailyFFoodRate) {
+      dailyFFoodRate = 0;
+    }
+
+    let minimumToExit = await kitchenPackContract.MINIMUM_TO_EXIT();
+    if (!minimumToExit) {
+      minimumToExit = 0;
+    }
+
+    let ratTax = await kitchenPackContract.FFOOD_CLAIM_TAX_PERCENTAGE();
+    if (!ratTax) {
+      ratTax = 0;
+    }
+
+    let maxSupply = await kitchenPackContract.FFOOD_MAX_SUPPLY();
+    if (!maxSupply) {
+      maxSupply = 0;
+    }
+
+    let ratsStaked = await kitchenPackContract.totalRatsStaked();
+    if (!ratsStaked) {
+      ratsStaked = 0;
+    }
+
+    let chefsStaked = await kitchenPackContract.totalChefsStaked();
+    if (!chefsStaked) {
+      chefsStaked = 0;
+    }
+
+    let tokensClaimed = await kitchenPackContract.totalFastFoodEarned();
+    if (!tokensClaimed) {
+      tokensClaimed = 0;
+    }
+
+    const stats = {
+      minted,
+      totalSupply: parseInt(totalSupply) || 0,
+      rats,
+      chefs,
+      ratsStaked: parseInt(ratsStaked),
+      chefsStaked: parseInt(chefsStaked),
+      tokensClaimed: parseFloat(ethers.utils.formatEther(tokensClaimed)).toFixed(8),
+      paidTokens: parseInt(paidTokens),
+      dailyFFoodRate: parseInt(ethers.utils.formatEther(dailyFFoodRate)),
+      minimumToExit: parseInt(minimumToExit),
+      ratTax: parseInt(ratTax),
+      maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
+      mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
+    };
+    this.setState({ stats });
+
   }
 
   renderMintContent() {
@@ -415,13 +534,13 @@ class Main extends React.Component {
         <Row  style={{ paddingTop: "25px" }}>
           <Col span={8} />
           <Col span={3} style={{ textAlign: "center" }}>
-            Gen {this.props.stats.minted > this.props.stats.paidTokens ? 1 : 0}
+            Gen {this.state.stats.minted > this.state.stats.paidTokens ? 1 : 0}
           </Col>
           <Col span={8} style={{ textAlign: "center" }}>
-            {this.props.stats.minted} /{" "}
-            {this.props.stats.minted > this.props.stats.paidTokens
-              ? this.props.stats.totalSupply
-              : this.props.stats.paidTokens}
+            {this.state.stats.minted} /{" "}
+            {this.state.stats.minted > this.state.stats.paidTokens
+              ? this.state.stats.totalSupply
+              : this.state.stats.paidTokens}
           </Col>
         </Row>
         <Row style={{ paddingTop: "25px" }}>
@@ -505,10 +624,10 @@ class Main extends React.Component {
 
               <div>
               {
-                key.trait_type !== 'Insanity1' && key.trait_type !== 'Insanity percentage1' &&
-                key.trait_type !== 'Skill1' && key.trait_type !== 'Skill percentage1' &&
-                key.trait_type !== 'Intelligence1' && key.trait_type !== 'Intelligence percentage1' &&
-                key.trait_type !== 'Fatness1' && key.trait_type !== 'Fatness percentage1'
+                key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
+                key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
+                key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
+                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage'
                 ?
               <Row>
                 <Col span={12}>{key.trait_type}</Col>
@@ -605,7 +724,7 @@ class Main extends React.Component {
 
     let availableSpace = window.innerWidth - offset;
     availableSpace = availableSpace * 0.65;
-    nftsPerRow = parseInt(availableSpace / 122);
+    nftsPerRow = parseInt(availableSpace / 150);
     if (nftsPerRow < minimumNftsPerRow) {
       nftsPerRow = minimumNftsPerRow;
     }
@@ -622,7 +741,9 @@ class Main extends React.Component {
           }
 
         }
-        rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
+        if (rowNFTs.length > 0) {
+          rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
+        }
     }
 
 
@@ -634,16 +755,29 @@ class Main extends React.Component {
   }
 
   renderNFTRow(i, nftsPerRow, nft, staked, type) {
+    let className;
+    if (staked === 1) {
+      className = "fastFoodKitchen";
+    }
+    if (type === 'Chef') {
+      className = "chefWaitingRoom"
+    }
+    if (type === 'Rat') {
+      className = "ratSewer"
+    }
+
     return (
-      <Row>
+      <div className={className}>
+      <Row >
         <Col span={24}>
-          <Row style={{marginLeft: '10px', marginRight: '10px'}}>
+          <Row style={{marginLeft: '10px', marginRight: '10px', marginTop: '40px'}}>
           {nft.map(c => {
             return this.renderNFTColumn(c, staked);
           })}
           </Row>
         </Col>
       </Row>
+      </div>
     )
   }
 
@@ -652,7 +786,8 @@ class Main extends React.Component {
       return <div>&nbsp;</div>
     }
     return (
-      <span style={{ width: "120px", marginRight: "20px"}}>
+      <span>
+        <div className="nftId">#{c.name}</div>
         <div
           onClick={() => this.selectNFT(this, c.name, staked)}
           className={
@@ -663,25 +798,42 @@ class Main extends React.Component {
               : "nftNotSelected nft"
           }
         >
-          <div>#{c.name}</div>
           <Popover mouseEnterDelay={1} content={this.renderNFTInfo(c.attributes, c.image)} title={c.description}>
-            <img width={100} src={c.image} />
+            <img width={150} src={c.image} style={{marginLeft: '-5px', marginTop: '5px'}}/>
           </Popover>
-          <Progress
-            strokeColor={c.type === "Chef" ? "green" : "orange"}
-            percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
+
+        </div>
+        <div
+        className={
+          this.state.selectedNfts &&
+          this.state.selectedNfts[c.name] &&
+          this.state.selectedNfts[c.name]["status"] === true
+            ? "nftSelectedStats nftStats"
+            : "nftNotSelectedStats nftStats"
+        }>
+        <Row>
+          <Col style={{marginRight: '5px'}} span={4}><img src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
+          <Col span={18}>
+          <Progress className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
+            strokeColor={c.type === "Chef" ? "#13e969" : "#1eaeea"}
+            percent={ c.type === 'Chef' ? 40 : 40 }
             size="small"
-            status="active"
           />
-          <Progress
-          strokeColor={c.type === "Chef" ? "blue" : "brown"}
-          percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
+          </Col>
+        </Row>
+        <Row>
+        <Col style={{marginRight: '5px'}} span={4}><img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
+          <Col span={18}>
+          <Progress className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
+          strokeColor={c.type === "Chef" ? "#fc24ff" : "#ffae00"}
+          percent={ c.type === 'Chef' ? 40 : 40 }
           size="small"
-          status="active"
            />
-          {c.timestamp > 0 ? (
-            <p style={{ fontSize: "11px" }}>{this.renderNftProfit(c.type, c.timestamp)} $FFOOD</p>
-          ) : null}
+          </Col>
+        </Row>
+        {c.timestamp > 0 ? (
+          <p style={{ fontSize: "11px" }}>{this.renderNftProfit(c.type, c.timestamp)} $FFOOD</p>
+        ) : null}
         </div>
       </span>
     )
@@ -1107,15 +1259,15 @@ class Main extends React.Component {
     return (
       <Row>
         <Col span={12}>Total rats</Col>
-        <Col span={12}>{this.props.stats.rats}</Col>
+        <Col span={12}>{this.state.stats.rats}</Col>
         <Col span={12}>Total rats staked</Col>
-        <Col span={12}>{this.props.stats.ratsStaked}</Col>
+        <Col span={12}>{this.state.stats.ratsStaked}</Col>
         <Col span={12}>Total chefs</Col>
-        <Col span={12}>{this.props.stats.chefs}</Col>
+        <Col span={12}>{this.state.stats.chefs}</Col>
         <Col span={12}>Total chefs staked</Col>
-        <Col span={12}>{this.props.stats.chefsStaked}</Col>
+        <Col span={12}>{this.state.stats.chefsStaked}</Col>
         <Col span={12}>Total $FFOOD claimed</Col>
-        <Col span={12}>{this.props.stats.tokensClaimed}</Col>
+        <Col span={12}>{this.state.stats.tokensClaimed}</Col>
       </Row>
     )
   }
@@ -1143,18 +1295,18 @@ class Main extends React.Component {
                   <Card size="small" title="Info" style={{ marginTop: "25px" }}>
                     <Row>
                       <Col span="24">
-                        {this.props.stats.tokensClaimed + this.props.stats.maxSupply * 0.25 <=
-                        this.props.stats.maxSupply ? (
+                        {this.state.stats.tokensClaimed + this.state.stats.maxSupply * 0.25 <=
+                        this.state.stats.maxSupply ? (
                           <div>
                             <p>
-                              Chefs earn a minimum of {this.props.stats.dailyFFoodRate} $FFOOD per day. Your chefs may
+                              Chefs earn a minimum of {this.state.stats.dailyFFoodRate} $FFOOD per day. Your chefs may
                               get more daily $FFOOD depending on their <b>skill</b> level.
                             </p>
                             <p>
-                              Rats steal {this.props.stats.ratTax}% of all Chef's $FFOOD. Your rats get a proportional
+                              Rats steal {this.state.stats.ratTax}% of all Chef's $FFOOD. Your rats get a proportional
                               cut depending on their <b>fatness</b> level.
                             </p>
-                            The minimum staking period is {this.props.stats.minimumToExit / 3600} hours. Learn more
+                            The minimum staking period is {this.state.stats.minimumToExit / 3600} hours. Learn more
                             about the rules in the whitepaper.
                           </div>
                         ) : (

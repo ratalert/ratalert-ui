@@ -11,8 +11,8 @@ export default config = {
     FastFood: '0xB09F74A9969e8AAFECe79558Cf02bCB7f8398de1',
   },
   rinkeby: {
-    ChefRat: '0xaddD0C06197D3899C4e5D3E916463eb51c67CACb',
-    KitchenPack: '0x847dc6cf71B5581BdF0D86da46C906A9fFEDb7BB',
-    FastFood: '0xBFC3d8B5560e451F94AfB51EdC652689cb7dAde4',
+    ChefRat: '0x489ced7c291eEE4AB567DD2BFf8c70Fc64102a70',
+    KitchenPack: '0xb33128d957534C71a4ac9c99a75f147e9693FDF5',
+    FastFood: '0x45273e8b0B0dc3D7228910512Beff0d1B2CF3331',
   }
 }
