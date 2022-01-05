@@ -764,7 +764,7 @@ class Main extends React.Component {
       }
     });
     nft.sort((a, b) => a.name - b.name);
-    this.nftProfit = 0;
+
 
     if (!this.state.dataLoaded) {
       return (
@@ -819,6 +819,10 @@ class Main extends React.Component {
         if (rowNFTs.length > 0) {
           rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
         }
+    }
+
+    if (rows.length === 0) {
+      rows.push(this.renderNFTRow(0, 0, [], staked, type));
     }
 
 
@@ -1268,24 +1272,25 @@ class Main extends React.Component {
   }
 
   getWidth(type = 'kitchen') {
-    if (type === 'kitchen') {
-      if (window.innerWidth <= 768) {
-        return { width: 315 };
-      }
-      else {
-        return { width: window.innerWidth - 650 > 500 ? window.innerWidth - 420 : 500 };
-      }
-    } else {
-      if (window.innerWidth <= 768) {
-        return { width: 500 };
-      }
-      else {
-        return { width: window.innerWidth - 450 > 500 ? window.innerWidth - 218 : 500 };
+    let width = 0;
+    if (window.innerWidth <= 768) {
+        width = 315;
+    }
+    else {
+      if (window.innerWidth - 650 > 500) {
+        width = window.innerWidth - 420;
+      } else {
+        width = 500;
       }
     }
+    if (type !== 'kitchen') {
+      width += 200;
+    }
+    return { width };
   }
 
   renderNfts() {
+    this.nftProfit = 0;
     return (
       <Card size="small" title="My NFTs">
         <Card size="small" style={{background: '#CCCCCC', height: '100px'}}>
