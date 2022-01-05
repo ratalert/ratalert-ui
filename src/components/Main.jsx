@@ -76,10 +76,12 @@ class Main extends React.Component {
       totalCooksStaked: 0,
       mintAmount: 1,
       loading: true,
+      isApprovedForAll: false,
       noAddressLoaded: true,
       dataLoaded: false,
       pairs: {},
       currency: 'ETH',
+      fFoodBalance: 0,
       stats: {
         minted: 0,
         totalSupply: 0,
@@ -125,6 +127,12 @@ class Main extends React.Component {
       this.setState({
         loading: false
       });
+
+      setTimeout(() => {
+        this.getBalances();
+        this.checkContractApproved();
+      }, 500);
+
     }
   }
 
@@ -185,7 +193,7 @@ class Main extends React.Component {
     const query1 = `{ chefRats(where: {
           owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
-          id, staked, owner,stakedTimestamp, URI, type,
+          id, staked, owner,stakedTimestamp, lastClaimTimestamp, URI, type,
           insanity,  skill,
           intelligence, fatness,
         }
@@ -194,7 +202,7 @@ class Main extends React.Component {
     const query2 = `{ chefRats(where: {
           stakingOwner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
-          id, staked, owner,stakedTimestamp, URI,
+          id, staked, owner,stakedTimestamp, lastClaimTimestamp, URI,
           type,
           insanity, skill,
           intelligence,
@@ -202,8 +210,21 @@ class Main extends React.Component {
         }
       }`;
 
-    const result1 = await graphQLClient.request(query1);
-    const result2 = await graphQLClient.request(query2);
+    let result1;
+    try {
+      result1 = await graphQLClient.request(query1);
+    } catch (e) {
+      console.log('ERROR', e);
+      this.fetchGraph();
+    }
+    let result2;
+    try {
+      result2 = await graphQLClient.request(query2);
+    } catch (e) {
+      console.log('ERROR', e);
+      this.fetchGraph();
+    }
+
     let totalRats = 0;
     let totalChefs = 0;
     let totalRatsStaked = 0;
@@ -371,6 +392,45 @@ class Main extends React.Component {
 
       renderNotification("error", "Error", e.message);
     }
+  }
+
+  async checkContractApproved() {
+    const chainId = this.props.chainId;
+    let networkName;
+    if (chainId === 1337) {
+      networkName = 'localhost';
+    } else if (chainId === 4) {
+      networkName = 'rinkeby';
+    }
+    else {
+      networkName = 'mainnet';
+    }
+    const contract = new ethers.Contract(config[networkName].ChefRat,
+      contracts[chainId][networkName].contracts.ChefRat.abi, this.props.provider);
+
+    let isApprovedForAll = await contract.isApprovedForAll(this.props.address, this.props.readContracts.KitchenPack.address);
+    this.setState({isApprovedForAll });
+  }
+
+  async getBalances() {
+    const chainId = this.props.chainId;
+    let networkName;
+    if (chainId === 1337) {
+      networkName = 'localhost';
+    } else if (chainId === 4) {
+      networkName = 'rinkeby';
+    }
+    else {
+      networkName = 'mainnet';
+    }
+    const fastFoodContract = new ethers.Contract(config[networkName].FastFood,
+      contracts[chainId][networkName].contracts.FastFood.abi, this.props.provider);
+
+
+
+    let balance = await fastFoodContract.balanceOf(this.props.address);
+    balance = ethers.utils.formatEther(balance);
+    this.setState({fFoodBalance: parseFloat(balance).toFixed(4)});
   }
 
   async getChainStats() {
@@ -667,6 +727,7 @@ class Main extends React.Component {
               name: parseInt(r.id, 16),
               description: json.name,
               timestamp: parseInt(r.stakedTimestamp),
+              lastClaimTimestamp: parseInt(r.lastClaimTimestamp),
               image: json.image,
               type,
               attributes: json.attributes,
@@ -686,6 +747,7 @@ class Main extends React.Component {
               image: json.image,
               description: json.name,
               timestamp: parseInt(r.stakedTimestamp),
+              lastClaimTimestamp: parseInt(r.lastClaimTimestamp),
               type: json.attributes[0].value,
               attributes: json.attributes,
               insanity: hash['Insanity'],
@@ -713,22 +775,35 @@ class Main extends React.Component {
     let nftsPerRow = 0;
     let offset = 0;
     let minimumNftsPerRow = 3;
-
+    let nftWidth = 0;
     if (staked) {
       // Is in a kitchen
-      offset = 290;
+      offset = 200;
       minimumNftsPerRow = 2;
+      nftWidth = 185;
     } else {
-      offset = 100;
+      offset = 50;
+      nftWidth = 185;
+    }
+
+    if (window.innerWidth <= 768) {
+      nftWidth = 150;
     }
 
     let availableSpace = window.innerWidth - offset;
     availableSpace = availableSpace * 0.65;
-    nftsPerRow = parseInt(availableSpace / 150);
+    let widthType = 'kitchen';
+    if (!staked) {
+      widthType = 'waiting'
+    }
+    const width = this.getWidth(widthType);
+
+    availableSpace = width.width;
+    nftsPerRow = parseInt(availableSpace / nftWidth);
+
     if (nftsPerRow < minimumNftsPerRow) {
       nftsPerRow = minimumNftsPerRow;
     }
-
 
     const numberOfRows = parseInt(nft.length / nftsPerRow);
     const rows = [];
@@ -756,27 +831,33 @@ class Main extends React.Component {
 
   renderNFTRow(i, nftsPerRow, nft, staked, type) {
     let className;
+    let widthType;
     if (staked === 1) {
       className = "fastFoodKitchen";
+      widthType = 'kitchen';
     }
     if (type === 'Chef') {
       className = "chefWaitingRoom"
+      widthType = 'waitingRoom';
     }
     if (type === 'Rat') {
       className = "ratSewer"
+      widthType = 'waitingRoom';
     }
 
     return (
-      <div className={className}>
+      <div className={className} style={this.getWidth(widthType)}>
+      <div className="fade">
       <Row >
         <Col span={24}>
-          <Row style={{marginLeft: '10px', marginRight: '10px', marginTop: '40px'}}>
+          <Row className="kitchenRow">
           {nft.map(c => {
             return this.renderNFTColumn(c, staked);
           })}
           </Row>
         </Col>
       </Row>
+      </div>
       </div>
     )
   }
@@ -787,7 +868,9 @@ class Main extends React.Component {
     }
     return (
       <span>
-        <div className="nftId">#{c.name}</div>
+        <div className="nftId"><span style={{color: '#000000'}}>#</span>
+        <span style={{color: '#d1c0b6'}}>{c.name}</span>
+        </div>
         <div
           onClick={() => this.selectNFT(this, c.name, staked)}
           className={
@@ -799,7 +882,7 @@ class Main extends React.Component {
           }
         >
           <Popover mouseEnterDelay={1} content={this.renderNFTInfo(c.attributes, c.image)} title={c.description}>
-            <img width={150} src={c.image} style={{marginLeft: '-5px', marginTop: '5px'}}/>
+            <img className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
           </Popover>
 
         </div>
@@ -816,7 +899,7 @@ class Main extends React.Component {
           <Col span={18}>
           <Progress className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
             strokeColor={c.type === "Chef" ? "#13e969" : "#1eaeea"}
-            percent={ c.type === 'Chef' ? 40 : 40 }
+            percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
             size="small"
           />
           </Col>
@@ -826,20 +909,29 @@ class Main extends React.Component {
           <Col span={18}>
           <Progress className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
           strokeColor={c.type === "Chef" ? "#fc24ff" : "#ffae00"}
-          percent={ c.type === 'Chef' ? 40 : 40 }
+          percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
           size="small"
            />
           </Col>
         </Row>
         {c.timestamp > 0 ? (
-          <p style={{ fontSize: "11px" }}>{this.renderNftProfit(c.type, c.timestamp)} $FFOOD</p>
+          <Row>
+          <Col style={{marginRight: '5px', marginLeft: '2px'}} span={2}><img src="/img/ffood.png"/></Col>
+            <Col span={18} style={{color: '#fee017', fontWeight: 'bold'}}>
+              {this.renderNftProfit(c.type, c.timestamp, c.lastClaimTimestamp)}
+              <span style={{color: '#000000'}}>&nbsp;$FFOOD</span>
+            </Col>
+          </Row>
         ) : null}
         </div>
       </span>
     )
   }
 
-  renderNftProfit(type, timestamp) {
+  renderNftProfit(type, timestamp, lastClaimTimestamp) {
+    if (lastClaimTimestamp > timestamp) {
+      timestamp = lastClaimTimestamp;
+    }
     if (type !== "Rat") {
       const owedPerSecond = 1000 / 86400;
       const timePassed = Math.floor(Date.now() / 1000) - timestamp;
@@ -885,6 +977,7 @@ class Main extends React.Component {
         }),
       );
       renderNotification("info", `Approval successful`, "");
+      this.checkContractApproved();
     } catch (e) {
       renderNotification("error", "Error", e.message);
     }
@@ -892,7 +985,7 @@ class Main extends React.Component {
 
   renderApprovalButton() {
     return (
-      <Button className="web3Button" type={"default"} onClick={this.setApprovalForAll.bind(this)}>
+      <Button className="web3Button" type={!this.state.isApprovedForAll ? "primary" : "default"} onClick={this.setApprovalForAll.bind(this)}>
         Authorize
       </Button>
     );
@@ -933,6 +1026,30 @@ class Main extends React.Component {
       );
       this.setState({ selectedNfts: {} });
       renderNotification("info", `All your NFTs have been unstaked.`, "");
+    } catch (e) {
+      this.setState({ selectedNfts: {} });
+      let message = e.message;
+      if (e.data && e.data.message) {
+        message = e.data.message;
+      }
+      renderNotification("error", "Error", message);
+    }
+  }
+
+  async claimFunds() {
+    try {
+      const result = await this.props.tx(
+        this.props.writeContracts.KitchenPack.claimMany(this.state.stakedNfts, false, {
+          gasPrice: 1000000000,
+          from: this.props.address,
+          gasLimit: this.state.stakedNfts.length * 125000,
+        }),
+      );
+      this.setState({ selectedNfts: {} });
+      renderNotification("info", `Funds from your NFTs have been claimed.`, "");
+      setTimeout(() => {
+        this.getBalances();
+      }, 1000);
     } catch (e) {
       this.setState({ selectedNfts: {} });
       let message = e.message;
@@ -987,7 +1104,7 @@ class Main extends React.Component {
 
   renderStakeAllButton() {
     return (
-      <Button className="web3Button" type={"primary"} onClick={this.stakeAll.bind(this)}>
+      <Button disabled={!this.state.isApprovedForAll} className="web3Button" type={"primary"} onClick={this.stakeAll.bind(this)}>
         Stake all
       </Button>
     );
@@ -998,7 +1115,7 @@ class Main extends React.Component {
       <Button
         className="web3Button"
         type={"primary"}
-        disabled={selectedToStakeNfts.length === 0}
+        disabled={!this.state.isApprovedForAll && selectedToStakeNfts.length === 0}
         onClick={this.stake.bind(this, selectedToStakeNfts)}
       >
         Stake {selectedToStakeNfts.length} NFTs
@@ -1011,7 +1128,7 @@ class Main extends React.Component {
       <Button
         className="web3Button"
         type={"default"}
-        disabled={selectedToUnStakeNfts.length === 0}
+        disabled={!this.state.isApprovedForAll && selectedToUnStakeNfts.length === 0}
         onClick={this.unstake.bind(this, selectedToUnStakeNfts)}
       >
         Unstake {selectedToUnStakeNfts.length} NFTs
@@ -1021,7 +1138,7 @@ class Main extends React.Component {
 
   renderUnStakeAllButton() {
     return (
-      <Button className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
+      <Button disabled={!this.state.isApprovedForAll} className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
         Unstake all
       </Button>
     );
@@ -1029,7 +1146,7 @@ class Main extends React.Component {
 
   renderClaimButton() {
     return (
-      <Button className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
+      <Button disabled={!this.state.isApprovedForAll} className="web3Button" type={"default"} onClick={this.claimFunds.bind(this)}>
         Claim $FFOOD
       </Button>
     );
@@ -1039,15 +1156,6 @@ class Main extends React.Component {
     return (
       <div>
         <Row>
-          <Col xl={4} md={8} sm={8}>
-            Chefs
-          </Col>
-          <Col xl={4} md={8} sm={8} style={{ color: "green" }}>
-            Skill level
-          </Col>
-          <Col xl={4} md={8} sm={8} style={{ color: "blue" }}>
-            Insanity level
-          </Col>
           <Col xl={6} lg={0} md={0} sm={0}>
             {this.state.totalChefs} chefs, {this.state.totalChefsStaked} staked
           </Col>
@@ -1056,15 +1164,6 @@ class Main extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col xl={4} md={8} sm={8}>
-            Rats
-          </Col>
-          <Col xl={4} md={8} sm={8} style={{ color: "orange" }}>
-            Intelligence
-          </Col>
-          <Col xl={4} md={8} sm={8} style={{ color: "brown" }}>
-            Fatness
-          </Col>
           <Col xl={0} md={24} sm={24}>
             {this.state.totalChefs} total chefs, {this.state.totalChefsStaked} staked
           </Col>
@@ -1168,6 +1267,24 @@ class Main extends React.Component {
     }
   }
 
+  getWidth(type = 'kitchen') {
+    if (type === 'kitchen') {
+      if (window.innerWidth <= 768) {
+        return { width: 315 };
+      }
+      else {
+        return { width: window.innerWidth - 650 > 500 ? window.innerWidth - 420 : 500 };
+      }
+    } else {
+      if (window.innerWidth <= 768) {
+        return { width: 500 };
+      }
+      else {
+        return { width: window.innerWidth - 450 > 500 ? window.innerWidth - 218 : 500 };
+      }
+    }
+  }
+
   renderNfts() {
     return (
       <Card size="small" title="My NFTs">
@@ -1179,8 +1296,9 @@ class Main extends React.Component {
             <Col style={{width: '180px', border: '1px solid #000000'}}>
               Le stake ***
             </Col>
-            <Col span="22">
-
+            <Col>
+              <div className="fade gourmetKitchen" style={this.getWidth()}>
+              </div>
             </Col>
           </Row>
         </Card>
@@ -1189,7 +1307,9 @@ class Main extends React.Component {
             <Col style={{width: '180px', border: '1px solid #000000'}}>
               Stake house
             </Col>
-            <Col span={22}>
+            <Col>
+            <div className="fade casualKitchen" style={this.getWidth()}>
+            </div>
             </Col>
           </Row>
         </Card>
@@ -1277,17 +1397,17 @@ class Main extends React.Component {
           <Row style={{ height: "100%" }}>
             <Col md={24} xs={24}>
               <Row>
-                <Col md={2} xs={1} />
-                <Col md={20} xs={22}>
+                <Col md={1} xs={1} />
+                <Col md={22} xs={22}>
                   {this.props.address ? this.renderMintContent() : this.renderNACard("Mint")}
                 </Col>
-                <Col md={2} xs={1} />
+                <Col md={1} xs={1} />
               </Row>
               <Row>
-                <Col md={2} xs={1} />
-                <Col md={20} xs={22}>
+                <Col md={1} xs={1} />
+                <Col md={22} xs={22}>
                   <Card size="small" title="My balances" style={{ marginTop: "25px" }}>
-                    {this.props.balanceContent}
+                    <div>$FFOOD2 {this.state.fFoodBalance }</div>
                   </Card>
                   <Card size="small" title="Game Stats" style={{ marginTop: "25px" }}>
                     { this.renderStats() }
@@ -1323,8 +1443,8 @@ class Main extends React.Component {
             </Col>
             <Col md={24} xs={24}>
               <Row style={{ marginTop: "25px" }}>
-                <Col md={2} xs={1} />
-                <Col md={20} xs={22}>
+                <Col md={1} xs={1} />
+                <Col md={22} xs={22}>
                   {this.props.address ? this.renderNfts() : this.renderNACard("Your NFTs")}
                 </Col>
               </Row>

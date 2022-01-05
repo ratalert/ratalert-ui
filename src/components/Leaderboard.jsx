@@ -22,11 +22,15 @@ import {
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { Link } from 'react-router-dom';
-import { request, gql } from "graphql-request";
+import { GraphQLClient, gql } from 'graphql-request'
+
 import Address from "./Address";
 
-const APIURL = `${process.env.REACT_APP_GRAPH_URI}/subgraphs/name/ChefRat`;
+const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
 
+const graphQLClient = new GraphQLClient(APIURL, {
+    mode: 'cors',
+});
 
 import { renderNotification } from "../helpers";
 import {
@@ -70,7 +74,7 @@ class Leaderboard extends React.Component {
       }
     }`;
 
-    const result = await request(APIURL, query);
+    const result = await graphQLClient.request(query);
     let chefRats = this.state.results;
     await result.chefRats.map(r => {
       if (r.URI) {

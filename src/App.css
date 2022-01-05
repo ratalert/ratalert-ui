@@ -41,25 +41,6 @@
   background: #FFFFFF !important;
 }
 
-.nftId {
-  text-align: center !important;
-  width: 40px;
-  border-top: 3px solid #000000;
-  border-left: 3px solid #000000;
-  border-right: 3px solid #000000;
-  margin-left: 110px;
-  font-weight: bold;
-}
-.nftStats {
-  text-align: center !important;
-  width: 150px;
-  border: 3px solid #000000;
-  padding-left: 5px;
-  padding-right: 5px;
-  height: 70px;
-  background: rgba(255, 255, 255, 0.8);
-}
-
 .nftProgress .ant-progress-inner{
   background-color: #4a413b;
   height: 12px;
@@ -73,7 +54,6 @@
   padding-top: 5px !important;
   margin-left: 0px !important;
   border-radius: 0px;
-  width: 100% !important;
 }
 
 
@@ -116,16 +96,109 @@
   font-weight: bold;
 }
 
+@media only screen and (min-width: 769px) {
+  .nft {
+    width: 160px;
+    height: 160px;
+  }
+  .nftStats {
+    width: 160px;
+  }
+  .nftImage {
+    margin-left: 0px;
+    margin-top: 5px;
+    width: 150px;
+  }
+  .nftRat {
+    margin-left: -5px;
+  }
+
+  .nftChef {
+    margin-left: -10px;
+  }
+  .nftId {
+    margin-left: 120px;
+  }
+  .kitchenRow {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 38px;
+  }
+
+}
+
+@media only screen and (max-width: 768px) {
+  .nft {
+    width: 125px;
+    height: 140px;
+  }
+  .nftStats {
+    width: 125px;
+  }
+  .nftId {
+    margin-left: 85px;
+  }
+
+  .nftImage {
+    margin-top: 10px;
+    width: 120px;
+  }
+
+  .nftRat {
+    margin-left: 0px;
+  }
+
+  .nftChef {
+    margin-left: -20px;
+  }
+
+  .kitchenRow {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 58px;
+  }
+}
+
+
+.nftId {
+  text-align: center !important;
+  width: 40px;
+  border-top: 3px solid #443a31;
+  border-left: 3px solid #443a31;
+  border-right: 3px solid #443a31;
+  font-weight: bold;
+  background: #524944;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 2px;
+}
+.nftStats {
+  text-align: center !important;
+  border: 3px solid #443a31;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  background: rgba(80, 70, 64, 0.8);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+}
+
+
+.fade {
+  background-image: url("img/fade.png");
+}
 
 .nft {
   text-align: center !important;
-  width: 150px;
   margin-right: 20px;
-  border-left: 3px solid #000000;
-  border-right: 3px solid #000000;
-  border-top: 3px solid #000000;
-  height: 160px;
-  background: rgba(255, 255, 255, 0.5);
+  border-left: 3px solid #443a31;
+  border-right: 3px solid #443a31;
+  border-top: 3px solid #443a31;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 2px;
+
+  background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
 }
 > .code-box-demo > .ant-layout + .ant-layout {
   margin-top: 48px;
@@ -269,7 +342,28 @@
 }
 
 .fastFoodKitchen {
-  background: #CCCCCC;
   background-image: url("img/ffood_kitchen.png");
   height: 300px;
+}
+
+.chefWaitingRoom {
+  background-image: url("img/waiting_room.png");
+  height: 300px;
+}
+
+.ratSewer {
+  background-image: url("img/rat_sewer.png");
+  height: 300px;
+}
+
+.gourmetKitchen {
+  background-image: url("img/gourmet_kitchen.png");
+  height: 300px;
+  margin-left: 20px;
+}
+
+.casualKitchen {
+  background-image: url("img/casual_kitchen.png");
+  height: 300px;
+  margin-left: 20px;
 }

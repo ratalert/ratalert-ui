@@ -39,9 +39,8 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
   chainId = 1337;
 }
 
-targetNetwork = NETWORKS.localhost;
+// targetNetwork = NETWORKS.localhost;
 // let chainId = 1337;
-// targetNetwork = NETWORKS.rinkeby;
 
 const DEBUG = true;
 const NETWORKCHECK = true;
@@ -80,9 +79,7 @@ let lastCall = 0;
 let startTime = Math.round(new Date().getTime() / 1000);
 
 let fFoodBalance = 0;
-let count = 0;
 function App(props) {
-  count += 1;
   const mainnetProvider =
     poktMainnetProvider && poktMainnetProvider._isProvider
       ? poktMainnetProvider
@@ -265,21 +262,12 @@ function App(props) {
     );
   }
 
-  const renderTokenBalances = () => {
-    return (
-      <div>$FFOOD {fFoodBalance ? parseFloat(ethers.utils.formatEther(fFoodBalance).toString()).toFixed(8) : 0}</div>
-    );
-  };
-
-  const balanceContent = renderTokenBalances();
-
   return (
     <div className="App">
       {networkDisplay}
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
-            { count }
             <RatMenu
             tx={tx}
             readContracts={readContracts}
@@ -294,7 +282,6 @@ function App(props) {
             injectedProvider={injectedProvider}
             active={1}
             content={<Main
-              balanceContent={balanceContent}
               tx={tx}
               contractConfig={contractConfig}
               readContracts={readContracts}
@@ -315,7 +302,6 @@ function App(props) {
               provider={localProvider}
               active={2}
               content={<Leaderboard
-                balanceContent={balanceContent}
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}
@@ -333,7 +319,6 @@ function App(props) {
               provider={localProvider}
               active={3}
               content={<Whitepaper
-                balanceContent={balanceContent}
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}
