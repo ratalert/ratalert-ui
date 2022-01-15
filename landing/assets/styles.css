@@ -137,3 +137,9 @@ strong {
 em {
     font-style: italic;
 }
+
+a {
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: bold;
+}
