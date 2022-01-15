@@ -19,6 +19,10 @@ deploy-app:
 	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
 	aws s3 sync ./build/ s3://${FULL_DOMAIN_NAME}/ --delete
 
+deploy-landing:
+	@$(eval TAG := latest)
+	aws s3 sync ./landing/ s3://ratalert.com/ --delete
+
 deploy-cf-bucket:
 	@echo "+ Creating CloudFormation bucket"
 	aws s3 mb s3://${CF_BUCKET} --region ${AWS_REGION}
