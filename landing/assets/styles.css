@@ -98,3 +98,8 @@ li {
   margin-left: 20px;
   list-style-type: square;
 }
+
+p {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
