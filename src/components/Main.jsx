@@ -508,6 +508,7 @@ class Main extends React.Component {
       ratTax: parseInt(ratTax),
       maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
       mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
+      levelUpThreshold: 86400,
     };
     this.setState({ stats });
 
@@ -661,7 +662,7 @@ class Main extends React.Component {
           <Col span={12}>{attributes[0].value === "Chef" ? hash['Skill'] : hash["Intelligence"]}</Col>
         </Row>
         <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Fatness level"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Bodymass level"}</Col>
           <Col span={12}>
             <Progress
               strokeColor={attributes[0].value === "Chef" ? "blue" : "brown"}
@@ -670,7 +671,7 @@ class Main extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Fatness status"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Bodymass status"}</Col>
           <Col span={12}>{attributes[0].value === "Chef" ? hash['Insanity'] : hash['Fatness']}</Col>
         </Row>
 
@@ -687,7 +688,8 @@ class Main extends React.Component {
                 key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
                 key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
                 key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
-                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage'
+                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage' &&
+                key.value.length > 0
                 ?
               <Row>
                 <Col span={12}>{key.trait_type}</Col>
@@ -805,6 +807,14 @@ class Main extends React.Component {
       nftsPerRow = minimumNftsPerRow;
     }
 
+    const emptyRow = <Row>
+      <Col span={24}>
+        <Row className={`kitchenRow_${type}`}>
+          <div style={{height: 10}}/>
+        </Row>
+      </Col>
+    </Row>;
+
     const numberOfRows = parseInt(nft.length / nftsPerRow);
     const rows = [];
     for (let i=0;i <= numberOfRows; i += 1) {
@@ -818,11 +828,13 @@ class Main extends React.Component {
         }
         if (rowNFTs.length > 0) {
           rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
+          rows.push(emptyRow);
         }
     }
 
     if (rows.length === 0) {
       rows.push(this.renderNFTRow(0, 0, [], staked, type));
+      //rows.push(emptyRow);
     }
 
 
@@ -854,7 +866,7 @@ class Main extends React.Component {
       <div className="fade">
       <Row >
         <Col span={24}>
-          <Row className="kitchenRow">
+          <Row className={`kitchenRow_${widthType}`}>
           {nft.map(c => {
             return this.renderNFTColumn(c, staked);
           })}
@@ -864,6 +876,45 @@ class Main extends React.Component {
       </div>
       </div>
     )
+  }
+
+  renderAttribute(type) {
+    switch (type) {
+      case 'skill':
+        return <div style={{width: '200px'}}>The chef's <img src="/img/skill.png"/> skill level increases 4% per day. </div>;
+      case 'insanity':
+        return <div style={{width: '200px'}}>The chef's <img src="/img/insanity.png"/> insanity level increases 2% per day. When insanity reaches the state "insane" your chef might burn out.</div>;
+      case 'intelligence':
+          return <div style={{width: '200px'}}>The rats's <img src="/img/intelligence.png"/> intelligence level increases 4% per day. </div>;
+      case 'bodymass':
+          return <div style={{width: '200px'}}>The rats's <img src="/img/fatness.png"/> body mass level increases 2% per day. When the body mass reaches the state "obese" your rat might be killed by a cat. </div>;
+
+      break;
+    }
+  }
+
+  getPercentageClass(c, val, type) {
+    let zero = '';
+    let trait = '';
+    if (val === 0) {
+       zero = 'Zero';
+    }
+
+    if (type === 1) {
+      if (c.type === 'Chef') {
+        trait = 'Skill';
+      } else {
+        trait = 'Intelligence';
+      }
+    } else {
+      if (c.type === 'Chef') {
+        trait = 'Insanity';
+      } else {
+        trait = 'Bodymass';
+      }
+    }
+
+    return `percentage${zero} percentage${trait}`;
   }
 
   renderNFTColumn(c, staked) {
@@ -898,38 +949,157 @@ class Main extends React.Component {
             ? "nftSelectedStats nftStats"
             : "nftNotSelectedStats nftStats"
         }>
+        <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill') : this.renderAttribute.bind(this, 'intelligence')}>
         <Row>
-          <Col style={{marginRight: '5px'}} span={4}><img src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
-          <Col span={18}>
-          <Progress className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
+          <Col style={{marginRight: '0px'}} xs={5} span={4}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
+          <Col xs={16} span={18}>
+          <Progress
+            format={() => <span>100<div className={this.getPercentageClass(c, 100, 1)}></div></span>}
+            format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 1)}></div></span>}
+            className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
             strokeColor={c.type === "Chef" ? "#13e969" : "#1eaeea"}
             percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
             size="small"
           />
           </Col>
         </Row>
+        </Popover>
+        <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'insanity') : this.renderAttribute.bind(this, 'bodymass')}>
         <Row>
-        <Col style={{marginRight: '5px'}} span={4}><img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
-          <Col span={18}>
-          <Progress className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
+        <Col style={{marginRight: '0px'}} xs={5} span={4}>
+          <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
+          <Col xs={16} span={18}>
+          <Progress
+          format={() => <span>100<div className={this.getPercentageClass(c, 100, 2)}></div></span>}
+          format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 2)}></div></span>}
+          className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
           strokeColor={c.type === "Chef" ? "#fc24ff" : "#ffae00"}
           percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
           size="small"
            />
           </Col>
         </Row>
+        </Popover>
         {c.timestamp > 0 ? (
+          <div>
           <Row>
-          <Col style={{marginRight: '5px', marginLeft: '2px'}} span={2}><img src="/img/ffood.png"/></Col>
-            <Col span={18} style={{color: '#fee017', fontWeight: 'bold'}}>
-              {this.renderNftProfit(c.type, c.timestamp, c.lastClaimTimestamp)}
-              <span style={{color: '#000000'}}>&nbsp;$FFOOD</span>
+            <Col style={{marginRight: '5px', marginLeft: '5px'}} xs={3} span={2}>
+              <Popover content="Your NFT earns fastfood (FFOOD) tokens when staked into a kitchen.">
+              <img src="/img/ffood.png"/>
+              </Popover>
+            </Col>
+            <Col span={7} className="funds" style={{color: '#fee017'}}>
+              <Popover content="Amount of $FFOOD your NFTs have accumulated.">
+                {this.renderNftProfit(c.type, c.timestamp, c.lastClaimTimestamp)}
+              </Popover>
             </Col>
           </Row>
+          <Row>
+            <Col style={{marginRight: '0px'}} xs={5} span={4}>
+              <img src={"/img/time.png"}/>
+            </Col>
+            <Col xs={16} span={18}>
+              <div>{ this.renderTimeLeftForLevelUp(c.lastClaimTimestamp, c.timestamp) }</div>
+            </Col>
+          </Row>
+          </div>
         ) : null}
         </div>
       </span>
     )
+  }
+
+  renderTimeLeftForLevelUp(lastClaim, stakeTimestamp) {
+    const levelUpMsg = "Your next level upgrade is available. Unstake or claim to level up your NFT!";
+    const levelUpSoon = "When the countdown ends, your next level upgrade will be available. Unstake or claim to level up your NFT!";
+    if (lastClaim === 0) {
+      const now = Math.floor(Date.now() / 1000);
+      const d = new Date(stakeTimestamp * 1000);
+      let stakeDate = d.getTime() / 1000;
+      const numberOfDays = (now - stakeDate) / 86400;
+
+
+      d.setDate(d.getDate() + numberOfDays);
+      const futureDate = d.getTime() / 1000;
+
+      let diff = futureDate - now;
+
+      if ((diff < 0) && (diff > -86400)) {
+        diff = 86400 - (diff*-1);
+      }
+
+      if (numberOfDays > 1) {
+        if (parseInt(Math.floor(diff / 3600)) >= 12) {
+            // At least 1 day staked and 12 hours to go
+            diff = 86400;
+        }
+      }
+
+      if (diff >= 86400) {
+        return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
+      }
+      return <Popover content={levelUpSoon}>
+        <div className="levelUpTime">{this.secondsToHms(diff)}
+        </div>
+        </Popover>
+    } else {
+      let now = Math.floor(Date.now() / 1000);
+      let futureDate;
+      now = Math.floor(Date.now() / 1000);
+      const d = new Date(stakeTimestamp * 1000);
+      let stakeDate = d.getTime() / 1000;
+      const numberOfDays = (now - stakeDate) / 86400;
+
+      if (now - lastClaim >= 86400) {
+        futureDate = new Date();
+        futureDate.setHours(new Date(lastClaim * 1000).getHours());
+        futureDate.setMinutes(new Date(lastClaim * 1000).getMinutes());
+        futureDate.setSeconds(new Date(lastClaim * 1000).getSeconds());
+        futureDate.setDate(new Date().getDate() + 1);
+        futureDate = futureDate.getTime() / 1000;
+      } else {
+        const d = new Date(lastClaim * 1000);
+        d.setDate(d.getDate() + 1);
+        futureDate = d.getTime() / 1000;
+      }
+
+      let diff = futureDate - now;
+      if (numberOfDays > 1) {
+        if (parseInt(Math.floor(diff / 3600)) >= 12) {
+            // At least 1 day staked and 16 hours to go
+            diff = 86400;
+        }
+      }
+
+      if (diff >= 86400) {
+        return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
+      }
+      return <Popover content={levelUpSoon}>
+        <div className="levelUpTime"> {this.secondsToHms(diff)}
+        </div>
+        </Popover>;
+    }
+
+
+  }
+
+  secondsToHms(d) {
+    d = Number(d);
+    let h = Math.floor(d / 3600);
+    let m = Math.floor(d % 3600 / 60);
+    let s = Math.floor(d % 3600 % 60);
+
+    if (h < 10) {
+      h = "0" + h;
+    }
+    if (m < 10) {
+      m = "0" + m;
+    }
+    if (s < 10) {
+      s = "0" + s;
+    }
+
+    return <span>{h}<img className="colon" src="/img/colon.svg"/>{m}<img className="colon" src="/img/colon.svg"/>{s}</span>;
   }
 
   renderNftProfit(type, timestamp, lastClaimTimestamp) {
@@ -945,7 +1115,7 @@ class Main extends React.Component {
       let totalChefProfit = 0;
       this.state.allStakedChefs.map(a => {
         const owedPerSecond = 1000 / 86400;
-        const timePassed = Math.floor(Date.now() / 1000) - a.stakedTimestamp;
+        const timePassed = Math.floor(Date.now() / 1000) - timestamp;
         totalChefProfit += timePassed * owedPerSecond;
       });
       const totalRatProfit = totalChefProfit * 0.2;
@@ -987,9 +1157,33 @@ class Main extends React.Component {
     }
   }
 
+  getButtonHeight() {
+    let height=32;
+    if (window.innerWidth <= 768) {
+      height=50;
+    }
+    return height;
+  }
+
   renderApprovalButton() {
+
+    const height = this.getButtonHeight();
+    let enabled = true;
+    if (this.state.isApprovedForAll) {
+      enabled = false;
+    }
+
+    if (this.state.unstakedNfts.length === 0) {
+      enabled = false;
+    }
+
     return (
-      <Button className="web3Button" type={!this.state.isApprovedForAll ? "primary" : "default"} onClick={this.setApprovalForAll.bind(this)}>
+      <Button style={{height}}
+      className="web3Button"
+      disabled={!enabled}
+      type={!this.state.isApprovedForAll ? "primary" : "default"}
+      onClick={this.setApprovalForAll.bind(this)}
+      >
         Authorize
       </Button>
     );
@@ -999,9 +1193,8 @@ class Main extends React.Component {
     try {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.stakeMany(this.props.address, this.state.unstakedNfts, {
-          gasPrice: 1000000000,
           from: this.props.address,
-          gasLimit: this.state.unstakedNfts.length * 120000,
+          gasLimit: parseInt(this.state.unstakedNfts.length * 140000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1023,9 +1216,8 @@ class Main extends React.Component {
     try {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.claimMany(this.state.stakedNfts, true, {
-          gasPrice: 1000000000,
           from: this.props.address,
-          gasLimit: this.state.stakedNfts.length * 125000,
+          gasLimit: parseInt(this.state.stakedNfts.length) * 125000,
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1040,17 +1232,16 @@ class Main extends React.Component {
     }
   }
 
-  async claimFunds() {
+  async claimFunds(selectedToUnStakeNfts) {
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.claimMany(this.state.stakedNfts, false, {
-          gasPrice: 1000000000,
+        this.props.writeContracts.KitchenPack.claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
-          gasLimit: this.state.stakedNfts.length * 125000,
+          gasLimit: parseInt(this.state.stakedNfts.length * 180000),
         }),
       );
       this.setState({ selectedNfts: {} });
-      renderNotification("info", `Funds from your NFTs have been claimed.`, "");
+      renderNotification("info", `Your NFTs have been leveled up & Funds from your NFTs have been claimed.`, "");
       setTimeout(() => {
         this.getBalances();
       }, 1000);
@@ -1068,8 +1259,8 @@ class Main extends React.Component {
     try {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.stakeMany(this.props.address, selectedToStakeNfts, {
-          gasPrice: 1000000000,
           from: this.props.address,
+          gasLimit: parseInt(selectedToStakeNfts.length * 140000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1088,7 +1279,6 @@ class Main extends React.Component {
     try {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.claimMany(selectedToUnStakeNfts, {
-          gasPrice: 1000000000,
           from: this.props.address,
           gasLimit: selectedToUnStakeNfts.length * 200000,
         }),
@@ -1106,20 +1296,79 @@ class Main extends React.Component {
     }
   }
 
+  getStakeStats() {
+    const selectedToStakeNfts = [];
+    const selectedToUnStakeNfts = [];
+    Object.keys(this.state.selectedNfts).map(n => {
+      if (
+        this.state.selectedNfts[n] &&
+        this.state.selectedNfts[n]["status"] === true &&
+        this.state.selectedNfts[n]["staked"] === 0
+      ) {
+        selectedToStakeNfts.push(parseInt(n));
+      }
+      if (
+        this.state.selectedNfts[n] &&
+        this.state.selectedNfts[n]["status"] === true &&
+        this.state.selectedNfts[n]["staked"] === 1
+      ) {
+        selectedToUnStakeNfts.push(parseInt(n));
+      }
+    });
+    return ({ selectedToStakeNfts, selectedToUnStakeNfts});
+  }
+
   renderStakeAllButton() {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+    let enabled=true;
+    if ((selectedToUnStakeNfts.length > 0) && (selectedToStakeNfts.length === 0)) {
+      enabled=false;
+    }
+    if (!this.state.isApprovedForAll) {
+      enabled=false;
+    }
+
+    let type = 'default';
+    if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
+      type = 'primary';
+    }
+
+    const height = this.getButtonHeight();
+
     return (
-      <Button disabled={!this.state.isApprovedForAll} className="web3Button" type={"primary"} onClick={this.stakeAll.bind(this)}>
+      <Button style={{height}} disabled={!enabled} className="web3Button" type={type} onClick={this.stakeAll.bind(this)}>
         Stake all
       </Button>
     );
   }
 
-  renderStakeButton(selectedToStakeNfts) {
+  renderStakeButton() {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+    let enabled=true;
+    if ((selectedToUnStakeNfts.length > 0)) {
+      enabled=false;
+    }
+    if (!this.state.isApprovedForAll) {
+      enabled=false;
+    }
+
+    if ((selectedToStakeNfts.length === 0)) {
+      enabled=false;
+    }
+
+    let type = 'default';
+    if ((selectedToStakeNfts.length > 0)) {
+      type = 'primary';
+    }
+
+    const height = this.getButtonHeight();
+
     return (
       <Button
         className="web3Button"
-        type={"primary"}
-        disabled={!this.state.isApprovedForAll && selectedToStakeNfts.length === 0}
+        type={type}
+        style={{height}}
+        disabled={!enabled}
         onClick={this.stake.bind(this, selectedToStakeNfts)}
       >
         Stake {selectedToStakeNfts.length} NFTs
@@ -1127,12 +1376,34 @@ class Main extends React.Component {
     );
   }
 
-  renderUnStakeButton(selectedToUnStakeNfts) {
+  renderUnStakeButton() {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+    let enabled=true;
+    if ((selectedToStakeNfts.length > 0)) {
+      enabled=false;
+    }
+
+    if ((selectedToUnStakeNfts.length === 0)) {
+      enabled=false;
+    }
+
+    if (!this.state.isApprovedForAll) {
+      enabled=false;
+    }
+
+    let type = 'default';
+    if ((selectedToUnStakeNfts.length > 0)) {
+      type = 'primary';
+    }
+
+    const height = this.getButtonHeight();
+
     return (
       <Button
         className="web3Button"
-        type={"default"}
-        disabled={!this.state.isApprovedForAll && selectedToUnStakeNfts.length === 0}
+        style={{height}}
+        type={type}
+        disabled={!enabled}
         onClick={this.unstake.bind(this, selectedToUnStakeNfts)}
       >
         Unstake {selectedToUnStakeNfts.length} NFTs
@@ -1141,17 +1412,74 @@ class Main extends React.Component {
   }
 
   renderUnStakeAllButton() {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+    let enabled=true;
+    if ((selectedToStakeNfts.length > 0)) {
+      enabled=false;
+    }
+
+    if ((selectedToUnStakeNfts.length > 0)) {
+      enabled=false;
+    }
+
+    if (!this.state.isApprovedForAll) {
+      enabled=false;
+    }
+
+    if (this.state.stakedNfts.length === 0) {
+      enabled = false;
+    }
+
+    let type = 'default';
+    if ((selectedToUnStakeNfts.length === 0)) {
+      type = 'primary';
+    }
+    const height = this.getButtonHeight();
     return (
-      <Button disabled={!this.state.isApprovedForAll} className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
-        Unstake all
+      <Button style={{height}} disabled={!enabled} className="web3Button" type={type} onClick={this.unstakeAll.bind(this)}>
+         Unstake all
       </Button>
     );
   }
 
   renderClaimButton() {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+    let enabled=true;
+    if ((selectedToStakeNfts.length > 0)) {
+      enabled=false;
+    }
+
+    if ((selectedToUnStakeNfts.length === 0)) {
+      enabled=false;
+    }
+
+    if (!this.state.isApprovedForAll) {
+      enabled=false;
+    }
+
+    let type = 'default';
+    if ((selectedToUnStakeNfts.length > 0)) {
+      type = 'primary';
+    }
+    const height = this.getButtonHeight();
+    let disabledText = <span>Level up & Claim from {selectedToUnStakeNfts.length} NFTs</span>;
+    let activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}}src="/img/ffood.png"/> from {selectedToUnStakeNfts.length} NFTs</span>
+    if (window.innerWidth <= 768) {
+      disabledText = <span style={{marginLeft: '-5px'}}>Level up & Claim <br/>from {selectedToUnStakeNfts.length} NFTs</span>;
+      activeText = <span  style={{marginLeft: '-5px'}}>Level up & Claim <img style={{paddingLeft: '3px', marginTop: '-5px'}} src="/img/ffood.png"/><br/>from {selectedToUnStakeNfts.length} NFTs</span>
+    }
     return (
-      <Button disabled={!this.state.isApprovedForAll} className="web3Button" type={"default"} onClick={this.claimFunds.bind(this)}>
-        Claim $FFOOD
+      <Button
+        className="web3Button"
+        style={{height}}
+        type={type}
+        disabled={!enabled}
+        onClick={this.claimFunds.bind(this, selectedToUnStakeNfts)}
+      >
+      { selectedToUnStakeNfts.length === 0 ?
+        disabledText : activeText
+      }
+
       </Button>
     );
   }
@@ -1271,10 +1599,12 @@ class Main extends React.Component {
     }
   }
 
-  getWidth(type = 'kitchen') {
+  getWidth(type = 'kitchen', stretch = false, originalWidth = false, originalHeight = false) {
     let width = 0;
+    let mobile = false;
     if (window.innerWidth <= 768) {
-        width = 315;
+        width = 325;
+        mobile = true;
     }
     else {
       if (window.innerWidth - 650 > 500) {
@@ -1283,23 +1613,51 @@ class Main extends React.Component {
         width = 500;
       }
     }
-    if (type !== 'kitchen') {
-      width += 200;
+
+    if (type === 'roof') {
+      const tmp = this.getWidth('kitchen');
+      if (window.innerWidth <= 768) {
+        width = tmp.width + 222;
+      } else {
+        width = tmp.width + 240;
+      }
+    } else if (type === 'building') {
+      const tmp = this.getWidth('kitchen');
+      if (window.innerWidth <= 768) {
+        width = tmp.width + 292;
+      } else {
+        width = tmp.width + 310;
+      }
+
+    } else if (type === 'rats') {
+        width += 220;
+    } else if (type !== 'kitchen') {
+          width += 200;
     }
-    return { width };
+
+
+
+    if (stretch) {
+      const factor = width / originalWidth;
+      const height = factor * originalHeight;
+      return { width, height };
+    }
+    return { width: width - 30 };
   }
 
   renderNfts() {
     this.nftProfit = 0;
     return (
-      <Card size="small" title="My NFTs">
-        <Card size="small" style={{background: '#CCCCCC', height: '100px'}}>
-        Roof
+      <Card className="stakeHouse" size="small">
+        <Card className="roofWall" size="small">
+        <div className="roof" style={this.getWidth('roof', true, 1000, 100)}>
+        </div>
         </Card>
-        <Card size="small">
-          <Row>
-            <Col style={{width: '180px', border: '1px solid #000000'}}>
-              Le stake ***
+        <Card className="house" size="small" style={this.getWidth('building')}>
+          <Row >
+            <Col style={{width: '180px'}}>
+              <div className="gourmetScene">
+              </div>
             </Col>
             <Col>
               <div className="fade gourmetKitchen" style={this.getWidth()}>
@@ -1307,10 +1665,15 @@ class Main extends React.Component {
             </Col>
           </Row>
         </Card>
-        <Card size="small">
+        <Card className="house" size="small" style={this.getWidth('building')}>
+          <div style={{height: 10}}>
+          </div>
+        </Card>
+        <Card className="house" size="small" style={this.getWidth('building')}>
           <Row>
-            <Col style={{width: '180px', border: '1px solid #000000'}}>
-              Stake house
+            <Col style={{width: '180px'}}>
+            <div className="casualScene">
+            </div>
             </Col>
             <Col>
             <div className="fade casualKitchen" style={this.getWidth()}>
@@ -1318,23 +1681,35 @@ class Main extends React.Component {
             </Col>
           </Row>
         </Card>
-        <Card size="small">
+        <Card className="house" size="small" style={this.getWidth('building')}>
+          <div style={{height: 10}}>
+          </div>
+        </Card>
+        <Card className="house" size="small" style={this.getWidth('building')}>
           <Row>
-            <Col style={{width: '180px', border: '1px solid #000000'}}>
-              McStake
+            <Col style={{width: '180px'}}>
+            <div className="fastFoodScene">
+            </div>
             </Col>
-            <Col style={{border: '1px solid #000000', marginLeft: '20px'}}>
+            <Col style={{marginLeft: '20px'}}>
               {!this.state.loading ? this.renderStaked() : <Skeleton />}
             </Col>
           </Row>
         </Card>
-        <Card size="small">{!this.state.loading ? this.renderChefs() : <Skeleton />}</Card>
-        <Card size="small" style={{background: '#CCCCCC', height: '30px'}}>
-          Ground
+        <Card className="house" size="small" style={this.getWidth('building')}>
+          <div style={{height: 10}}>
+          </div>
+        </Card>
+        <Card className="house" size="small" style={this.getWidth('building')}>
+        {!this.state.loading ? this.renderChefs() : <Skeleton />}
+        </Card>
+        <Card className="invisibleWall" size="small">
+          <div style={this.getWidth('waitingRoom')} className="ground"/>
         </Card>
 
-        <Card size="small">{!this.state.loading ? this.renderRats() : <Skeleton />}</Card>
-
+        <Card className="invisibleWall" size="small">
+        {!this.state.loading ? this.renderRats() : <Skeleton />}
+        </Card>
 
 
         <Card size="small">

@@ -27,7 +27,6 @@ import { GraphQLClient, gql } from 'graphql-request'
 import Address from "./Address";
 
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
-
 const graphQLClient = new GraphQLClient(APIURL, {
     mode: 'cors',
 });
@@ -94,6 +93,9 @@ class Leaderboard extends React.Component {
             });
           }
           if (found === 0 && r.earned > 0) {
+            if (r.insanity > 0) {
+              console.log(r);
+            }
             chefRats.push({
               owner: r.stakingOwner !== '0x00000000' ? r.stakingOwner : r.owner,
               name: json.name,
@@ -137,10 +139,10 @@ class Leaderboard extends React.Component {
       }
     }, 2800);
 
-    await this.fetchGraph('skill');
+    // await this.fetchGraph('skill');
     await this.fetchGraph('insanity');
-    await this.fetchGraph('intelligence');
-    await this.fetchGraph('fatness');
+    // await this.fetchGraph('intelligence');
+    // await this.fetchGraph('fatness');
   }
 
   componentWillUnmount() {
@@ -183,7 +185,7 @@ class Leaderboard extends React.Component {
           <Col span={12}>{attributes[0].value === "Chef" ? hash['Skill'] : hash["Intelligence"]}</Col>
         </Row>
         <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Fatness level"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Bodymass level"}</Col>
           <Col span={12}>
             <Progress
               strokeColor={attributes[0].value === "Chef" ? "blue" : "brown"}
@@ -192,7 +194,7 @@ class Leaderboard extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Fatness status"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Body mass status"}</Col>
           <Col span={12}>{attributes[0].value === "Chef" ? hash['Insanity'] : hash['Fatness']}</Col>
         </Row>
 
@@ -209,7 +211,8 @@ class Leaderboard extends React.Component {
                 key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
                 key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
                 key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
-                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage'
+                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage' &&
+                key.value.length > 0
                 ?
               <Row>
                 <Col span={12}>{key.trait_type}</Col>
@@ -223,23 +226,41 @@ class Leaderboard extends React.Component {
   }
 
   renderProgress(type, small, data) {
+    const hash = {};
+    data.attributes.map((m) => {
+      hash[m.trait_type] = m.value;
+    });
+
+
     return (
       <div>
         <Row>
-          <Col span={small ? 2: 1}>{ type === 'Chef' ? 'I' : 'i' }</Col>
+          <Col span={small ? 2: 1}>{ type === 'Chef' ? <img src="/img/skill.png"/> : <img src="/img/intelligence.png"/> }</Col>
           <Col span={small ? 22: 23}>
-            <Progress size="small" strokeColor={ type === 'Chef' ? 'green' : 'orange' } percent={ type === 'Chef' ? data.insanity : data.intelligence } />
+            <Progress
+            size="small"
+            strokeColor={ type === 'Chef' ? '#13e969' : '#1eaeea' }
+            format={percent => <span style={{color: '#000000'}}>{percent}%</span>}
+            percent={ type === 'Chef' ? hash['Skill percentage'] : hash['Intelligence quotient'] } />
           </Col>
         </Row>
         <Row>
-          <Col span={small ? 2: 1}>{ type === 'Chef' ? 'S' : 'F' }</Col>
+          <Col span={small ? 2: 1}>{ type === 'Chef' ? <img src="/img/insanity.png"/> : <img src="/img/fatness.png"/> }</Col>
           <Col  span={small ? 22: 23}>
-            <Progress size="small" strokeColor={ type === 'Chef' ? 'blue' : 'brown' } percent={ type === 'Chef' ? data.skill : data.fatness } />
+            <Progress
+            size="small"
+            format={percent => <span style={{color: '#000000'}}>{percent}%</span>}
+            strokeColor={ type === 'Chef' ? '#fc24ff' : '#ffae00' }
+            percent={ type === 'Chef' ? hash['Insanity percentage'] : hash['Fatness percentage'] } />
           </Col>
         </Row>
 
       </div>
     );
+  }
+
+  renderId(i) {
+    return (i+1).toString();
   }
 
   renderLeaderBoard() {
@@ -254,7 +275,7 @@ class Leaderboard extends React.Component {
         dataIndex: 'id',
         key: 'id',
         width: '1%',
-        render: text => <span>{text}</span>,
+        render: (text, c, i) => this.renderId(i),
       },
       {
         title: 'NFT',
@@ -294,7 +315,9 @@ class Leaderboard extends React.Component {
         dataIndex: 'profit',
         key: 'profit',
         width: '5%',
-        render: text => <span>{text}</span>,
+        defaultSortOrder: 'descend',
+        sorter: (a, b) => a.profit - b.profit,
+        render: text => <span><img style={{marginRight: '5px'}} src="/img/ffood.png"/>{text}</span>,
       },
     ];
 
@@ -313,6 +336,9 @@ class Leaderboard extends React.Component {
       chefRats[i-1]['id'] = i;
       i += 1;
     })
+
+    chefRats = chefRats.sort((a, b) => parseInt(a.id) > parseInt(b.id));
+
 
     return (
       <Row style={{ height: "100%", 'text-align': 'center' }}>

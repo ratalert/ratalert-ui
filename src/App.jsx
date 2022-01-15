@@ -39,8 +39,8 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
   chainId = 1337;
 }
 
-// targetNetwork = NETWORKS.localhost;
-// let chainId = 1337;
+// targetNetwork = NETWORKS.rinkeby;
+// chainId = 1337;
 
 const DEBUG = true;
 const NETWORKCHECK = true;
@@ -301,6 +301,8 @@ function App(props) {
               address={address}
               provider={localProvider}
               active={2}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
               content={<Leaderboard
                 tx={tx}
                 readContracts={readContracts}

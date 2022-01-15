@@ -18,8 +18,15 @@ import {
 const { Header, Footer, Sider, Content } = Layout;
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
-import { request, gql } from "graphql-request";
-import Loadable from "react-loadable"
+import { GraphQLClient, gql } from 'graphql-request';
+
+const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
+
+const graphQLClient = new GraphQLClient(APIURL, {
+    mode: 'cors',
+});
+
+import Loadable from "react-loadable";
 
 const Account = React.lazy(() => import('./Account'));
 
@@ -31,7 +38,6 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
-const APIURL = `${process.env.REACT_APP_GRAPH_URI}/subgraphs/name/ChefRat`;
 
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
@@ -79,7 +85,7 @@ class RatMenu extends React.Component {
           id, URI
         }
       }`;
-    const result = await request(APIURL, query);
+    const result = await graphQLClient.request(query);
     if (result.chefRat) {
       const URI = result.chefRat.URI;
       const base64 = URI.split(",");
@@ -96,6 +102,7 @@ class RatMenu extends React.Component {
 
   async componentWillMount() {
     setTimeout(async () => {
+      console.log('Start mint hook');
       const filter = {
         address: this.props.readContracts.ChefRat.address,
         topics: [
@@ -116,6 +123,7 @@ class RatMenu extends React.Component {
           decoded.push(tmp);
         });
 
+        console.log(decoded);
         if (
           decoded[1] &&
           decoded[0] &&
@@ -124,6 +132,7 @@ class RatMenu extends React.Component {
         ) {
           setTimeout(async () => {
             const { name, image } = await this.getNFTObject(decoded[2]);
+            console.log(`NFT ${name} minted`);
             if (image) {
               renderNotification(
                 "info",
