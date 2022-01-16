@@ -22,6 +22,7 @@ deploy-app:
 deploy-landing:
 	@$(eval TAG := latest)
 	aws s3 sync ./landing/ s3://ratalert.com/ --delete
+	aws s3 cp ./landing/whitepaper/index.html s3://ratalert.com/whitepaper
 
 deploy-cf-bucket:
 	@echo "+ Creating CloudFormation bucket"
