@@ -143,3 +143,15 @@ a {
     cursor: pointer;
     font-weight: bold;
 }
+
+ul#tableofcontents ul {
+    margin-bottom: 0;
+}
+ul#tableofcontents li {
+    list-style: none;
+    margin: 5px 0 5px 0;
+}
+ul#tableofcontents li li {
+    list-style: none;
+    margin-left: 20px;
+}
