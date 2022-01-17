@@ -76,6 +76,10 @@ footer ul li {
 footer a {
     text-decoration: none;
 }
+footer a:hover {
+    position: relative;
+    top: -2px;
+}
 footer svg {
     width: 40px;
     height: 40px;
@@ -179,6 +183,9 @@ a {
     text-decoration: underline;
     cursor: pointer;
     font-weight: bold;
+}
+a:hover {
+    text-decoration: none;
 }
 
 ul#tableofcontents ul {
