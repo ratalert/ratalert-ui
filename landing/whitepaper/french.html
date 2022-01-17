@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>RatAlert</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="theme-color" content="#e3d6b6" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N3G4NKL066"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+        gtag("config", "G-N3G4NKL066");
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="top">
+            <header>
+                <img id="logo" alt="RatAlert" title="RatAlert" src="../assets/logo.svg" />
+                <div id="tagline">Améliorez votre NFT</div>
+                <hr>
+                <div id="images">
+                    <img src="../assets/rat.png" id="rat" alt="Rat" title="Rat" />
+                    <img src="../assets/chef.png" id="chef" alt="Chef" title="Chef" />
+                </div>
+            </header>
+        </div>
+        <div id="bottom">
+            <div id="content">
+                <main>
+                    <h1 style="margin-top: 0;">Whitepaper v1</h1>
+                    <h2 id="toc">Table des Matières</h2>
+                    <ul id="tableofcontents">
+                        <li><a href="#story">L'Histoire</a></li>
+                        <li><a href="#mechanics">Les Mécaniques</a></li>
+                        <li>
+                            <a href="#venues">Les Lieux</a>
+                            <ul>
+                                <li><a href="#mcstake">Cuisine FastFood McStake©</a></li>
+                                <li><a href="#thestakehouse">Cuisine CasualFood TheStakeHouse©</a></li>
+                                <li><a href="#lestake">Cuisine GourmetFood LeStake©</a></li>
+                                <li><a href="#gym">Salle de Sport</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#tokens">Les Jetons</a>
+                            <ul>
+                                <li><a href="#ffood">FastFood ($FFOOD)</a></li>
+                                <li><a href="#cfood">CasualFood ($CFOOD)</a></li>
+                                <li><a href="#gfood">GourmetFood ($GFOOD)</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#cast">Les Rôles</a>
+                            <ul>
+                                <li><a href="#chefs">Chefs</a></li>
+                                <li><a href="#rats">Rats</a></li>
+                                <li><a href="#cats">Chats</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#contracts">Adresses des contrats</a></li>
+                    </ul>
+
+                    <h2 id="story">L'Histoire</h2>
+                    <img src="../assets/images/image23.png" width="100%" alt="alt_text" title="image_tooltip">
+
+                    <p>
+                        Paris - c'est la ville où les aspirants <a href="#chefs">chefs</a> en herbe se frayent un chemin jusqu'au sommet. Seule la crème de la crème pourra <del>ouvrir</del> minter leur propre cuisine GourmetFood comme
+                        <a href="#lestake"><em>LeStake©</em></a>, le célèbre restaurant 3 étoiles du métavers. Glissez-vous dans le rôle d'un chef entrepreneur et <del>recrutez</del> mintez votre équipe de cuisine !
+                    </p>
+                    <p>
+                        Bien sûr, vous savez que le savoir-faire nécessite beaucoup de pratique et donc la première position (staking) de vos <a href="#chefs">chefs’</a> les amène à <a href="#mcstake"><em>McStake©</em></a>, le fastFood du métavers
+                        dirigé par <em>Michael McSaylor</em>. Rapidement, leur niveau de compétence surpassera l'industrie <a href="#ffood">$FFOOD</a> business et ils en voudront encore plus. Sachant que vous avez déjà fait bon usage de vos jetons obtenus, votre
+                        nouvelle cuisine CasualFood <a href="#thestakehouse"><em>TheStakeHouse©</em></a> permet à vos chefs de produire les délicieux <a href="#cfood">$CFOOD</a>. Vous pouvez déjà sentir le doux parfum du succès, quand enfin, vos
+                        vos chefs deviendront l'élite rare et produiront les <a href="#gfood">$GFOOD</a> les plus rares dans votre toute nouvelle cuisine GourmetFood <a href="#lestake"><em>LeStake©</em></a>. Dans le même temps, vos chefs sont mis à rude épreuve.
+                        Travailler au sommet signifie beaucoup de stress. Vous le regretterez certainement si vous les laissez s'épuiser ou être punis par l'inspecteur des aliments !
+                    </p>
+                    <p>Les trois <a href="#tokens">jetons de nourriture</a> vous permettent non seulement d'acheter des <a href="#venues">cuisines</a> plus élaborées, mais aussi plus de chefs pour faire évoluer votre entreprise. Ou bien est-ce que... ?</p>
+                    <p>
+                        Ce n'est pas le cas. Autant vous acheter des <a href="#rats">rats</a> d'égouts affamés qui n'aiment rien de plus que la <a href="#ffood">$FFOOD</a> et qui sont prêts à tout pour <em>vous</em> le voler aux quatre coins de la ville.
+                        Ils apprennent vite, et vous leur ferez voler de la <a href="#cfood">$CFOOD</a> et finalement de la tant convoitée <a href="#gfood">$GFOOD</a> une fois que leur quotient intellectuel le leur permettra. Mais attention : Les pièges à rats et les
+                        <a href="#cats">chats</a> rusés sont partout. Ne laissez pas vos rats se faire prendre, ou vous en subirez les conséquences !
+                    </p>
+
+                    <h2 id="mechanics">Les Mécaniquess</h2>
+
+                    <ul>
+                        <li>Jouez pour gagner différents jetons ERC20 en stakant vous personnages ERC721 dans l'une des trois <del>cuisines</del> contrats disponibles</li>
+                        <li>Pour la première fois, vous pouvez "entraîner" et "récupérer" vos personnages ERC721 grâce à un staking intelligent dans différents contrats pour les faire gagner en valeur.</li>
+                        <li>Les règles du jeu sont entièrement sur la chaîne.</li>
+                        <li>Le plus important : Veillez toujours sur vos personnages - ils sont fragiles comme des Tamagotchi !</li>
+                        <li>Le Jeu est implémenté sur Polygon (MATIC) pour 2 raisons évidentes : Le coût du gaz &amp; le support d'OpenSea</li>
+                    </ul>
+
+                    <h2 id="venues">Les Lieux</h2>
+
+                    <h3 id="mcstake">Cuisine FastFood McStake©</h3>
+
+                    <p><img src="../assets/images/image16.png" width="100%" alt="alt_text" title="image_tooltip"></p>
+                    <p>
+                        Le <em>McStake©</em> de <em>Michael McSaylor’s</em> est "virtuellement" dans toute la ville. Ici, les <a href="#chefs">chefs</a> commencent leur carrière en tant qu'employés produisant du <a href="#ffood">$FFOOD</a> que les <a href="#rats">rats</a> adorent
+                        pour sa “simplicité”.
+                    </p>
+
+                    <h4>Événements</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <th><strong>Événement</strong></th>
+                            <th><strong>Chefs</strong></th>
+                            <th><strong>Rats</strong></th>
+                        </tr>
+                        <tr>
+                            <td>Entrer dans la cuisine (stake)</td>
+                            <td>Pas de conditions</td>
+                            <td>Pas de conditions</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3">Paiement (claim)</td>
+                            <td>
+                                Succès :
+                                <ul>
+                                    <li>2% de compétence par jour</li>
+                                    <li>4% de folie par jour</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Succès :
+                                <ul>
+                                    <li>2% d'intelligence par jour</li>
+                                    <li>8% de masse corporelle par jour</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Récompense : Minimum 250 $FFOOD par jour (au prorata à la seconde), recevez 80 % sur le claim.</td>
+                            <td>Récompense : Vole une part garantie de 20% du $FFOOD produit.</td>
+                        </tr>
+                        <tr>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">Sortir de la cuisine (unstake)</td>
+                            <td>Impossible de unstake dans les 24 heures</td>
+                            <td>Impossible de unstake dans les 24 heures</td>
+                        </tr>
+                        <tr>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="thestakehouse">Cuisine CasualFood TheStakeHouse©</h3>
+
+                    <p>
+                        <img src="../assets/images/image19.png" width="100%" alt="alt_text" title="image_tooltip">
+                    </p>
+                    <p>
+                        Un homme avisé a dit un jour : "Il n'y a pas de second meilleur". Il parlait bien sûr des steaks de <em>TheStakeHouse©</em>. Ces cuisines CasualFood permettent à vos <a href="#chefs">chefs</a> de produire du
+                        <a href="#cfood">$CFOOD</a> et c'est là que le bon grain se sépare de l'ivraie. Avec une offre totale de seulement 5 000 cuisines, il faut être rapide pour entrer dans le jeu.
+                    </p>
+                    <h4>Coût du mint</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <td class="right">1 - 1,000</td>
+                            <td>2,000 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">1,001 - 2,000</td>
+                            <td>3,000 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">2,001 - 3,000</td>
+                            <td>4,000 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">3,001 - 4,000</td>
+                            <td>5,000 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">4,001 - 5,000</td>
+                            <td>6,000 $FFOOD</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h4>Événements</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <th><strong>Événement</strong></th>
+                            <th><strong>Chefs</strong></th>
+                            <th><strong>Rats</strong></th>
+                        </tr>
+                        <tr>
+                            <td>Entrer dans la cuisine (stake)</td>
+                            <td>Condition requise : 28% skill</td>
+                            <td>Condition requise : 28% intelligence</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3">Paiement (claim)</td>
+                            <td>
+                                Succès :
+                                <ul>
+                                    <li>4% de compétence par jour</li>
+                                    <li>6% de folie par jour</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Succès :
+                                <ul>
+                                    <li>4% d'intelligence par jour</li>
+                                    <li>6% de masse corporelle par jour</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Récompense : Minimum 250 $CFOOD par jour (au prorata à la seconde), recevez 80 % sur le claim.</td>
+                            <td>Récompense : Vole une part garantie de 20% du $CFOOD produit.</td>
+                        </tr>
+                        <tr>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">Sortir de la cuisine (unstake)</td>
+                            <td>Impossible de unstake dans les 24 heures</td>
+                            <td>Impossible de unstake dans les 24 heures</td>
+                        </tr>
+                        <tr>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="lestake">Cuisine GourmetFood LeStake©</h3>
+
+                    <p>
+                        <img src="../assets/images/image33.png" width="100%" alt="alt_text" title="image_tooltip">
+                    </p>
+                    <p>
+                        <em>LeStake©</em>. Aucun autre restaurant dans le métavers ne peut rivaliser avec cette célèbre cuisine 3 étoiles, et elle ne peut être achetée qu'avec du <a href="#cfood">$CFOOD</a>. Ces cuisines GourmetFood sont l'endroit où les mets
+                        raffinés <a href="#gfood">$GFOOD</a> sont fabriqués et où les héros deviennent des légendes. Avec une offre totale de 500 cuisines, seule la crème de la crème pourra s'enorgueillir d'en être les propriétaires. Mais cela ne s'arrête pas là. Comme le
+                        $GFOOD est le jeton DAO de RatAlert, tous les <a href="#chefs">chefs</a> &amp; <a href="#rats">rats</a> opérant dans cette cuisine auront les premières places dans tous les processus de décision du jeu.
+                    </p>
+
+                    <h4>Coût du mint</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <td class="right">1 - 100</td>
+                            <td>2,000 $CFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">101 - 200</td>
+                            <td>3,000 $CFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">201 - 300</td>
+                            <td>4,000 $CFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">301 - 400</td>
+                            <td>5,000 $CFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">401 - 500</td>
+                            <td>6,000 $CFOOD</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h4>Événements</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <th><strong>Événement</strong></th>
+                            <th><strong>Chefs</strong></th>
+                            <th><strong>Rats</strong></th>
+                        </tr>
+                        <tr>
+                            <td>Entrer dans la cuisine (stake)</td>
+                            <td>Condition requise : 72% de compétence</td>
+                            <td>Condition requise : 72% d'intelligence</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3">Paiement (claim)</td>
+                            <td>
+                                Succès :
+                                <ul>
+                                    <li>6% de compétence par jour</li>
+                                    <li>
+                                        8% de folie par jour
+                                        <p>(au prorata à la seconde)</p>
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                Succès :
+                                <ul>
+                                    <li>6% d'intelligence par jour</li>
+                                    <li>
+                                        4% de masse corporelle par jour
+                                        <p>(au prorata à la seconde)</p>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Récompense : Minimum 250 $GFOOD par jour (au prorata à la seconde), recevez 80 % sur le claim.</td>
+                            <td>Récompense : Vole une part garantie de 20% du $GFOOD produit.</td>
+                        </tr>
+                        <tr>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">Sortir de la cuisine (unstake)</td>
+                            <td>Impossible de unstake dans les 24 heures</td>
+                            <td>Impossible de unstake dans les 24 heures</td>
+                        </tr>
+                        <tr>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                            <td>Risque : Aucun jusqu'à présent, mais il y en aura dans la v2.</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="gym">Salle de Sport</h3>
+
+                    <p>
+                        Il n'y a que peu d'emplois plus stressants que celui d'un <a href="#chefs">chef</a>. Le temps est compté, la langue est rude, les enjeux sont élevés, tout comme le risque de burn-out. Les <a href="#rats">Rats</a> quant à eux, courent
+                        le risque d'être en surpoids et de devenir une proie facile pour les <a href="#cats">chats</a>, notamment dans les <a href="#mcstake">cuisines FastFood</a>.
+                    </p>
+                    <p>
+                        Ne laissez pas cela se produire, veillez à envoyer vos personnages à la salle de sport où ils pourront se défouler, se détendre et perdre du poids.
+                    </p>
+
+                    <h4>Événements</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <th><strong>Événement</strong></th>
+                            <th><strong>Chefs</strong></th>
+                            <th><strong>Rats</strong></th>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">Enter dans la salle de sport (stake)</td>
+                            <td>Pas de conditions</td>
+                            <td>Pas de conditions</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Succès : -12% de folie par jour<br>
+                                (au prorata à la seconde)
+                            </td>
+                            <td>
+                                Succès : -8% de masse corporelle par jour<br>
+                                (au prorata à la seconde)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td rowspan="2">Leave gym (unstake)</td>
+                            <td>Impossible de unstake dans les 2h</td>
+                            <td>Impossible de unstake dans les 2h</td>
+                        </tr>
+                        <tr>
+                            <td>Pas de risques</td>
+                            <td>Pas de risques</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h2 id="jetons">Les Jetons</h2>
+
+                    <p>
+                        Le jeu présente 3 jetons "food" (nourriture) différents dont le nombre total décroît. Ensemble, ils sont désignés par le terme $xFOOD. Au cours de votre progression dans le jeu, vous allez produire ces jetons et en avoir besoin pour acheter des
+                        items. La liquidité sera fournie par l'équipe, mais tout le monde est encouragé à fournir de la liquidité et à gagner ses propres récompenses de LP staking.
+                    </p>
+                    <h3 id="ffood">FastFood ($FFOOD)</h3>
+
+                    <p>
+                        Le jeton ERC20 gagné pour <del>travailler / voler</del> staker chez <a href="#mcstake"><em>McStake©</em></a>. Il est proposé avec une réserve maximale de 100.000.000 jetons.
+                    </p>
+
+                    <h4>Allocations et Planning de déblocage des Jetons</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Trésorerie Play2Earn</td>
+                            <td class="right">50%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Équipe principale</td>
+                            <td class="right">20%</td>
+                            <td>20% débloqués au lancement, puis 5% par mois</td>
+                        </tr>
+                        <tr>
+                            <td>Incitations pour les écosystèmes</td>
+                            <td class="right">15%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Récompenses de Staking &amp; LP</td>
+                            <td class="right">10%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Conseillers</td>
+                            <td class="right">5%</td>
+                            <td>25% débloqués au lancement, puis 5% par mois</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="cfood">CasualFood ($CFOOD)</h3>
+
+                    <p>Le jeton ERC20 gagné pour <del>travailler / voler</del> staker chez <a href="#thestakehouse"><em>TheStakeHouse©</em></a>. Il est proposé avec une réserve maximale de 10.000.000 jetons.</p>
+
+                    <h4>Allocations et Planning de déblocage des Jetons</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Trésorerie Play2Earn</td>
+                            <td class="right">50%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Équipe principale</td>
+                            <td class="right">20%</td>
+                            <td>20% débloqués au lancement, puis 5% par mois</td>
+                        </tr>
+                        <tr>
+                            <td>Incitations pour les écosystèmes</td>
+                            <td class="right">15%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Récompenses de Staking &amp; LP</td>
+                            <td class="right">10%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Conseillers</td>
+                            <td class="right">5%</td>
+                            <td>25% débloqués au lancement, puis 5% par mois</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="gfood">GourmetFood ($GFOOD)</h3>
+
+                    <p>
+                        Le jeton ERC20 gagné pour <del>travailler / voler</del> staker chez <a href="#lestake"><em>LeStake©</em></a>. Il est proposé avec une réserve maximale de 1.000.000 jetons and est le jeton DAO de RatAlert. Les propriétaires sont aux premières loges dans tous les
+                        processus de décision du jeu.
+                    </p>
+                    <h4>Allocations et Planning de déblocage des Jetons</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Trésorerie Play2Earn</td>
+                            <td class="right">50%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Équipe principale</td>
+                            <td class="right">20%</td>
+                            <td>20% débloqués au lancement, puis 5% par mois</td>
+                        </tr>
+                        <tr>
+                            <td>Incitations pour les écosystèmes</td>
+                            <td class="right">15%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Récompenses de Staking &amp; LP</td>
+                            <td class="right">10%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Conseillers</td>
+                            <td class="right">5%</td>
+                            <td>25% débloqués au lancement, puis 5% par mois</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h2 id="cast">Les Rôles</h2>
+
+                    <h3 id="cast_general">Général</h3>
+
+                    <p>RatAlert a 3 personnages principaux : les <a href="#chefs">chefs</a>, les <a href="#rats">rats</a> et les <a href="#cats">chats</a>. Les chefs <del>cuisinent</del> mintent des jetons de nourriture (food), les rats les volent et les chats kidnappent les rats.</p>
+                    <p>
+                        Chaque personnage créé est unique et peut être entraîné par le joueur. Chaque NFT possède 2 attributs qui changent lors du déblocage (unstake) ou du claim. Les attributs affectent l'apparence (image) du NFT, visible à la fois dans
+                        le jeu et sur OpenSea. dans le jeu et sur OpenSea. La taille des pixels est de 100x100, soit 3 fois la taille des autres jeux Play2Earn, comme Wolf Game.
+                    </p>
+                    <p>Le coût de mint d'un NFT de génération 0 est de <strong>0.07 WETH</strong>.</p>
+                    <p>Les utilisateurs éligibles à la liste blanche peuvent mint leurs NFT jusqu'à <strong>24 heures</strong> avant le lancement officiel, et bénéficier d'une réduction de 15 %, ce qui donne un prix de <strong>0.06 WETH</strong>.</p>
+                    <p>
+                        Une fois que 10 000 NFT de génération 0 auront été vendus, les NFT de génération 1 pourront être achetés avec le premier de nos jetons de jeu, $FFOOD (FastFood) :
+                    </p>
+
+                    <table>
+                        <tbody><tr>
+                            <td class="right">10,001 - 20,000</td>
+                            <td>1,000 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">20,001 - 30,000</td>
+                            <td>1,500 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">30,001 - 40,000</td>
+                            <td>2,000 $FFOOD</td>
+                        </tr>
+                        <tr>
+                            <td class="right">40,001 - 60,000</td>
+                            <td>3,000 $FFOOD</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="chefs">Chefs</h3>
+
+                    <p>Les chefs sont les personnages principaux du jeu et sont dotés de 5 types de traits différents :</p>
+                    <ul>
+                        <li>Yeux : comprend les lunettes de soleil ou les yeux laser</li>
+
+                        <li>Chapeau : comprend divers chapeaux, comme le célèbre bonnet rouge du <em>McStake©</em></li>
+
+                        <li>Cou : divers articles pour le cou, comme des attaches papillon</li>
+
+                        <li>Bouche : comprend diverses barbes, comme une barbe tressée</li>
+
+                        <li>Main : comprend différents accessoires, comme des rouleaux à pâtisserie ou des couteaux</li>
+                    </ul>
+                    <p><strong>90%</strong> de tous les mints sont des chefs.</p>
+                    <p>Les chefs ont deux attributs : <strong>compétence</strong> et <strong>folie</strong>.</p>
+                    <p>
+                        La <strong>Compétence</strong> est un attribut exclusivement positif et décrit la capacité de votre chef à apprendre de nouvelles choses et à acquérir de l'expérience. Le niveau de <strong>compétence</strong> affecte également la quantité de
+                        <a href="#tokens">$xFOOD</a> que votre chef peut produire par jour. Plus votre chef est intelligent, plus il cuisinera.
+                    </p>
+                    <p>
+                        La <strong>Folie </strong>est une arme à double tranchant : au début, l'attribut de folie de votre chef est inoffensif étant donné qu'il vient juste de commencer à cuisiner dans la célèbre chaîne de FastFood <a href="#mcstake"><em>McStake©</em></a>. Il
+                        s'ennuie et a envie d'en savoir plus. Plus tard dans sa carrière, votre chef commence à cuisiner dans ses propres <a href="#thestakehouse">cuisines</a> et se prend d'affection pour lui-même, jusqu'au point où il peut tout simplement devenir
+                        <strong>fou.</strong> Devenir <strong>fou</strong> s'accompagne d'un risque élevé de burn-out, ce qui met fin à la carrière de votre chef et le ramène à la case départ.
+                    </p>
+                    <p>
+                        Cependant, la chance sourit aux audacieux. Si vous êtes suffisamment motivé pour prendre le risque de voir votre chef parié devenir fou, vous avez la possibilité de minter gratuitement l'un des 100 <a href="#cats">chats</a> qui s'occupera des rats
+                        à sa manière.
+                    </p>
+                    <p>Même si vous n'êtes pas en mesure de minter l'un des 100 <a href="#cats">chats</a>, vous pouvez toujours en obtenir un en gardant votre chef <strong>fou</strong> (ou votre rat <strong>obèse</strong>)</p>
+                    <p>
+                        Le niveau de <strong>compétence</strong> du chef est représenté par son <strong>corps</strong> tandis que son niveau de <strong>folie</strong> est représenté par sa <strong>tête</strong>. Les deux attributs sont affichés sur une
+                        une échelle de 0% à 100 %.
+                    </p>
+
+                    <h4>Liste des Niveaux de Folie</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Valeur Numérique</th>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image31.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>bored (ennuyé)</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image30.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>unconventional (non conventionnel)</td>
+                            <td>15%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image20.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>fancy (chic)</td>
+                            <td>28%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image13.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>brilliant (brillant)</td>
+                            <td>42%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image27.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>creative genius (génie créatif)</td>
+                            <td>58%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image10.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>guru (gourou)</td>
+                            <td>72%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image17.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>insane (fou)</td>
+                            <td>86%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h4>Liste des niveaux de compétence</h4>
+
+                    <p>Tous les corps incluent la tête du "gourou" pour des raisons artistiques :</p>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Valeur Numérique</th>
+                            <th>Gains en $xFOOD</th>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image21.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Kitchen Scullion (Garçon de Cuisine)</td>
+                            <td>0%</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image8.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Vegetable Slicer (Coupe-Légumes)</td>
+                            <td>15%</td>
+                            <td>125%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image28.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Ingredient Taster (Goûteur d'Ingrédients)</td>
+                            <td>28%</td>
+                            <td>150%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image7.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Pastry chef (Chef Pâtissier)</td>
+                            <td>42%</td>
+                            <td>175%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image14.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Chef de Partie</td>
+                            <td>58%</td>
+                            <td>200%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image9.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Sous Chef</td>
+                            <td>72%</td>
+                            <td>225%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image12.png" width="50" alt="alt_text" title="image_tooltip"></td>
+                            <td>Three star chef (Chef trois étoiles)</td>
+                            <td>86%</td>
+                            <td>250%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h4>Événements de Chef</h4>
+
+                    <h5>Événement Inspecteur des aliments</h5>
+
+                    <p>
+                        Puisque vos chefs cuisiniers "collaborent" avec les <a href="#rats">rats</a>, ils peuvent recevoir la visite de l'inspecteur des aliments. Il interdira à votre chef de cuisiner pendant 24 heures, ce qui entraînera une réduction
+                        de ses <strong>compétences</strong> et de sa <strong>folie</strong>.
+                    </p>
+                    <p>Plus votre chef est compétent, moins il a de chances d'avoir affaire à l'inspecteur des aliments.</p>
+                    <p>Les événements se produisent lorsque vous réclamez (claim) ou retirez (unstake) vos chefs.</p>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Niveau de compétence minimum requis</td>
+                            <td>&gt;15% (vegetable slicer / coupe-légumes)</td>
+                        </tr>
+                        <tr>
+                            <td>Probabilité d'occurrence</td>
+                            <td>2-12% à chaque unstake ou claim, selon le niveau de compétence</td>
+                        </tr>
+                        <tr>
+                            <td>Formule d'occurrence :</td>
+                            <td>((compétence-100)/-1000)+0.02</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 1</td>
+                            <td>Compétence réduite de 10%</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 2</td>
+                            <td>Folie réduite de 25%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <div>Probabilité d'occurrence :</div>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Niveau de compétence</th>
+                            <th>Risque d'être contrôlé par l'inspecteur des aliments</th>
+                        </tr>
+                        <tr>
+                            <td>0%</td>
+                            <td>12%</td>
+                        </tr>
+                        <tr>
+                            <td>10%</td>
+                            <td>11%</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>10%</td>
+                        </tr>
+                        <tr>
+                            <td>30%</td>
+                            <td>9%</td>
+                        </tr>
+                        <tr>
+                            <td>40%</td>
+                            <td>8%</td>
+                        </tr>
+                        <tr>
+                            <td>50%</td>
+                            <td>7%</td>
+                        </tr>
+                        <tr>
+                            <td>60%</td>
+                            <td>6%</td>
+                        </tr>
+                        <tr>
+                            <td>70%</td>
+                            <td>5%</td>
+                        </tr>
+                        <tr>
+                            <td>80%</td>
+                            <td>4%</td>
+                        </tr>
+                        <tr>
+                            <td>90%</td>
+                            <td>3%</td>
+                        </tr>
+                        <tr>
+                            <td>100%</td>
+                            <td>2%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h5>Événement de Burn-out</h5>
+
+                    <p>
+                        Le surmenage entraîne généralement l'épuisement, la fatigue et des problèmes de santé. Les chefs qui sont <strong>fous </strong>ont un risque très élevé de souffrir d'épuisement professionnel. Les chefs ayant un niveau de <strong>compétence</strong> plus élevé ont
+                        beaucoup plus de chances d'éviter le burn-out.
+                    </p>
+                    <p>Laisser votre chef travailler trop longtemps alors qu'il est <strong>fou</strong> comporte le risque qu'il quitte son lieu de travail et redémarre avec<strong> 0 point de compétence</strong> ainsi que <strong>0 point de folie</strong>.</p>
+                    <p>Ne laissez pas cela se produire, veillez à envoyer vos Chefs à la <a href="#gym">Salle de Sport</a> pour qu'ils puissent se défouler et se détendre.</p>
+                    <p>Les événements se produisent lorsque vous réclamez (claim) ou retirez (unstake) vos chefs.</p>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Niveau de compétence minimum requis</td>
+                            <td>&gt;86% (Insane / Fou)</td>
+                        </tr>
+                        <tr>
+                            <td>Probabilité d'occurrence</td>
+                            <td>27-2% à chaque unstake ou claim, selon le niveau de compétence</td>
+                        </tr>
+                        <tr>
+                            <td>Formule d'occurrence :</td>
+                            <td>((intelligence-100)/-400)+0.02</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 1</td>
+                            <td>Compétence réduite à 0%</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 2</td>
+                            <td>Folie réduite à 0%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <div>
+                        Probabilité d'occurrence:
+                    </div>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Niveau de compétence</th>
+                            <th>Risque de souffrir de burn-out</th>
+                        </tr>
+                        <tr>
+                            <td>0%</td>
+                            <td>27.00%</td>
+                        </tr>
+                        <tr>
+                            <td>10%</td>
+                            <td>24.50%</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>22.00%</td>
+                        </tr>
+                        <tr>
+                            <td>30%</td>
+                            <td>19.50%</td>
+                        </tr>
+                        <tr>
+                            <td>40%</td>
+                            <td>17.00%</td>
+                        </tr>
+                        <tr>
+                            <td>50%</td>
+                            <td>14.50%</td>
+                        </tr>
+                        <tr>
+                            <td>60%</td>
+                            <td>12.00%</td>
+                        </tr>
+                        <tr>
+                            <td>70%</td>
+                            <td>9.50%</td>
+                        </tr>
+                        <tr>
+                            <td>80%</td>
+                            <td>7.00%</td>
+                        </tr>
+                        <tr>
+                            <td>90%</td>
+                            <td>4.50%</td>
+                        </tr>
+                        <tr>
+                            <td>100%</td>
+                            <td>2.00%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="rats">Rats</h3>
+
+                    <p>Les rats sont les vilains du jeu et peuvent avoir 5 types de traits différents :</p>
+                    <ul>
+                        <li>Queue : comprend les décorations de queue ou les queues blessées</li>
+                        <li>Yeux : comprend diverses lunettes de soleil ou des yeux laser</li>
+                        <li>Piercings : comprend divers piercings de la tête, comme les piercings du nez et des oreilles</li>
+                        <li>Chapeaux : comprend divers couvre-chefs, comme les bonnets de nuit ou les bonnets d'hiver</li>
+                        <li>Cou : comprend différents accessoires pour le cou, comme des cravates ou des écharpes</li>
+                    </ul>
+                    <p><strong>10%</strong> de tous les mints sont des rats.</p>
+                    <p>Les rats mangent et volent <strong>20%</strong> des <a href="#tokens">$xFOOD</a> des <a href="#chefs">Chefs</a> pour leur meute de rats.</p>
+                    <p>Les rats ont deux attributs, l'<strong>intelligence</strong> et la <strong>masse corporelle</strong>.</p>
+                    <p>L'<strong>Intelligence</strong> est un attribut exclusivement positif, et décrit la capacité de vos rats à éviter les pièges à rats du <a href="#chefs">chef</a> avec plus de confiance.</p>
+                    <p>
+                        Semblable à la folie du <a href="#chefs">chef</a>, la <strong>masse corporelle </strong>peut s'agir d'un bon ou d'un mauvais attribut : Les rats commencent comme <strong>anorexiques </strong>et doivent gagner en <strong>masse corporelle</strong> afin de
+                        manger et voler plus de <a href="#tokens">$xFOOD</a> pour leur meute. Après un certain temps, ils deviendront <strong>athletiques, </strong>ce qui est la condition la plus parfaite pour un rat. Les rats athlétiques peuvent voler l'optimum des
+                        <a href="#tokens">$xFOOD</a> par jour des <a href="#chefs">Chefs</a>. Les rats qui sont plus minces ou plus lourds qu'<strong>athletiques </strong>ne sont pas aussi efficaces quand il s'agit de voler les
+                        <a href="#chefs">chefs</a>.
+                    </p>
+                    <p>
+                        Les rats qui grossissent présentent plusieurs inconvénients : ils sont plus léthargiques et plus faibles que leurs congénères plus minces, ce qui leur permet de transporter moins de nourriture lorsqu'ils sont stakés dans une <a href="#venues">cuisine</a>. Les rats obese
+                        ont un net désavantage. Ils sont une cible facile pour le <a href="#cats">chat</a> du Chef. Les chats aiment beaucoup les rats obèses et n'hésitent pas à les kidnapper lorsqu'ils les repèrent.
+                        <strong>Un rat kidnappé redémarre avec 0 point d'intelligence et 0 point de masse corporelle.</strong>
+                    </p>
+                    <p>
+                        Tant que vous avez au moins un rat obèse staké et que vous possédez au moins un <a href="#chefs">chef</a>, vous pourrez recevoir de manière aléatoire l'un des <a href="#cats">chats</a> mintés, vous permettant de l'utiliser à votre
+                        avantage.
+                    </p>
+                    <p>Le niveau d'<strong>intelligence</strong> du rat est représenté par la <strong>tête</strong>, tandis que le niveau de <strong>masse corporelle</strong> est représenté par le <strong>corps</strong>.</p>
+                    <p>Les deux attributs sont affichés sur une échelle de 0 à 100%.</p>
+
+                    <h4>Liste des niveaux d'intelligence</h4>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Valeur Numérique</th>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image3.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>braindead (sans cerveau)</td>
+                            <td>0%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image1.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>stupid (stupide)</td>
+                            <td>15%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image18.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>foolish (sot)</td>
+                            <td>28%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image26.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>average (moyen)</td>
+                            <td>42%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image6.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>bright (lumineux)</td>
+                            <td>58%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image5.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>smart (intelligent)</td>
+                            <td>72%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image15.png" width="" alt="alt_text" title="image_tooltip"></td>
+                            <td>genius (génie)</td>
+                            <td>86%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h4>Liste des taux de graisse corporelle</h4>
+
+                    <p>Tous les corps incluent la tête "intelligente" pour des raisons artistiques :</p>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Image</th>
+                            <th>Description</th>
+                            <th>Valeur Numérique</th>
+                            <th>Gains en $xFOOD</th>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image22.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>anorexic (anorexique)</td>
+                            <td>0%</td>
+                            <td>55%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image25.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>skinny (maigre)</td>
+                            <td>15%</td>
+                            <td>70%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image11.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>lean (mince)</td>
+                            <td>28%</td>
+                            <td>85%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image32.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>athletic (athlétique)</td>
+                            <td>42%</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image24.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>chubby (joufflu)</td>
+                            <td>58%</td>
+                            <td>90%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image29.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>fat (gras)</td>
+                            <td>72%</td>
+                            <td>80%</td>
+                        </tr>
+                        <tr>
+                            <td><img src="../assets/images/image2.png" width="100" alt="alt_text" title="image_tooltip"></td>
+                            <td>obese (obèse)</td>
+                            <td>86%</td>
+                            <td>70%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h4>Événements Rat</h4>
+
+                    <h5>Événement Piège à Rats</h5>
+
+                    <p>
+                        Tous les <a href="#chefs">chefs</a> n'apprécient pas le fait qu'il y ait eu un accord pour donner 20% de toutes leur production de <a href="#tokens">$xFOOD</a>, alors certains d'entre eux ont installé des pièges à rats. Se retrouver coincé dans un piège est très stressant
+                        pour les rats, ils perdent donc des points de <strong>masse corporelle</strong> et d'<strong>intelligence</strong> en étant piégés. Les rats plus intelligents sont capables d'éviter les pièges à rats plus souvent.
+                    </p>
+                    <p>Les événements se produisent lorsque vous réclamez (claim) ou retirez (unstake) vos rats.</p>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Niveau d'intelligence minimum requis</td>
+                            <td>&gt;15% (skinny / maigre)</td>
+                        </tr>
+                        <tr>
+                            <td>Probabilité d'occurrence</td>
+                            <td>2-12% à chaque unstake ou claim, selon le niveau de d'intelligence</td>
+                        </tr>
+                        <tr>
+                            <td>Formule d'occurrence :</td>
+                            <td>((intelligence-100)/-1000)+0.02</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 1</td>
+                            <td>Masse corporelle réduite de 50%</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 2</td>
+                            <td>Intelligence réduite de 10%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <div>Probabilité d'occurrence:</div>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Niveau d'intelligence</th>
+                            <th>Risque d'être pris dans un piège à rat</th>
+                        </tr>
+                        <tr>
+                            <td>0%</td>
+                            <td>12%</td>
+                        </tr>
+                        <tr>
+                            <td>10%</td>
+                            <td>11%</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>10%</td>
+                        </tr>
+                        <tr>
+                            <td>30%</td>
+                            <td>9%</td>
+                        </tr>
+                        <tr>
+                            <td>40%</td>
+                            <td>8%</td>
+                        </tr>
+                        <tr>
+                            <td>50%</td>
+                            <td>7%</td>
+                        </tr>
+                        <tr>
+                            <td>60%</td>
+                            <td>6%</td>
+                        </tr>
+                        <tr>
+                            <td>70%</td>
+                            <td>5%</td>
+                        </tr>
+                        <tr>
+                            <td>80%</td>
+                            <td>4%</td>
+                        </tr>
+                        <tr>
+                            <td>90%</td>
+                            <td>3%</td>
+                        </tr>
+                        <tr>
+                            <td>100%</td>
+                            <td>2%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <p></p>
+                    <h5>Événement se faire attraper par un chat</h5>
+
+                    <p>
+                        Les rats en surpoids et obèses sont très léthargiques et faibles. Ils se déplacent très lentement et il leur est difficile d'éviter leurs ennemis naturels - les <a href="#cats">chats</a>. Les chats adorent les rats obèses parce qu'ils sont une
+                        proie facile. Les rats plus intelligents ont moins de chances d'être repérés par les chats.
+                    </p>
+                    <p>Un rat obèse attrapé par un chat souffre d'une perte totale d'<strong>intelligence</strong> et de <strong>masse corporelle</strong>.</p>
+                    <p>Ne laissez pas cela se produire, assurez-vous d'envoyer vos rats à la <a href="#gym">Salle de Sport</a> où ils peuvent perdre de la graisse !</p>
+                    <p>Les événements se produisent lorsque vous réclamez (claim) ou retirez (unstake) vos rats.</p>
+
+                    <table>
+                        <tbody><tr>
+                            <td>Niveau minimum de masse corporelle requis</td>
+                            <td>&gt;86% (Obèse)</td>
+                        </tr>
+                        <tr>
+                            <td>Probabilité d'occurrence</td>
+                            <td>27-2% à chaque unstake ou claim, selon le niveau de compétence</td>
+                        </tr>
+                        <tr>
+                            <td>Formule d'occurrence :</td>
+                            <td>((intelligence-100)/-400)+0.02</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 1</td>
+                            <td>Intelligence réduite à 0%</td>
+                        </tr>
+                        <tr>
+                            <td>Résultat 2</td>
+                            <td>Masse corporelle réduite à 0%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <div>Probabilité d'occurrence:</div>
+
+                    <table>
+                        <tbody><tr>
+                            <th>Niveau de compétence</th>
+                            <th>Risque d'être attrapé par un chat</th>
+                        </tr>
+                        <tr>
+                            <td>0%</td>
+                            <td>27.00%</td>
+                        </tr>
+                        <tr>
+                            <td>10%</td>
+                            <td>24.50%</td>
+                        </tr>
+                        <tr>
+                            <td>20%</td>
+                            <td>22.00%</td>
+                        </tr>
+                        <tr>
+                            <td>30%</td>
+                            <td>19.50%</td>
+                        </tr>
+                        <tr>
+                            <td>40%</td>
+                            <td>17.00%</td>
+                        </tr>
+                        <tr>
+                            <td>50%</td>
+                            <td>14.50%</td>
+                        </tr>
+                        <tr>
+                            <td>60%</td>
+                            <td>12.00%</td>
+                        </tr>
+                        <tr>
+                            <td>70%</td>
+                            <td>9.50%</td>
+                        </tr>
+                        <tr>
+                            <td>80%</td>
+                            <td>7.00%</td>
+                        </tr>
+                        <tr>
+                            <td>90%</td>
+                            <td>4.50%</td>
+                        </tr>
+                        <tr>
+                            <td>100%</td>
+                            <td>2.00%</td>
+                        </tr>
+                        </tbody></table>
+
+                    <h3 id="cats">Chats</h3>
+
+                    <p>
+                        Le troisième personnage jouable est le chat. Il n'y a que 100 chats dans le jeu et ils ne peuvent être mintés gratuitement que par des <a href="#chefs">chefs</a> fous. Un chat vous permet de voler le butin de 5
+                        <a href="#rats">rats</a> obèses aléatoires par jour. Après 10 jours, le chat cherchera un nouveau foyer soit chez un autre chef fou aléatoire, soit chez un propriétaire de rats obèses possédant au moins un chef (le niveau de folie du chef "supplémentaire" n'a pas
+                        d'importance dans ce cas).
+                    </p>
+                    <p>Le chat est conçu pour être la récompense du risque lorsque l'on joue audacieusement en stakant :</p>
+                    <ul>
+                        <li>Des <strong><a href="#chefs">chefs</a> fous</strong> qui peuvent aléatoirement souffrir de burn-outs</li>
+                        <li>Des <strong><a href="#rats">rats</a> obèses</strong> qui peut être tué au hasard par un chat</li>
+                    </ul>
+                    <p>Il n'y a pas d'événements, d'attributs ou de traits pour les chats.</p>
+                    <h2 id="contracts">Adresses des contrats</h2>
+
+                    <table>
+                        <tbody><tr>
+                            <td><a href="#chefs">Chefs</a> / <a href="#rats">Rats</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#mcstake">Cuisine FastFood</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#thestakehouse">Cuisine CasualFood</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#lestake">Cuisine GourmetFood</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#gym">Salle de Sport</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#ffood">$FFOOD</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#cfood">$CFOOD</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        <tr>
+                            <td><a href="#gfood">$GFOOD</a></td>
+                            <td>Prochainement…</td>
+                        </tr>
+                        </tbody></table>
+                </main>
+            </div>
+        </div>
+        <footer>
+            <ul>
+                <li><a href="https://twitter.com/RatAlertNFT" target="_blank" title="Twitter"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path d="M23.643 4.937c-.835.37-1.732.62-2.675.733a4.67 4.67 0 0 0 2.048-2.578a9.3 9.3 0 0 1-2.958 1.13a4.66 4.66 0 0 0-7.938 4.25a13.229 13.229 0 0 1-9.602-4.868c-.4.69-.63 1.49-.63 2.342A4.66 4.66 0 0 0 3.96 9.824a4.647 4.647 0 0 1-2.11-.583v.06a4.66 4.66 0 0 0 3.737 4.568a4.692 4.692 0 0 1-2.104.08a4.661 4.661 0 0 0 4.352 3.234a9.348 9.348 0 0 1-5.786 1.995a9.5 9.5 0 0 1-1.112-.065a13.175 13.175 0 0 0 7.14 2.093c8.57 0 13.255-7.098 13.255-13.254c0-.2-.005-.402-.014-.602a9.47 9.47 0 0 0 2.323-2.41l.002-.003z" fill="white"/></g></svg><!--[if lt IE 9]><em>Twitter</em><![endif]--></a></li>
+                <li><a href="https://discord.gg/T6THfqh37A" target="_blank" title="Discord"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.956-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419c0-1.333.955-2.419 2.157-2.419c1.21 0 2.176 1.096 2.157 2.42c0 1.333-.946 2.418-2.157 2.418z" fill="white"/></svg><!--[if lt IE 9]>Discord<![endif]--></a></li>
+                <li><a href="https://github.com/ratalert" target="_blank" title="GitHub"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><g fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385c.6.105.825-.255.825-.57c0-.285-.015-1.23-.015-2.235c-3.015.555-3.795-.735-4.035-1.41c-.135-.345-.72-1.41-1.23-1.695c-.42-.225-1.02-.78-.015-.795c.945-.015 1.62.87 1.845 1.23c1.08 1.815 2.805 1.305 3.495.99c.105-.78.42-1.305.765-1.605c-2.67-.3-5.46-1.335-5.46-5.925c0-1.305.465-2.385 1.23-3.225c-.12-.3-.54-1.53.12-3.18c0 0 1.005-.315 3.3 1.23c.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23c.66 1.65.24 2.88.12 3.18c.765.84 1.23 1.905 1.23 3.225c0 4.605-2.805 5.625-5.475 5.925c.435.375.81 1.095.81 2.22c0 1.605-.015 2.895-.015 3.3c0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" fill="white"/></g></svg><!--[if lt IE 9]>GitHub<![endif]--></a></li>
+            </ul>
+        </footer>
+    </div>
+</body>
+</html>
