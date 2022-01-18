@@ -43,6 +43,12 @@
       "Type": "String",
       "NoEcho": true
     },
+    "WebsiteHosting": {
+      "Description": "Enable S3 website hosting (less secure)?",
+      "Type": "String",
+      "AllowedValues": [ "true", "false" ],
+      "Default": "false"
+    },
     "Protected": {
       "Description": "Enable signed cookie protection?",
       "Type": "String",
@@ -112,6 +118,7 @@
     "EnableLambdaEdgeOriginResponse": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeOriginResponse" }, "true" ] },
     "EnableLambdaEdgeViewerRequest": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeViewerRequest" }, "true" ] },
     "EnableLambdaEdgeViewerResponse": { "Fn::Equals": [ { "Ref": "EnableLambdaEdgeViewerResponse" }, "true" ] },
+    "WebsiteHosting": { "Fn::Equals": [ { "Ref": "WebsiteHosting" }, "true" ] },
     "Protected": { "Fn::Equals": [ { "Ref": "Protected" }, "true" ] }
   },
 
@@ -364,8 +371,8 @@
             {
               "ErrorCachingMinTTL": 30,
               "ErrorCode": 404,
-              "ResponseCode": "200",
-              "ResponsePagePath": "/index.html"
+              "ResponseCode": 404,
+              "ResponsePagePath": "/error.html"
             }
           ],
           "DefaultCacheBehavior": {
@@ -468,10 +475,30 @@
           "HttpVersion": "http2",
           "Origins": [{
             "Id": { "Fn::Join": ["", ["S3-", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
-            "DomainName": { "Fn::GetAtt": [ "S3AppBucket", "DomainName" ] },
-            "S3OriginConfig": {
-              "OriginAccessIdentity" : { "Fn::Join": ["/", ["origin-access-identity", "cloudfront", { "Ref": "CloudFrontOriginAccessIdentity" }]] }
-            }
+            "DomainName": { "Fn::If": [
+              "WebsiteHosting",
+              { "Fn::Join": [".", [{ "Ref": "S3AppBucket" }, "s3-website", { "Ref" : "AWS::Region" }, "amazonaws", "com"]] },
+              { "Fn::GetAtt": [ "S3AppBucket", "DomainName" ] }
+            ] },
+            "S3OriginConfig": { "Fn::If": [
+              "WebsiteHosting",
+              { "Ref" : "AWS::NoValue" },
+              {
+                "OriginAccessIdentity" : { "Fn::Join": ["/", ["origin-access-identity", "cloudfront", { "Ref": "CloudFrontOriginAccessIdentity" }]] }
+              }
+            ] },
+            "CustomOriginConfig": { "Fn::If": [
+              "WebsiteHosting",
+              {
+                "HTTPPort": 80,
+                "HTTPSPort": 443,
+                "OriginKeepaliveTimeout": 5,
+                "OriginProtocolPolicy": "http-only",
+                "OriginReadTimeout": 30,
+                "OriginSSLProtocols": ["TLSv1", "TLSv1.1", "TLSv1.2"]
+              },
+              { "Ref" : "AWS::NoValue" }
+            ] }
           }],
           "Logging": {
             "Bucket": { "Fn::GetAtt": [ "S3LogsBucket", "DomainName" ] },
@@ -493,6 +520,17 @@
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
+            { "Fn::If": ["WebsiteHosting",
+              {
+                "Sid": "PublicRead",
+                "Effect": "Allow",
+                "Principal": "*",
+                "Action": ["s3:GetObject", "s3:GetObjectVersion"],
+                "Resource": [
+                  { "Fn::Join": ["", ["arn:aws:s3:::", { "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }, "/*"]] }
+                ]
+              }, { "Ref" : "AWS::NoValue" }]
+            },
             {
               "Sid": "ProxyS3Policy",
               "Effect": "Allow",
