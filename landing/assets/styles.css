@@ -1,7 +1,7 @@
 @import "reset.css";
 @font-face {
     font-family: eightbit;
-    src: url(8bit-wonder-nominal.woff);
+    src: url(pixeloidsans-bold.woff);
 }
 html, body {
     height: 100%;
@@ -36,7 +36,8 @@ div#tagline {
     color: white;
     font-size: 20px;
     font-family: eightbit, Helvetica, sans-serif;
-    padding: 2px 5px 5px 5px;
+    text-transform: uppercase;
+    padding: 4px 5px 4px 5px;
 }
 div#content {
     margin: 0 10px;
@@ -93,15 +94,16 @@ h1, h2, h3, h4, h5 {
 }
 h1 {
     text-align: center;
-    font-size: 22px;
-    padding: 2px 5px 5px 5px;
+    font-size: 24px;
+    padding: 4px 5px 4px 5px;
+    text-transform: uppercase;
 }
 h2 {
     margin-top: 80px;
     background-color: #d8cba9;
     color: white;
     font-size: 20px;
-    padding: 2px 5px 5px 5px;
+    padding: 4px 5px 4px 5px;
 }
 h3 {
     font-size: 20px;
