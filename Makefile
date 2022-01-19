@@ -25,6 +25,10 @@ deploy-landing:
 	aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
 	aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper
 
+clear-cache:
+	@DISTRIBUTION="E5H9VMU68O7UP" && [[ "${ENV}" == "prod" ]] && DISTRIBUTION=EIB41B6XCOCXM; \
+	aws cloudfront create-invalidation --distribution-id $$DISTRIBUTION --paths "/*"
+
 deploy-cf-bucket:
 	@echo "+ Creating CloudFormation bucket"
 	aws s3 mb s3://${CF_BUCKET} --region ${AWS_REGION}
