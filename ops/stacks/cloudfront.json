@@ -130,7 +130,18 @@
         "BucketName": { "Fn::Join": ["", [{ "Fn::FindInMap": [ "ServiceParameters", { "Ref": "Environment" }, "BucketSubDomain" ] }, { "Ref": "ServiceDomain" }]] },
         "AccessControl": "Private",
         "WebsiteConfiguration": {
-          "IndexDocument": "index.html"
+          "IndexDocument": "index.html",
+          "RoutingRules": [
+            {
+              "RoutingRuleCondition": {
+                "KeyPrefixEquals": "whitepaper/index.html"
+              },
+              "RedirectRule": {
+                "HostName": "ratalert.com",
+                "ReplaceKeyPrefixWith": "whitepaper"
+              }
+            }
+          ]
         },
         "Tags": [
           { "Key": "Stack", "Value": { "Ref": "AWS::StackName" } },
