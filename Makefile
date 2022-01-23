@@ -24,6 +24,7 @@ deploy-landing:
 	aws s3 sync ./landing/ s3://ratalert.com/ --delete
 	aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
 	aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper
+	make clear-cache ENV=prod
 
 clear-cache:
 	@DISTRIBUTION="E5H9VMU68O7UP" && [[ "${ENV}" == "prod" ]] && DISTRIBUTION=EIB41B6XCOCXM; \
