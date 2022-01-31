@@ -143,19 +143,6 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "MINT_PRICE",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
               "name": "PAID_TOKENS",
               "outputs": [
                 {
@@ -261,6 +248,32 @@ export const contracts = {
                   "internalType": "bool",
                   "name": "",
                   "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "kitchenPack",
+              "outputs": [
+                {
+                  "internalType": "contract IKitchenPack",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "mintPrice",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -547,22 +560,12 @@ export const contracts = {
                 },
                 {
                   "internalType": "uint8",
-                  "name": "insanity",
+                  "name": "efficiency",
                   "type": "uint8"
                 },
                 {
                   "internalType": "uint8",
-                  "name": "skill",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "intelligence",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "fatness",
+                  "name": "tolerance",
                   "type": "uint8"
                 }
               ],
@@ -629,6 +632,11 @@ export const contracts = {
                   "internalType": "uint256",
                   "name": "_maxTokens",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_mintPrice",
+                  "type": "uint256"
                 }
               ],
               "name": "initialize",
@@ -642,6 +650,11 @@ export const contracts = {
                   "internalType": "uint8",
                   "name": "amount",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "stake",
+                  "type": "bool"
                 }
               ],
               "name": "mint",
@@ -662,8 +675,14 @@ export const contracts = {
                   "type": "int8"
                 }
               ],
-              "name": "updateInsanity",
-              "outputs": [],
+              "name": "updateEfficiency",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
               "stateMutability": "nonpayable",
               "type": "function"
             },
@@ -680,44 +699,14 @@ export const contracts = {
                   "type": "int8"
                 }
               ],
-              "name": "updateSkill",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
+              "name": "updateTolerance",
+              "outputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "int8",
-                  "name": "increment",
-                  "type": "int8"
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
                 }
               ],
-              "name": "updateIntelligence",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "int8",
-                  "name": "increment",
-                  "type": "int8"
-                }
-              ],
-              "name": "updateFatness",
-              "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
             },
@@ -794,22 +783,12 @@ export const contracts = {
                     },
                     {
                       "internalType": "uint8",
-                      "name": "insanity",
+                      "name": "efficiency",
                       "type": "uint8"
                     },
                     {
                       "internalType": "uint8",
-                      "name": "skill",
-                      "type": "uint8"
-                    },
-                    {
-                      "internalType": "uint8",
-                      "name": "intelligence",
-                      "type": "uint8"
-                    },
-                    {
-                      "internalType": "uint8",
-                      "name": "fatness",
+                      "name": "tolerance",
                       "type": "uint8"
                     }
                   ],
@@ -878,6 +857,19 @@ export const contracts = {
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_kitchenPack",
+                  "type": "address"
+                }
+              ],
+              "name": "setKitchenPack",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
             }
           ],
         },
@@ -904,6 +896,18 @@ export const contracts = {
                   "internalType": "bool",
                   "name": "unstaked",
                   "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "skill",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "insanity",
+                  "type": "uint8"
                 }
               ],
               "name": "ChefClaimed",
@@ -961,6 +965,18 @@ export const contracts = {
                   "internalType": "bool",
                   "name": "unstaked",
                   "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "intelligence",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "fatness",
+                  "type": "uint8"
                 }
               ],
               "name": "RatClaimed",
@@ -984,7 +1000,7 @@ export const contracts = {
                 {
                   "indexed": false,
                   "internalType": "uint256",
-                  "name": "timestamp",
+                  "name": "value",
                   "type": "uint256"
                 }
               ],
@@ -1006,6 +1022,19 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "DAILY_FATNESS_RATE",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "DAILY_FFOOD_RATE",
               "outputs": [
                 {
@@ -1020,6 +1049,19 @@ export const contracts = {
             {
               "inputs": [],
               "name": "DAILY_INSANITY_RATE",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "DAILY_INTELLIGENCE_RATE",
               "outputs": [
                 {
                   "internalType": "uint8",
@@ -1117,6 +1159,11 @@ export const contracts = {
                 },
                 {
                   "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
                   "name": "timestamp",
                   "type": "uint80"
                 }
@@ -1169,6 +1216,11 @@ export const contracts = {
                   "internalType": "address",
                   "name": "owner",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
                 },
                 {
                   "internalType": "uint80",
@@ -1334,7 +1386,7 @@ export const contracts = {
                   "type": "bool"
                 }
               ],
-              "stateMutability": "pure",
+              "stateMutability": "view",
               "type": "function"
             },
             {
@@ -1932,19 +1984,6 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "MINT_PRICE",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [],
               "name": "PAID_TOKENS",
               "outputs": [
                 {
@@ -2050,6 +2089,32 @@ export const contracts = {
                   "internalType": "bool",
                   "name": "",
                   "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "kitchenPack",
+              "outputs": [
+                {
+                  "internalType": "contract IKitchenPack",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "mintPrice",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
                 }
               ],
               "stateMutability": "view",
@@ -2336,22 +2401,12 @@ export const contracts = {
                 },
                 {
                   "internalType": "uint8",
-                  "name": "insanity",
+                  "name": "efficiency",
                   "type": "uint8"
                 },
                 {
                   "internalType": "uint8",
-                  "name": "skill",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "intelligence",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "fatness",
+                  "name": "tolerance",
                   "type": "uint8"
                 }
               ],
@@ -2418,6 +2473,11 @@ export const contracts = {
                   "internalType": "uint256",
                   "name": "_maxTokens",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_mintPrice",
+                  "type": "uint256"
                 }
               ],
               "name": "initialize",
@@ -2431,6 +2491,11 @@ export const contracts = {
                   "internalType": "uint8",
                   "name": "amount",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "stake",
+                  "type": "bool"
                 }
               ],
               "name": "mint",
@@ -2451,8 +2516,14 @@ export const contracts = {
                   "type": "int8"
                 }
               ],
-              "name": "updateInsanity",
-              "outputs": [],
+              "name": "updateEfficiency",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
               "stateMutability": "nonpayable",
               "type": "function"
             },
@@ -2469,44 +2540,14 @@ export const contracts = {
                   "type": "int8"
                 }
               ],
-              "name": "updateSkill",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
+              "name": "updateTolerance",
+              "outputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "int8",
-                  "name": "increment",
-                  "type": "int8"
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
                 }
               ],
-              "name": "updateIntelligence",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "int8",
-                  "name": "increment",
-                  "type": "int8"
-                }
-              ],
-              "name": "updateFatness",
-              "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
             },
@@ -2583,22 +2624,12 @@ export const contracts = {
                     },
                     {
                       "internalType": "uint8",
-                      "name": "insanity",
+                      "name": "efficiency",
                       "type": "uint8"
                     },
                     {
                       "internalType": "uint8",
-                      "name": "skill",
-                      "type": "uint8"
-                    },
-                    {
-                      "internalType": "uint8",
-                      "name": "intelligence",
-                      "type": "uint8"
-                    },
-                    {
-                      "internalType": "uint8",
-                      "name": "fatness",
+                      "name": "tolerance",
                       "type": "uint8"
                     }
                   ],
@@ -2667,6 +2698,19 @@ export const contracts = {
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_kitchenPack",
+                  "type": "address"
+                }
+              ],
+              "name": "setKitchenPack",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
             }
           ],
         },
@@ -2693,6 +2737,18 @@ export const contracts = {
                   "internalType": "bool",
                   "name": "unstaked",
                   "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "skill",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "insanity",
+                  "type": "uint8"
                 }
               ],
               "name": "ChefClaimed",
@@ -2750,6 +2806,18 @@ export const contracts = {
                   "internalType": "bool",
                   "name": "unstaked",
                   "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "intelligence",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "fatness",
+                  "type": "uint8"
                 }
               ],
               "name": "RatClaimed",
@@ -2773,7 +2841,7 @@ export const contracts = {
                 {
                   "indexed": false,
                   "internalType": "uint256",
-                  "name": "timestamp",
+                  "name": "value",
                   "type": "uint256"
                 }
               ],
@@ -2795,6 +2863,19 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "DAILY_FATNESS_RATE",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "DAILY_FFOOD_RATE",
               "outputs": [
                 {
@@ -2809,6 +2890,19 @@ export const contracts = {
             {
               "inputs": [],
               "name": "DAILY_INSANITY_RATE",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "DAILY_INTELLIGENCE_RATE",
               "outputs": [
                 {
                   "internalType": "uint8",
@@ -2873,6 +2967,19 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "accrualPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "fastFoodPerRat",
               "outputs": [
                 {
@@ -2903,6 +3010,11 @@ export const contracts = {
                   "internalType": "address",
                   "name": "owner",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
                 },
                 {
                   "internalType": "uint80",
@@ -2958,6 +3070,11 @@ export const contracts = {
                   "internalType": "address",
                   "name": "owner",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
                 },
                 {
                   "internalType": "uint80",
@@ -3064,6 +3181,11 @@ export const contracts = {
                   "internalType": "address",
                   "name": "_fastFood",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
                 }
               ],
               "name": "initialize",
@@ -3123,7 +3245,7 @@ export const contracts = {
                   "type": "bool"
                 }
               ],
-              "stateMutability": "pure",
+              "stateMutability": "view",
               "type": "function"
             },
             {

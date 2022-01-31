@@ -66,9 +66,9 @@
     "extends": "react-app"
   },
   "scripts": {
-    "build": "REACT_APP_ETH_ENV=rinkeby REACT_APP_GRAPH_URI=https://api.thegraph.com/subgraphs/name/crypto-1/chefrat react-scripts build",
+    "build": "REACT_APP_ETH_ENV=rinkeby REACT_APP_GRAPH_URI=//api.thegraph.com/subgraphs/name/crypto-1/rinkebychef react-scripts build",
     "eject": "react-scripts eject",
-    "start": "REACT_APP_GRAPH_ETH_ENV=local REACT_APP_GRAPH_URI=http://192.168.178.62:8000/subgraphs/name/ChefRat react-scripts start",
+    "start": "REACT_APP_GRAPH_ETH_ENV=local REACT_APP_GRAPH_URI=http://localhost:8000/subgraphs/name/ChefRat react-scripts start",
     "startRinkeby": "REACT_APP_GRAPH_ETH_ENV=rinkeby REACT_APP_GRAPH_URI=https://api.thegraph.com/subgraphs/name/crypto-1/chefrat react-scripts start",
     "test": "react-scripts test",
     "lint": "eslint --config ./.eslintrc.js --ignore-path ./.eslintignore ./src/**/*",

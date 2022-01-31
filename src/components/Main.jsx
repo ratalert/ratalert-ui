@@ -81,6 +81,7 @@ class Main extends React.Component {
       dataLoaded: false,
       pairs: {},
       currency: 'ETH',
+      officeView: 'mint',
       fFoodBalance: 0,
       stats: {
         minted: 0,
@@ -104,6 +105,12 @@ class Main extends React.Component {
   setCurrency(val) {
     if ( (val.target.value === 'ETH') || (val.target.value === 'WOOL') || (val.target.value === 'GP') ) {
       this.setState({currency: val.target.value})
+    }
+  }
+
+  setOfficeView(val) {
+    if ( (val.target.value === 'mint') || (val.target.value === 'balance') || (val.target.value === 'stats') ) {
+      this.setState({officeView: val.target.value})
     }
   }
 
@@ -368,14 +375,14 @@ class Main extends React.Component {
       const sum = amount * mintPrice;
       let gasLimit;
       if (amount === 1) {
-        gasLimit = 200000;
+        gasLimit = 500000;
       } else {
-        gasLimit = amount * 200000;
+        gasLimit = amount * 500000;
       }
 
 
       const result = await this.props.tx(
-        this.props.writeContracts.ChefRat.mint(amount, {
+        this.props.writeContracts.ChefRat.mint(amount, false, {
           from: this.props.address,
           value: ethers.utils.parseEther(sum.toString()),
           gasLimit,
@@ -452,7 +459,7 @@ class Main extends React.Component {
     const minted = await chefRatContract.minted();
     let totalSupply = await chefRatContract.MAX_TOKENS();
     let paidTokens = await chefRatContract.PAID_TOKENS();
-    let mintPrice = await chefRatContract.MINT_PRICE();
+    let mintPrice = await chefRatContract.mintPrice();
     if (!mintPrice) {
       mintPrice = 0;
     }
@@ -517,7 +524,7 @@ class Main extends React.Component {
   renderMintContent() {
     if (!this.state.dataLoaded) {
       return (
-        <Card size="small" title="Minting">
+        <Card size="small">
           <Row>
             <Col span={24} style={{ textAlign: "center" }}>
               <Spin/>
@@ -528,105 +535,75 @@ class Main extends React.Component {
     }
     const mintPrice = this.getMintPrice();
     return (
-      <Card size="small" title="Minting">
-
-        <Row></Row>
+      <div className="officeHeadline">
         <Row>
-          <Col span={8}/>
-          <Col span={16} style={{ textAlign: "left" }}>
-            Select how many NFTs you want to mint:
+          <Col span={16}>
+            Mint your character here:
           </Col>
         </Row>
-        <Row>
-          <Col span={10} />
-          <Col span={12}>
+        <Row className="officeContent">
+          <Col  span={24}>
             <Row>
-              <Col span={3}>
-                <CaretLeftOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount - 1)} style={{cursor: 'pointer', fontSize: '32px'}}/>
+              <Col xs={11} md={12} className="officeLine">1. Amount of NFTs to mint</Col>
+              <Col style={{width: '20px', paddingTop: '0px'}}>
+                <CaretLeftOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount - 1)} style={{cursor: 'pointer', fontSize: '20px'}}/>
+              </Col>
+              <Col style={{width: '25px'}}>
+              <div style={{textDecoration: 'underline', paddingLeft: 11, marginTop: 5}}>{this.state.mintAmount}</div>
               </Col>
               <Col span={3}>
-              <InputNumber
-                min={1}
-                max={10}
-                style={{ width: '40px' }}
-                value={this.state.mintAmount}
-                onChange={this.onChangeAmount.bind(this)}
-              />
-              </Col>
-              <Col span={3}>
-                <CaretRightOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '32px'}}/>
+                <CaretRightOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '20px'}}/>
               </Col>
             </Row>
           </Col>
-          <Col span={4}>
-
-          </Col>
         </Row>
-        <Row>
-          <Col span={8}/>
-          <Col span={16} style={{ textAlign: "left" }}>
-            Select currency for payment:
+        <Row className="officeContent">
+          <Col className="officeLine" xs={11} md={12} style={{ textAlign: "left"}}>
+            2. Select currency for payment
           </Col>
-        </Row>
-        <Row>
-          <Col span={0}/>
-          <Col span={24} style={{ textAlign: "center" }}>
+          <Col span={12} style={{marginTop: -5}}>
           <Radio.Group onChange={this.setCurrency.bind(this)} value={this.state.currency} buttonStyle="solid">
-            <Radio.Button value="ETH">$ETH</Radio.Button>
-            <Radio.Button disabled={this.state.pairs['WOOL/WETH'] > 0 ? false : true} value="WOOL">$WOOL</Radio.Button>
-            <Radio.Button disabled={this.state.pairs['GP/WETH'] > 0 ? false : true} value="GP">$GP</Radio.Button>
+            <Radio.Button value="wETH">$wETH</Radio.Button>
+            <Radio.Button disabled={this.state.pairs['WOOL/WETH'] > 0 ? false : true} value="MATIC">$MATIC</Radio.Button>
           </Radio.Group>
           </Col>
-          <Col span={8}/>
         </Row>
-        <Row>
-          <Col span={8}/>
-          <Col span={12} style={{ textAlign: "left" }}>
-            <b>Price per NFT: { mintPrice } { this.state.currency }</b>
+        <Row  className="officeContent">
+          <Col className="officeLine" xs={11} md={12}>
+            3. Start minting
+          </Col>
+          <Col span={3} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this)}>
+              Mint
+            </Button>
+          </Col>
+          <Col span={6} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this)}>
+              Mint & Stake
+            </Button>
           </Col>
         </Row>
-        <Row>
-          <Col span={8}/>
-          <Col span={12} style={{ textAlign: "left" }}>
-            <b>Total: { Decimal(mintPrice).times(this.state.mintAmount).toString() } { this.state.currency }</b>
-          </Col>
-        </Row>
-
-        <Row  style={{ paddingTop: "25px" }}>
-          <Col span={8} />
-          <Col span={3} style={{ textAlign: "center" }}>
+        <Row  className="officeContent">
+          <Col className="officeLine" span={3} style={{ textAlign: "left" }}>
             Gen {this.state.stats.minted > this.state.stats.paidTokens ? 1 : 0}
           </Col>
-          <Col span={8} style={{ textAlign: "center" }}>
+          <Col className="officeLine" xs={8} md={9} style={{ textAlign: "left" }}>
             {this.state.stats.minted} /{" "}
             {this.state.stats.minted > this.state.stats.paidTokens
               ? this.state.stats.totalSupply
               : this.state.stats.paidTokens}
           </Col>
-        </Row>
-        <Row style={{ paddingTop: "25px" }}>
-          <Col span={6}/>
-          <Col span="6" style={{ textAlign: "center" }}>
-            <Button type="primary" onClick={this.mint.bind(this)} style={{ textAlign: "center" }}>
-              Mint
-            </Button>
-          </Col>
-          <Col span="6" style={{ textAlign: "center" }}>
-            <Button type="primary" onClick={this.mint.bind(this)} style={{ textAlign: "center" }}>
-              Mint & Stake
-            </Button>
-          </Col>
-          <Col span={6}/>
-        </Row>
-        <Row>
-          <Col span={6}/>
-          <Col span="6" style={{ textAlign: "center" }}>
-          </Col>
-          <Col span="6" style={{ textAlign: "center" }}>
-            (saves gas costs)
+          <Col className="officeLine" xs={8}  style={{ textAlign: "left" }}>
+            <b>Price per NFT: { mintPrice } { this.state.currency }</b>
           </Col>
         </Row>
-      </Card>
+        <Row  className="officeContent">
+          <Col className="officeLine" xs={11} md={12}/>
+          <Col className="officeLine" xs={11} md={12} style={{ textAlign: "left" }}>
+            <b>Total: { Decimal(mintPrice).times(this.state.mintAmount).toString() } { this.state.currency }</b>
+          </Col>
+        </Row>
+      </div>
     );
   }
 
@@ -796,7 +773,7 @@ class Main extends React.Component {
     availableSpace = availableSpace * 0.65;
     let widthType = 'kitchen';
     if (!staked) {
-      widthType = 'waiting'
+      widthType = 'kitchen'
     }
     const width = this.getWidth(widthType);
 
@@ -854,11 +831,11 @@ class Main extends React.Component {
     }
     if (type === 'Chef') {
       className = "chefWaitingRoom"
-      widthType = 'waitingRoom';
+      widthType = 'kitchen';
     }
     if (type === 'Rat') {
       className = "ratSewer"
-      widthType = 'waitingRoom';
+      widthType = 'kitchen';
     }
 
     return (
@@ -1194,7 +1171,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.stakeMany(this.props.address, this.state.unstakedNfts, {
           from: this.props.address,
-          gasLimit: parseInt(this.state.unstakedNfts.length * 140000),
+          gasLimit: parseInt(this.state.unstakedNfts.length * 220000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1217,7 +1194,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.claimMany(this.state.stakedNfts, true, {
           from: this.props.address,
-          gasLimit: parseInt(this.state.stakedNfts.length) * 125000,
+          gasLimit: parseInt(this.state.stakedNfts.length) * 260000,
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1237,7 +1214,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
-          gasLimit: parseInt(this.state.stakedNfts.length * 180000),
+          gasLimit: parseInt(this.state.stakedNfts.length * 260000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1260,7 +1237,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.stakeMany(this.props.address, selectedToStakeNfts, {
           from: this.props.address,
-          gasLimit: parseInt(selectedToStakeNfts.length * 140000),
+          gasLimit: parseInt(selectedToStakeNfts.length * 200000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1602,37 +1579,63 @@ class Main extends React.Component {
   getWidth(type = 'kitchen', stretch = false, originalWidth = false, originalHeight = false) {
     let width = 0;
     let mobile = false;
+
+    const offsets = {
+      mobileWidth: 325,
+      normalLargeWidth: 580,
+      normalWidth: 500,
+      roofSmall: 222,
+      roofNormal: 270,
+      buildingSmall: 292,
+      buildingNormal: 310,
+      rat: 220,
+      noKitchen: 200,
+      townhouseMobile: 222,
+      townhouseNormal: 270,
+    };
+
     if (window.innerWidth <= 768) {
-        width = 325;
+        width = offsets.mobileWidth;
         mobile = true;
     }
     else {
       if (window.innerWidth - 650 > 500) {
-        width = window.innerWidth - 420;
+        width = window.innerWidth - offsets.normalLargeWidth;
       } else {
-        width = 500;
+        width = offsets.normalWidth;
       }
     }
+
+
 
     if (type === 'roof') {
       const tmp = this.getWidth('kitchen');
       if (window.innerWidth <= 768) {
-        width = tmp.width + 222;
+        width = tmp.width + offsets.roofSmall;
       } else {
-        width = tmp.width + 240;
+        width = tmp.width + offsets.roofNormal;
       }
-    } else if (type === 'building') {
+    }
+    else if (type === 'townhouse') {
       const tmp = this.getWidth('kitchen');
       if (window.innerWidth <= 768) {
-        width = tmp.width + 292;
+        width = tmp.width + offsets.townhouseMobile;
       } else {
-        width = tmp.width + 310;
+        width = tmp.width + offsets.townhouseNormal;
+      }
+    }
+    else if (type === 'building') {
+      const tmp = this.getWidth('kitchen');
+      if (window.innerWidth <= 768) {
+        width = tmp.width + offsets.buildingSmall;
+      } else {
+        width = tmp.width + offsets.buildingNormal;
       }
 
     } else if (type === 'rats') {
-        width += 220;
+        width += offsets.rat;
     } else if (type !== 'kitchen') {
-          width += 200;
+          width += offsets.noKitchen;
     }
 
 
@@ -1642,21 +1645,95 @@ class Main extends React.Component {
       const height = factor * originalHeight;
       return { width, height };
     }
-    return { width: width - 30 };
+    return { width: width };
+  }
+
+  getOfficeBackground() {
+    if (this.state.officeView === 'mint') {
+      return 'officeBackground1';
+    }
+    if (this.state.officeView === 'balance') {
+      return 'officeBackground2';
+    }
+    if (this.state.officeView === 'stats') {
+      return 'officeBackground3';
+    }
+
+  }
+
+  renderRatAlertOfficeInfo() {
+    return (
+      <Col style={{width: '180px'}}>
+        <div className="officeScene">
+          <span class="logoText">
+            RATalert
+          </span>
+          <div className="logoLine"/>
+          <div className="officeDescription">
+          The NFT game that lets you train your characters
+on-chain for higher rewards!<br/><br/>
+Learn more about the rules in the <Link>Whitepaper</Link>.
+          </div>
+          <Radio.Group onChange={this.setOfficeView.bind(this)} value={this.state.officeView} buttonStyle="solid">
+            <Radio.Button value="mint">Mint</Radio.Button>
+            <Radio.Button value="balance">Balance</Radio.Button>
+            <Radio.Button value="stats">Stats</Radio.Button>
+          </Radio.Group>
+
+        </div>
+      </Col>
+    );
+  }
+
+  renderMobileOfficeNav() {
+    return (
+      <div style={{marginTop: 70, marginLeft: 90, color: '#FFFFFF'}}>
+      <Radio.Group onChange={this.setOfficeView.bind(this)} value={this.state.officeView} buttonStyle="solid">
+        <Radio.Button value="mint">Mint</Radio.Button>
+        <Radio.Button value="balance">Balance</Radio.Button>
+        <Radio.Button value="stats">Stats</Radio.Button>
+      </Radio.Group>
+      </div>
+    );
   }
 
   renderNfts() {
     this.nftProfit = 0;
     return (
-      <Card className="stakeHouse" size="small">
+      <div className="stakeHouse" size="small" style={this.getWidth('townhouse')}>
         <Card className="roofWall" size="small">
-        <div className="roof" style={this.getWidth('roof', true, 1000, 100)}>
+        <div className="roof" style={this.getWidth('roof', true, 1000, 300)}>
         </div>
+        </Card>
+        <Card className="house office" size="small" style={this.getWidth('building')}>
+          <Row >
+            { window.innerWidth > 768 ? this.renderRatAlertOfficeInfo() : null }
+            <Col>
+              <div className={this.getOfficeBackground()} style={this.getWidth(window.innerWidth > 768 ? 'kitchen' : null)}>
+                <div className="officeBoard">
+                  { this.state.officeView === 'mint' ?
+                    this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
+                    : null }
+                    { this.state.officeView === 'balance' ?
+                      this.props.address ? this.renderBalances() : this.renderNACard("Balance")
+                      : null }
+                      { this.state.officeView === 'stats' ?
+                        this.renderStats()
+                        : null }
+                </div>
+                { window.innerWidth < 769 ? this.renderMobileOfficeNav() : null }
+
+              </div>
+            </Col>
+          </Row>
         </Card>
         <Card className="house" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
               <div className="gourmetScene">
+              </div>
+              <div className="restaurantSign">
+                <img width={window.innerWidth < 769 ? 75 : 150} src="img/le-stake.png"/>
               </div>
             </Col>
             <Col>
@@ -1666,29 +1743,29 @@ class Main extends React.Component {
           </Row>
         </Card>
         <Card className="house" size="small" style={this.getWidth('building')}>
-          <div style={{height: 10}}>
-          </div>
-        </Card>
-        <Card className="house" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
             <div className="casualScene">
             </div>
+            <div className="restaurantSign">
+              <img width={window.innerWidth < 769 ? 75 : 150} src="img/stake-house.png"/>
+            </div>
+
             </Col>
             <Col>
             <div className="fade casualKitchen" style={this.getWidth()}>
             </div>
+
             </Col>
           </Row>
-        </Card>
-        <Card className="house" size="small" style={this.getWidth('building')}>
-          <div style={{height: 10}}>
-          </div>
         </Card>
         <Card className="house" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
             <div className="fastFoodScene">
+            </div>
+            <div className="restaurantSign">
+              <img width={window.innerWidth < 769 ? 75 : 150} src="img/mc-stake.png"/>
             </div>
             </Col>
             <Col style={{marginLeft: '20px'}}>
@@ -1696,27 +1773,88 @@ class Main extends React.Component {
             </Col>
           </Row>
         </Card>
-        <Card className="house" size="small" style={this.getWidth('building')}>
-          <div style={{height: 10}}>
-          </div>
+        <Card className="house gym" size="small" style={this.getWidth('building')}>
+          <Row >
+          <Col style={{width: '180px'}}>
+            <div className="descriptionBox">
+              <span class="logoText">
+                CHEFs
+              </span>
+              <div class="subtitle">
+                break room
+              </div>
+
+              <div className="logoLine"/>
+              <div className="gymDescription">
+              </div>
+            </div>
+          </Col>
+            <Col style={{marginLeft: '20px'}}>
+            {!this.state.loading ? this.renderChefs() : <Skeleton />}
+            </Col>
+        </Row>
         </Card>
-        <Card className="house" size="small" style={this.getWidth('building')}>
-        {!this.state.loading ? this.renderChefs() : <Skeleton />}
+        <Card className="house gym" size="small" style={this.getWidth('building')}>
+          <Row >
+            <Col style={{width: '180px'}}>
+              <div className="descriptionBox">
+                <span class="logoText">
+                  GYM
+                </span>
+                <div class="subtitle">
+                  muscle box
+                </div>
+
+                <div className="logoLine"/>
+                <div className="gymDescription">
+                </div>
+              </div>
+            </Col>
+            <Col>
+              <div className="gymBackground" style={this.getWidth()}>
+              </div>
+            </Col>
+          </Row>
         </Card>
-        <Card className="invisibleWall" size="small">
-          <div style={this.getWidth('waitingRoom')} className="ground"/>
+        <Card className="house" size="small" style={{height: 15}}>
+          <Row >
+            <Col style={{width: '180px'}}>
+            </Col>
+            <Col style={{marginLeft: '20px'}}>
+              <div style={this.getWidth('kitchen')} className="ground"/>
+            </Col>
+          </Row>
         </Card>
 
-        <Card className="invisibleWall" size="small">
-        {!this.state.loading ? this.renderRats() : <Skeleton />}
-        </Card>
+        <Card className="house" size="small">
+          <Row >
+            <Col style={{width: '180px'}}>
+              <div className="descriptionBox">
+                <span class="logoText">
+                  RATs
+                </span>
+                <div class="subtitle">
+                  sewer
+                </div>
+
+                <div className="logoLine"/>
+                <div className="gymDescription">
+                </div>
+              </div>
+            </Col>
+            <Col style={{marginLeft: 20}}>
+              {!this.state.loading ? this.renderRats() : <Skeleton />}
+            </Col>
+          </Row>
+
+          </Card>
 
 
         <Card size="small">
         { this.renderLegend() }
         { this.renderButtons() }
         </Card>
-      </Card>
+      </div>
     );
   }
 
@@ -1757,6 +1895,12 @@ class Main extends React.Component {
     }
 
     return (
+      <div className="officeHeadline">
+      <Row>
+        <Col span={12}>
+          Stats
+        </Col>
+      </Row>
       <Row>
         <Col span={12}>Total rats</Col>
         <Col span={12}>{this.state.stats.rats}</Col>
@@ -1769,7 +1913,29 @@ class Main extends React.Component {
         <Col span={12}>Total $FFOOD claimed</Col>
         <Col span={12}>{this.state.stats.tokensClaimed}</Col>
       </Row>
+      </div>
     )
+  }
+
+  renderBalances() {
+    return (
+      <div className="officeHeadline">
+        <Row>
+          <Col span={16}>
+            Balances
+          </Col>
+        </Row>
+        <Row className="officeContent">
+          <Col span={12}>
+            $FFOOD
+          </Col>
+          <Col span={12}>
+          {this.state.fFoodBalance }
+          </Col>
+        </Row>
+      </div>
+    );
+
   }
 
   renderGame() {
@@ -1779,10 +1945,11 @@ class Main extends React.Component {
               <Row>
                 <Col md={1} xs={1} />
                 <Col md={22} xs={22}>
-                  {this.props.address ? this.renderMintContent() : this.renderNACard("Mint")}
                 </Col>
                 <Col md={1} xs={1} />
               </Row>
+              {
+                /*
               <Row>
                 <Col md={1} xs={1} />
                 <Col md={22} xs={22}>
@@ -1820,12 +1987,16 @@ class Main extends React.Component {
                 </Col>
                 <Col span={2} />
               </Row>
+              */
+            }
             </Col>
             <Col md={24} xs={24}>
               <Row style={{ marginTop: "25px" }}>
                 <Col md={1} xs={1} />
                 <Col md={22} xs={22}>
-                  {this.props.address ? this.renderNfts() : this.renderNACard("Your NFTs")}
+                  <div className="townhouseBox">
+                  {this.props.address ? this.renderNfts() : this.renderNACard()}
+                  </div>
                 </Col>
               </Row>
             </Col>
