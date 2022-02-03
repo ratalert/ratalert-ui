@@ -62,6 +62,7 @@ import {
 class Main extends React.Component {
   constructor(props) {
     super(props);
+    this.townhouseHeight = 0;
     this.state = {
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { chefRats: [] },
@@ -130,6 +131,7 @@ class Main extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+
     if (this.props.address && !prevProps.address) {
       this.setState({
         loading: false
@@ -753,24 +755,26 @@ class Main extends React.Component {
 
     let nftsPerRow = 0;
     let offset = 0;
-    let minimumNftsPerRow = 3;
+    let minimumNftsPerRow = 2;
     let nftWidth = 0;
     if (staked) {
       // Is in a kitchen
       offset = 200;
       minimumNftsPerRow = 2;
-      nftWidth = 185;
+      nftWidth = 190;
     } else {
       offset = 50;
-      nftWidth = 185;
+      nftWidth = 190;
     }
 
     if (window.innerWidth <= 768) {
       nftWidth = 150;
     }
 
-    let availableSpace = window.innerWidth - offset;
-    availableSpace = availableSpace * 0.65;
+    // let availableSpace = window.innerWidth - offset;
+    // availableSpace = availableSpace * 0.70;
+    let availableSpace = this.getWidth('kitchen');
+    availableSpace = availableSpace.width;
     let widthType = 'kitchen';
     if (!staked) {
       widthType = 'kitchen'
@@ -804,12 +808,18 @@ class Main extends React.Component {
 
         }
         if (rowNFTs.length > 0) {
+          if (type !== 'chef') {
+            this.townhouseHeight += 315; // Kitchen
+          }
           rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
           rows.push(emptyRow);
         }
     }
 
     if (rows.length === 0) {
+      if (type !== 'chef') {
+        this.townhouseHeight += 315; // Kitchen
+      }
       rows.push(this.renderNFTRow(0, 0, [], staked, type));
       //rows.push(emptyRow);
     }
@@ -817,7 +827,7 @@ class Main extends React.Component {
 
     return (
       <div>
-        { rows }
+         { rows }
       </div>
     );
   }
@@ -860,7 +870,7 @@ class Main extends React.Component {
       case 'skill':
         return <div style={{width: '200px'}}>The chef's <img src="/img/skill.png"/> skill level increases 4% per day. </div>;
       case 'insanity':
-        return <div style={{width: '200px'}}>The chef's <img src="/img/insanity.png"/> insanity level increases 2% per day. When insanity reaches the state "insane" your chef might burn out.</div>;
+        return <div style={{width: '200px'}}>The chef's <img src="/img/insanity.png"/> freak level increases 2% per day. When freak level reaches the state "insane" your chef might burn out.</div>;
       case 'intelligence':
           return <div style={{width: '200px'}}>The rats's <img src="/img/intelligence.png"/> intelligence level increases 4% per day. </div>;
       case 'bodymass':
@@ -1576,33 +1586,77 @@ class Main extends React.Component {
     }
   }
 
+  getSkylineStyle() {
+    const baseSkylineOffset = 170;
+    let offset = baseSkylineOffset;
+    const originalWidth = 1440;
+    const originalHeight = 266;
+    const factor = window.innerWidth / originalWidth;
+    if (originalHeight * factor < originalHeight) {
+        offset = originalHeight * factor - baseSkylineOffset;
+    }
+    return (
+      { width: window.innerWidth, height: originalHeight * factor, top: this.townhouseHeight - offset}
+    )
+  }
+
+
+  getStreetLightPosition() {
+    const width = this.getWidth('building');
+    const margin = (window.innerWidth - width.width)/2;
+    const left = margin + width.width - 135;
+    return left;
+  }
+
+  getFlowerPot1Position() {
+    const width = this.getWidth('building');
+    const margin = (window.innerWidth - width.width)/2;
+    return margin + 10;
+  }
+
+
+
+  getTownhouseMargin() {
+    const width = this.getWidth('building');
+    const margin = (window.innerWidth - width.width)/2;
+    return {
+      marginLeft: margin > 20 ? parseInt(margin) : 20,
+      marginTop: 100
+    }
+  }
+
   getWidth(type = 'kitchen', stretch = false, originalWidth = false, originalHeight = false) {
     let width = 0;
     let mobile = false;
 
     const offsets = {
       mobileWidth: 325,
-      normalLargeWidth: 580,
+      normalLargeWidth: 650, // kitchen width
+      buildingNormal: 450, // whole width for the kitchen
+      buildingSmall: 271,
       normalWidth: 500,
       roofSmall: 222,
-      roofNormal: 270,
-      buildingSmall: 292,
-      buildingNormal: 310,
+      roofNormal: 272,
       rat: 220,
       noKitchen: 200,
       townhouseMobile: 222,
-      townhouseNormal: 270,
+      townhouseNormal: 272, // outer box
     };
 
-    if (window.innerWidth <= 768) {
+    let maxWidth = window.innerWidth;
+    if (maxWidth > 1400) {
+      maxWidth = 1400;
+    }
+
+    if (maxWidth <= 768) {
         width = offsets.mobileWidth;
         mobile = true;
     }
     else {
-      if (window.innerWidth - 650 > 500) {
-        width = window.innerWidth - offsets.normalLargeWidth;
+      if (window.innerWidth - 650 > 400) {
+        width = maxWidth - offsets.normalLargeWidth;
       } else {
-        width = offsets.normalWidth;
+        width = maxWidth - offsets.normalLargeWidth;
       }
     }
 
@@ -1610,7 +1664,7 @@ class Main extends React.Component {
 
     if (type === 'roof') {
       const tmp = this.getWidth('kitchen');
-      if (window.innerWidth <= 768) {
+      if (maxWidth <= 768) {
         width = tmp.width + offsets.roofSmall;
       } else {
         width = tmp.width + offsets.roofNormal;
@@ -1618,34 +1672,37 @@ class Main extends React.Component {
     }
     else if (type === 'townhouse') {
       const tmp = this.getWidth('kitchen');
-      if (window.innerWidth <= 768) {
+      if (maxWidth <= 768) {
         width = tmp.width + offsets.townhouseMobile;
       } else {
         width = tmp.width + offsets.townhouseNormal;
       }
     }
-    else if (type === 'building') {
+    else if (type === 'sewer') {
       const tmp = this.getWidth('kitchen');
-      if (window.innerWidth <= 768) {
-        width = tmp.width + offsets.buildingSmall;
-      } else {
-        width = tmp.width + offsets.buildingNormal;
-      }
-
+      width = tmp.width + 272;
+    } else if (type === 'building') {
+      const tmp = this.getWidth('kitchen');
+      width = tmp.width + offsets.buildingNormal;
     } else if (type === 'rats') {
         width += offsets.rat;
     } else if (type !== 'kitchen') {
           width += offsets.noKitchen;
     }
-
-
-
     if (stretch) {
-      const factor = width / originalWidth;
-      const height = factor * originalHeight;
-      return { width, height };
+      let factor;
+      let height;
+      if (type === 'sky') {
+        factor = window.innerWidth / originalWidth;
+        width = window.innerWidth;
+        height = factor * originalHeight;
+      } else {
+        factor = width / originalWidth;
+        height = factor * originalHeight;
+      }
+      return { width, height, type };
     }
-    return { width: width };
+    return { width: width, type };
   }
 
   getOfficeBackground() {
@@ -1699,17 +1756,24 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
 
   renderNfts() {
     this.nftProfit = 0;
+    this.townhouseHeight = 0;
+    const roofHeight = this.getWidth('roof', true, 1000, 300);
+    this.townhouseHeight += roofHeight.height; // Roof
+    this.townhouseHeight += 315; // Office
+    this.townhouseHeight += 315; // Gourmet Kitchen
+    this.townhouseHeight += 315; // Casual Kitchen
+    this.townhouseHeight += 315; // Gym
     return (
       <div className="stakeHouse" size="small" style={this.getWidth('townhouse')}>
         <Card className="roofWall" size="small">
-        <div className="roof" style={this.getWidth('roof', true, 1000, 300)}>
-        </div>
+          <div className="roof" style={this.getWidth('roof', true, 1000, 300)}>
+          </div>
         </Card>
         <Card className="house office" size="small" style={this.getWidth('building')}>
           <Row >
-            { window.innerWidth > 768 ? this.renderRatAlertOfficeInfo() : null }
+            { window.innerWidth > 1100 ? this.renderRatAlertOfficeInfo() : null }
             <Col>
-              <div className={this.getOfficeBackground()} style={this.getWidth(window.innerWidth > 768 ? 'kitchen' : null)}>
+              <div className={this.getOfficeBackground()} style={this.getWidth(window.innerWidth > 1100 ? 'kitchen' : null)}>
                 <div className="officeBoard">
                   { this.state.officeView === 'mint' ?
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
@@ -1721,7 +1785,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
                         this.renderStats()
                         : null }
                 </div>
-                { window.innerWidth < 769 ? this.renderMobileOfficeNav() : null }
+                { window.innerWidth < 1099 ? this.renderMobileOfficeNav() : null }
 
               </div>
             </Col>
@@ -1773,27 +1837,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
-        <Card className="house gym" size="small" style={this.getWidth('building')}>
-          <Row >
-          <Col style={{width: '180px'}}>
-            <div className="descriptionBox">
-              <span class="logoText">
-                CHEFs
-              </span>
-              <div class="subtitle">
-                break room
-              </div>
 
-              <div className="logoLine"/>
-              <div className="gymDescription">
-              </div>
-            </div>
-          </Col>
-            <Col style={{marginLeft: '20px'}}>
-            {!this.state.loading ? this.renderChefs() : <Skeleton />}
-            </Col>
-        </Row>
-        </Card>
         <Card className="house gym" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
@@ -1816,39 +1860,84 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
-        <Card className="house" size="small" style={{height: 15}}>
+
+        <Card className="house gym" size="small" style={this.getWidth('building')}>
+          <Row >
+          <Col style={{width: '180px'}}>
+            <div className="descriptionBox">
+              <span class="logoText">
+                CHEFs
+              </span>
+              <div class="subtitle">
+                break room
+              </div>
+
+              <div className="logoLine"/>
+              <div className="gymDescription">
+              </div>
+            </div>
+          </Col>
+            <Col style={{marginLeft: '20px'}}>
+            {!this.state.loading ? this.renderChefs() : <Skeleton />}
+            </Col>
+        </Row>
+        </Card>
+        <div className="streetlight2">
+        </div>
+        <div className="streetlight3" style={{ left: this.getStreetLightPosition()} }>
+        </div>
+        <div className="streetlight1" style={{left: window.innerWidth * 0.9}}>
+        </div>
+
+        <div className="flowerpot1" style={{ left: this.getFlowerPot1Position()} }>
+        </div>
+
+        <div className="fence" style={{ left: this.getStreetLightPosition() }}>
+        </div>
+
+        <div className="flowerpot2" style={{ left: this.getStreetLightPosition()+100} }>
+        </div>
+
+        <div className="skyline">
+        </div>
+        <div className="street">
+        </div>
+
+        <div className="darkBackground">
+        </div>
+
+        <Card className="sewerEntrance" size="small" style={{height: 55}}>
           <Row >
             <Col style={{width: '180px'}}>
+              <div className="descriptionBox">
+              </div>
             </Col>
-            <Col style={{marginLeft: '20px'}}>
+            <Col style={{marginLeft: '40px'}}>
               <div style={this.getWidth('kitchen')} className="ground"/>
             </Col>
           </Row>
         </Card>
-
-        <Card className="house" size="small">
+        <Card className="house gym sewer" size="small" style={this.getWidth('sewer')}>
           <Row >
-            <Col style={{width: '180px'}}>
-              <div className="descriptionBox">
-                <span class="logoText">
-                  RATs
-                </span>
-                <div class="subtitle">
-                  sewer
-                </div>
-
-                <div className="logoLine"/>
-                <div className="gymDescription">
-                </div>
+          <Col style={{width: '180px'}}>
+            <div className="descriptionBox">
+              <span class="logoText">
+                RATs
+              </span>
+              <div class="subtitle">
+                sewer
               </div>
-            </Col>
-            <Col style={{marginLeft: 20}}>
-              {!this.state.loading ? this.renderRats() : <Skeleton />}
+              <div className="logoLine"/>
+              <div className="gymDescription">
+              </div>
+            </div>
+          </Col>
+            <Col style={{marginLeft: '20px'}}>
+            {!this.state.loading ? this.renderRats() : <Skeleton />}
             </Col>
           </Row>
-
-          </Card>
-
+        </Card>
+        <div className="belowTheSewer"/>
 
         <Card size="small">
         { this.renderLegend() }
@@ -1941,6 +2030,11 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
   renderGame() {
     return (
           <Row style={{ height: "100%" }}>
+            <div className="sky" style={this.getWidth('sky', true, 1440, 1000)}>
+            </div>
+            <div className="nightGradient" style={{height: this.townhouseHeight - 1000 + 250}}>
+            </div>
+
             <Col md={24} xs={24}>
               <Row>
                 <Col md={1} xs={1} />
@@ -1994,7 +2088,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
               <Row style={{ marginTop: "25px" }}>
                 <Col md={1} xs={1} />
                 <Col md={22} xs={22}>
-                  <div className="townhouseBox">
+                  <div className="townhouseBox" style={this.getTownhouseMargin()}>
                   {this.props.address ? this.renderNfts() : this.renderNACard()}
                   </div>
                 </Col>

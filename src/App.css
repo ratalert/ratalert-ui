@@ -39,8 +39,15 @@
 .ground {
   background-image: url("img/ground.png");
   height: 30px;
+  z-index: 2;
 }
 
+.belowTheSewer {
+  background-image: url("img/below_the_sewer.png") !important;
+  height: 300px;
+  z-index: 5;
+  background: #000000;
+}
 
 
 .gourmetScene {
@@ -134,7 +141,7 @@
   padding-top: 0px !important;
   padding-bottom: 0px !important;
   margin-top: -2px !important;
-  margin-left: 12px;
+  margin-left: 17px;
   margin-right: 28px;
 }
 
@@ -159,6 +166,117 @@
 
 .colon {
   filter: invert(81%) sepia(35%) saturate(172%) hue-rotate(335deg) brightness(86%) contrast(92%);
+}
+
+
+.darkBackground {
+  width: 120%;
+  height: 20%;
+  position: absolute;
+  left: -100px;
+  background: #000000;
+  z-index: -2;
+}
+
+.sky {
+  width: 120%;
+  height: 1000px;
+  position: absolute;
+  top: 80px;
+  background: #000000;
+  background-image: url("img/sky.png");
+  background-size: cover;
+  z-index: -2;
+}
+
+.nightGradient {
+  width: 120%;
+  position: absolute;
+  left: 0px;
+  background-image: linear-gradient(to bottom, #021536, #46597a);
+  top: 1000px;
+  z-index: -2;
+}
+
+.skyline {
+  position: absolute;
+  width: 120%;
+  left: 0px;
+  background-image: url("img/skyline.png");
+  z-index: -1;
+  margin-top:-266px;
+  height: 266px;
+  left: -80px;
+}
+
+.streetlight1 {
+  position: absolute;
+  width: 35px;
+  background-size: cover;
+  background-image: url("img/street-light-1.png");
+  z-index: 0;
+  height: 296px;
+  margin-top: -296px;
+}
+
+
+.streetlight2 {
+  position: absolute;
+  width: 35px;
+  background-size: cover;
+  background-image: url("img/street-light-2.png");
+  z-index: 5;
+  height: 296px;
+  margin-top: -296px;
+  left: 0px;
+}
+
+.streetlight3 {
+  position: absolute;
+  width: 64px;
+  background-size: cover;
+  background-image: url("img/street-light-3.png");
+  z-index: 0;
+  height: 102px;
+  margin-top: -300px;
+}
+
+.flowerpot1 {
+  position: absolute;
+  width: 76px;
+  background-image: url("img/flower-pot-2.png");
+  z-index: 0;
+  height: 75px;
+  margin-top: -75px;
+}
+
+.flowerpot2 {
+  position: absolute;
+  width: 64px;
+  background-image: url("img/flower-pot-1.png");
+  z-index: 0;
+  height: 103px;
+  margin-top: -153px;
+}
+
+
+
+.fence {
+  position: absolute;
+  width: 174px;
+  background-image: url("img/fence.png");
+  z-index: 0;
+  height: 119px;
+  margin-top: -119px;
+}
+
+.street {
+  width: 120%;
+  height: 12px;
+  position: absolute;
+  z-index: -1;
+  left: -100px;
+  background-image: url("img/street.png");
 }
 
 
@@ -205,15 +323,14 @@
 }
 
 
-
 .ant-layout-content {
   min-height: 120px;
   color: #000;
   line-height: 120px;
-  background-color: #031636;
   text-align: left;
   padding-top: 2em;
   padding-bottom: 2em;
+  z-index: 1;
 }
 
 .logo {
@@ -336,9 +453,6 @@
     left: -155px;
   }
 
-  .townhouseBox {
-    margin-left: 20px;
-  }
   .house {
     margin-top: 15px;
     background: transparent !important;
@@ -348,9 +462,6 @@
     margin-left: -12px;
   }
 
-  .invisibleWall {
-    margin-left: 55px;
-  }
 
 
 
@@ -419,9 +530,6 @@
     margin-left: 20px;
   }
 
-  .invisibleWall {
-    margin-left: 20px;
-  }
 
 
 }
@@ -675,7 +783,7 @@
   margin-top: -26px;
 }
 
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 1100px) {
   .officeBackground1 {
     margin-left: 20px;
   }
@@ -685,7 +793,6 @@
   .officeBackground3 {
     margin-left: 20px;
   }
-
 }
 
 @media only screen and (max-width: 768px) {
@@ -768,4 +875,14 @@
   background-image: url("img/casual_kitchen.png");
   height: 300px;
   margin-left: 20px;
+}
+
+.sewerEntrance {
+  background: transparent !important;
+  margin-top: -12px;
+  background-image: url("img/tiles_sewer.png");
+}
+
+.sewer {
+  background-image: url("img/tiles_sewer.png") !important;
 }
