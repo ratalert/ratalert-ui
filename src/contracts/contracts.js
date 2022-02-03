@@ -377,6 +377,19 @@ export const contracts = {
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "properties",
+              "outputs": [
+                {
+                  "internalType": "contract IProperties",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -629,6 +642,11 @@ export const contracts = {
                   "type": "address"
                 },
                 {
+                  "internalType": "address",
+                  "name": "_properties",
+                  "type": "address"
+                },
+                {
                   "internalType": "uint256",
                   "name": "_maxTokens",
                   "type": "uint256"
@@ -671,40 +689,31 @@ export const contracts = {
                 },
                 {
                   "internalType": "int8",
-                  "name": "increment",
+                  "name": "efficiencyIncrement",
                   "type": "int8"
-                }
-              ],
-              "name": "updateEfficiency",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
                 },
                 {
                   "internalType": "int8",
-                  "name": "increment",
+                  "name": "toleranceIncrement",
                   "type": "int8"
                 }
               ],
-              "name": "updateTolerance",
+              "name": "updateCharacter",
               "outputs": [
                 {
                   "internalType": "uint8",
-                  "name": "",
+                  "name": "efficiencyValue",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "toleranceValue",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
                 }
               ],
               "stateMutability": "nonpayable",
@@ -908,6 +917,12 @@ export const contracts = {
                   "internalType": "uint8",
                   "name": "insanity",
                   "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
                 }
               ],
               "name": "ChefClaimed",
@@ -977,6 +992,12 @@ export const contracts = {
                   "internalType": "uint8",
                   "name": "fatness",
                   "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
                 }
               ],
               "name": "RatClaimed",
@@ -1114,6 +1135,19 @@ export const contracts = {
             {
               "inputs": [],
               "name": "MINIMUM_TO_EXIT",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "accrualPeriod",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -1327,6 +1361,11 @@ export const contracts = {
                   "internalType": "address",
                   "name": "_fastFood",
                   "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
                 }
               ],
               "name": "initialize",
@@ -2218,6 +2257,19 @@ export const contracts = {
               "type": "function"
             },
             {
+              "inputs": [],
+              "name": "properties",
+              "outputs": [
+                {
+                  "internalType": "contract IProperties",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -2470,6 +2522,11 @@ export const contracts = {
                   "type": "address"
                 },
                 {
+                  "internalType": "address",
+                  "name": "_properties",
+                  "type": "address"
+                },
+                {
                   "internalType": "uint256",
                   "name": "_maxTokens",
                   "type": "uint256"
@@ -2512,40 +2569,31 @@ export const contracts = {
                 },
                 {
                   "internalType": "int8",
-                  "name": "increment",
+                  "name": "efficiencyIncrement",
                   "type": "int8"
-                }
-              ],
-              "name": "updateEfficiency",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
                 },
                 {
                   "internalType": "int8",
-                  "name": "increment",
+                  "name": "toleranceIncrement",
                   "type": "int8"
                 }
               ],
-              "name": "updateTolerance",
+              "name": "updateCharacter",
               "outputs": [
                 {
                   "internalType": "uint8",
-                  "name": "",
+                  "name": "efficiencyValue",
                   "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "toleranceValue",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
                 }
               ],
               "stateMutability": "nonpayable",
@@ -2749,6 +2797,12 @@ export const contracts = {
                   "internalType": "uint8",
                   "name": "insanity",
                   "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
                 }
               ],
               "name": "ChefClaimed",
@@ -2818,6 +2872,12 @@ export const contracts = {
                   "internalType": "uint8",
                   "name": "fatness",
                   "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
                 }
               ],
               "name": "RatClaimed",

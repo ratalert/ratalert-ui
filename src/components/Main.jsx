@@ -812,7 +812,10 @@ class Main extends React.Component {
             this.townhouseHeight += 315; // Kitchen
           }
           rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type));
-          rows.push(emptyRow);
+          if (i !== numberOfRows - 1) {
+            rows.push(emptyRow);
+          }
+
         }
     }
 
@@ -1791,6 +1794,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
+        <div className="floor"/>
         <Card className="house" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
@@ -1806,6 +1810,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
+        <div className="floor"/>
         <Card className="house" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
@@ -1823,6 +1828,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
+        <div className="floor"/>
         <Card className="house" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
@@ -1837,7 +1843,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
-
+        <div className="floor"/>
         <Card className="house gym" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
@@ -1860,7 +1866,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
-
+        <div className="floor"/>
         <Card className="house gym" size="small" style={this.getWidth('building')}>
           <Row >
           <Col style={{width: '180px'}}>
@@ -1906,17 +1912,9 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
         <div className="darkBackground">
         </div>
 
-        <Card className="sewerEntrance" size="small" style={{height: 55}}>
-          <Row >
-            <Col style={{width: '180px'}}>
-              <div className="descriptionBox">
-              </div>
-            </Col>
-            <Col style={{marginLeft: '40px'}}>
-              <div style={this.getWidth('kitchen')} className="ground"/>
-            </Col>
-          </Row>
-        </Card>
+        <div className="sewerEntrance">
+          <div style={this.getWidth('kitchen')} className="ground"/>
+        </div>
         <Card className="house gym sewer" size="small" style={this.getWidth('sewer')}>
           <Row >
           <Col style={{width: '180px'}}>

@@ -67,13 +67,45 @@ class Whitepaper extends React.Component {
 
   renderWhitepaper() {
     return (
-      <Row style={{ height: "100%", 'text-align': 'center' }}>
+      <div>
+      <Row>
         <Col span={1}/>
         <Col span={22}>
-          Whitepaper
+          <strong>Contracts</strong>
         </Col>
         <Col span={1}/>
       </Row>
+      <Row>
+        <Col span={1}/>
+        <Col span={11}>
+          ChefRat
+        </Col>
+        <Col span={11}>
+        { this.props.readContracts.ChefRat ? this.props.readContracts.ChefRat.address : null}
+        </Col>
+        <Col span={1}/>
+      </Row>
+      <Row>
+        <Col span={1}/>
+        <Col span={11}>
+          KitchenPack
+        </Col>
+        <Col span={11}>
+         { this.props.readContracts.KitchenPack ? this.props.readContracts.KitchenPack.address : null}
+        </Col>
+        <Col span={1}/>
+      </Row>
+      <Row>
+        <Col span={1}/>
+        <Col span={11}>
+          FastFood
+        </Col>
+        <Col span={11}>
+          { this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null }
+        </Col>
+        <Col span={1}/>
+      </Row>
+      </div>
     );
   }
 
