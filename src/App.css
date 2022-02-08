@@ -2,6 +2,11 @@
   text-align: left;
 }
 
+html {
+    overflow-x: hidden;
+}
+
+
 @font-face {
   font-family:"Pixel";
   src: url("fonts/pixel.ttf") format("truetype");
@@ -36,11 +41,7 @@
   height: 20px;
 }
 
-.ground {
-  background-image: url("img/ground.png");
-  height: 30px;
-  z-index: 2;
-}
+
 
 .belowTheSewer {
   background-image: url("img/below_the_sewer.png") !important;
@@ -146,9 +147,7 @@
 }
 
 .stakeHouse {
-  height: 100%;
   background-image: url("img/wall.png") !important;
-  margin-left: 45px;
 }
 
 
@@ -170,114 +169,13 @@
 
 
 .darkBackground {
-  width: 120%;
-  height: 20%;
+  width: 100%;
   position: absolute;
   left: -100px;
   background: #000000;
   z-index: -2;
 }
 
-.sky {
-  width: 120%;
-  height: 1000px;
-  position: absolute;
-  top: 80px;
-  background: #000000;
-  background-image: url("img/sky.png");
-  background-size: cover;
-  z-index: -2;
-}
-
-.nightGradient {
-  width: 120%;
-  position: absolute;
-  left: 0px;
-  background-image: linear-gradient(to bottom, #021536, #46597a);
-  top: 1000px;
-  z-index: -2;
-}
-
-.skyline {
-  position: absolute;
-  width: 120%;
-  left: 0px;
-  background-image: url("img/skyline.png");
-  z-index: -1;
-  margin-top:-266px;
-  height: 266px;
-  left: -80px;
-}
-
-.streetlight1 {
-  position: absolute;
-  width: 35px;
-  background-size: cover;
-  background-image: url("img/street-light-1.png");
-  z-index: 0;
-  height: 296px;
-  margin-top: -296px;
-}
-
-
-.streetlight2 {
-  position: absolute;
-  width: 35px;
-  background-size: cover;
-  background-image: url("img/street-light-2.png");
-  z-index: 5;
-  height: 296px;
-  margin-top: -296px;
-  left: 0px;
-}
-
-.streetlight3 {
-  position: absolute;
-  width: 64px;
-  background-size: cover;
-  background-image: url("img/street-light-3.png");
-  z-index: 0;
-  height: 102px;
-  margin-top: -300px;
-}
-
-.flowerpot1 {
-  position: absolute;
-  width: 76px;
-  background-image: url("img/flower-pot-2.png");
-  z-index: 0;
-  height: 75px;
-  margin-top: -75px;
-}
-
-.flowerpot2 {
-  position: absolute;
-  width: 64px;
-  background-image: url("img/flower-pot-1.png");
-  z-index: 0;
-  height: 103px;
-  margin-top: -153px;
-}
-
-
-
-.fence {
-  position: absolute;
-  width: 174px;
-  background-image: url("img/fence.png");
-  z-index: 0;
-  height: 119px;
-  margin-top: -119px;
-}
-
-.street {
-  width: 120%;
-  height: 12px;
-  position: absolute;
-  z-index: -1;
-  left: -100px;
-  background-image: url("img/street.png");
-}
 
 
 
@@ -406,11 +304,46 @@
   font-family: 'Pixel';
 }
 
+.sky {
+  width: 100%;
+  height: 1000px;
+  position: absolute;
+  top: 80px;
+  background: #000000;
+  background-image: url("img/sky.png");
+  background-size: cover;
+  z-index: -2;
+}
+
+@media only screen and (max-width: 1080px) {
+  .restaurantSign {
+    position: absolute;
+    top: 70px;
+    left: -65px;
+  }
+}
+
+@media only screen and (min-width: 1081px) {
+  .restaurantSign {
+    width: 154px;
+    height: 152px;
+    position: absolute;
+    top: 70px;
+    left: -155px;
+  }
+}
+
 @media only screen and (min-width: 769px) {
   .house .ant-card-body {
     margin-right: 28px;
     padding-left: 15px;
   }
+
+  .sewerEntrance {
+    background: #362f2d;
+    margin-top: -12px;
+  }
+
 
   .nft {
     width: 160px;
@@ -445,26 +378,140 @@
     margin-top: 10px;
   }
 
-  .restaurantSign {
-    width: 154px;
-    height: 152px;
-    position: absolute;
-    top: 70px;
-    left: -155px;
-  }
 
   .house {
-    margin-top: 15px;
     background: transparent !important;
   }
 
+  .kitchenMargin {
+    margin-top: 15px;
+    margin-bottom: 15px;
+  }
+
   .roof {
-    margin-left: -12px;
+    margin-top: 150px !important;
+    margin-bottom: -12px !important;
+  }
+
+  .skyline {
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    background-image: url("img/skyline.png");
+    z-index: -1;
+    margin-top:-266px;
+    height: 266px;
+    left: -80px;
+  }
+
+  .ground {
+    background-image: url("img/ground.png");
+    height: 30px;
+    z-index: 2;
+    margin-left: 232px;
+  }
+
+  .streetlight1 {
+    position: absolute;
+    width: 35px;
+    background-size: cover;
+    background-image: url("img/street-light-1.png");
+    z-index: 0;
+    height: 296px;
+    margin-top: -308px;
+  }
+
+
+  .streetlight2 {
+    position: absolute;
+    width: 35px;
+    background-size: cover;
+    background-image: url("img/street-light-2.png");
+    z-index: 5;
+    height: 296px;
+    margin-top: -308px;
+    left: 25px;
+  }
+
+  .streetlight3 {
+    position: absolute;
+    width: 64px;
+    background-size: cover;
+    background-image: url("img/street-light-3.png");
+    z-index: 0;
+    height: 102px;
+    margin-top: -312px;
+  }
+
+  .marginSewer {
+    margin-left: 20px;
+  }
+
+  .flowerpot1 {
+    position: absolute;
+    width: 76px;
+    background-image: url("img/flower-pot-2.png");
+    z-index: 0;
+    height: 75px;
+    margin-top: -87px;
+  }
+
+  .flowerpot2 {
+    position: absolute;
+    width: 64px;
+    background-image: url("img/flower-pot-1.png");
+    z-index: 0;
+    height: 103px;
+    margin-top: -165px;
   }
 
 
 
+  .fence {
+    position: absolute;
+    width: 174px;
+    background-image: url("img/fence.png");
+    z-index: 0;
+    height: 119px;
+    margin-top: -131px;
+  }
 
+  .street {
+    width: 100%;
+    height: 12px;
+    position: absolute;
+    z-index: -1;
+    left: -110px;
+    margin-top: -12px;
+    background-image: url("img/street.png");
+  }
+
+  .nightGradient {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    background-image: linear-gradient(to bottom, #021536, #46597a);
+    z-index: -2;
+  }
+
+  .roof {
+    margin-top: 150px !important;
+    margin-bottom: -13px !important;
+  }
+}
+
+.floor {
+  background-image: url("img/floor.png") !important;
+  height: 32px;
+  z-index: 5;
+}
+
+.superFloor {
+  background-image: url("img/floor.png") !important;
+  height: 32px;
+  z-index: 0;
+  position: relative;
+  left: -232px;
 }
 
 .descriptionBox {
@@ -472,13 +519,41 @@
 }
 
 @media only screen and (max-width: 768px) {
+
+  .roof {
+    margin-top: 10px !important;
+  }
+
+  .street {
+    width: 100%;
+    height: 12px;
+    position: absolute;
+    z-index: -1;
+    left: -110px;
+    margin-top: -12px;
+    background-image: url("img/street.png");
+  }
+
+  .sewerEntrance {
+    background: #362f2d;
+    margin-top: 3px;
+  }
+
+  .ground {
+    background-image: url("img/ground.png");
+    height: 30px;
+    z-index: 2;
+    margin-left: 247px;
+  }
+
+  .marginSewer {
+    margin-left: 40px;
+  }
+
+
   .house .ant-card-body {
     margin-right: 28px;
     padding-left: 10px;
-  }
-
-  .stakeHouse {
-    padding-left: 5px;
   }
 
   .nft {
@@ -516,20 +591,24 @@
     margin-top: 25px;
   }
 
-  .restaurantSign {
-    position: absolute;
-    top: 70px;
-    left: -80px;
-  }
-
   .house {
     margin-left: 20px;
+    background: transparent !important;
   }
 
   .roof {
-    margin-left: 20px;
+    margin-left: -12px;
   }
 
+  .nightGradient {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    background-image: linear-gradient(to bottom, #021536, #46597a);
+    top: 530px;
+    z-index: -2;
+    overflow-x: hidden;
+  }
 
 
 }
@@ -626,6 +705,24 @@
   background-color: #fff;
 }
 
+.officeFullScene {
+  padding-bottom: 10px;
+  padding-top: 20px;
+}
+
+
+.officeFullDescription {
+  margin: 20px 10px 20px 0;
+  font-family: "Pixellari";
+  font-size: 14px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+}
+
 .officeDescription {
   width: 165px;
   margin: 20px 10px 20px 0;
@@ -685,9 +782,6 @@
   .mobileRow {
       margin-top: 20px;
   }
-  .web3Button {
-      width: 155px;
-  }
   .icons {
     float: left;
     width: 130px;
@@ -699,72 +793,26 @@
 
 }
 
-@media only screen and (min-width: 769px) {
-  .web3Button {
-    width: 200px;
-    font-size: 10px;
-  }
-  .web3Button span {
-    font-size: 12px;
-  }
-
+.web3ButtonTransparent {
+  height: 35px !important;
+  padding-top: 6px;
+  textAlign: center;
+  background: transparent;
+  font-weight: bold;
+  width: 160px;
+  margin-left: 10px;
+  color: #FFFFFF;
+  border: 3px solid #FFFFFF;
 }
 
-@media only screen and (min-width: 800px) {
-  .web3Button {
-    width: 230px;
-  }
-}
-
-
-
-@media only screen and (min-width: 900px) {
-  .web3Button {
-    width: 250px;
-  }
-}
-
-@media only screen and (min-width: 1000px) {
-  .web3Button {
-    width: 270px;
-  }
-}
-
-
-@media only screen and (min-width: 1020px) {
-  .web3Button {
-    width: 200px;
-  }
-}
-
-
-@media only screen and (min-width: 1100px) {
-  .web3Button {
-    width: 250px;
-  }
-}
-
-@media only screen and (min-width: 1200px) {
-  .web3Button {
-    width: 250px;
-  }
-}
-@media only screen and (min-width: 1300px) {
-  .web3Button {
-    width: 250px;
-  }
-}
-
-@media only screen and (min-width: 1400px) {
-  .web3Button {
-    width: 300px;
-  }
-}
-
-@media only screen and (min-width: 1500px) {
-  .web3Button {
-    width: 350px;
-  }
+.web3Button {
+  height: 30px;
+  padding-top: 6px;
+  textAlign: center;
+  background: transparent;
+  color: #FFFFFF;
+  font-weight: bold;
+  width: 180px;
 }
 
 .fastFoodKitchen {
@@ -775,15 +823,15 @@
 .chefWaitingRoom {
   background-image: url("img/waiting_room.png");
   height: 300px;
+  margin-bottom: -3px;
 }
 
 .ratSewer {
   background-image: url("img/rat_sewer.png");
   height: 300px;
-  margin-top: -26px;
 }
 
-@media only screen and (min-width: 1100px) {
+@media only screen and (min-width: 1161px) {
   .officeBackground1 {
     margin-left: 20px;
   }
@@ -798,6 +846,18 @@
 @media only screen and (max-width: 768px) {
   .office {
     margin-right: 10px !important;
+  }
+  .house2 {
+    background: transparent !important;
+  }
+  .officeBackground1 {
+    margin-left: 0px;
+  }
+  .officeBackground2 {
+    margin-left: 0px;
+  }
+  .officeBackground3 {
+    margin-left: 0px;
   }
 }
 
@@ -877,12 +937,9 @@
   margin-left: 20px;
 }
 
-.sewerEntrance {
-  background: transparent !important;
-  margin-top: -12px;
-  background-image: url("img/tiles_sewer.png");
-}
+
 
 .sewer {
   background-image: url("img/tiles_sewer.png") !important;
+  margin-left: 0px !important;
 }

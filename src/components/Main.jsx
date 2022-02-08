@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from 'react-dom'
 import {
   PageHeader,
   Button,
@@ -62,7 +63,11 @@ import {
 class Main extends React.Component {
   constructor(props) {
     super(props);
+
     this.townhouseHeight = 0;
+    this.townhouseRef = React.createRef();
+    this.mobileBreakpoint = 651;
+    this.officeBreakpoint = 1160;
     this.state = {
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { chefRats: [] },
@@ -71,6 +76,10 @@ class Main extends React.Component {
       stakedNfts: [],
       unstakedNfts: [],
       allStakedChefs: [],
+      unstakedChefs: [],
+      unstakedRats: [],
+      stakedChefs: [],
+      stakedRats: [],
       totalRats: 0,
       totalCooks: 0,
       totalRatsStaked: 0,
@@ -242,6 +251,12 @@ class Main extends React.Component {
     const stakedNfts = [];
     const unstakedNfts = [];
 
+    const unstakedChefs = [];
+    const unstakedRats = [];
+    const stakedChefs = [];
+    const stakedRats = [];
+
+
     const allStakedChefs = [];
 
     result1.chefRats.map(r => {
@@ -259,6 +274,20 @@ class Main extends React.Component {
           if (parseInt(r.staked) === 0) {
             unstakedNfts.push(parseInt(r.id, 16));
           }
+          if (parseInt(r.staked) === 0 && r.type === 'chef') {
+            unstakedChefs.push(parseInt(r.id, 16));
+          }
+          if (parseInt(r.staked) === 0 && r.type === 'rat') {
+            unstakedRats.push(parseInt(r.id, 16));
+          }
+
+          if (parseInt(r.staked) === 1 && r.type === 'chef') {
+            stakedChefs.push(parseInt(r.id, 16));
+          }
+          if (parseInt(r.staked) === 1 && r.type === 'rat') {
+            stakedRats.push(parseInt(r.id, 16));
+          }
+
           if (parseInt(r.staked) === 1) {
             stakedNfts.push(parseInt(r.id, 16));
           }
@@ -314,6 +343,10 @@ class Main extends React.Component {
       stakedGraph: result2,
       stakedNfts,
       unstakedNfts,
+      unstakedChefs,
+      unstakedRats,
+      stakedChefs,
+      stakedRats,
       totalRats,
       totalChefs,
       totalRatsStaked,
@@ -596,13 +629,13 @@ class Main extends React.Component {
               : this.state.stats.paidTokens}
           </Col>
           <Col className="officeLine" xs={8}  style={{ textAlign: "left" }}>
-            <b>Price per NFT: { mintPrice } { this.state.currency }</b>
+            <b>1 NFT: { mintPrice } { this.state.currency }</b>
           </Col>
         </Row>
         <Row  className="officeContent">
           <Col className="officeLine" xs={11} md={12}/>
           <Col className="officeLine" xs={11} md={12} style={{ textAlign: "left" }}>
-            <b>Total: { Decimal(mintPrice).times(this.state.mintAmount).toString() } { this.state.currency }</b>
+            <b>Total price: { Decimal(mintPrice).times(this.state.mintAmount).toString() } { this.state.currency }</b>
           </Col>
         </Row>
       </div>
@@ -767,7 +800,7 @@ class Main extends React.Component {
       nftWidth = 190;
     }
 
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= this.mobileBreakpoint) {
       nftWidth = 150;
     }
 
@@ -917,7 +950,7 @@ class Main extends React.Component {
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
         </div>
         <div
-          onClick={() => this.selectNFT(this, c.name, staked)}
+          onClick={() => this.selectNFT(this, c.name, staked, c.type)}
           className={
             this.state.selectedNfts &&
             this.state.selectedNfts[c.name] &&
@@ -1121,12 +1154,12 @@ class Main extends React.Component {
     }
   }
 
-  selectNFT(self, item, staked) {
+  selectNFT(self, item, staked, type) {
     const selectedNfts = this.state.selectedNfts;
     if (this.state.selectedNfts[item]) {
       delete selectedNfts[item];
     } else {
-      selectedNfts[item] = { status: true, staked };
+      selectedNfts[item] = { status: true, staked, type };
     }
     this.setState({ selectedNfts });
   }
@@ -1149,7 +1182,7 @@ class Main extends React.Component {
 
   getButtonHeight() {
     let height=32;
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= this.mobileBreakpoint) {
       height=50;
     }
     return height;
@@ -1171,7 +1204,7 @@ class Main extends React.Component {
       <Button style={{height}}
       className="web3Button"
       disabled={!enabled}
-      type={!this.state.isApprovedForAll ? "primary" : "default"}
+      type={!this.state.isApprovedForAll ? "default" : "default"}
       onClick={this.setApprovalForAll.bind(this)}
       >
         Authorize
@@ -1179,12 +1212,19 @@ class Main extends React.Component {
     );
   }
 
-  async stakeAll() {
+  async stakeAll(type) {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(type);
+    let nfts = [];
+    if (type === 'Rat') {
+      nfts = this.state.unstakedRats;
+    } else {
+      nfts = this.state.unstakedChefs;
+    }
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.stakeMany(this.props.address, this.state.unstakedNfts, {
+        this.props.writeContracts.KitchenPack.stakeMany(this.props.address, nfts, {
           from: this.props.address,
-          gasLimit: parseInt(this.state.unstakedNfts.length * 220000),
+          gasLimit: parseInt(nfts.length * 220000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1270,7 +1310,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts.KitchenPack.claimMany(selectedToUnStakeNfts, {
           from: this.props.address,
-          gasLimit: selectedToUnStakeNfts.length * 200000,
+          gasLimit: selectedToUnStakeNfts.length * 250000,
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1286,30 +1326,52 @@ class Main extends React.Component {
     }
   }
 
-  getStakeStats() {
+  getStakeStats(type = false) {
     const selectedToStakeNfts = [];
     const selectedToUnStakeNfts = [];
-    Object.keys(this.state.selectedNfts).map(n => {
-      if (
-        this.state.selectedNfts[n] &&
-        this.state.selectedNfts[n]["status"] === true &&
-        this.state.selectedNfts[n]["staked"] === 0
-      ) {
-        selectedToStakeNfts.push(parseInt(n));
-      }
-      if (
-        this.state.selectedNfts[n] &&
-        this.state.selectedNfts[n]["status"] === true &&
-        this.state.selectedNfts[n]["staked"] === 1
-      ) {
-        selectedToUnStakeNfts.push(parseInt(n));
-      }
-    });
+    if (type) {
+      Object.keys(this.state.selectedNfts).map(n => {
+        if (
+          this.state.selectedNfts[n] &&
+          this.state.selectedNfts[n]["status"] === true &&
+          this.state.selectedNfts[n]["staked"] === 0 &&
+          this.state.selectedNfts[n]["type"] === type
+        ) {
+          selectedToStakeNfts.push(parseInt(n));
+        }
+        if (
+          this.state.selectedNfts[n] &&
+          this.state.selectedNfts[n]["status"] === true &&
+          this.state.selectedNfts[n]["staked"] === 1 &&
+          type && this.state.selectedNfts[n]["type"]
+        ) {
+          selectedToUnStakeNfts.push(parseInt(n));
+        }
+      });
+    } else {
+      Object.keys(this.state.selectedNfts).map(n => {
+        if (
+          this.state.selectedNfts[n] &&
+          this.state.selectedNfts[n]["status"] === true &&
+          this.state.selectedNfts[n]["staked"] === 0
+        ) {
+          selectedToStakeNfts.push(parseInt(n));
+        }
+        if (
+          this.state.selectedNfts[n] &&
+          this.state.selectedNfts[n]["status"] === true &&
+          this.state.selectedNfts[n]["staked"] === 1
+        ) {
+          selectedToUnStakeNfts.push(parseInt(n));
+        }
+      });
+    }
+
     return ({ selectedToStakeNfts, selectedToUnStakeNfts});
   }
 
-  renderStakeAllButton() {
-    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+  renderStakeButton(type) {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(type);
     let enabled=true;
     if ((selectedToUnStakeNfts.length > 0) && (selectedToStakeNfts.length === 0)) {
       enabled=false;
@@ -1318,55 +1380,78 @@ class Main extends React.Component {
       enabled=false;
     }
 
-    let type = 'default';
+    const height = this.getButtonHeight();
     if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
-      type = 'primary';
+      let nfts;
+      if (type === 'Rat') {
+        nfts = this.state.unstakedRats;
+      } else {
+        nfts = this.state.unstakedChefs;
+      }
+      if (nfts.length > 0) {
+        return (
+          <Button style={{height}} disabled={!enabled} className="web3Button" type={"default"} onClick={this.stakeAll.bind(this, type)}>
+            Stake all
+          </Button>
+        );
+      } else {
+        return <div></div>
+      }
+    } else {
+      return (
+        <Button
+          className="web3Button"
+          type={"default"}
+          style={{height}}
+          disabled={!enabled}
+          onClick={this.stake.bind(this, selectedToStakeNfts)}
+        >
+          Stake {selectedToStakeNfts.length} NFTs
+        </Button>
+      );
     }
 
-    const height = this.getButtonHeight();
 
-    return (
-      <Button style={{height}} disabled={!enabled} className="web3Button" type={type} onClick={this.stakeAll.bind(this)}>
-        Stake all
-      </Button>
-    );
   }
 
-  renderStakeButton() {
-    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+  renderUnStakeButton() {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(false);
     let enabled=true;
-    if ((selectedToUnStakeNfts.length > 0)) {
-      enabled=false;
-    }
+
     if (!this.state.isApprovedForAll) {
       enabled=false;
     }
 
-    if ((selectedToStakeNfts.length === 0)) {
-      enabled=false;
-    }
-
-    let type = 'default';
-    if ((selectedToStakeNfts.length > 0)) {
-      type = 'primary';
-    }
-
     const height = this.getButtonHeight();
+    if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
+      const nfts = this.state.stakedNfts;
+      if (nfts.length > 0) {
+        return (
+          <Button style={{height}} disabled={!enabled} className="web3ButtonTransparent" type={"default"} onClick={this.unstakeAll.bind(this)}>
+            Unstake all
+          </Button>
+        );
+      } else {
+        return <div></div>
+      }
+    } else {
+      return (
+        <Button
+          className="web3ButtonTransparent"
+          type={"default"}
+          style={{height}}
+          disabled={!enabled}
+          onClick={this.unstake.bind(this, selectedToUnStakeNfts)}
+        >
+          Unstake {selectedToUnStakeNfts.length} NFTs
+        </Button>
+      );
+    }
 
-    return (
-      <Button
-        className="web3Button"
-        type={type}
-        style={{height}}
-        disabled={!enabled}
-        onClick={this.stake.bind(this, selectedToStakeNfts)}
-      >
-        Stake {selectedToStakeNfts.length} NFTs
-      </Button>
-    );
+
   }
 
-  renderUnStakeButton() {
+  renderUnStakeButtonOld() {
     const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
     let enabled=true;
     if ((selectedToStakeNfts.length > 0)) {
@@ -1401,8 +1486,8 @@ class Main extends React.Component {
     );
   }
 
-  renderUnStakeAllButton() {
-    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
+  renderUnStakeAllButton(type) {
+    const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(type);
     let enabled=true;
     if ((selectedToStakeNfts.length > 0)) {
       enabled=false;
@@ -1420,13 +1505,11 @@ class Main extends React.Component {
       enabled = false;
     }
 
-    let type = 'default';
     if ((selectedToUnStakeNfts.length === 0)) {
-      type = 'primary';
     }
     const height = this.getButtonHeight();
     return (
-      <Button style={{height}} disabled={!enabled} className="web3Button" type={type} onClick={this.unstakeAll.bind(this)}>
+      <Button style={{height}} disabled={!enabled} className="web3Button" type={"default"} onClick={this.unstakeAll.bind(this)}>
          Unstake all
       </Button>
     );
@@ -1435,72 +1518,35 @@ class Main extends React.Component {
   renderClaimButton() {
     const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats();
     let enabled=true;
-    if ((selectedToStakeNfts.length > 0)) {
-      enabled=false;
-    }
-
-    if ((selectedToUnStakeNfts.length === 0)) {
-      enabled=false;
-    }
 
     if (!this.state.isApprovedForAll) {
       enabled=false;
     }
 
     let type = 'default';
+    let nfts = [];
     if ((selectedToUnStakeNfts.length > 0)) {
-      type = 'primary';
+      nfts = selectedToUnStakeNfts;
+    } else {
+      nfts = this.state.stakedNfts;
     }
     const height = this.getButtonHeight();
-    let disabledText = <span>Level up & Claim from {selectedToUnStakeNfts.length} NFTs</span>;
-    let activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}}src="/img/ffood.png"/> from {selectedToUnStakeNfts.length} NFTs</span>
-    if (window.innerWidth <= 768) {
-      disabledText = <span style={{marginLeft: '-5px'}}>Level up & Claim <br/>from {selectedToUnStakeNfts.length} NFTs</span>;
-      activeText = <span  style={{marginLeft: '-5px'}}>Level up & Claim <img style={{paddingLeft: '3px', marginTop: '-5px'}} src="/img/ffood.png"/><br/>from {selectedToUnStakeNfts.length} NFTs</span>
-    }
-    return (
-      <Button
-        className="web3Button"
-        style={{height}}
-        type={type}
-        disabled={!enabled}
-        onClick={this.claimFunds.bind(this, selectedToUnStakeNfts)}
-      >
-      { selectedToUnStakeNfts.length === 0 ?
-        disabledText : activeText
-      }
-
-      </Button>
-    );
-  }
-
-  renderLegend() {
-    return (
-      <div>
-        <Row>
-          <Col xl={6} lg={0} md={0} sm={0}>
-            {this.state.totalChefs} chefs, {this.state.totalChefsStaked} staked
-          </Col>
-          <Col xl={6} lg={0} md={0} sm={0}>
-            {this.state.totalRats} rats, {this.state.totalRatsStaked} staked
-          </Col>
-        </Row>
-        <Row>
-          <Col xl={0} md={24} sm={24}>
-            {this.state.totalChefs} total chefs, {this.state.totalChefsStaked} staked
-          </Col>
-          <Col xl={0} md={24} sm={24}>
-            {this.state.totalRats} total rats, {this.state.totalRatsStaked} staked
-          </Col>
-          <Col xl={12} md={24}>
-            Total $FFOOD not claimed: {this.nftProfit.toFixed(2)}
-          </Col>
-        </Row>
-      </div>
+    let activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}}src="/img/ffood.png"/></span>
+    if (nfts.length > 0) {
+      return (
+        <Button
+          className="web3ButtonTransparent"
+          style={{height}}
+          type={type}
+          onClick={this.claimFunds.bind(this, nfts)}
+        >
+          {activeText}
+        </Button>
       );
+    }
   }
 
-  renderButtons() {
+  getSelectedNFTs() {
     const selectedToStakeNfts = [];
     const selectedToUnStakeNfts = [];
     Object.keys(this.state.selectedNfts).map(n => {
@@ -1519,64 +1565,19 @@ class Main extends React.Component {
         selectedToUnStakeNfts.push(parseInt(n));
       }
     });
+    return { selectedToStakeNfts, selectedToUnStakeNfts };
+  }
 
-    if ((window.innerWidth >= 768) && (window.innerWidth <= 1020)) {
-      return (
-        <div>
-          <Row>
-            <Col span="12">
-              {this.renderApprovalButton()}
-            </Col>
-            <Col span="12">
-              {this.renderStakeAllButton()}
-            </Col>
-          </Row>
-          <Row style={{paddingTop: '15px'}}>
-            <Col span="12">
-              {this.renderStakeButton(selectedToStakeNfts)}
-            </Col>
-            <Col span="12">
-              {this.renderUnStakeButton(selectedToUnStakeNfts)}
-            </Col>
-          </Row>
-          <Row style={{paddingTop: '15px'}}>
-            <Col span="12">
-              {this.renderUnStakeAllButton()}
-            </Col>
-            <Col span="12">
-              {this.renderClaimButton()}
-            </Col>
-          </Row>
-        </div>
-      );
-    }
-
-      return (
-        <div>
-          <Row>
-            <Col span="8">
-              {this.renderApprovalButton()}
-            </Col>
-            <Col span="8">
-              {this.renderStakeAllButton()}
-            </Col>
-            <Col span="8">
-              {this.renderStakeButton(selectedToStakeNfts)}
-            </Col>
-          </Row>
-          <Row style={{paddingTop: '15px'}}>
-            <Col span="8">
-              {this.renderUnStakeButton(selectedToUnStakeNfts)}
-            </Col>
-            <Col span="8">
-              {this.renderUnStakeAllButton()}
-            </Col>
-            <Col span="8">
-              {this.renderClaimButton()}
-            </Col>
-          </Row>
-        </div>
-      );
+  renderStakeButtons(type) {
+    return (
+      <div style={{marginTop: 20}}>
+        <Row>
+        <Col span="8">
+          {!this.state.isApprovedForAll ? this.renderApprovalButton() : this.renderStakeButton(type)}
+        </Col>
+        </Row>
+      </div>
+    )
   }
 
   renderNACard(title) {
@@ -1604,27 +1605,35 @@ class Main extends React.Component {
   }
 
 
-  getStreetLightPosition() {
-    const width = this.getWidth('building');
-    const margin = (window.innerWidth - width.width)/2;
-    const left = margin + width.width - 135;
-    return left;
+  getStreetLightPosition(type = 1) {
+    const node = this.townhouseRef.current;
+    if (node) {
+      const rect = node.getBoundingClientRect();
+      if (type === 1) {
+        return rect.x+rect.width;
+      } else {
+        return rect.x+rect.width+180;
+      }
+    } else {
+      return 0;
+    }
   }
 
   getFlowerPot1Position() {
-    const width = this.getWidth('building');
-    const margin = (window.innerWidth - width.width)/2;
-    return margin + 10;
+    const node = this.townhouseRef.current;
+    if (node) {
+      const rect = node.getBoundingClientRect();
+      return rect.x-35;
+    } else {
+      return 0;
+    }
   }
-
-
 
   getTownhouseMargin() {
     const width = this.getWidth('building');
     const margin = (window.innerWidth - width.width)/2;
     return {
-      marginLeft: margin > 20 ? parseInt(margin) : 20,
-      marginTop: 100
+      margin: "0 auto",
     }
   }
 
@@ -1633,17 +1642,18 @@ class Main extends React.Component {
     let mobile = false;
 
     const offsets = {
-      mobileWidth: 325,
+      mobileWidth: 300,
       normalLargeWidth: 650, // kitchen width
       buildingNormal: 450, // whole width for the kitchen
       buildingSmall: 271,
       normalWidth: 500,
-      roofSmall: 222,
+      roofSmall: 600,
       roofNormal: 272,
       rat: 220,
       noKitchen: 200,
       townhouseMobile: 222,
-      townhouseNormal: 272, // outer box
+      townhouseNormal: 272, // outer box, not visible
+      buildingMobileWidth: 570,
     };
 
     let maxWidth = window.innerWidth;
@@ -1651,15 +1661,19 @@ class Main extends React.Component {
       maxWidth = 1400;
     }
 
-    if (maxWidth <= 768) {
+    if (maxWidth <= this.mobileBreakpoint) {
         width = offsets.mobileWidth;
         mobile = true;
     }
     else {
-      if (window.innerWidth - 650 > 400) {
-        width = maxWidth - offsets.normalLargeWidth;
+      if (window.innerWidth > 1100) {
+        if (window.innerWidth - 650 > 400) {
+          width = maxWidth - offsets.normalLargeWidth;
+        } else {
+          width = maxWidth - offsets.normalLargeWidth;
+        }
       } else {
-        width = maxWidth - offsets.normalLargeWidth;
+        width = window.innerWidth * 0.5;
       }
     }
 
@@ -1667,15 +1681,15 @@ class Main extends React.Component {
 
     if (type === 'roof') {
       const tmp = this.getWidth('kitchen');
-      if (maxWidth <= 768) {
-        width = tmp.width + offsets.roofSmall;
+      if (maxWidth <= this.mobileBreakpoint) {
+        width = offsets.roofSmall;
       } else {
         width = tmp.width + offsets.roofNormal;
       }
     }
     else if (type === 'townhouse') {
       const tmp = this.getWidth('kitchen');
-      if (maxWidth <= 768) {
+      if (maxWidth <= this.mobileBreakpoint) {
         width = tmp.width + offsets.townhouseMobile;
       } else {
         width = tmp.width + offsets.townhouseNormal;
@@ -1686,12 +1700,21 @@ class Main extends React.Component {
       width = tmp.width + 272;
     } else if (type === 'building') {
       const tmp = this.getWidth('kitchen');
-      width = tmp.width + offsets.buildingNormal;
+      if (window.innerWidth > this.mobileBreakpoint) {
+        width = tmp.width + offsets.buildingNormal;
+        if (width > 1022) {
+          width = 1022;
+        }
+      } else {
+        width = offsets.buildingMobileWidth;
+      }
     } else if (type === 'rats') {
         width += offsets.rat;
     } else if (type !== 'kitchen') {
           width += offsets.noKitchen;
     }
+
+
     if (stretch) {
       let factor;
       let height;
@@ -1721,7 +1744,33 @@ class Main extends React.Component {
 
   }
 
-  renderRatAlertOfficeInfo() {
+  renderRatAlertOfficeInfo(fullLine = false) {
+    if (fullLine) {
+      return (
+        <Row>
+        <Col span={24}>
+          <div className="officeFullScene">
+            <span class="logoText">
+              RATalert
+            </span>
+            <div className="logoLine"/>
+            <div className="officeFullDescription">
+            The NFT game that lets you train your characters
+  on-chain for higher rewards!<br/><br/>
+  Learn more about the rules in the <Link>Whitepaper</Link>.
+            </div>
+            <Radio.Group onChange={this.setOfficeView.bind(this)} value={this.state.officeView} buttonStyle="solid">
+              <Radio.Button value="mint">Mint</Radio.Button>
+              <Radio.Button value="balance">Balance</Radio.Button>
+              <Radio.Button value="stats">Stats</Radio.Button>
+            </Radio.Group>
+
+          </div>
+        </Col>
+        </Row>
+      );
+    }
+
     return (
       <Col style={{width: '180px'}}>
         <div className="officeScene">
@@ -1757,6 +1806,15 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
     );
   }
 
+  renderRoof() {
+    const style = this.getWidth('roof', true, 1000, 300);
+    style.margin = "0 auto";
+    return (
+      <div className="roof" style={style}>
+      </div>
+    )
+  }
+
   renderNfts() {
     this.nftProfit = 0;
     this.townhouseHeight = 0;
@@ -1766,17 +1824,17 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
     this.townhouseHeight += 315; // Gourmet Kitchen
     this.townhouseHeight += 315; // Casual Kitchen
     this.townhouseHeight += 315; // Gym
+    const sewer = this.getWidth('sewer');
+    if (window.innerWidth < 769) {
+      sewer.width += 30;
+    }
     return (
-      <div className="stakeHouse" size="small" style={this.getWidth('townhouse')}>
-        <Card className="roofWall" size="small">
-          <div className="roof" style={this.getWidth('roof', true, 1000, 300)}>
-          </div>
-        </Card>
-        <Card className="house office" size="small" style={this.getWidth('building')}>
+      <div className="stakeHouse" size="small" style={window.innerWidth > this.mobileBreakpoint ? this.getWidth('townhouse') : {} }>
+        <Card className="house office kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
-            { window.innerWidth > 1100 ? this.renderRatAlertOfficeInfo() : null }
+            { window.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
-              <div className={this.getOfficeBackground()} style={this.getWidth(window.innerWidth > 1100 ? 'kitchen' : null)}>
+              <div className={this.getOfficeBackground()} style={this.getWidth(window.innerWidth > this.officeBreakpoint ? 'kitchen' : null)}>
                 <div className="officeBoard">
                   { this.state.officeView === 'mint' ?
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
@@ -1788,20 +1846,18 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
                         this.renderStats()
                         : null }
                 </div>
-                { window.innerWidth < 1099 ? this.renderMobileOfficeNav() : null }
-
               </div>
             </Col>
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
               <div className="gourmetScene">
               </div>
               <div className="restaurantSign">
-                <img width={window.innerWidth < 769 ? 75 : 150} src="img/le-stake.png"/>
+                <img width={window.innerWidth < 1080 ? 75 : 150} src="img/le-stake.png"/>
               </div>
             </Col>
             <Col>
@@ -1811,13 +1867,13 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
             <div className="casualScene">
             </div>
             <div className="restaurantSign">
-              <img width={window.innerWidth < 769 ? 75 : 150} src="img/stake-house.png"/>
+              <img width={window.innerWidth < 1080 ? 50 : 150} src="img/stake-house.png"/>
             </div>
 
             </Col>
@@ -1829,13 +1885,19 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
             <div className="fastFoodScene">
+              <div style={{paddingTop: 210}}>
+                { this.renderUnStakeButton() }
+              </div>
+              <div style={{paddingTop: 10}}>
+                { this.renderClaimButton() }
+              </div>
             </div>
             <div className="restaurantSign">
-              <img width={window.innerWidth < 769 ? 75 : 150} src="img/mc-stake.png"/>
+              <img width={window.innerWidth < 1080 ? 50 : 150} src="img/mc-stake.png"/>
             </div>
             </Col>
             <Col style={{marginLeft: '20px'}}>
@@ -1844,7 +1906,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house gym" size="small" style={this.getWidth('building')}>
+        <Card className="house gym kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
               <div className="descriptionBox">
@@ -1867,7 +1929,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house gym" size="small" style={this.getWidth('building')}>
+        <Card className="house gym kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
           <Col style={{width: '180px'}}>
             <div className="descriptionBox">
@@ -1877,8 +1939,9 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
               <div class="subtitle">
                 break room
               </div>
-
               <div className="logoLine"/>
+
+              { this.renderStakeButtons('Chef') }
               <div className="gymDescription">
               </div>
             </div>
@@ -1890,9 +1953,9 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
         </Card>
         <div className="streetlight2">
         </div>
-        <div className="streetlight3" style={{ left: this.getStreetLightPosition()} }>
+        <div className="streetlight3" style={{ left: this.getStreetLightPosition(1)} }>
         </div>
-        <div className="streetlight1" style={{left: window.innerWidth * 0.9}}>
+        <div className="streetlight1" style={{ left: this.getStreetLightPosition(2)} }>
         </div>
 
         <div className="flowerpot1" style={{ left: this.getFlowerPot1Position()} }>
@@ -1909,13 +1972,13 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
         <div className="street">
         </div>
 
-        <div className="darkBackground">
+        <div className="darkBackground" style={{height: 900, width: window.innerWidth+100}}>
         </div>
 
         <div className="sewerEntrance">
           <div style={this.getWidth('kitchen')} className="ground"/>
         </div>
-        <Card className="house gym sewer" size="small" style={this.getWidth('sewer')}>
+        <Card className="house gym sewer" size="small" style={sewer}>
           <Row >
           <Col style={{width: '180px'}}>
             <div className="descriptionBox">
@@ -1926,21 +1989,18 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
                 sewer
               </div>
               <div className="logoLine"/>
+              { this.renderStakeButtons('Rat') }
+
               <div className="gymDescription">
               </div>
             </div>
           </Col>
-            <Col style={{marginLeft: '20px'}}>
+            <Col className="marginSewer">
             {!this.state.loading ? this.renderRats() : <Skeleton />}
             </Col>
           </Row>
         </Card>
         <div className="belowTheSewer"/>
-
-        <Card size="small">
-        { this.renderLegend() }
-        { this.renderButtons() }
-        </Card>
       </div>
     );
   }
@@ -2026,72 +2086,19 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
   }
 
   renderGame() {
+    const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
           <Row style={{ height: "100%" }}>
-            <div className="sky" style={this.getWidth('sky', true, 1440, 1000)}>
+            <div className="sky" style={skyAttr}>
             </div>
-            <div className="nightGradient" style={{height: this.townhouseHeight - 1000 + 250}}>
+            <div className="nightGradient" style={{top: skyAttr.height, height: this.townhouseHeight - 200}}>
             </div>
 
-            <Col md={24} xs={24}>
-              <Row>
-                <Col md={1} xs={1} />
-                <Col md={22} xs={22}>
-                </Col>
-                <Col md={1} xs={1} />
-              </Row>
-              {
-                /*
-              <Row>
-                <Col md={1} xs={1} />
-                <Col md={22} xs={22}>
-                  <Card size="small" title="My balances" style={{ marginTop: "25px" }}>
-                    <div>$FFOOD2 {this.state.fFoodBalance }</div>
-                  </Card>
-                  <Card size="small" title="Game Stats" style={{ marginTop: "25px" }}>
-                    { this.renderStats() }
-                  </Card>
-                  <Card size="small" title="Info" style={{ marginTop: "25px" }}>
-                    <Row>
-                      <Col span="24">
-                        {this.state.stats.tokensClaimed + this.state.stats.maxSupply * 0.25 <=
-                        this.state.stats.maxSupply ? (
-                          <div>
-                            <p>
-                              Chefs earn a minimum of {this.state.stats.dailyFFoodRate} $FFOOD per day. Your chefs may
-                              get more daily $FFOOD depending on their <b>skill</b> level.
-                            </p>
-                            <p>
-                              Rats steal {this.state.stats.ratTax}% of all Chef's $FFOOD. Your rats get a proportional
-                              cut depending on their <b>fatness</b> level.
-                            </p>
-                            The minimum staking period is {this.state.stats.minimumToExit / 3600} hours. Learn more
-                            about the rules in the whitepaper.
-                          </div>
-                        ) : (
-                          <div>
-                            <p>Max supply has been reached, there are no $FFOOD rewards for Chefs and Rats anymore. </p>
-                          </div>
-                        )}
-                      </Col>
-                    </Row>
-                  </Card>
-                </Col>
-                <Col span={2} />
-              </Row>
-              */
-            }
-            </Col>
-            <Col md={24} xs={24}>
-              <Row style={{ marginTop: "25px" }}>
-                <Col md={1} xs={1} />
-                <Col md={22} xs={22}>
-                  <div className="townhouseBox" style={this.getTownhouseMargin()}>
-                  {this.props.address ? this.renderNfts() : this.renderNACard()}
-                  </div>
-                </Col>
-              </Row>
-            </Col>
+            <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
+              { this.renderRoof() }
+              {this.props.address ? this.renderNfts() : this.renderNACard()}
+            </div>
+
           </Row>
     );
   }
