@@ -108,6 +108,16 @@ html {
   background-size: 100%;
 }
 
+.roofCat {
+  background-image: url("img/roof_cat.gif");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  position: relative;
+  left: 56.5%;
+  top: 49.5%;
+}
+
+
 .roofWall .ant-card-body {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
@@ -395,7 +405,6 @@ html {
 
   .skyline {
     position: absolute;
-    width: 100%;
     left: 0px;
     background-image: url("img/skyline.png");
     z-index: -1;
@@ -411,14 +420,16 @@ html {
     margin-left: 232px;
   }
 
-  .streetlight1 {
+
+
+  .streetlight3 {
     position: absolute;
-    width: 35px;
+    width: 64px;
     background-size: cover;
-    background-image: url("img/street-light-1.png");
+    background-image: url("img/street-light-3.png");
     z-index: 0;
-    height: 296px;
-    margin-top: -308px;
+    height: 102px;
+    margin-top: -312px;
   }
 
 
@@ -433,15 +444,6 @@ html {
     left: 25px;
   }
 
-  .streetlight3 {
-    position: absolute;
-    width: 64px;
-    background-size: cover;
-    background-image: url("img/street-light-3.png");
-    z-index: 0;
-    height: 102px;
-    margin-top: -312px;
-  }
 
   .marginSewer {
     margin-left: 20px;
@@ -793,6 +795,34 @@ html {
 
 }
 
+.hintHeader {
+  width: 182px;
+  height: 16px;
+  border: solid 1px #312313;
+  background-color: #896843;
+
+  font-family: Pixellari;
+  font-size: 12px;
+  color: #322110;
+  margin-top: 0px;
+  padding-left: 10px;
+}
+
+.hintContent {
+  width: 182px;
+  border: solid 1px #312313;
+  background-color: #a78969;
+  font-family: Pixellari;
+  font-size: 12px;
+  color: #322110;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  position: absolute;
+  z-index: 2;
+}
+
 .web3ButtonTransparent {
   height: 35px !important;
   padding-top: 6px;
@@ -808,6 +838,7 @@ html {
 .web3Button {
   height: 30px;
   padding-top: 6px;
+  margin-bottom: 10px;
   textAlign: center;
   background: transparent;
   color: #FFFFFF;
@@ -829,6 +860,18 @@ html {
 .ratSewer {
   background-image: url("img/rat_sewer.png");
   height: 300px;
+}
+
+@media only screen and (min-width: 1600px) {
+  .streetlight1 {
+    position: absolute;
+    width: 35px;
+    background-size: cover;
+    background-image: url("img/street-light-1.png");
+    z-index: 0;
+    height: 296px;
+    margin-top: -308px;
+  }
 }
 
 @media only screen and (min-width: 1161px) {

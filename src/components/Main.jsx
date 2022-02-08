@@ -400,7 +400,7 @@ class Main extends React.Component {
     return this.renderNFT(null, 1);
   }
 
-  async mint() {
+  async mint(stake = false) {
     try {
       const amount = this.state.mintAmount;
       let mintPrice = 0;
@@ -417,7 +417,7 @@ class Main extends React.Component {
 
 
       const result = await this.props.tx(
-        this.props.writeContracts.ChefRat.mint(amount, false, {
+        this.props.writeContracts.ChefRat.mint(amount, stake, {
           from: this.props.address,
           value: ethers.utils.parseEther(sum.toString()),
           gasLimit,
@@ -608,12 +608,12 @@ class Main extends React.Component {
             3. Start minting
           </Col>
           <Col span={3} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this)}>
+            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
               Mint
             </Button>
           </Col>
           <Col span={6} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this)}>
+            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
               Mint & Stake
             </Button>
           </Col>
@@ -745,13 +745,13 @@ class Main extends React.Component {
               image: json.image,
               type,
               attributes: json.attributes,
-              insanity: hash['Insanity'],
+              insanity: parseInt(r.insanity),
               insanityLevel: hash['Insanity percentage'],
-              skill: hash['Skill'],
+              skill: parseInt(r.skill),
               skillLevel: hash['Skill percentage'],
-              intelligence: hash['Intelligence'],
+              intelligence: parseInt(r.intelligence),
               intelligenceLevel: hash['Intelligence percentage'],
-              fatness: hash['Fatness'],
+              fatness: parseInt(r.fatness),
               fatnessLevel: hash['Fatness percentage'],
             });
           }
@@ -1200,6 +1200,12 @@ class Main extends React.Component {
       enabled = false;
     }
 
+    if (!enabled){
+      return (
+        <div></div>
+      );
+    }
+
     return (
       <Button style={{height}}
       className="web3Button"
@@ -1397,7 +1403,7 @@ class Main extends React.Component {
       } else {
         return <div></div>
       }
-    } else {
+    } else if (enabled) {
       return (
         <Button
           className="web3Button"
@@ -1809,8 +1815,12 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
   renderRoof() {
     const style = this.getWidth('roof', true, 1000, 300);
     style.margin = "0 auto";
+    const catWidth = style.width * 0.04;
+    const catHeight = style.height * 0.14;
     return (
       <div className="roof" style={style}>
+        <div className="roofCat" style={{width: catWidth, height: catHeight}}>
+        </div>
       </div>
     )
   }
@@ -1919,6 +1929,16 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
 
                 <div className="logoLine"/>
                 <div className="gymDescription">
+                <div style={{paddingTop: 20}}>
+                  <div class="hintHeader">Hint</div>
+                  <div class="hintContent">
+                  Time in the gym is good for your NFTs health. No tokens are earned.
+                  <br/><br/>
+                  Chefs reduce their freak level by -12% per day.
+                  <br/><br/>
+                  Rats reduce their body mass by -8% per day.
+                  </div>
+                </div>
                 </div>
               </div>
             </Col>
@@ -1942,7 +1962,11 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
               <div className="logoLine"/>
 
               { this.renderStakeButtons('Chef') }
-              <div className="gymDescription">
+              <div>
+                <div class="hintHeader">Hint</div>
+                <div class="hintContent">
+                { this.state.unstakedChefs.length === 0 ? <span>The break room represents your wallet, your chefs hang out here.<br/><br/></span> : null} From here, you can stake your chefs in a kitchen or in the gym here by selecting one chef or clicking 'Stake all'.
+                </div>
               </div>
             </div>
           </Col>
@@ -1967,9 +1991,9 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
         <div className="flowerpot2" style={{ left: this.getStreetLightPosition()+100} }>
         </div>
 
-        <div className="skyline">
+        <div className="skyline" style={{width: window.innerWidth+150}}>
         </div>
-        <div className="street">
+        <div className="street" style={{width: window.innerWidth+150}}>
         </div>
 
         <div className="darkBackground" style={{height: 900, width: window.innerWidth+100}}>
@@ -1991,7 +2015,13 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
               <div className="logoLine"/>
               { this.renderStakeButtons('Rat') }
 
-              <div className="gymDescription">
+              <div>
+                <div>
+                  <div class="hintHeader">Hint</div>
+                  <div class="hintContent">
+                    { this.state.unstakedRats.length === 0 ? <span>The sewer room represents your wallet, your rats hang out here.<br/><br/></span> : null}From here, you can stake your rats in a kitchen or in the gym here by selecting one rat or clicking 'Stake all'.
+                  </div>
+                </div>
               </div>
             </div>
           </Col>
