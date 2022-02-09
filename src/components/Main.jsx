@@ -16,6 +16,7 @@ import {
   Slider,
   Radio,
 } from "antd";
+let lastBlockTime = 0;
 const { Header, Footer, Sider, Content } = Layout;
 
 const univ3prices = require('@thanpolas/univ3prices');
@@ -48,6 +49,7 @@ const uniswapClient = new GraphQLClient(uniswapGraph, {
 });
 
 
+
 import { LeftOutlined } from "@ant-design/icons";
 const { ethers } = require("ethers");
 import { renderNotification } from "../helpers";
@@ -68,6 +70,7 @@ class Main extends React.Component {
     this.townhouseRef = React.createRef();
     this.mobileBreakpoint = 651;
     this.officeBreakpoint = 1160;
+
     this.state = {
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { chefRats: [] },
@@ -208,7 +211,7 @@ class Main extends React.Component {
       return;
     }
 
-    const query1 = `{ chefRats(where: {
+    const query1 = `{ chefRats(first: 1000, where: {
           owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
           id, staked, owner,stakedTimestamp, lastClaimTimestamp, URI, type,
@@ -258,7 +261,6 @@ class Main extends React.Component {
 
 
     const allStakedChefs = [];
-
     result1.chefRats.map(r => {
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
@@ -506,6 +508,18 @@ class Main extends React.Component {
       dailyFFoodRate = 0;
     }
 
+    let accrualPeriod = await kitchenPackContract.accrualPeriod();
+    if (!accrualPeriod) {
+      accrualPeriod = 0;
+    }
+
+    let chefEfficiencyMultiplier = await kitchenPackContract.chefEfficiencyMultiplier();
+    if (!chefEfficiencyMultiplier) {
+      chefEfficiencyMultiplier = 0;
+    }
+
+
+
     let minimumToExit = await kitchenPackContract.MINIMUM_TO_EXIT();
     if (!minimumToExit) {
       minimumToExit = 0;
@@ -519,6 +533,22 @@ class Main extends React.Component {
     let maxSupply = await kitchenPackContract.FFOOD_MAX_SUPPLY();
     if (!maxSupply) {
       maxSupply = 0;
+    }
+
+    // TODO get once every 5-10 minutes
+    let fastFoodperRat = await kitchenPackContract.fastFoodPerRat();
+    if (!fastFoodperRat) {
+      fastFoodperRat = 0;
+    }
+
+    let ratEfficiencyMultiplier = await kitchenPackContract.ratEfficiencyMultiplier();
+    if (!ratEfficiencyMultiplier) {
+      ratEfficiencyMultiplier = 0;
+    }
+
+    let ratEfficiencyOffset = await kitchenPackContract.ratEfficiencyOffset();
+    if (!ratEfficiencyOffset) {
+      ratEfficiencyOffset = 0;
     }
 
     let ratsStaked = await kitchenPackContract.totalRatsStaked();
@@ -535,7 +565,6 @@ class Main extends React.Component {
     if (!tokensClaimed) {
       tokensClaimed = 0;
     }
-
     const stats = {
       minted,
       totalSupply: parseInt(totalSupply) || 0,
@@ -550,7 +579,11 @@ class Main extends React.Component {
       ratTax: parseInt(ratTax),
       maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
       mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
-      levelUpThreshold: 86400,
+      levelUpThreshold: parseInt(accrualPeriod),
+      chefEfficiencyMultiplier: parseInt(chefEfficiencyMultiplier),
+      fastFoodperRat: parseInt(fastFoodperRat),
+      ratEfficiencyMultiplier: parseInt(ratEfficiencyMultiplier),
+      ratEfficiencyOffset: parseInt(ratEfficiencyOffset),
     };
     this.setState({ stats });
 
@@ -794,10 +827,10 @@ class Main extends React.Component {
       // Is in a kitchen
       offset = 200;
       minimumNftsPerRow = 2;
-      nftWidth = 190;
+      nftWidth = 170;
     } else {
       offset = 50;
-      nftWidth = 190;
+      nftWidth = 170;
     }
 
     if (window.innerWidth <= this.mobileBreakpoint) {
@@ -1013,7 +1046,7 @@ class Main extends React.Component {
             </Col>
             <Col span={7} className="funds" style={{color: '#fee017'}}>
               <Popover content="Amount of $FFOOD your NFTs have accumulated.">
-                {this.renderNftProfit(c.type, c.timestamp, c.lastClaimTimestamp)}
+                {this.renderNftProfit(c.type, c.timestamp, c.lastClaimTimestamp, c.skillLevel, c.name)}
               </Popover>
             </Col>
           </Row>
@@ -1125,32 +1158,37 @@ class Main extends React.Component {
     return <span>{h}<img className="colon" src="/img/colon.svg"/>{m}<img className="colon" src="/img/colon.svg"/>{s}</span>;
   }
 
-  renderNftProfit(type, timestamp, lastClaimTimestamp) {
+  renderNftProfit(type, timestamp, lastClaimTimestamp, skill, name) {
     if (lastClaimTimestamp > timestamp) {
-      timestamp = lastClaimTimestamp;
+    //  timestamp = lastClaimTimestamp;
     }
     if (type !== "Rat") {
-      const owedPerSecond = 1000 / 86400;
-      const timePassed = Math.floor(Date.now() / 1000) - timestamp;
-      this.nftProfit += timePassed * owedPerSecond * 0.8;
-      return (timePassed * owedPerSecond * 0.8).toFixed(0);
-    } else {
-      let totalChefProfit = 0;
-      this.state.allStakedChefs.map(a => {
-        const owedPerSecond = 1000 / 86400;
-        const timePassed = Math.floor(Date.now() / 1000) - timestamp;
-        totalChefProfit += timePassed * owedPerSecond;
-      });
-      const totalRatProfit = totalChefProfit * 0.2;
-      const totalRatsStaked = this.state.totalRatsStaked;
-      let myRatProfit = 0;
-      if (totalRatsStaked > 1) {
-        myRatProfit = (1 / parseInt(totalRatsStaked, 10)) * totalRatProfit;
-      } else {
-        myRatProfit = totalRatProfit;
+      if (this.state.stats && this.state.stats.dailyFFoodRate > 0) {
+        const nominal = (this.props.lastBlockTime - timestamp) * parseInt(this.state.stats.dailyFFoodRate) / parseInt(this.state.stats.levelUpThreshold);
+        const multiplier = 100000 + (skill * this.state.stats.chefEfficiencyMultiplier * 10);
+        const gross = nominal * multiplier / 100000;
+        const net = gross * (100 - this.state.stats.ratTax) / 100
+        console.log(`----NFT ${name}`);
+        console.log(`last blocktime ${this.props.lastBlockTime} Staked Time ${timestamp} Diff ${this.props.lastBlockTime - timestamp} DailyFoodRate ${this.state.stats.dailyFFoodRate} accrualPeriod ${this.state.stats.levelUpThreshold}`);
+        console.log(`efficiency ${skill} chefEfficiencyMultiplier ${this.state.stats.chefEfficiencyMultiplier }`);
+        console.log(`Nominal: ${nominal} Multiplier: ${multiplier}`);
+        console.log(`Gross: ${gross} Net: ${net}`);
+        console.log(`----END`);
+
+        if (net < 0) {
+          net = 0;
+        }
+        return parseFloat(gross).toFixed(2);
       }
-      this.nftProfit += myRatProfit;
-      return myRatProfit.toFixed(0);
+      return 0;
+    } else {
+      /*
+      const nominal = fastFoodPerRat - stake.value; // stake.value ist der fastFoodPerRat Betrag zum Zeitpunkt des stakens
+      const multiplier = (tolerance <= 50 ? tolerance : 100 - tolerance * ratEfficiencyMultiplier * 1000 / 100) + (ratEfficiencyOffset * 1000);
+      const net = nominal * multiplier / 100000;
+      */
+      return 0;
+
     }
   }
 
@@ -1648,7 +1686,7 @@ class Main extends React.Component {
     let mobile = false;
 
     const offsets = {
-      mobileWidth: 300,
+      mobileWidth: 310,
       normalLargeWidth: 650, // kitchen width
       buildingNormal: 450, // whole width for the kitchen
       buildingSmall: 271,
@@ -1657,9 +1695,9 @@ class Main extends React.Component {
       roofNormal: 272,
       rat: 220,
       noKitchen: 200,
-      townhouseMobile: 222,
+      townhouseMobile: 290,
       townhouseNormal: 272, // outer box, not visible
-      buildingMobileWidth: 570,
+      buildingMobileWidth: 750 // Building width mobile
     };
 
     let maxWidth = window.innerWidth;
@@ -1667,7 +1705,7 @@ class Main extends React.Component {
       maxWidth = 1400;
     }
 
-    if (maxWidth <= this.mobileBreakpoint) {
+    if (maxWidth <= 900) {
         width = offsets.mobileWidth;
         mobile = true;
     }
@@ -1694,6 +1732,8 @@ class Main extends React.Component {
       }
     }
     else if (type === 'townhouse') {
+
+
       const tmp = this.getWidth('kitchen');
       if (maxWidth <= this.mobileBreakpoint) {
         width = tmp.width + offsets.townhouseMobile;
@@ -1714,6 +1754,7 @@ class Main extends React.Component {
       } else {
         width = offsets.buildingMobileWidth;
       }
+
     } else if (type === 'rats') {
         width += offsets.rat;
     } else if (type !== 'kitchen') {
@@ -1836,10 +1877,10 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
     this.townhouseHeight += 315; // Gym
     const sewer = this.getWidth('sewer');
     if (window.innerWidth < 769) {
-      sewer.width += 30;
+      sewer.width += 18;
     }
     return (
-      <div className="stakeHouse" size="small" style={window.innerWidth > this.mobileBreakpoint ? this.getWidth('townhouse') : {} }>
+      <div className="stakeHouse" size="small" style={this.getWidth('townhouse')}>
         <Card className="house office kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             { window.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }

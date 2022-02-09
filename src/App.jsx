@@ -25,6 +25,7 @@ const { ethers } = require("ethers");
 
 let targetNetwork;
 let chainId = 0;
+let lastBlockTime = 0;
 if (process.env.REACT_APP_ETH_ENV === 'local') {
   targetNetwork = NETWORKS.localhost;
   chainId = 1337;
@@ -120,7 +121,11 @@ function App(props) {
   }
 
 
-  useEffect(() => {
+  useEffect(async() => {
+    if (lastBlockTime === 0) {
+      lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
+    }
+
     async function getAddress() {
       if (userSigner) {
         const newAddress = await userSigner.getAddress();
@@ -230,6 +235,12 @@ function App(props) {
     );
   }
 
+  useOnBlock(localProvider, async() => {
+    lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
+  });
+
+
+
   const [route, setRoute] = useState();
   useEffect(() => {
     setRoute(window.location.pathname);
@@ -290,6 +301,7 @@ function App(props) {
               provider={localProvider}
               targetNetwork={targetNetwork}
               chainId={chainId}
+              lastBlockTime={lastBlockTime}
             />}
             />
           </Route>

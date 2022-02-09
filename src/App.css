@@ -375,7 +375,7 @@ html {
     margin-left: -10px;
   }
   .nftId {
-    margin-left: 120px;
+    margin-left: 97px;
   }
   .kitchenRow_waitingRoom {
     margin-left: 10px;
@@ -398,10 +398,6 @@ html {
     margin-bottom: 15px;
   }
 
-  .roof {
-    margin-top: 150px !important;
-    margin-bottom: -12px !important;
-  }
 
   .skyline {
     position: absolute;
@@ -498,7 +494,7 @@ html {
 
   .roof {
     margin-top: 150px !important;
-    margin-bottom: -13px !important;
+    margin-bottom: -15px !important;
   }
 }
 
@@ -524,6 +520,7 @@ html {
 
   .roof {
     margin-top: 10px !important;
+    margin-bottom: -15px !important;
   }
 
   .street {
@@ -534,6 +531,11 @@ html {
     left: -110px;
     margin-top: -12px;
     background-image: url("img/street.png");
+  }
+
+  .kitchenMargin {
+    margin-top: 15px;
+    margin-bottom: 15px;
   }
 
   .sewerEntrance {
@@ -566,7 +568,7 @@ html {
     width: 117px;
   }
   .nftId {
-    margin-left: 77px;
+    margin-left: 54px;
   }
 
   .nftImage {
@@ -621,7 +623,7 @@ html {
 
 .nftId {
   text-align: center !important;
-  width: 40px;
+  width: 63px;
   border-top: 3px solid #443a31;
   border-left: 3px solid #443a31;
   border-right: 3px solid #443a31;

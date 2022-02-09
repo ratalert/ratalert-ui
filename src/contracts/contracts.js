@@ -1052,7 +1052,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1065,7 +1066,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1078,7 +1080,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1091,7 +1094,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1104,7 +1108,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1117,7 +1122,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1130,7 +1136,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1143,7 +1150,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1156,7 +1164,22 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "chefEfficiencyMultiplier",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1169,7 +1192,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1203,7 +1227,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1216,7 +1241,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1229,7 +1255,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1263,7 +1290,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1276,7 +1304,36 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "ratEfficiencyMultiplier",
+              "outputs": [
+                {
+                  "internalType": "int256",
+                  "name": "",
+                  "type": "int256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "ratEfficiencyOffset",
+              "outputs": [
+                {
+                  "internalType": "int256",
+                  "name": "",
+                  "type": "int256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1296,7 +1353,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1309,7 +1367,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1322,7 +1381,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1348,7 +1408,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1366,6 +1427,21 @@ export const contracts = {
                   "internalType": "uint256",
                   "name": "_accrualPeriod",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "_chefEfficiencyMultiplier",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "int256",
+                  "name": "_ratEfficiencyMultiplier",
+                  "type": "int256"
+                },
+                {
+                  "internalType": "int256",
+                  "name": "_ratEfficiencyOffset",
+                  "type": "int256"
                 }
               ],
               "name": "initialize",
@@ -1426,7 +1502,33 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getProperties",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "efficiency",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tolerance",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1460,9 +1562,10 @@ export const contracts = {
                 }
               ],
               "stateMutability": "pure",
-              "type": "function"
+              "type": "function",
+              "constant": true
             }
-          ],
+          ]
         },
         "FastFood": {
           "address": config.localhost.FastFood,
@@ -2932,7 +3035,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2945,7 +3049,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2958,7 +3063,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2971,7 +3077,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2984,7 +3091,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2997,7 +3105,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3010,7 +3119,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3023,7 +3133,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3036,7 +3147,22 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "chefEfficiencyMultiplier",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3049,7 +3175,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3083,7 +3210,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3096,7 +3224,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3109,7 +3238,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3143,7 +3273,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3156,7 +3287,36 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "ratEfficiencyMultiplier",
+              "outputs": [
+                {
+                  "internalType": "int256",
+                  "name": "",
+                  "type": "int256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "ratEfficiencyOffset",
+              "outputs": [
+                {
+                  "internalType": "int256",
+                  "name": "",
+                  "type": "int256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3176,7 +3336,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3189,7 +3350,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3202,7 +3364,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3228,7 +3391,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3246,6 +3410,21 @@ export const contracts = {
                   "internalType": "uint256",
                   "name": "_accrualPeriod",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "_chefEfficiencyMultiplier",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "int256",
+                  "name": "_ratEfficiencyMultiplier",
+                  "type": "int256"
+                },
+                {
+                  "internalType": "int256",
+                  "name": "_ratEfficiencyOffset",
+                  "type": "int256"
                 }
               ],
               "name": "initialize",
@@ -3306,7 +3485,33 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getProperties",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "efficiency",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tolerance",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3340,7 +3545,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "pure",
-              "type": "function"
+              "type": "function",
+              "constant": true
             }
           ],
         },
