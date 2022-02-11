@@ -343,6 +343,148 @@ html {
   }
 }
 
+@media only screen and (min-width: 700px) {
+  .skyline {
+    background-position: 46% 75%;
+  }
+  .streetlight2 {
+    left: 0px;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .skyline {
+    background-position: 47% 75%;
+  }
+  .streetlight2 {
+    left: 10px;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .skyline {
+    background-position: 49.5% 75%;
+  }
+  .streetlight2 {
+    left: 0px;
+  }
+}
+
+@media only screen and (min-width: 950px) {
+  .skyline {
+    background-position: 51% 75%;
+  }
+  .streetlight2 {
+    left: 0px;
+  }
+}
+
+@media only screen and (min-width: 1000px) {
+  .skyline {
+    background-position: 52% 75%;
+  }
+  .streetlight2 {
+    left: 0px;
+  }
+}
+
+@media only screen and (min-width: 1100px) {
+  .skyline {
+    background-position: 55% 75%;
+  }
+  .streetlight2 {
+    left: 0px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .skyline {
+    background-position: 58% 75%;
+  }
+  .streetlight2 {
+    left: 0px;
+  }
+}
+
+@media only screen and (min-width: 1300px) {
+  .skyline {
+    background-position: 62% 75%;
+  }
+  .streetlight2 {
+    left: 25px;
+  }
+}
+
+@media only screen and (min-width: 1400px) {
+  .skyline {
+    background-position: 65% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+}
+
+@media only screen and (min-width: 1500px) {
+  .skyline {
+    background-position: 70% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+
+}
+
+@media only screen and (min-width: 1600px) {
+  .skyline {
+    background-position: 75% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+
+}
+
+@media only screen and (min-width: 1700px) {
+  .skyline {
+    background-position: 80% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+
+}
+
+@media only screen and (min-width: 1800px) {
+  .skyline {
+    background-position: 100% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+
+}
+
+@media only screen and (min-width: 2000px) {
+  .skyline {
+    background-position: 120% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+
+}
+
+@media only screen and (min-width: 2200px) {
+  .skyline {
+    background-position: 150% 75%;
+  }
+  .streetlight2 {
+    left: 50px;
+  }
+
+}
+
+
 @media only screen and (min-width: 769px) {
   .house .ant-card-body {
     margin-right: 28px;
@@ -403,7 +545,7 @@ html {
     position: absolute;
     left: 0px;
     background-image: url("img/skyline.png");
-    background-repeat: repeat-x;
+    background-repeat: auto;
     z-index: -1;
     margin-top:-289px;
     height: 289px;
@@ -437,7 +579,6 @@ html {
     z-index: 5;
     height: 296px;
     margin-top: -308px;
-    left: 25px;
   }
 
 
@@ -899,10 +1040,6 @@ html {
   background: #FFFFFF;
 }
 
-.fastFoodKitchen {
-  background-image: url("img/ffood_kitchen.png");
-  height: 300px;
-}
 
 .chefWaitingRoom {
   background-image: url("img/waiting_room.png");
@@ -1014,10 +1151,14 @@ html {
 }
 
 
-.gymBackground {
+.gym {
   background-image: url("img/gym.png");
   height: 300px;
-  margin-left: 20px;
+}
+
+.fastFoodKitchen {
+  background-image: url("img/ffood_kitchen.png");
+  height: 300px;
 }
 
 

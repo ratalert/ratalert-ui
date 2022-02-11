@@ -4,6 +4,7 @@ export default config = {
     Character: '0x34D1B91752730f957A46c30248279198eA5b2256',
     McStake: '0x70Ab9F32514DC3226F2Fe19397cEF8C051a848Ec',
     FastFood: '0xB09F74A9969e8AAFECe79558Cf02bCB7f8398de1',
+    Gym: '0x282ee709621cE43e2F2Ec019700F51F089f30fF0',
   },
   mainnet: {
     ChefRat: '0xB37518b874F606bbcbfC3049fe2Efe0f81129c07',
@@ -14,5 +15,6 @@ export default config = {
     Character: '0x7bfeB7f32aa4477118BC737C543aD63e0c2DbbB4',
     McStake: '0x92Bf8563e4c2B6bFB91D98015CcE5d2cdeab62Dc',
     FastFood: '0x0EE15c56989e686a8237Cc8978fa961042e68E8d',
+    Gym: '0x91fA29098b6632A2d384415CdDbc06EFA389634c',
   }
 }

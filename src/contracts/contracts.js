@@ -1634,6 +1634,584 @@ export const contracts = {
             }
           ],
         },
+        "Gym": {
+          "address": config.localhost.Gym,
+          "abi": [
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "earned",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "bool",
+                  "name": "unstaked",
+                  "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "skill",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "insanity",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "foodTokensPerRat",
+                  "type": "uint256"
+                }
+              ],
+              "name": "ChefClaimed",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                }
+              ],
+              "name": "Paused",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "earned",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "bool",
+                  "name": "unstaked",
+                  "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "intelligence",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "fatness",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
+                }
+              ],
+              "name": "RatClaimed",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "name": "TokenStaked",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                }
+              ],
+              "name": "Unpaused",
+              "type": "event"
+            },
+            {
+              "inputs": [],
+              "name": "accrualPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "chefs",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "timestamp",
+                  "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "unstake",
+                  "type": "bool"
+                }
+              ],
+              "name": "claimMany",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "dailyFatnessRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyInsanityRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyIntelligenceRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailySkillRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "foodTokensPerRat",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getProperties",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "efficiency",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tolerance",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "isChef",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "chef",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "",
+                  "type": "bytes"
+                }
+              ],
+              "name": "onERC721Received",
+              "outputs": [
+                {
+                  "internalType": "bytes4",
+                  "name": "",
+                  "type": "bytes4"
+                }
+              ],
+              "stateMutability": "pure",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "paused",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rats",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "timestamp",
+                  "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                }
+              ],
+              "name": "stakeMany",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "totalChefsStaked",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "totalRatsStaked",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "vestingPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_vestingPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "_dailyInsanityRate",
+                  "type": "int8"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "_dailyFatnessRate",
+                  "type": "int8"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+        },
         "FastFood": {
           "address": config.localhost.FastFood,
           "abi": [
@@ -3667,6 +4245,584 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+        },
+        "Gym": {
+          "address": config.rinkeby.Gym,
+          "abi": [
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "earned",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "bool",
+                  "name": "unstaked",
+                  "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "skill",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "insanity",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "foodTokensPerRat",
+                  "type": "uint256"
+                }
+              ],
+              "name": "ChefClaimed",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                }
+              ],
+              "name": "Paused",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "earned",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "bool",
+                  "name": "unstaked",
+                  "type": "bool"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "intelligence",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint8",
+                  "name": "fatness",
+                  "type": "uint8"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "string",
+                  "name": "eventName",
+                  "type": "string"
+                }
+              ],
+              "name": "RatClaimed",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                }
+              ],
+              "name": "TokenStaked",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                }
+              ],
+              "name": "Unpaused",
+              "type": "event"
+            },
+            {
+              "inputs": [],
+              "name": "accrualPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "chefs",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "timestamp",
+                  "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "unstake",
+                  "type": "bool"
+                }
+              ],
+              "name": "claimMany",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "dailyFatnessRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyInsanityRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyIntelligenceRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailySkillRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "foodTokensPerRat",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getProperties",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "efficiency",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tolerance",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "isChef",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "chef",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "",
+                  "type": "bytes"
+                }
+              ],
+              "name": "onERC721Received",
+              "outputs": [
+                {
+                  "internalType": "bytes4",
+                  "name": "",
+                  "type": "bytes4"
+                }
+              ],
+              "stateMutability": "pure",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "paused",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rats",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "timestamp",
+                  "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                }
+              ],
+              "name": "stakeMany",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "totalChefsStaked",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "totalRatsStaked",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "vestingPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_vestingPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "_dailyInsanityRate",
+                  "type": "int8"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "_dailyFatnessRate",
+                  "type": "int8"
+                }
+              ],
               "name": "initialize",
               "outputs": [],
               "stateMutability": "nonpayable",
