@@ -5,8 +5,8 @@ export const contracts = {
       "name": "localhost",
       "chainId": "1337",
       "contracts": {
-        "ChefRat": {
-          "address": config.localhost.ChefRat,
+        "Character": {
+          "address": config.localhost.Character,
           "abi": [
             {
               "anonymous": false,
@@ -139,7 +139,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -152,7 +153,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -189,7 +191,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -208,7 +211,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -227,7 +231,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -251,20 +256,22 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
-              "name": "kitchenPack",
+              "name": "kitchen",
               "outputs": [
                 {
-                  "internalType": "contract IKitchenPack",
+                  "internalType": "contract IVenue",
                   "name": "",
                   "type": "address"
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -277,7 +284,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -290,7 +298,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -303,7 +312,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -316,7 +326,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -329,7 +340,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -342,7 +354,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -361,7 +374,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -374,7 +388,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -387,7 +402,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -411,7 +427,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -506,7 +523,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -519,7 +537,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -583,7 +602,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -596,7 +616,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -678,7 +699,8 @@ export const contracts = {
               "name": "mint",
               "outputs": [],
               "stateMutability": "payable",
-              "type": "function"
+              "type": "function",
+              "payable": true
             },
             {
               "inputs": [
@@ -736,7 +758,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -801,13 +824,14 @@ export const contracts = {
                       "type": "uint8"
                     }
                   ],
-                  "internalType": "struct IChefRat.ChefRatStruct",
+                  "internalType": "struct ICharacter.CharacterStruct",
                   "name": "",
                   "type": "tuple"
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -820,7 +844,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -839,7 +864,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -871,19 +897,19 @@ export const contracts = {
               "inputs": [
                 {
                   "internalType": "address",
-                  "name": "_kitchenPack",
+                  "name": "_kitchen",
                   "type": "address"
                 }
               ],
-              "name": "setKitchenPack",
+              "name": "setKitchen",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
             }
           ],
         },
-        "KitchenPack": {
-          "address": config.localhost.KitchenPack,
+        "McStake": {
+          "address": config.localhost.McStake,
           "abi": [
             {
               "anonymous": false,
@@ -923,6 +949,12 @@ export const contracts = {
                   "internalType": "string",
                   "name": "eventName",
                   "type": "string"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "foodTokensPerRat",
+                  "type": "uint256"
                 }
               ],
               "name": "ChefClaimed",
@@ -1043,118 +1075,6 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "DAILY_FATNESS_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_FFOOD_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_INSANITY_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_INTELLIGENCE_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_SKILL_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "FFOOD_CLAIM_TAX_PERCENTAGE",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "FFOOD_MAX_SUPPLY",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "MINIMUM_TO_EXIT",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
               "name": "accrualPeriod",
               "outputs": [
                 {
@@ -1182,20 +1102,6 @@ export const contracts = {
               "constant": true
             },
             {
-              "inputs": [],
-              "name": "fastFoodPerRat",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -1203,7 +1109,7 @@ export const contracts = {
                   "type": "uint256"
                 }
               ],
-              "name": "kitchen",
+              "name": "chefs",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -1224,6 +1130,167 @@ export const contracts = {
                   "internalType": "uint80",
                   "name": "timestamp",
                   "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "unstake",
+                  "type": "bool"
+                }
+              ],
+              "name": "claimMany",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "dailyChefEarnings",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyFatnessRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyInsanityRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyIntelligenceRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailySkillRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "foodTokenMaxSupply",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "foodTokensPerRat",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getProperties",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "efficiency",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tolerance",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "isChef",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "chef",
+                  "type": "bool"
                 }
               ],
               "stateMutability": "view",
@@ -1245,6 +1312,41 @@ export const contracts = {
               "constant": true
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "",
+                  "type": "bytes"
+                }
+              ],
+              "name": "onERC721Received",
+              "outputs": [
+                {
+                  "internalType": "bytes4",
+                  "name": "",
+                  "type": "bytes4"
+                }
+              ],
+              "stateMutability": "pure",
+              "type": "function",
+              "constant": true
+            },
+            {
               "inputs": [],
               "name": "owner",
               "outputs": [
@@ -1252,41 +1354,6 @@ export const contracts = {
                   "internalType": "address",
                   "name": "",
                   "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "name": "pack",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint80",
-                  "name": "value",
-                  "type": "uint80"
-                },
-                {
-                  "internalType": "uint80",
-                  "name": "timestamp",
-                  "type": "uint80"
                 }
               ],
               "stateMutability": "view",
@@ -1337,7 +1404,74 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "ratTheftPercentage",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rats",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "timestamp",
+                  "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
               "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                }
+              ],
+              "name": "stakeMany",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -1358,7 +1492,7 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "totalFastFoodEarned",
+              "name": "totalFoodTokensEarned",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -1412,21 +1546,45 @@ export const contracts = {
               "constant": true
             },
             {
+              "inputs": [],
+              "name": "vestingPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
               "inputs": [
                 {
                   "internalType": "address",
-                  "name": "_chefRat",
+                  "name": "_character",
                   "type": "address"
                 },
                 {
                   "internalType": "address",
-                  "name": "_fastFood",
+                  "name": "_foodToken",
                   "type": "address"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "_accrualPeriod",
+                  "name": "_foodTokenMaxSupply",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "_earningSettings",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "int8[]",
+                  "name": "_propertyIncrements",
+                  "type": "int8[]"
                 },
                 {
                   "internalType": "uint8",
@@ -1450,19 +1608,8 @@ export const contracts = {
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "account",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint16[]",
-                  "name": "tokenIds",
-                  "type": "uint16[]"
-                }
-              ],
-              "name": "stakeMany",
+              "inputs": [],
+              "name": "initialize",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -1470,102 +1617,22 @@ export const contracts = {
             {
               "inputs": [
                 {
-                  "internalType": "uint16[]",
-                  "name": "tokenIds",
-                  "type": "uint16[]"
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
                 },
                 {
-                  "internalType": "bool",
-                  "name": "unstake",
-                  "type": "bool"
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
                 }
               ],
-              "name": "claimMany",
+              "name": "initialize",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "isChef",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "chef",
-                  "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getProperties",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "efficiency",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "tolerance",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "",
-                  "type": "bytes"
-                }
-              ],
-              "name": "onERC721Received",
-              "outputs": [
-                {
-                  "internalType": "bytes4",
-                  "name": "",
-                  "type": "bytes4"
-                }
-              ],
-              "stateMutability": "pure",
-              "type": "function",
-              "constant": true
             }
-          ]
+          ],
         },
         "FastFood": {
           "address": config.localhost.FastFood,
@@ -1648,6 +1715,19 @@ export const contracts = {
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "addController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "owner",
                   "type": "address"
                 },
@@ -1666,7 +1746,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1709,6 +1790,25 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "burn",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -1722,7 +1822,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1752,6 +1853,26 @@ export const contracts = {
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "getController",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "spender",
                   "type": "address"
                 },
@@ -1773,6 +1894,24 @@ export const contracts = {
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "mint",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -1783,7 +1922,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1796,6 +1936,20 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "removeController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -1816,7 +1970,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -1829,7 +1984,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -1896,87 +2052,6 @@ export const contracts = {
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "mint",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "burn",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "controller",
-                  "type": "address"
-                }
-              ],
-              "name": "getController",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "controller",
-                  "type": "address"
-                }
-              ],
-              "name": "addController",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "controller",
-                  "type": "address"
-                }
-              ],
-              "name": "removeController",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
             }
           ],
         }
@@ -1988,8 +2063,8 @@ export const contracts = {
       "name": "rinkeby",
       "chainId": "4",
       "contracts": {
-        "ChefRat": {
-          "address": config.rinkeby.ChefRat,
+        "Character": {
+          "address": config.rinkeby.Character,
           "abi": [
             {
               "anonymous": false,
@@ -2122,7 +2197,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2135,7 +2211,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2172,7 +2249,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2191,7 +2269,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2210,7 +2289,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2234,20 +2314,22 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
-              "name": "kitchenPack",
+              "name": "kitchen",
               "outputs": [
                 {
-                  "internalType": "contract IKitchenPack",
+                  "internalType": "contract IVenue",
                   "name": "",
                   "type": "address"
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2260,7 +2342,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2273,7 +2356,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2286,7 +2370,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2299,7 +2384,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2312,7 +2398,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2325,7 +2412,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2344,7 +2432,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2357,7 +2446,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2370,7 +2460,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2394,7 +2485,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2489,7 +2581,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2502,7 +2595,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2566,7 +2660,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2579,7 +2674,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2661,7 +2757,8 @@ export const contracts = {
               "name": "mint",
               "outputs": [],
               "stateMutability": "payable",
-              "type": "function"
+              "type": "function",
+              "payable": true
             },
             {
               "inputs": [
@@ -2719,7 +2816,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2784,13 +2882,14 @@ export const contracts = {
                       "type": "uint8"
                     }
                   ],
-                  "internalType": "struct IChefRat.ChefRatStruct",
+                  "internalType": "struct ICharacter.CharacterStruct",
                   "name": "",
                   "type": "tuple"
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2803,7 +2902,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2822,7 +2922,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -2854,19 +2955,19 @@ export const contracts = {
               "inputs": [
                 {
                   "internalType": "address",
-                  "name": "_kitchenPack",
+                  "name": "_kitchen",
                   "type": "address"
                 }
               ],
-              "name": "setKitchenPack",
+              "name": "setKitchen",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
             }
           ],
         },
-        "KitchenPack": {
-          "address": config.rinkeby.KitchenPack,
+        "McStake": {
+          "address": config.rinkeby.McStake,
           "abi": [
             {
               "anonymous": false,
@@ -2906,6 +3007,12 @@ export const contracts = {
                   "internalType": "string",
                   "name": "eventName",
                   "type": "string"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "foodTokensPerRat",
+                  "type": "uint256"
                 }
               ],
               "name": "ChefClaimed",
@@ -3026,118 +3133,6 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "DAILY_FATNESS_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_FFOOD_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_INSANITY_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_INTELLIGENCE_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "DAILY_SKILL_RATE",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "FFOOD_CLAIM_TAX_PERCENTAGE",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "FFOOD_MAX_SUPPLY",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "MINIMUM_TO_EXIT",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
               "name": "accrualPeriod",
               "outputs": [
                 {
@@ -3165,20 +3160,6 @@ export const contracts = {
               "constant": true
             },
             {
-              "inputs": [],
-              "name": "fastFoodPerRat",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
               "inputs": [
                 {
                   "internalType": "uint256",
@@ -3186,7 +3167,7 @@ export const contracts = {
                   "type": "uint256"
                 }
               ],
-              "name": "kitchen",
+              "name": "chefs",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -3207,6 +3188,167 @@ export const contracts = {
                   "internalType": "uint80",
                   "name": "timestamp",
                   "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "unstake",
+                  "type": "bool"
+                }
+              ],
+              "name": "claimMany",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "dailyChefEarnings",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyFatnessRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyInsanityRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailyIntelligenceRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "dailySkillRate",
+              "outputs": [
+                {
+                  "internalType": "int8",
+                  "name": "",
+                  "type": "int8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "foodTokenMaxSupply",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "foodTokensPerRat",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getProperties",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "efficiency",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "tolerance",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "isChef",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "chef",
+                  "type": "bool"
                 }
               ],
               "stateMutability": "view",
@@ -3228,6 +3370,41 @@ export const contracts = {
               "constant": true
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "",
+                  "type": "bytes"
+                }
+              ],
+              "name": "onERC721Received",
+              "outputs": [
+                {
+                  "internalType": "bytes4",
+                  "name": "",
+                  "type": "bytes4"
+                }
+              ],
+              "stateMutability": "pure",
+              "type": "function",
+              "constant": true
+            },
+            {
               "inputs": [],
               "name": "owner",
               "outputs": [
@@ -3235,41 +3412,6 @@ export const contracts = {
                   "internalType": "address",
                   "name": "",
                   "type": "address"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "name": "pack",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "address",
-                  "name": "owner",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint80",
-                  "name": "value",
-                  "type": "uint80"
-                },
-                {
-                  "internalType": "uint80",
-                  "name": "timestamp",
-                  "type": "uint80"
                 }
               ],
               "stateMutability": "view",
@@ -3320,7 +3462,74 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "ratTheftPercentage",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rats",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "value",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint80",
+                  "name": "timestamp",
+                  "type": "uint80"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
               "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "account",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint16[]",
+                  "name": "tokenIds",
+                  "type": "uint16[]"
+                }
+              ],
+              "name": "stakeMany",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -3341,7 +3550,7 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "totalFastFoodEarned",
+              "name": "totalFoodTokensEarned",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -3395,21 +3604,45 @@ export const contracts = {
               "constant": true
             },
             {
+              "inputs": [],
+              "name": "vestingPeriod",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
               "inputs": [
                 {
                   "internalType": "address",
-                  "name": "_chefRat",
+                  "name": "_character",
                   "type": "address"
                 },
                 {
                   "internalType": "address",
-                  "name": "_fastFood",
+                  "name": "_foodToken",
                   "type": "address"
                 },
                 {
                   "internalType": "uint256",
-                  "name": "_accrualPeriod",
+                  "name": "_foodTokenMaxSupply",
                   "type": "uint256"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "_earningSettings",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "int8[]",
+                  "name": "_propertyIncrements",
+                  "type": "int8[]"
                 },
                 {
                   "internalType": "uint8",
@@ -3433,19 +3666,8 @@ export const contracts = {
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "account",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint16[]",
-                  "name": "tokenIds",
-                  "type": "uint16[]"
-                }
-              ],
-              "name": "stakeMany",
+              "inputs": [],
+              "name": "initialize",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
@@ -3453,100 +3675,20 @@ export const contracts = {
             {
               "inputs": [
                 {
-                  "internalType": "uint16[]",
-                  "name": "tokenIds",
-                  "type": "uint16[]"
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
                 },
                 {
-                  "internalType": "bool",
-                  "name": "unstake",
-                  "type": "bool"
+                  "internalType": "uint256",
+                  "name": "_accrualPeriod",
+                  "type": "uint256"
                 }
               ],
-              "name": "claimMany",
+              "name": "initialize",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "isChef",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "chef",
-                  "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "tokenId",
-                  "type": "uint256"
-                }
-              ],
-              "name": "getProperties",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "efficiency",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "tolerance",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "",
-                  "type": "bytes"
-                }
-              ],
-              "name": "onERC721Received",
-              "outputs": [
-                {
-                  "internalType": "bytes4",
-                  "name": "",
-                  "type": "bytes4"
-                }
-              ],
-              "stateMutability": "pure",
-              "type": "function",
-              "constant": true
             }
           ],
         },
@@ -3631,6 +3773,19 @@ export const contracts = {
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "addController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "owner",
                   "type": "address"
                 },
@@ -3649,7 +3804,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3692,6 +3848,25 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "burn",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -3705,7 +3880,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3735,6 +3911,26 @@ export const contracts = {
               "inputs": [
                 {
                   "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "getController",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
                   "name": "spender",
                   "type": "address"
                 },
@@ -3756,6 +3952,24 @@ export const contracts = {
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "mint",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
               "inputs": [],
               "name": "name",
               "outputs": [
@@ -3766,7 +3980,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3779,6 +3994,20 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "removeController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
               "type": "function"
             },
             {
@@ -3799,7 +4028,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -3812,7 +4042,8 @@ export const contracts = {
                 }
               ],
               "stateMutability": "view",
-              "type": "function"
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [
@@ -3876,87 +4107,6 @@ export const contracts = {
                 }
               ],
               "name": "transferOwnership",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "mint",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "from",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "burn",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "controller",
-                  "type": "address"
-                }
-              ],
-              "name": "getController",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "controller",
-                  "type": "address"
-                }
-              ],
-              "name": "addController",
-              "outputs": [],
-              "stateMutability": "nonpayable",
-              "type": "function"
-            },
-            {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "controller",
-                  "type": "address"
-                }
-              ],
-              "name": "removeController",
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"

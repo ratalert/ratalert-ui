@@ -86,8 +86,8 @@ class RatMenu extends React.Component {
         }
       }`;
     const result = await graphQLClient.request(query);
-    if (result.chefRat) {
-      const URI = result.chefRat.URI;
+    if (result.Character) {
+      const URI = result.Character.URI;
       const base64 = URI.split(",");
       const decoded = atob(base64[1]);
       const json = JSON.parse(decoded);
@@ -104,7 +104,7 @@ class RatMenu extends React.Component {
     setTimeout(async () => {
       console.log('Start mint hook');
       const filter = {
-        address: this.props.readContracts.ChefRat.address,
+        address: this.props.readContracts.Character.address,
         topics: [
           // the name of the event, parnetheses containing the data type of each event, no spaces
           ethers.utils.id("Transfer(address,address,uint256)"),

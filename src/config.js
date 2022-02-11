@@ -1,8 +1,8 @@
 let config;
 export default config = {
   localhost: {
-    ChefRat: '0xC6aE929bCA4c8914738E3675eEd998be8fB2b4aF',
-    KitchenPack: '0x34D1B91752730f957A46c30248279198eA5b2256',
+    Character: '0x34D1B91752730f957A46c30248279198eA5b2256',
+    McStake: '0x70Ab9F32514DC3226F2Fe19397cEF8C051a848Ec',
     FastFood: '0xB09F74A9969e8AAFECe79558Cf02bCB7f8398de1',
   },
   mainnet: {
@@ -11,8 +11,8 @@ export default config = {
     FastFood: '0xB09F74A9969e8AAFECe79558Cf02bCB7f8398de1',
   },
   rinkeby: {
-    ChefRat: '0x39A531259318FFBb3d0f8eb82Ccdbd351935F562',
-    KitchenPack: '0xcEad8CE00d49Bd2d6d0DF0dE60D7f706CC3802C8',
-    FastFood: '0x3ce775DeB7297Eb01634d55469e52AB770EE61ea',
+    Character: '0x7bfeB7f32aa4477118BC737C543aD63e0c2DbbB4',
+    McStake: '0x92Bf8563e4c2B6bFB91D98015CcE5d2cdeab62Dc',
+    FastFood: '0x0EE15c56989e686a8237Cc8978fa961042e68E8d',
   }
 }

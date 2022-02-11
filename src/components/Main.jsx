@@ -15,6 +15,9 @@ import {
   Spin,
   Slider,
   Radio,
+  Menu,
+  Dropdown,
+  Icon
 } from "antd";
 let lastBlockTime = 0;
 const { Header, Footer, Sider, Content } = Layout;
@@ -59,6 +62,7 @@ import {
   FileTextOutlined,
   CaretLeftOutlined,
   CaretRightOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 
 
@@ -73,8 +77,8 @@ class Main extends React.Component {
 
     this.state = {
       windowHeight: window.innerHeight - 235,
-      nonStakedGraph: { chefRats: [] },
-      stakedGraph: { chefRats: [] },
+      nonStakedGraph: { characters: [] },
+      stakedGraph: { characters: [] },
       selectedNfts: {},
       stakedNfts: [],
       unstakedNfts: [],
@@ -211,7 +215,7 @@ class Main extends React.Component {
       return;
     }
 
-    const query1 = `{ chefRats(first: 1000, where: {
+    const query1 = `{ characters(first: 1000, where: {
           owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
           id, staked, owner,stakedTimestamp, lastClaimTimestamp, URI, type,
@@ -220,7 +224,7 @@ class Main extends React.Component {
         }
       }`;
 
-    const query2 = `{ chefRats(where: {
+    const query2 = `{ characters(where: {
           stakingOwner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
           id, staked, owner,stakedTimestamp, lastClaimTimestamp, URI,
@@ -261,7 +265,7 @@ class Main extends React.Component {
 
 
     const allStakedChefs = [];
-    result1.chefRats.map(r => {
+    result1.characters.map(r => {
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
           const base64 = r.URI.split(",");
@@ -297,7 +301,7 @@ class Main extends React.Component {
       }
     });
 
-    result2.chefRats.map(r => {
+    result2.characters.map(r => {
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
           const base64 = r.URI.split(",");
@@ -325,7 +329,7 @@ class Main extends React.Component {
       }
     });
 
-    result2.chefRats.map(r => {
+    result2.characters.map(r => {
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
           const base64 = r.URI.split(",");
@@ -419,7 +423,7 @@ class Main extends React.Component {
 
 
       const result = await this.props.tx(
-        this.props.writeContracts.ChefRat.mint(amount, stake, {
+        this.props.writeContracts.Character.mint(amount, stake, {
           from: this.props.address,
           value: ethers.utils.parseEther(sum.toString()),
           gasLimit,
@@ -449,10 +453,11 @@ class Main extends React.Component {
     else {
       networkName = 'mainnet';
     }
-    const contract = new ethers.Contract(config[networkName].ChefRat,
-      contracts[chainId][networkName].contracts.ChefRat.abi, this.props.provider);
+    const contract = new ethers.Contract(config[networkName].Character,
+      contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
-    let isApprovedForAll = await contract.isApprovedForAll(this.props.address, this.props.readContracts.KitchenPack.address);
+      console.log('ADDRESS', this.props.readContracts.McStake.address);
+    let isApprovedForAll = await contract.isApprovedForAll(this.props.address, this.props.readContracts.McStake.address);
     this.setState({isApprovedForAll });
   }
 
@@ -469,7 +474,7 @@ class Main extends React.Component {
     }
     const fastFoodContract = new ethers.Contract(config[networkName].FastFood,
       contracts[chainId][networkName].contracts.FastFood.abi, this.props.provider);
-
+      console.log('CONTRACT FASTFOOD', fastFoodContract);
 
 
     let balance = await fastFoodContract.balanceOf(this.props.address);
@@ -488,80 +493,80 @@ class Main extends React.Component {
     else {
       networkName = 'mainnet';
     }
-    const chefRatContract = new ethers.Contract(config[networkName].ChefRat,
-      contracts[chainId][networkName].contracts.ChefRat.abi, this.props.provider);
-    const kitchenPackContract = new ethers.Contract(config[networkName].KitchenPack,
-        contracts[chainId][networkName].contracts.KitchenPack.abi, this.props.provider);
+    const CharacterContract = new ethers.Contract(config[networkName].Character,
+      contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
+    const McStakeContract = new ethers.Contract(config[networkName].McStake,
+        contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
 
-    const minted = await chefRatContract.minted();
-    let totalSupply = await chefRatContract.MAX_TOKENS();
-    let paidTokens = await chefRatContract.PAID_TOKENS();
-    let mintPrice = await chefRatContract.mintPrice();
+    const minted = await CharacterContract.minted();
+    let totalSupply = await CharacterContract.MAX_TOKENS();
+    let paidTokens = await CharacterContract.PAID_TOKENS();
+    let mintPrice = await CharacterContract.mintPrice();
     if (!mintPrice) {
       mintPrice = 0;
     }
-    const rats = await chefRatContract.numRats();
-    const chefs = await chefRatContract.numChefs();
+    const rats = await CharacterContract.numRats();
+    const chefs = await CharacterContract.numChefs();
 
-    let dailyFFoodRate = await kitchenPackContract.DAILY_FFOOD_RATE();
+    let dailyFFoodRate = await McStakeContract.dailyChefEarnings();
     if (!dailyFFoodRate) {
       dailyFFoodRate = 0;
     }
 
-    let accrualPeriod = await kitchenPackContract.accrualPeriod();
+    let accrualPeriod = await McStakeContract.accrualPeriod();
     if (!accrualPeriod) {
       accrualPeriod = 0;
     }
 
-    let chefEfficiencyMultiplier = await kitchenPackContract.chefEfficiencyMultiplier();
+    let chefEfficiencyMultiplier = await McStakeContract.chefEfficiencyMultiplier();
     if (!chefEfficiencyMultiplier) {
       chefEfficiencyMultiplier = 0;
     }
 
 
 
-    let minimumToExit = await kitchenPackContract.MINIMUM_TO_EXIT();
+    let minimumToExit = await McStakeContract.vestingPeriod();
     if (!minimumToExit) {
       minimumToExit = 0;
     }
 
-    let ratTax = await kitchenPackContract.FFOOD_CLAIM_TAX_PERCENTAGE();
+    let ratTax = await McStakeContract.ratTheftPercentage();
     if (!ratTax) {
       ratTax = 0;
     }
 
-    let maxSupply = await kitchenPackContract.FFOOD_MAX_SUPPLY();
+    let maxSupply = await McStakeContract.foodTokenMaxSupply();
     if (!maxSupply) {
       maxSupply = 0;
     }
 
     // TODO get once every 5-10 minutes
-    let fastFoodperRat = await kitchenPackContract.fastFoodPerRat();
+    let fastFoodperRat = await McStakeContract.foodTokensPerRat();
     if (!fastFoodperRat) {
       fastFoodperRat = 0;
     }
 
-    let ratEfficiencyMultiplier = await kitchenPackContract.ratEfficiencyMultiplier();
+    let ratEfficiencyMultiplier = await McStakeContract.ratEfficiencyMultiplier();
     if (!ratEfficiencyMultiplier) {
       ratEfficiencyMultiplier = 0;
     }
 
-    let ratEfficiencyOffset = await kitchenPackContract.ratEfficiencyOffset();
+    let ratEfficiencyOffset = await McStakeContract.ratEfficiencyOffset();
     if (!ratEfficiencyOffset) {
       ratEfficiencyOffset = 0;
     }
 
-    let ratsStaked = await kitchenPackContract.totalRatsStaked();
+    let ratsStaked = await McStakeContract.totalRatsStaked();
     if (!ratsStaked) {
       ratsStaked = 0;
     }
 
-    let chefsStaked = await kitchenPackContract.totalChefsStaked();
+    let chefsStaked = await McStakeContract.totalChefsStaked();
     if (!chefsStaked) {
       chefsStaked = 0;
     }
 
-    let tokensClaimed = await kitchenPackContract.totalFastFoodEarned();
+    let tokensClaimed = await McStakeContract.totalFoodTokensEarned();
     if (!tokensClaimed) {
       tokensClaimed = 0;
     }
@@ -759,7 +764,7 @@ class Main extends React.Component {
       element = this.state.stakedGraph;
     }
 
-    element.chefRats.map(r => {
+    element.characters.map(r => {
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
           const base64 = r.URI.split(",");
@@ -1167,13 +1172,15 @@ class Main extends React.Component {
         const nominal = (this.props.lastBlockTime - timestamp) * parseInt(this.state.stats.dailyFFoodRate) / parseInt(this.state.stats.levelUpThreshold);
         const multiplier = 100000 + (skill * this.state.stats.chefEfficiencyMultiplier * 10);
         const gross = nominal * multiplier / 100000;
-        const net = gross * (100 - this.state.stats.ratTax) / 100
+        const net = gross * (100 - this.state.stats.ratTax) / 100;
+        /*
         console.log(`----NFT ${name}`);
         console.log(`last blocktime ${this.props.lastBlockTime} Staked Time ${timestamp} Diff ${this.props.lastBlockTime - timestamp} DailyFoodRate ${this.state.stats.dailyFFoodRate} accrualPeriod ${this.state.stats.levelUpThreshold}`);
         console.log(`efficiency ${skill} chefEfficiencyMultiplier ${this.state.stats.chefEfficiencyMultiplier }`);
         console.log(`Nominal: ${nominal} Multiplier: ${multiplier}`);
         console.log(`Gross: ${gross} Net: ${net}`);
         console.log(`----END`);
+        */
 
         if (net < 0) {
           net = 0;
@@ -1205,7 +1212,7 @@ class Main extends React.Component {
   async setApprovalForAll() {
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.ChefRat.setApprovalForAll(this.props.readContracts.KitchenPack.address, true, {
+        this.props.writeContracts.Character.setApprovalForAll(this.props.readContracts.McStake.address, true, {
           gasPrice: 1000000000,
           from: this.props.address,
           gasLimit: 85000,
@@ -1256,7 +1263,11 @@ class Main extends React.Component {
     );
   }
 
-  async stakeAll(type) {
+  async stakeAll(type, data) {
+    if (data.key !== 'fastfood') {
+      return;
+    }
+    const stakeTarget = data.key;
     const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(type);
     let nfts = [];
     if (type === 'Rat') {
@@ -1266,7 +1277,7 @@ class Main extends React.Component {
     }
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.stakeMany(this.props.address, nfts, {
+        this.props.writeContracts.McStake.stakeMany(this.props.address, nfts, {
           from: this.props.address,
           gasLimit: parseInt(nfts.length * 220000),
         }),
@@ -1289,7 +1300,7 @@ class Main extends React.Component {
   async unstakeAll() {
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.claimMany(this.state.stakedNfts, true, {
+        this.props.writeContracts.McStake.claimMany(this.state.stakedNfts, true, {
           from: this.props.address,
           gasLimit: parseInt(this.state.stakedNfts.length) * 260000,
         }),
@@ -1309,7 +1320,7 @@ class Main extends React.Component {
   async claimFunds(selectedToUnStakeNfts) {
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.claimMany(selectedToUnStakeNfts, false, {
+        this.props.writeContracts.McStake.claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
           gasLimit: parseInt(this.state.stakedNfts.length * 260000),
         }),
@@ -1330,9 +1341,14 @@ class Main extends React.Component {
   }
 
   async stake(selectedToStakeNfts) {
+    if (data.key !== 'fastfood') {
+      return;
+    }
+    const stakeTarget = data.key;
+
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.stakeMany(this.props.address, selectedToStakeNfts, {
+        this.props.writeContracts.McStake.stakeMany(this.props.address, selectedToStakeNfts, {
           from: this.props.address,
           gasLimit: parseInt(selectedToStakeNfts.length * 200000),
         }),
@@ -1352,7 +1368,7 @@ class Main extends React.Component {
   async unstake(selectedToUnStakeNfts) {
     try {
       const result = await this.props.tx(
-        this.props.writeContracts.KitchenPack.claimMany(selectedToUnStakeNfts, {
+        this.props.writeContracts.McStake.claimMany(selectedToUnStakeNfts, {
           from: this.props.address,
           gasLimit: selectedToUnStakeNfts.length * 250000,
         }),
@@ -1424,6 +1440,15 @@ class Main extends React.Component {
       enabled=false;
     }
 
+    const menu = (
+      <Menu onClick={this.stakeAll.bind(this, type)}>
+        <Menu.Item key="fastfood">to McStake</Menu.Item>
+        <Menu.Item key="casualfood" disabled={true}>to TheStakeHouse</Menu.Item>
+        <Menu.Item key="gourmetfood" disabled={true}>to LeStake</Menu.Item>
+        <Menu.Item key="gym">to MuscleBox</Menu.Item>
+      </Menu>
+    );
+
     const height = this.getButtonHeight();
     if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
       let nfts;
@@ -1432,26 +1457,35 @@ class Main extends React.Component {
       } else {
         nfts = this.state.unstakedChefs;
       }
+
       if (nfts.length > 0) {
+
+
+
         return (
-          <Button style={{height}} disabled={!enabled} className="web3Button" type={"default"} onClick={this.stakeAll.bind(this, type)}>
-            Stake all
-          </Button>
+          <Dropdown className="web3Button" type={"default"} overlay={menu}>
+            <Button>
+              Stake all {type}s <DownOutlined/>
+            </Button>
+          </Dropdown>
         );
       } else {
         return <div></div>
       }
     } else if (enabled) {
       return (
-        <Button
-          className="web3Button"
+        <Dropdown className="web3Button"
           type={"default"}
+          overlay={menu}
+          className="web3Button"
           style={{height}}
           disabled={!enabled}
           onClick={this.stake.bind(this, selectedToStakeNfts)}
         >
-          Stake {selectedToStakeNfts.length} NFTs
-        </Button>
+          <Button>
+            Stake {selectedToStakeNfts.length} {type}s <DownOutlined/>
+          </Button>
+        </Dropdown>
       );
     }
 
@@ -1632,20 +1666,6 @@ class Main extends React.Component {
         </Card>
       );
     }
-  }
-
-  getSkylineStyle() {
-    const baseSkylineOffset = 170;
-    let offset = baseSkylineOffset;
-    const originalWidth = 1440;
-    const originalHeight = 266;
-    const factor = window.innerWidth / originalWidth;
-    if (originalHeight * factor < originalHeight) {
-        offset = originalHeight * factor - baseSkylineOffset;
-    }
-    return (
-      { width: window.innerWidth, height: originalHeight * factor, top: this.townhouseHeight - offset}
-    )
   }
 
 
