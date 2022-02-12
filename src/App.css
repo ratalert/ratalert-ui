@@ -519,6 +519,58 @@ html {
   .nftId {
     margin-left: 97px;
   }
+
+  .nftDetailId {
+    margin-left: 0px;
+  }
+
+  .nftIdDetail {
+    padding-left: 10;
+    text-align: right !important;
+    width: 60px;
+    position: absolute;
+  }
+
+  .nftDetails {
+    padding-top: 5px;
+    border: 3px solid #443a31;
+    width: 160px;
+    padding-left: 15px;
+    padding-right: 5px;
+    margin-right: 20px;
+    padding-bottom: 5px;
+    background: rgba(80, 70, 64, 0.8);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  .nftDetailHeader {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #fff;
+  }
+
+  .nftDetailDetails {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #000;
+  }
+
+
+
+  .nftDetailId {
+    width: 155px;
+    border-top: 3px solid #443a31;
+    border-left: 3px solid #443a31;
+    border-right: 3px solid #443a31;
+    font-weight: bold;
+    background: #524944;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 2px;
+  }
+
+
   .kitchenRow_waitingRoom {
     margin-left: 10px;
     margin-right: 10px;
@@ -774,18 +826,18 @@ html {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 2px;
 }
+
+
+
 .nftStats {
-  text-align: center !important;
   border: 3px solid #443a31;
-  padding-left: 5px;
+  padding-left: 15px;
   padding-right: 5px;
   padding-bottom: 5px;
   background: rgba(80, 70, 64, 0.8);
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-
 }
-.
 
 .fade {
   background-image: url("img/fade.png");

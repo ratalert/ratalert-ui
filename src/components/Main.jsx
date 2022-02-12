@@ -93,6 +93,7 @@ class Main extends React.Component {
       totalCooksStaked: 0,
       mintAmount: 1,
       loading: true,
+      nftDetailsActive: {},
       isApprovedForAll: {
         "McStake": false,
         "Gym": false,
@@ -1010,7 +1011,7 @@ class Main extends React.Component {
         <Col span={24}>
           <Row className={`kitchenRow_${widthType}`}>
           {nft.map(c => {
-            return this.renderNFTColumn(c, staked);
+            return this.renderNFTCard(c, staked);
           })}
           </Row>
         </Col>
@@ -1059,17 +1060,94 @@ class Main extends React.Component {
     return `percentage${zero} percentage${trait}`;
   }
 
+  handleNFTEnter(c) {
+    this.setState({ nftDetailsActive: {} });
+    setTimeout(() => {
+      if (c.name > 0) {
+        const nftDetailsActive = this.state.nftDetailsActive;
+        nftDetailsActive[c.name] = true;
+        this.setState({ nftDetailsActive });
+      }
+    }, 100)
+  }
+
+  handleNFTLeave(c) {
+    if (c.name > 0) {
+      setTimeout(() => {
+        const nftDetailsActive = this.state.nftDetailsActive;
+        nftDetailsActive[c.name] = false;
+        this.setState({ nftDetailsActive });
+      }, 250);
+    }
+  }
+
+  renderNFTDetails(c, staked) {
+    const hash = {};
+    if (c.attributes) {
+      c.attributes.map((m) => {
+        hash[m.trait_type] = m.value;
+      });
+    }
+    return (
+      <span  onMouseLeave={() => this.handleNFTLeave(c)}>
+        <div className="nftDetailId">
+          <span style={{color: '#000000', paddingLeft: 9}}>{hash.Generation}</span>
+          <span style={{color: '#FFFFFF', paddingLeft: 5}}>{hash.Type}</span>
+          <span className="nftIdDetail">
+            <span style={{color: '#000000'}}>#</span>
+            <span style={{color: '#d1c0b6'}}>{c.name}</span>
+          </span>
+        </div>
+        <div style={{height: 215}}
+        className={"nftDetails"}>
+        { c.attributes.map( (key) => (
+
+              <div>
+              {
+                key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
+                key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
+                key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
+                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage' &&
+                key.trait_type !== 'Generation' && key.trait_type !== 'Type' &&
+                key.value.length > 0
+                ?
+              <div>
+              <Row>
+                <Col className="nftDetailHeader" span={24}>{key.trait_type}</Col>
+              </Row>
+              <Row>
+                <Col className="nftDetailDetails" span={24}>{key.value}</Col>
+              </Row>
+              </div>: null }
+              </div>
+            )
+        )}
+        </div>
+
+      </span>
+    );
+  }
+
+  renderNFTCard(c, staked) {
+    return (
+      <div>
+        { this.state.nftDetailsActive && !this.state.nftDetailsActive[c.name] ? this.renderNFTColumn(c, c.staked) : this.renderNFTDetails(c, staked) }
+      </div>
+    )
+  }
+
   renderNFTColumn(c, staked) {
     if (!c || !c.name) {
       return <div>&nbsp;</div>
     }
     return (
-      <span>
+      <span  onMouseEnter={() => this.handleNFTEnter(c)}>
         <div className="nftId"><span style={{color: '#000000'}}>#</span>
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
         </div>
         <div
           onClick={() => this.selectNFT(this, c.name, staked, c.type)}
+
           className={
             this.state.selectedNfts &&
             this.state.selectedNfts[c.name] &&
@@ -1078,10 +1156,7 @@ class Main extends React.Component {
               : "nftNotSelected nft"
           }
         >
-          <Popover mouseEnterDelay={1} content={this.renderNFTInfo(c.attributes, c.image, c)} title={c.description}>
-            <img className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
-          </Popover>
-
+        <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
         </div>
         <div
         className={
@@ -2229,6 +2304,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
 
         <div className="darkBackground" style={{height: 900, width: window.innerWidth+100}}>
         </div>
+      }
 
         <div className="sewerEntrance">
           <div style={this.getWidth('kitchen')} className="ground"/>
