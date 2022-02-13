@@ -454,7 +454,7 @@ class Main extends React.Component {
         if (now - c.lastUpdate > 10) {
           found = true;
           const nft = this.nfts[c.tokenId];
-          console.log('Found new img:', nft.image);
+          //console.log('Found new img:', nft.image);
           claimStats[i]['newImg'] = nft.image;
         }
         i += 1;
@@ -841,7 +841,7 @@ class Main extends React.Component {
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
             };
             this.nfts[nftObj.name] = nftObj;
-            nft.push(nft);
+            nft.push(nftObj);
           }
           if (type === null && json.name && r.staked == staked && r.stakingLocation == location) {
             const nftObj = {
@@ -871,7 +871,6 @@ class Main extends React.Component {
       }
     });
     nft.sort((a, b) => a.name - b.name);
-
     if (!this.state.dataLoaded) {
       return (
         <Spin/>
