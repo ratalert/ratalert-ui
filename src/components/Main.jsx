@@ -17,7 +17,8 @@ import {
   Radio,
   Menu,
   Dropdown,
-  Icon
+  Icon,
+  Modal,
 } from "antd";
 let lastBlockTime = 0;
 const { Header, Footer, Sider, Content } = Layout;
@@ -74,8 +75,10 @@ class Main extends React.Component {
     this.townhouseRef = React.createRef();
     this.mobileBreakpoint = 651;
     this.officeBreakpoint = 1160;
-
+    this.nfts = {};
     this.state = {
+      isClaimModalVisible: false,
+      currentStatsNFT: 0,
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { characters: [] },
       stakedGraph: { characters: [] },
@@ -87,6 +90,7 @@ class Main extends React.Component {
       unstakedRats: [],
       stakedChefs: [],
       stakedRats: [],
+      claimStats: [],
       totalRats: 0,
       totalCooks: 0,
       totalRatsStaked: 0,
@@ -105,6 +109,7 @@ class Main extends React.Component {
       officeView: 'mint',
       fFoodBalance: 0,
       stats: {
+
         minted: 0,
         totalSupply: 0,
         rats: 0,
@@ -165,6 +170,9 @@ class Main extends React.Component {
     }
   }
 
+  onChangeCurrentNFT(currentStatsNFT) {
+    this.setState({ currentStatsNFT });
+  }
   onChangeAmount(mintAmount) {
     if (mintAmount >= 1 && mintAmount <= 10) {
       this.setState({ mintAmount });
@@ -227,7 +235,27 @@ class Main extends React.Component {
 
 
       contract.on("ChefClaimed", (tokenId, earned, unstaked, skill, insanity, eventName, foodTokensPerRat) => {
-        console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
+        const oldNft = this.nfts[parseInt(tokenId)];
+        // console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
+
+        const claimInfo = {
+          tokenId: parseInt(tokenId),
+          earned: earned / 1000000000000000000,
+          event: eventName,
+          unstaked: unstaked,
+          skill: parseInt(skill),
+          insanity: parseInt(insanity),
+          lastUpdate: Math.floor(Date.now() / 1000),
+        };
+        if (oldNft && oldNft.image) {
+          claimInfo['oldSkill'] = parseInt(oldNft.skill);
+          claimInfo['oldInsanity'] = parseInt(oldNft.insanity);
+          claimInfo['oldImg'] = oldNft.image;
+        }
+
+        const claimStats = this.state.claimStats;
+        claimStats.push(claimInfo);
+        this.setState({ currentStatsNFT: 0, claimStats });
       });
 /*
     const filter = {
@@ -417,6 +445,28 @@ class Main extends React.Component {
       allStakedChefs,
     });
 
+    setTimeout(() => {
+      const claimStats = this.state.claimStats;
+      let found = false;
+      let i = 0;
+      claimStats.map((c) => {
+        const now = Math.floor(Date.now() / 1000);
+        if (now - c.lastUpdate > 10) {
+          found = true;
+          const nft = this.nfts[c.tokenId];
+          console.log('Found new img:', nft.image);
+          claimStats[i]['newImg'] = nft.image;
+        }
+        i += 1;
+      });
+      if (found) {
+        window.scrollTo(0, 0);
+        this.setState({ isClaimModalVisible: true });
+      }
+    }, 1000);
+
+
+
     setTimeout(async () => {
       this.fetchGraph();
       this.fetchFromUniswap('WOOL', 'WETH', '0x8355dbe8b0e275abad27eb843f3eaf3fc855e525', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // WOOL-WETH
@@ -545,8 +595,6 @@ class Main extends React.Component {
     }
     const fastFoodContract = new ethers.Contract(config[networkName].FastFood,
       contracts[chainId][networkName].contracts.FastFood.abi, this.props.provider);
-      console.log('CONTRACT FASTFOOD', fastFoodContract);
-
 
     let balance = await fastFoodContract.balanceOf(this.props.address);
     balance = ethers.utils.formatEther(balance);
@@ -751,80 +799,6 @@ class Main extends React.Component {
     );
   }
 
-  renderNFTInfo(attributes, img, obj) {
-    const hash = {};
-    attributes.map((m) => {
-      hash[m.trait_type] = m.value;
-    });
-
-    return (
-      <div style={{ width: "300px" }}>
-        <Row>
-          <Col span={24}>
-            <img width={200} src={img} />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={24}>
-            <b>Training levels</b>
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Skill level" : "Intelligence"}</Col>
-          <Col span={12}>
-            <Progress
-            strokeColor={attributes[0].value === "Chef" ? "green" : "orange"}
-            percent={ attributes[0].value === "Chef" ? obj.skill : obj.intelligence }
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Skill status" : "Intelligence status"}</Col>
-          <Col span={12}>{attributes[0].value === "Chef" ? hash['Skill'] : hash["Intelligence"]}</Col>
-        </Row>
-        <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Bodymass level"}</Col>
-          <Col span={12}>
-            <Progress
-              strokeColor={attributes[0].value === "Chef" ? "blue" : "brown"}
-              percent={ attributes[0].value === "Chef" ? obj.insanity : obj.fatness }
-              status="active" />
-          </Col>
-        </Row>
-        <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Bodymass status"}</Col>
-          <Col span={12}>{attributes[0].value === "Chef" ? hash['Insanity'] : hash['Fatness']}</Col>
-        </Row>
-
-        <Row>
-          <Col span={24}>
-            <b>Attributes</b>
-          </Col>
-        </Row>
-
-        { attributes.map( (key) => (
-
-              <div>
-              {
-                key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
-                key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
-                key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
-                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage' &&
-                key.value.length > 0
-                ?
-              <Row>
-                <Col span={12}>{key.trait_type}</Col>
-                <Col span={12}>{key.value}</Col>
-              </Row> : null }
-              </div>
-            )
-        )}
-      </div>
-    );
-  }
-
-
-
   renderNFT(type, staked = 0, location = false) {
     const nft = [];
     let element;
@@ -846,7 +820,7 @@ class Main extends React.Component {
             hash[m.trait_type] = m.value;
           });
           if (type !== null && json.name && json.attributes[0].value === type && r.staked == staked) {
-            nft.push({
+            const nftObj = {
               name: parseInt(r.id, 16),
               description: json.name,
               mcstakeTimestamp: parseInt(r.mcstakeStakedTimestamp),
@@ -865,10 +839,12 @@ class Main extends React.Component {
               fatnessLevel: hash['Fatness percentage'],
               owed: parseInt(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
-            });
+            };
+            this.nfts[nftObj.name] = nftObj;
+            nft.push(nft);
           }
           if (type === null && json.name && r.staked == staked && r.stakingLocation == location) {
-            nft.push({
+            const nftObj = {
               name: parseInt(r.id, 16),
               image: json.image,
               description: json.name,
@@ -887,13 +863,14 @@ class Main extends React.Component {
               fatnessLevel: parseInt(r.fatness),
               owed: parseInt(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
-            });
+            }
+            this.nfts[nftObj.name] = nftObj;
+            nft.push(nftObj);
           }
         }
       }
     });
     nft.sort((a, b) => a.name - b.name);
-
 
     if (!this.state.dataLoaded) {
       return (
@@ -1062,13 +1039,11 @@ class Main extends React.Component {
 
   handleNFTEnter(c) {
     this.setState({ nftDetailsActive: {} });
-    setTimeout(() => {
-      if (c.name > 0) {
-        const nftDetailsActive = this.state.nftDetailsActive;
-        nftDetailsActive[c.name] = true;
-        this.setState({ nftDetailsActive });
-      }
-    }, 100)
+    if (c > 0) {
+      const nftDetailsActive = this.state.nftDetailsActive;
+      nftDetailsActive[c] = true;
+      this.setState({ nftDetailsActive });
+    }
   }
 
   handleNFTLeave(c) {
@@ -1077,7 +1052,7 @@ class Main extends React.Component {
         const nftDetailsActive = this.state.nftDetailsActive;
         nftDetailsActive[c.name] = false;
         this.setState({ nftDetailsActive });
-      }, 250);
+      }, 100);
     }
   }
 
@@ -1088,8 +1063,21 @@ class Main extends React.Component {
         hash[m.trait_type] = m.value;
       });
     }
+    let height = 0;
+    if (this.state.selectedNfts &&
+    this.state.selectedNfts[c.name] &&
+    this.state.selectedNfts[c.name]["status"] === true) {
+      height = 59;
+    } else {
+      height = 55;
+    }
+
+    if (c.stakingLocation === 'McStake') {
+      height += 44;
+    }
+
     return (
-      <span  onMouseLeave={() => this.handleNFTLeave(c)}>
+      <span className="nftCardBack" onMouseLeave={() => this.handleNFTLeave(c)}>
         <div className="nftDetailId">
           <span style={{color: '#000000', paddingLeft: 9}}>{hash.Generation}</span>
           <span style={{color: '#FFFFFF', paddingLeft: 5}}>{hash.Type}</span>
@@ -1098,8 +1086,17 @@ class Main extends React.Component {
             <span style={{color: '#d1c0b6'}}>{c.name}</span>
           </span>
         </div>
-        <div style={{height: 215}}
-        className={"nftDetails"}>
+        <div onClick={() => this.selectNFT(this, c.name, staked, c.type)}
+        style={{height: 160}}
+        className={
+          this.state.selectedNfts &&
+          this.state.selectedNfts[c.name] &&
+          this.state.selectedNfts[c.name]["status"] === true
+            ? "nftSelected nftDetails"
+            : "nftNotSelected nftDetails"
+        }
+
+        >
         { c.attributes.map( (key) => (
 
               <div>
@@ -1123,6 +1120,31 @@ class Main extends React.Component {
             )
         )}
         </div>
+        <div style={{height}}
+        className={
+          this.state.selectedNfts &&
+          this.state.selectedNfts[c.name] &&
+          this.state.selectedNfts[c.name]["status"] === true
+            ? "nftSelectedStats nftStats"
+            : "nftNotSelected nftStats"
+        }        >
+        <Row>
+          <Col style={{marginRight: '0px'}} xs={5} span={4}>
+            <img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
+          <Col xs={16} span={18} className={c.type === 'Chef' ? 'nftDetailSkill' : 'nftDetailIntelligence'}>
+            {c.type === 'Chef' ? hash.Skill : hash.Intelligence }
+          </Col>
+        </Row>
+        <Row>
+          <Col style={{marginRight: '0px'}} xs={5} span={4}>
+            <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/>
+          </Col>
+          <Col xs={16} span={18} className={c.type === 'Chef' ? 'nftDetailInsanity' : 'nftDetailBodymass'}>
+            {c.type === 'Chef' ? hash.Insanity : hash.Fatness }
+          </Col>
+        </Row>
+
+        </div>
 
       </span>
     );
@@ -1130,9 +1152,11 @@ class Main extends React.Component {
 
   renderNFTCard(c, staked) {
     return (
-      <div>
-        { this.state.nftDetailsActive && !this.state.nftDetailsActive[c.name] ? this.renderNFTColumn(c, c.staked) : this.renderNFTDetails(c, staked) }
-      </div>
+      <div className="nftCardFlip">
+
+          { this.state.nftDetailsActive && !this.state.nftDetailsActive[c.name] ? this.renderNFTColumn(c, staked) : this.renderNFTDetails(c, staked) }
+        </div>
+
     )
   }
 
@@ -1141,7 +1165,8 @@ class Main extends React.Component {
       return <div>&nbsp;</div>
     }
     return (
-      <span  onMouseEnter={() => this.handleNFTEnter(c)}>
+      <div className="nftCardFlipInner">
+      <span >
         <div className="nftId"><span style={{color: '#000000'}}>#</span>
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
         </div>
@@ -1200,7 +1225,7 @@ class Main extends React.Component {
         {c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
           <div>
           <Row>
-            <Col style={{marginRight: '5px', marginLeft: '5px'}} xs={3} span={2}>
+            <Col style={{marginRight: '5px', marginLeft: '0px'}} xs={3} span={2}>
               <Popover content="Your NFT earns fastfood (FFOOD) tokens when staked into a kitchen.">
               <img src="/img/ffood.png"/>
               </Popover>
@@ -1217,12 +1242,19 @@ class Main extends React.Component {
             </Col>
             <Col xs={16} span={18}>
               <div>{ this.renderTimeLeftForLevelUp(c.mcstakeLastClaimTimestamp, c.mcstakeTimestamp) }</div>
+
             </Col>
           </Row>
           </div>
         ) : null}
+        <div onClick={this.handleNFTEnter.bind(this,c.name) } className="info"
+        style={c.stakingLocation === 'McStake' ? {left: 135, top: 245} : {left: 137, top: 200}}>
+          <img style={{marginTop: -20, marginLeft: -2}} src="/img/i.png"/>
+        </div>
+
         </div>
       </span>
+      </div>
     )
   }
 
@@ -1233,7 +1265,7 @@ class Main extends React.Component {
       const now = Math.floor(Date.now() / 1000);
       const d = new Date(stakeTimestamp * 1000);
       let stakeDate = d.getTime() / 1000;
-      const numberOfDays = (now - stakeDate) / 86400;
+      const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
 
 
       d.setDate(d.getDate() + numberOfDays);
@@ -1241,58 +1273,45 @@ class Main extends React.Component {
 
       let diff = futureDate - now;
 
-      if ((diff < 0) && (diff > -86400)) {
-        diff = 86400 - (diff*-1);
+      if ((diff < 0) && (diff > this.state.stats.levelUpThreshold * -1)) {
+        diff = this.state.stats.levelUpThreshold - (diff*-1);
       }
 
-      if (numberOfDays > 1) {
-        if (parseInt(Math.floor(diff / 3600)) >= 12) {
-            // At least 1 day staked and 12 hours to go
-            diff = 86400;
-        }
-      }
 
-      if (diff >= 86400) {
+      if (numberOfDays >= 86400) {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
       return <Popover content={levelUpSoon}>
-        <div className="levelUpTime">{this.secondsToHms(diff)}
+        <div className="levelUpTime">Y{this.secondsToHms(diff)}
         </div>
         </Popover>
     } else {
+      // Already claimed at least once
       let now = Math.floor(Date.now() / 1000);
       let futureDate;
       now = Math.floor(Date.now() / 1000);
       const d = new Date(stakeTimestamp * 1000);
       let stakeDate = d.getTime() / 1000;
-      const numberOfDays = (now - stakeDate) / 86400;
-
-      if (now - lastClaim >= 86400) {
+      const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
+      if (now - lastClaim >= this.state.stats.levelUpThreshold) {
         futureDate = new Date();
         futureDate.setHours(new Date(lastClaim * 1000).getHours());
         futureDate.setMinutes(new Date(lastClaim * 1000).getMinutes());
-        futureDate.setSeconds(new Date(lastClaim * 1000).getSeconds());
-        futureDate.setDate(new Date().getDate() + 1);
+        futureDate.setSeconds(new Date(lastClaim * 1000).getSeconds()+this.state.stats.levelUpThreshold);
+        // futureDate.setDate(new Date().getDate() + 1);
         futureDate = futureDate.getTime() / 1000;
       } else {
         const d = new Date(lastClaim * 1000);
-        d.setDate(d.getDate() + 1);
+        d.setSeconds(new Date(lastClaim * 1000).getSeconds()+this.state.stats.levelUpThreshold);
         futureDate = d.getTime() / 1000;
       }
 
       let diff = futureDate - now;
-      if (numberOfDays > 1) {
-        if (parseInt(Math.floor(diff / 3600)) >= 12) {
-            // At least 1 day staked and 16 hours to go
-            diff = 86400;
-        }
-      }
-
-      if (diff >= 86400) {
+      if (diff >= this.state.stats.levelUpThreshold) {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
       return <Popover content={levelUpSoon}>
-        <div className="levelUpTime"> {this.secondsToHms(diff)}
+        <div className="levelUpTime"> X{this.secondsToHms(diff)}
         </div>
         </Popover>;
     }
@@ -1328,7 +1347,7 @@ class Main extends React.Component {
       if (this.state.stats && this.state.stats.dailyFFoodRate > 0) {
         const nominal = (this.props.lastBlockTime - timestamp) * parseInt(this.state.stats.dailyFFoodRate) / parseInt(this.state.stats.levelUpThreshold);
         const multiplier = 100000 + (skill * this.state.stats.chefEfficiencyMultiplier * 10);
-        const gross = nominal * multiplier / 100000;
+        let gross = nominal * multiplier / 100000;
         let net = gross * (100 - this.state.stats.ratTax) / 100;
         /*
         console.log(`----NFT ${name}`);
@@ -1338,9 +1357,8 @@ class Main extends React.Component {
         console.log(`Gross: ${gross} Net: ${net}`);
         console.log(`----END`);
         */
-
-        if (net < 0) {
-          net = 0;
+        if (gross < 0) {
+          gross = 0;
         }
         return parseFloat(gross).toFixed(2);
       }
@@ -1351,12 +1369,15 @@ class Main extends React.Component {
       const nominal = this.newestfoodTokensPerRat - owed; // stake.value ist der fastFoodPerRat Betrag zum Zeitpunkt des stakens
       const multiplier = (tolerance <= 50 ? tolerance : 100 - tolerance * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
       // console.log('RAT', owed, this.newestfoodTokensPerRat, nominal, multiplier);
-      const net = nominal * multiplier / 100000;
+      let net = nominal * multiplier / 100000;
+      if (net < 0) {
+        net = 0;
+      }
       return parseFloat(net).toFixed(2);
     }
   }
 
-  selectNFT(self, item, staked, type) {
+  selectNFT(self, item, staked , type) {
     const selectedNfts = this.state.selectedNfts;
     if (this.state.selectedNfts[item]) {
       delete selectedNfts[item];
@@ -1435,7 +1456,6 @@ class Main extends React.Component {
     } else {
       return;
     }
-    console.log('Staking to ', contract);
 
     const stakeTarget = data.key;
     const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(type);
@@ -1460,7 +1480,6 @@ class Main extends React.Component {
       if (e.data && e.data.message) {
         message = e.data.message;
       }
-      console.log(message);
       if (message.indexOf("while formatting outputs") !== -1) {
         message = "Error while submitting transaction";
       }
@@ -1493,7 +1512,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts.McStake.claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
-          gasLimit: parseInt(this.state.stakedNfts.length * 260000),
+          gasLimit: parseInt(selectedToUnStakeNfts.length * 260000),
         }),
       );
       this.setState({ selectedNfts: {} });
@@ -1562,6 +1581,7 @@ class Main extends React.Component {
     const selectedToUnStakeNfts = [];
     if (type) {
       Object.keys(this.state.selectedNfts).map(n => {
+        console.log(`Got status ${this.state.selectedNfts[n]["status"]} ${this.state.selectedNfts[n]["staked"]} type ${this.state.selectedNfts[n]["type"]}`);
         if (
           this.state.selectedNfts[n] &&
           this.state.selectedNfts[n]["status"] === true &&
@@ -1619,7 +1639,6 @@ class Main extends React.Component {
         <Menu.Item key="gym">to MuscleBox</Menu.Item>
       </Menu>
     );
-
     const height = this.getButtonHeight();
     if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
       let nfts;
@@ -2221,7 +2240,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house gym kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
               <div className="descriptionBox">
@@ -2255,7 +2274,7 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house gym kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
           <Col style={{width: '180px'}}>
             <div className="descriptionBox">
@@ -2304,7 +2323,6 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
 
         <div className="darkBackground" style={{height: 900, width: window.innerWidth+100}}>
         </div>
-      }
 
         <div className="sewerEntrance">
           <div style={this.getWidth('kitchen')} className="ground"/>
@@ -2422,6 +2440,91 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
 
   }
 
+  renderClaimStats(id) {
+    const key = this.state.claimStats[id];
+    return (
+      <div>
+        <Row>
+          <Col span={4} >Claimed</Col>
+            <Col span={20} className="modalClaim">
+            { parseFloat(key.earned).toFixed(2) } $FFOOD
+            </Col>
+        </Row>
+        <Row>
+          <Col span={4}>Event</Col>
+            <Col span={20} className="modalClaim">
+            { key.event ? key.event : 'No event has happened.' }
+            </Col>
+        </Row>
+        <Row style={{marginTop: 30}}>
+        </Row>
+        <Row>
+            <Col span={24}><strong>Attributes</strong></Col>
+        </Row>
+        <Row>
+            <Col span={4}></Col>
+            <Col span={10} className="modalClaim">Old</Col>
+            <Col span={10} className="modalClaim">New</Col>
+        </Row>
+        <Row>
+            <Col span={4}>Image</Col>
+            <Col span={10} className="modalClaim">
+              <img style={{width: 125}} src={key.oldImg}/>
+            </Col>
+            <Col span={10} className="modalClaim">
+              <img style={{width: 125}} src={key.newImg}/>
+            </Col>
+        </Row>
+        <Row>
+            <Col span={4}>Skill</Col>
+            <Col span={10}  className="modalClaim">
+              { key.skill }
+            </Col>
+            <Col span={10} className="modalClaim">
+              { key.oldSkill }
+            </Col>
+        </Row>
+        <Row>
+            <Col span={4}>Freak Level</Col>
+            <Col span={10} className="modalClaim">
+              { key.insanity }
+            </Col>
+            <Col span={10} className="modalClaim">
+              { key.insanity }
+            </Col>
+        </Row>
+    </div>
+    )
+  }
+
+  renderClaimModal() {
+    return (
+      <div>
+        <div>
+        <Col  span={24}>
+          <Row>
+            <Col xs={11} md={12} className="officeLine">Total NFT Updates: </Col>
+            <Col style={{width: '20px', paddingTop: '10px'}}>
+              <CaretLeftOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT - 1)} style={{cursor: 'pointer', fontSize: '20px'}}/>
+            </Col>
+            <Col style={{width: '30px', paddingTop: '10px'}}>
+            <span style={{textDecoration: 'underline'}}>{ this.state.currentStatsNFT + 1 }</span> / { this.state.claimStats.length }
+            </Col>
+            <Col span={3} style={{width: '20px', paddingTop: '10px'}}>
+              <CaretRightOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '20px'}}/>
+            </Col>
+          </Row>
+        </Col>
+          { this.state.claimStats[this.state.currentStatsNFT] ? this.renderClaimStats(this.state.currentStatsNFT) : null }
+        </div>
+       {
+         /* JSON.stringify(this.state.claimStats)
+       */
+      }
+      </div>
+    )
+  }
+
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
@@ -2431,10 +2534,17 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
             <div className="nightGradient" style={{top: skyAttr.height, height: this.townhouseHeight - 150}}>
             </div>
 
+
+
+
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
               {this.props.address ? this.renderNfts() : this.renderNACard()}
             </div>
+
+            <Modal title="Claiming was successful" onOk={() => this.setState({isClaimModalVisible: false, claimStats: []})} visible={this.state.isClaimModalVisible}>
+              { this.renderClaimModal() }
+            </Modal>
 
           </Row>
     );

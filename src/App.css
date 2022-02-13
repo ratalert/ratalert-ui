@@ -22,6 +22,7 @@ html {
   font-family: "Pixel";
   font-size: 14px;
   color: #fee017;
+  padding-left: 5px;
 }
 
 .levelUpTime {
@@ -30,7 +31,7 @@ html {
   color: #d2b5a7;
   margin-top: 0px;
   height: 20px;
-  margin-left: -15px;
+  margin-left: 0px;
 }
 
 .levelUpDone {
@@ -484,6 +485,18 @@ html {
 
 }
 
+.info {
+  width: 18px;
+  height: 18px;
+  margin: 18px 1px 0;
+  padding: 4px 7px 3px;
+  border-radius: 10px;
+  border: solid 2px #fff;
+  position: absolute;
+  cursor: pointer;
+  left: 0px;
+  z-index: 5;
+}
 
 @media only screen and (min-width: 769px) {
   .house .ant-card-body {
@@ -531,35 +544,86 @@ html {
     position: absolute;
   }
 
+  .nftCardFlipInner {
+    width: 170px;
+    position: relative;
+  }
+
+  .nftCardFlip:hover .nftCardFlipInner {
+  }
+
+  .info {
+    width: 18px;
+    height: 18px;
+    margin: 18px 1px 0;
+    padding: 4px 7px 3px;
+    border-radius: 10px;
+    border: solid 2px #fff;
+    background-image: linear-gradient(to bottom, #544a43, #706258);
+  }
+
   .nftDetails {
     padding-top: 5px;
-    border: 3px solid #443a31;
+    border-top: 3px solid #443a31;
+    border-left: 3px solid #443a31;
+    border-right: 3px solid #443a31;
     width: 160px;
     padding-left: 15px;
     padding-right: 5px;
     margin-right: 20px;
     padding-bottom: 5px;
-    background: rgba(80, 70, 64, 0.8);
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+    background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
   }
 
   .nftDetailHeader {
     font-family: Pixellari;
-    font-size: 12px;
+    font-size: 10px;
     color: #fff;
   }
 
   .nftDetailDetails {
     font-family: Pixellari;
-    font-size: 12px;
+    font-size: 10px;
     color: #000;
   }
 
+  .nftDetailSkill {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #000;
+    padding-top: 5px;
+    color: #13e969
+  }
+
+  .nftDetailIntelligence {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #000;
+    padding-top: 5px;
+    color: #1eaeea
+  }
+
+  .nftDetailInsanity {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #000;
+    padding-top: 5px;
+    color: #fc24ff;
+  }
+
+  .nftDetailBodymass {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #000;
+    padding-top: 5px;
+    color: #ffae00;
+  }
 
 
   .nftDetailId {
-    width: 155px;
+    width: 160px;
     border-top: 3px solid #443a31;
     border-left: 3px solid #443a31;
     border-right: 3px solid #443a31;
@@ -567,7 +631,6 @@ html {
     background: #524944;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    border-bottom-right-radius: 2px;
   }
 
 
@@ -841,6 +904,7 @@ html {
 
 .fade {
   background-image: url("img/fade.png");
+  height: 300px;
 }
 
 .nft {
@@ -853,14 +917,29 @@ html {
   border-top-right-radius: 2px;
 
   background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
 }
 > .code-box-demo > .ant-layout + .ant-layout {
   margin-top: 48px;
 }
 
 .nftSelectedStats {
-  border: 5px solid #FFFFFF;
-  border-radius: 5px;
+  border-top: 3px solid #FFFFFF;
+  border-left: 3px solid #FFFFFF;
+  border-right: 3px solid #FFFFFF;
+  border-bottom: 3px solid #FFFFFF;
+  cursor: pointer;
+}
+
+.modalClaim {
+  text-align: center;
+}
+
+.nftSelected {
+  border-top: 3px solid #FFFFFF;
+  border-left: 3px solid #FFFFFF;
+  border-right: 3px solid #FFFFFF;
   cursor: pointer;
 }
 
@@ -868,18 +947,10 @@ html {
   cursor: pointer;
 }
 
-
-.nftSelected {
-  border-top: 5px solid #FFFFFF;
-  border-left: 5px solid #FFFFFF;
-  border-right: 5px solid #FFFFFF;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
 .nftNotSelected {
   cursor: pointer;
 }
+
 
 .trigger {
   padding: 0 24px;
@@ -1201,7 +1272,6 @@ html {
 .officeLine {
   padding-top: 11px;
 }
-
 
 .gym {
   background-image: url("img/gym.png");
