@@ -1281,7 +1281,7 @@ class Main extends React.Component {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
       return <Popover content={levelUpSoon}>
-        <div className="levelUpTime">Y{this.secondsToHms(diff)}
+        <div className="levelUpTime">{this.secondsToHms(diff)}
         </div>
         </Popover>
     } else {
@@ -1306,11 +1306,11 @@ class Main extends React.Component {
       }
 
       let diff = futureDate - now;
-      if (diff >= this.state.stats.levelUpThreshold) {
+      if (diff >= this.state.stats.levelUpThreshold || diff < 0) {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
       return <Popover content={levelUpSoon}>
-        <div className="levelUpTime"> X{this.secondsToHms(diff)}
+        <div className="levelUpTime">{this.secondsToHms(diff)}
         </div>
         </Popover>;
     }
@@ -1580,7 +1580,6 @@ class Main extends React.Component {
     const selectedToUnStakeNfts = [];
     if (type) {
       Object.keys(this.state.selectedNfts).map(n => {
-        console.log(`Got status ${this.state.selectedNfts[n]["status"]} ${this.state.selectedNfts[n]["staked"]} type ${this.state.selectedNfts[n]["type"]}`);
         if (
           this.state.selectedNfts[n] &&
           this.state.selectedNfts[n]["status"] === true &&
