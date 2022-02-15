@@ -1046,10 +1046,10 @@ class Main extends React.Component {
   }
 
   handleNFTLeave(c) {
-    if (c.name > 0) {
+    if (c > 0) {
       setTimeout(() => {
         const nftDetailsActive = this.state.nftDetailsActive;
-        nftDetailsActive[c.name] = false;
+        nftDetailsActive[c] = false;
         this.setState({ nftDetailsActive });
       }, 100);
     }
@@ -1071,12 +1071,12 @@ class Main extends React.Component {
       height = 55;
     }
 
-    if (c.stakingLocation === 'McStake') {
+    // if (c.stakingLocation === 'McStake') {
       height += 44;
-    }
+    //}
 
     return (
-      <span className="nftCardBack" onMouseLeave={() => this.handleNFTLeave(c)}>
+      <span className="nftCardBack">
         <div className="nftDetailId">
           <span style={{color: '#000000', paddingLeft: 9}}>{hash.Generation}</span>
           <span style={{color: '#FFFFFF', paddingLeft: 5}}>{hash.Type}</span>
@@ -1086,7 +1086,7 @@ class Main extends React.Component {
           </span>
         </div>
         <div onClick={() => this.selectNFT(this, c.name, staked, c.type)}
-        style={{height: 160}}
+        style={{height: 170}}
         className={
           this.state.selectedNfts &&
           this.state.selectedNfts[c.name] &&
@@ -1109,7 +1109,7 @@ class Main extends React.Component {
                 ?
               <div>
               <Row>
-                <Col className="nftDetailHeader" span={24}>{key.trait_type}</Col>
+                <Col className="nftDetailHeader" span={24}>{key.trait_type}:</Col>
               </Row>
               <Row>
                 <Col className="nftDetailDetails" span={24}>{key.value}</Col>
@@ -1127,6 +1127,12 @@ class Main extends React.Component {
             ? "nftSelectedStats nftStats"
             : "nftNotSelected nftStats"
         }        >
+        <div style={{position: 'absolute'}}>
+          <div style={{position: 'relative', left: 120, top: 54}} onClick={this.handleNFTLeave.bind(this,c.name) } className="info">
+            <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
+          </div>
+        </div>
+
         <Row>
           <Col style={{marginRight: '0px'}} xs={5} span={4}>
             <img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
@@ -1142,7 +1148,6 @@ class Main extends React.Component {
             {c.type === 'Chef' ? hash.Insanity : hash.Fatness }
           </Col>
         </Row>
-
         </div>
 
       </span>
@@ -1171,7 +1176,7 @@ class Main extends React.Component {
         </div>
         <div
           onClick={() => this.selectNFT(this, c.name, staked, c.type)}
-
+          style={{height: 170}}
           className={
             this.state.selectedNfts &&
             this.state.selectedNfts[c.name] &&
@@ -1183,6 +1188,7 @@ class Main extends React.Component {
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
         </div>
         <div
+        style={{height: 99}}
         className={
           this.state.selectedNfts &&
           this.state.selectedNfts[c.name] &&
@@ -1223,6 +1229,13 @@ class Main extends React.Component {
         </Popover>
         {c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
           <div>
+          <div style={{position: 'absolute'}}>
+            <div style={{position: 'relative', left: 120, top: 10}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
+              <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
+            </div>
+          </div>
+
+
           <Row>
             <Col style={{marginRight: '5px', marginLeft: '0px'}} xs={3} span={2}>
               <Popover content="Your NFT earns fastfood (FFOOD) tokens when staked into a kitchen.">
@@ -1239,17 +1252,23 @@ class Main extends React.Component {
             <Col style={{marginRight: '0px'}} xs={5} span={4}>
               <img src={"/img/time.png"}/>
             </Col>
-            <Col xs={16} span={18}>
+            <Col xs={16} span={17}>
               <div>{ this.renderTimeLeftForLevelUp(c.mcstakeLastClaimTimestamp, c.mcstakeTimestamp) }</div>
-
             </Col>
           </Row>
+
           </div>
-        ) : null}
-        <div onClick={this.handleNFTEnter.bind(this,c.name) } className="info"
-        style={c.stakingLocation === 'McStake' ? {left: 135, top: 245} : {left: 137, top: 200}}>
-          <img style={{marginTop: -20, marginLeft: -2}} src="/img/i.png"/>
+        ) :
+        <div>
+        <div className="clickToSelect">Click to select</div>
+        <div style={{position: 'absolute'}}>
+          <div style={{position: 'relative', left: 120, top: -24}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
+            <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
+          </div>
         </div>
+
+        </div>
+      }
 
         </div>
       </span>

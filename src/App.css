@@ -492,9 +492,7 @@ html {
   padding: 4px 7px 3px;
   border-radius: 10px;
   border: solid 2px #fff;
-  position: absolute;
   cursor: pointer;
-  left: 0px;
   z-index: 5;
 }
 
@@ -563,14 +561,14 @@ html {
   }
 
   .nftDetails {
-    padding-top: 5px;
+    padding-top: 3px;
     border-top: 3px solid #443a31;
     border-left: 3px solid #443a31;
     border-right: 3px solid #443a31;
     width: 160px;
     padding-left: 15px;
     padding-right: 5px;
-    margin-right: 20px;
+    margin-right: 10px;
     padding-bottom: 5px;
     -webkit-backface-visibility: hidden; /* Safari */
     backface-visibility: hidden;
@@ -579,19 +577,21 @@ html {
 
   .nftDetailHeader {
     font-family: Pixellari;
-    font-size: 10px;
+    font-size: 9pt;
     color: #fff;
+    text-transform: uppercase;
   }
 
   .nftDetailDetails {
     font-family: Pixellari;
-    font-size: 10px;
+    font-size: 10pt;
+    line-height: 1em;
     color: #000;
   }
 
   .nftDetailSkill {
     font-family: Pixellari;
-    font-size: 12px;
+    font-size: 14px;
     color: #000;
     padding-top: 5px;
     color: #13e969
@@ -599,7 +599,7 @@ html {
 
   .nftDetailIntelligence {
     font-family: Pixellari;
-    font-size: 12px;
+    font-size: 14px;
     color: #000;
     padding-top: 5px;
     color: #1eaeea
@@ -607,7 +607,7 @@ html {
 
   .nftDetailInsanity {
     font-family: Pixellari;
-    font-size: 12px;
+    font-size: 14px;
     color: #000;
     padding-top: 5px;
     color: #fc24ff;
@@ -615,10 +615,18 @@ html {
 
   .nftDetailBodymass {
     font-family: Pixellari;
-    font-size: 12px;
+    font-size: 14px;
     color: #000;
     padding-top: 5px;
     color: #ffae00;
+  }
+
+  .clickToSelect {
+    font-family: Pixellari;
+    font-size: 14px;
+    padding-top: 12px;
+    padding-left: 20px;
+    color: #ffffff;
   }
 
 
@@ -637,12 +645,12 @@ html {
   .kitchenRow_waitingRoom {
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 40px;
+    margin-top: 0px;
   }
   .kitchenRow_kitchen {
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 10px;
+    margin-top: 0px;
   }
 
 
