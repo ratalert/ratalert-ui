@@ -171,7 +171,10 @@ class Main extends React.Component {
   }
 
   onChangeCurrentNFT(currentStatsNFT) {
-    this.setState({ currentStatsNFT });
+    if (currentStatsNFT >= 0 && currentStatsNFT < this.state.claimStats.length) {
+      this.setState({ currentStatsNFT });
+    }
+
   }
   onChangeAmount(mintAmount) {
     if (mintAmount >= 1 && mintAmount <= 10) {
@@ -234,7 +237,7 @@ class Main extends React.Component {
       contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
 
 
-      contract.on("ChefClaimed", (tokenId, earned, unstaked, skill, insanity, eventName, foodTokensPerRat) => {
+      contract.on("ChefClaimed", async(tokenId, earned, unstaked, skill, insanity, eventName, foodTokensPerRat) => {
         const oldNft = this.nfts[parseInt(tokenId)];
         // console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
 
@@ -247,15 +250,28 @@ class Main extends React.Component {
           insanity: parseInt(insanity),
           lastUpdate: Math.floor(Date.now() / 1000),
         };
+
+        const contract = new ethers.Contract(config[networkName].Character,
+          contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
+
+        const URI = await contract.tokenURI(parseInt(tokenId));
+        if (URI.indexOf("data:application/json;base64,") === 0) {
+          const base64 = URI.split(",");
+          const decoded = atob(base64[1]);
+          const json = JSON.parse(decoded);
+          const img = json.image;
+          claimInfo['img'] = img;
+        }
+
         if (oldNft && oldNft.image) {
           claimInfo['oldSkill'] = parseInt(oldNft.skill);
           claimInfo['oldInsanity'] = parseInt(oldNft.insanity);
-          claimInfo['oldImg'] = oldNft.image;
         }
 
         const claimStats = this.state.claimStats;
         claimStats.push(claimInfo);
-        this.setState({ currentStatsNFT: 0, claimStats });
+        window.scrollTo(0, 0);
+        this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
       });
 /*
     const filter = {
@@ -444,7 +460,7 @@ class Main extends React.Component {
       totalChefsStaked,
       allStakedChefs,
     });
-
+    /*
     setTimeout(() => {
       const claimStats = this.state.claimStats;
       let found = false;
@@ -455,7 +471,7 @@ class Main extends React.Component {
           found = true;
           const nft = this.nfts[c.tokenId];
           //console.log('Found new img:', nft.image);
-          claimStats[i]['newImg'] = nft.image;
+          claimStats[i]['img'] = nft.image;
         }
         i += 1;
       });
@@ -464,6 +480,7 @@ class Main extends React.Component {
         this.setState({ isClaimModalVisible: true });
       }
     }, 1000);
+    */
 
 
 
@@ -1055,7 +1072,51 @@ class Main extends React.Component {
     }
   }
 
-  renderNFTDetails(c, staked) {
+  renderToleranceTitle(c, hash, border = false) {
+    let className = '';
+    if (border) {
+      if (c.type === 'Chef') {
+        className = 'nftDetailInsanityBorder'
+      } else {
+        className = 'nftDetailFatnessBorder'
+      }
+    }
+    return (
+      <div className={className}>
+      <Row>
+        <Col style={{marginRight: '0px'}} xs={5} span={4}>
+          <img alt={c.type === 'Chef' ? 'Insanity' : 'Fatness'} src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
+        <Col xs={16} span={18} className={c.type === 'Chef' ? 'nftDetailInsanity' : 'nftDetailBodymass'}>
+          {c.type === 'Chef' ? hash.Insanity : hash.Fatness }
+        </Col>
+      </Row>
+      </div>
+    )
+  }
+
+  renderEfficiencyTitle(c, hash, border = false) {
+    let className = '';
+    if (border) {
+      if (c.type === 'Chef') {
+        className = 'nftDetailSkillBorder'
+      } else {
+        className = 'nftDetailIntelligenceBorder'
+      }
+    }
+    return (
+      <div className={className}>
+      <Row>
+        <Col style={{marginRight: '0px'}} xs={5} span={4}>
+          <img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
+        <Col xs={16} span={18} className={c.type === 'Chef' ? 'nftDetailSkill' : 'nftDetailIntelligence'}>
+          {c.type === 'Chef' ? hash.Skill : hash.Intelligence }
+        </Col>
+      </Row>
+      </div>
+    )
+  }
+
+  renderNFTDetails(c, staked, type = 'app', highlightEfficiency = false, highlightTolerance = false) {
     const hash = {};
     if (c.attributes) {
       c.attributes.map((m) => {
@@ -1070,17 +1131,21 @@ class Main extends React.Component {
     } else {
       height = 55;
     }
+    height += 44;
 
-    // if (c.stakingLocation === 'McStake') {
-      height += 44;
-    //}
+    let classNameImg = 'nftDetails';
+    let classNameStats = 'nftStats';
+    if (type === 'modal') {
+      classNameImg = 'nftDetailsModal'
+      classNameStats = 'nftStatsModalEnd'
+    }
 
     return (
       <span className="nftCardBack">
-        <div className="nftDetailId">
+        <div className={type === 'modal' ? 'nftDetailIdModal' : 'nftDetailId'}>
           <span style={{color: '#000000', paddingLeft: 9}}>{hash.Generation}</span>
-          <span style={{color: '#FFFFFF', paddingLeft: 5}}>{hash.Type}</span>
-          <span className="nftIdDetail">
+          { type !== 'modal' ? <span style={{color: '#FFFFFF', paddingLeft: 5}}>{hash.Type}</span> : null }
+          <span className={type === 'modal' ? "nftIdDetailModal" : "nftIdDetail"}>
             <span style={{color: '#000000'}}>#</span>
             <span style={{color: '#d1c0b6'}}>{c.name}</span>
           </span>
@@ -1091,8 +1156,8 @@ class Main extends React.Component {
           this.state.selectedNfts &&
           this.state.selectedNfts[c.name] &&
           this.state.selectedNfts[c.name]["status"] === true
-            ? "nftSelected nftDetails"
-            : "nftNotSelected nftDetails"
+            ? `nftSelected ${classNameImg}`
+            : `nftNotSelected ${classNameImg}`
         }
 
         >
@@ -1124,30 +1189,18 @@ class Main extends React.Component {
           this.state.selectedNfts &&
           this.state.selectedNfts[c.name] &&
           this.state.selectedNfts[c.name]["status"] === true
-            ? "nftSelectedStats nftStats"
-            : "nftNotSelected nftStats"
+            ? `nftSelectedStats ${classNameStats}`
+            : `nftNotSelected ${classNameStats}`
         }        >
+        { type !== 'modal' ?
         <div style={{position: 'absolute'}}>
           <div style={{position: 'relative', left: 120, top: 54}} onClick={this.handleNFTLeave.bind(this,c.name) } className="info">
             <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
           </div>
-        </div>
+        </div> : null }
 
-        <Row>
-          <Col style={{marginRight: '0px'}} xs={5} span={4}>
-            <img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
-          <Col xs={16} span={18} className={c.type === 'Chef' ? 'nftDetailSkill' : 'nftDetailIntelligence'}>
-            {c.type === 'Chef' ? hash.Skill : hash.Intelligence }
-          </Col>
-        </Row>
-        <Row>
-          <Col style={{marginRight: '0px'}} xs={5} span={4}>
-            <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/>
-          </Col>
-          <Col xs={16} span={18} className={c.type === 'Chef' ? 'nftDetailInsanity' : 'nftDetailBodymass'}>
-            {c.type === 'Chef' ? hash.Insanity : hash.Fatness }
-          </Col>
-        </Row>
+        { this.renderEfficiencyTitle(c, hash, highlightEfficiency) }
+        { this.renderToleranceTitle(c,hash, highlightTolerance) }
         </div>
 
       </span>
@@ -1158,22 +1211,28 @@ class Main extends React.Component {
     return (
       <div className="nftCardFlip">
 
-          { this.state.nftDetailsActive && !this.state.nftDetailsActive[c.name] ? this.renderNFTColumn(c, staked) : this.renderNFTDetails(c, staked) }
+          { this.state.nftDetailsActive && !this.state.nftDetailsActive[c.name] ? this.renderNFTColumn(c, staked, 'app') : this.renderNFTDetails(c, staked) }
         </div>
 
     )
   }
 
-  renderNFTColumn(c, staked) {
+  renderNFTColumn(c, staked, type = 'app') {
     if (!c || !c.name) {
       return <div>&nbsp;</div>
+    }
+    let classNameImg = 'nft';
+    let classNameStats = 'nftStats';
+    if (type === 'modal') {
+      classNameImg = 'nftModal'
+      classNameStats = 'nftStatsModal'
     }
     return (
       <div className="nftCardFlipInner">
       <span >
-        <div className="nftId"><span style={{color: '#000000'}}>#</span>
+        { type === 'app' ? <div className="nftId"><span style={{color: '#000000'}}>#</span>
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
-        </div>
+        </div> : null }
         <div
           onClick={() => this.selectNFT(this, c.name, staked, c.type)}
           style={{height: 170}}
@@ -1181,8 +1240,8 @@ class Main extends React.Component {
             this.state.selectedNfts &&
             this.state.selectedNfts[c.name] &&
             this.state.selectedNfts[c.name]["status"] === true
-              ? "nftSelected nft"
-              : "nftNotSelected nft"
+              ? `nftSelected ${classNameImg}`
+              : `nftNotSelected ${classNameImg}`
           }
         >
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
@@ -1193,8 +1252,8 @@ class Main extends React.Component {
           this.state.selectedNfts &&
           this.state.selectedNfts[c.name] &&
           this.state.selectedNfts[c.name]["status"] === true
-            ? "nftSelectedStats nftStats"
-            : "nftNotSelectedStats nftStats"
+            ? `nftSelectedStats ${classNameStats}`
+            : `nftNotSelectedStats ${classNameStats}`
         }>
         <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill') : this.renderAttribute.bind(this, 'intelligence')}>
         <Row>
@@ -1227,13 +1286,13 @@ class Main extends React.Component {
           </Col>
         </Row>
         </Popover>
-        {c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
+        {type !== 'modal' && c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
           <div>
-          <div style={{position: 'absolute'}}>
+          { type !== 'modal' ? <div style={{position: 'absolute'}}>
             <div style={{position: 'relative', left: 120, top: 10}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
               <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
             </div>
-          </div>
+          </div> : null}
 
 
           <Row>
@@ -1260,12 +1319,13 @@ class Main extends React.Component {
           </div>
         ) :
         <div>
-        <div className="clickToSelect">Click to select</div>
-        <div style={{position: 'absolute'}}>
+
+        { type !== 'modal' ? <div className="clickToSelect">Click to select</div> : null }
+        { type !== 'modal' ? <div style={{position: 'absolute'}}>
           <div style={{position: 'relative', left: 120, top: -24}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
             <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
           </div>
-        </div>
+        </div> : null}
 
         </div>
       }
@@ -2459,79 +2519,415 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
 
   renderClaimStats(id) {
     const key = this.state.claimStats[id];
+    /*
+    key.intelligence=23;
+    key.fatness = 11;
+    key.skill = 11;
+    key.insanity = 23;
+
+    key.oldIntelligence=14;
+    key.oldSkill=1;
+    key.oldInsanity=1;
+    key.oldFatness=1;
+    key.event = 'ratTrap';
+
+*/
+/*
+    key.oldIntelligenceLevel = 'Braindead';
+    key.oldSkillLevel = 'Ingredient Taster';
+    key.oldInsanityLevel = 'Something';
+    key.oldFatnessLevel = 'Skinny';
+*/
+
+    const c = this.nfts[parseInt(key.tokenId)];
+
+    const hash = {};
+    if (c && c.attributes) {
+      c.attributes.map((m) => {
+        hash[m.trait_type] = m.value;
+      });
+    }
+
+
+    let events = [];
+    let highlightEfficiency = false;
+    let highlightTolerance = false;
+
+    if (key.event) {
+      if (c.type === 'Rat' && key.event === 'ratTrap') {
+        events.push({ event: 'rat_trap',
+         image: 'rat_trap.gif',
+         nft: `${c.type} #${c.name}`,
+         title: 'Rat Trap!',
+         efficiencyLost: `${key.oldIntelligence - key.intelligence}`,
+         toleranceLost: `${key.oldFatness - key.fatness}`,
+         effiencyName: 'Intelligence',
+         toleranceName: 'Bodymass',
+         effiency: key.intelligence,
+         tolerance: key.fatness,
+         efficiencyLevel: hash['Intelligence'],
+         toleranceLevel: hash['Fatness']
+       });
+       highlightEfficiency = true;
+       highlightTolerance = true;
+      }
+
+      if (c.type === 'Rat' && key.event === 'cat') {
+        events.push({ event: 'cat',
+         image: 'cat.gif',
+         nft: `${c.type} #${c.name}`,
+         title: 'Kidnapped by the cat!',
+         efficiencyLost: `${key.oldIntelligence - key.intelligence}`,
+         toleranceLost: `${key.oldFatness - key.fatness}`,
+         effiencyName: 'Intelligence',
+         toleranceName: 'Bodymass',
+         effiency: key.intelligence,
+         tolerance: key.fatness,
+         efficiencyLevel: hash['Intelligence'],
+         toleranceLevel: hash['Insanity']
+       });
+       highlightEfficiency = true;
+       highlightTolerance = true;
+      }
+
+      if (c.type === 'Chef' && key.event === 'foodInspector') {
+        events.push({ event: 'food_inspector',
+         image: 'food_inspector.gif',
+         nft: `${c.type} #${c.name}`,
+         title: 'Food Inspector!',
+         efficiencyLost: `${key.oldSkill - key.skill}`,
+         toleranceLost: `${key.oldInsanity - key.insanity}`,
+         effiencyName: 'Skill',
+         toleranceName: 'Freak level',
+         effiency: key.skill,
+         tolerance: key.insanity,
+         efficiencyLevel: hash['Skill'],
+         toleranceLevel: hash['Fatness']
+       });
+       highlightEfficiency = true;
+       highlightTolerance = true;
+      }
+
+      if (c.type === 'Chef' && key.event === 'burnout') {
+        events.push({ event: 'burnout',
+         image: 'burnout.gif',
+         nft: `${c.type} #${c.name}`,
+         title: 'Burnout!',
+         efficiencyLost: `${key.oldSkill - key.skill}`,
+         toleranceLost: `${key.oldInsanity - key.insanity}`,
+         effiencyName: 'Skill',
+         toleranceName: 'Freak level',
+         effiency: key.skill,
+         tolerance: key.insanity,
+         efficiencyLevel: hash['Skill'],
+         toleranceLevel: hash['Fatness']
+       });
+       highlightEfficiency = true;
+       highlightTolerance = true;
+      }
+
+    } else {
+      if (key.earned > 0) {
+        events.push({ nft: `${c.type} #${c.name}`, event: 'earned', amount: key.earned, title: 'Tokens earned', currency: 'FFOOD'});
+      }
+
+      if (c.type === 'Chef' && (key.oldSkillLevel !== hash['Skill']) && (key.skill > key.oldSkill)) {
+        events.push({ event: 'new_skill_level', type: 'skill', nft: `${c.type} #${c.name}`, name: 'Skill', value: key.skill, title: 'New Skill Level', gained: `${key.skill - key.oldSkill}%`, level: hash['Skill']});
+        highlightEfficiency = true;
+      }
+
+      if (c.type === 'Chef' && (key.oldSkillLevel === hash['Skill']) && (key.skill > key.oldSkill)) {
+        events.push({ event: 'skill_earned', type: 'skill', nft: `${c.type} #${c.name}`, name: 'Skill', value: key.skill, title: 'Skill earned', gained: `${key.skill - key.oldSkill}%`, level: hash['Skill']});
+      }
+
+      if (c.type === 'Chef' && (key.oldInsanityLevel === hash['Insanity']) && (key.insanity > key.oldInsanity)) {
+        events.push({ event: 'insanity_increased', type: 'insanity', nft: `${c.type} #${c.name}`, name: 'Insanity', value: key.insanity, title: 'Insanity increased', gained: `${key.insanity - key.oldInsanity}%`, level: hash['Insanity']});
+        highlightTolerance = true;
+      }
+
+      if (c.type === 'Chef' && (key.oldInsanityLevel !== hash['Insanity']) && (key.insanity > key.oldInsanity)) {
+        events.push({ event: 'new_insanity_level', type: 'insanity', nft: `${c.type} #${c.name}`, name: 'Insanity', value: key.insanity, title: 'New insanity level', gained: `${key.insanity - key.oldInsanity}%`, level: hash['Insanity']});
+        highlightTolerance = true;
+      }
+
+      if (c.type === 'Rat' && (key.oldIntelligenceLevel !== hash['Intelligence']) && (key.intelligence > key.oldIntelligence)) {
+        events.push({ event: 'new_intelligence_level', type: 'intelligence', nft: `${c.type} #${c.name}`, name: 'Intelligence', value: key.intelligence, title: 'New Intelligence Level', gained: `${key.intelligence - key.oldIntelligence}%`, level: hash['Intelligence']});
+        highlightEfficiency = true;
+      }
+
+      if (c.type === 'Rat' && (key.oldIntelligenceLevel === hash['Intelligence']) && (key.intelligence > key.oldIntelligence)) {
+        events.push({ event: 'intelligence_earned', type: 'intelligence', nft: `${c.type} #${c.name}`, name: 'Intelligence', value: key.intelligence, title: 'Intelligence earned', gained: `${key.intelligence - key.oldIntelligence}%`, level: hash['Intelligence']});
+      }
+
+      if (c.type === 'Rat' && (key.oldFatnessLevel === hash['Fatness']) && (key.fatness > key.oldFatness)) {
+        events.push({ event: 'bodymass_gained', type: 'bodymass', nft: `${c.type} #${c.name}`, name: 'Bodymass', value: key.fatness, title: 'Bodymass gained', gained: `${key.fatness - key.oldFatness}%`, level: hash['Fatness']});
+      }
+
+      if (c.type === 'Rat' && (key.oldFatnessLevel !== hash['Fatness']) && (key.fatness > key.oldFatness)) {
+        events.push({ event: 'new_fatness_level', type: 'bodymass', nft: `${c.type} #${c.name}`, name: 'Body mass', value: key.fatness, title: 'New bodymass level', gained: `${key.fatness - key.oldFatness}%`, level: hash['Fatness']});
+        highlightTolerance = true;
+      }
+    }
+
+
+
     return (
       <div>
         <Row>
-          <Col span={4} >Claimed</Col>
-            <Col span={20} className="modalClaim">
-            { parseFloat(key.earned).toFixed(2) } $FFOOD
-            </Col>
+          <Col span={12}>
+            <div>
+            { this.renderNFTColumn(c, 0, 'modal') }
+            <div style={{marginLeft: 140, marginTop: -294}}>{ this.renderNFTDetails(c, 0, 'modal', highlightEfficiency, highlightTolerance) }</div>
+            </div>
+          </Col>
+          <Col span={12}>
+          { events.map( (e) =>
+                this.renderEvent(e,c,hash)
+          )}
+
+          </Col>
         </Row>
-        <Row>
-          <Col span={4}>Event</Col>
-            <Col span={20} className="modalClaim">
-            { key.event ? key.event : 'No event has happened.' }
-            </Col>
-        </Row>
-        <Row style={{marginTop: 30}}>
-        </Row>
-        <Row>
-            <Col span={24}><strong>Attributes</strong></Col>
-        </Row>
-        <Row>
-            <Col span={4}></Col>
-            <Col span={10} className="modalClaim">Old</Col>
-            <Col span={10} className="modalClaim">New</Col>
-        </Row>
-        <Row>
-            <Col span={4}>Image</Col>
-            <Col span={10} className="modalClaim">
-              <img style={{width: 125}} src={key.oldImg}/>
-            </Col>
-            <Col span={10} className="modalClaim">
-              <img style={{width: 125}} src={key.newImg}/>
-            </Col>
-        </Row>
-        <Row>
-            <Col span={4}>Skill</Col>
-            <Col span={10}  className="modalClaim">
-              { key.skill }
-            </Col>
-            <Col span={10} className="modalClaim">
-              { key.oldSkill }
-            </Col>
-        </Row>
-        <Row>
-            <Col span={4}>Freak Level</Col>
-            <Col span={10} className="modalClaim">
-              { key.insanity }
-            </Col>
-            <Col span={10} className="modalClaim">
-              { key.insanity }
-            </Col>
-        </Row>
+
+
     </div>
+    )
+  }
+
+  renderEvent (e, c, hash) {
+    if (e.event === 'earned') {
+      return this.renderEarned(e, c, hash);
+    }
+    if (e.event === 'rat_trap' || e.event === 'cat' || e.event === 'food_inspector' || e.event === 'burnout') {
+      return this.renderNFTEvent(e, c, hash);
+    }
+
+    if (e.event === 'new_skill_level' || e.event === 'new_intelligence_level') {
+      return this.renderNewEfficiencyLevel(e, c, hash);
+    }
+
+    if (e.event === 'new_insanity_level' || e.event === 'new_fatness_level') {
+      return this.renderNewToleranceLevel(e, c, hash);
+    }
+
+    if (e.event === 'skill_earned' || e.event === 'intelligence_earned') {
+      return this.renderEfficiencyEarned(e, c, hash);
+    }
+    if (e.event === 'insanity_increased' || e.event === 'bodymass_gained') {
+      return this.renderToleranceGained(e, c, hash);
+    }
+
+
+
+  }
+
+  renderNFTEvent(e, c, hash) {
+    return (
+      <div>
+      <Row>
+        <Col span={24}>
+        <Row>
+          <Col className="eventTitle" span={24}>
+            {e.title}
+          </Col>
+        </Row>
+        <Row>
+          <Col className="whiteContent" span={24}>
+            <img src={`/img/${e.image}`}/>
+          </Col>
+        </Row>
+        <Row>
+          <Col className="eventContent" span={12}>
+            {e.efficiencyLost}% {e.effiencyName}
+          </Col>
+          <Col className="eventContent" span={12}>
+            {e.toleranceLost}% {e.toleranceName}
+          </Col>
+        </Row>
+        <Row>
+          <Col className="whiteContent" span={12}>
+            {e.effiencyName} level {e.effiency}%
+          </Col>
+          <Col className="whiteContent" span={12}>
+            {e.toleranceName} level {e.tolerance}%
+          </Col>
+        </Row>
+
+        <Row align="middle" style={{paddingTop: 20}}>
+          <Col  span={4}>
+          <div className={c.type === 'Chef' ? 'downArrow chefEfficiency' : 'downArrow ratEfficiency'}/>
+          </Col>
+          <Col span={18}>
+          { this.renderEfficiencyTitle(c, hash, true) }
+          </Col>
+        </Row>
+
+        <Row align="middle" style={{paddingTop: 20}}>
+          <Col  span={4}>
+          <div className={c.type === 'Chef' ? 'downArrow chefInsanity' : 'downArrow ratFatness'}/>
+          </Col>
+          <Col span={18}>
+          { this.renderToleranceTitle(c, hash, true) }
+          </Col>
+        </Row>
+
+        </Col>
+      </Row>
+      </div>
+    );
+  }
+
+  renderEarned(e, c, hash) {
+    return (
+      <div>
+      <Row>
+        <Col className="eventHeader" span={24}>{e.title}</Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.nft} has earned <u>{e.amount.toFixed(2)}</u> ${e.currency}
+        </Col>
+      </Row>
+      </div>
+    );
+  }
+
+  renderToleranceGained(e, c, hash) {
+    return (
+      <div>
+      <Row>
+        <Col className="eventHeader" span={24}>{e.title}</Col>
+      </Row>
+      <Row>
+        <Col className={e.type === 'insanity' ? 'chefToleranceContent' : 'ratToleranceContent'} span={24}>
+            {e.gained} {e.name} { e.type === 'insanity' ? 'obtained' : 'gained'}
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.name} level is now {e.value}%
+        </Col>
+      </Row>
+      </div>
+    );
+  }
+
+  renderEfficiencyEarned(e, c, hash) {
+    return (
+      <div>
+      <Row>
+        <Col className="eventHeader" span={24}>{e.title}</Col>
+      </Row>
+      <Row>
+        <Col className={e.type === 'skill' ? 'chefEfficiencyContent' : 'ratEfficiencyContent'} span={24}>
+            {e.gained} {e.name} gained
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.name} level is now {e.value}%
+        </Col>
+      </Row>
+      </div>
+    );
+  }
+
+  renderNewToleranceLevel(e, c, hash) {
+    return (
+      <div>
+      <Row>
+        <Col className="eventHeader" span={24}>{e.title}</Col>
+      </Row>
+      <Row>
+        <Col className={e.type === 'insanity' ? 'chefToleranceContent' : 'ratToleranceContent'} span={24}>
+            {e.gained} {e.name} { e.type === 'insanity' ? 'obtained' : 'gained'}
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.name} level is now {e.value}%
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.nft} has reached a new level:
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={12}>
+            <Row align="middle">
+              <Col  span={4}>
+              <div className={c.type === 'Chef' ? 'upArrow chefInsanity' : 'upArrow ratFatness'}/>
+              </Col>
+              <Col span={18}>
+              { this.renderToleranceTitle(c, hash, true) }
+              </Col>
+            </Row>
+        </Col>
+      </Row>
+      </div>
+    );
+  }
+
+  renderNewEfficiencyLevel(e, c, hash) {
+    return (
+      <div>
+      <Row>
+        <Col className="eventHeader" span={24}>{e.title}</Col>
+      </Row>
+      <Row>
+        <Col className={e.type === 'skill' ? 'chefEfficiencyContent' : 'ratEfficiencyContent'} span={24}>
+            {e.gained} {e.name} gained
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.name} level is now {e.value}%
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={24}>
+            {e.nft} has reached a new level:
+        </Col>
+      </Row>
+      <Row>
+        <Col className="whiteContent" span={12}>
+            <Row align="middle">
+              <Col  span={4}>
+              <div className={c.type === 'Chef' ? 'upArrow chefEfficiency' : 'upArrow ratEfficiency'}/>
+              </Col>
+              <Col span={18}>
+              { this.renderEfficiencyTitle(c, hash, true) }
+              </Col>
+            </Row>
+        </Col>
+      </Row>
+      </div>
+    );
+  }
+
+  renderCarets() {
+    return (
+      <Row className="carets" style={{marginBottom: '20'}}>
+         <Col xs={11} md={12}/>
+          <Col style={{width: '30px', paddingTop: '10px'}}>
+              <CaretLeftOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT - 1)} style={{cursor: 'pointer', fontSize: '20px'}}/>
+          </Col>
+          <Col style={{width: '30px', paddingTop: '10px'}}>
+              <span style={{textDecoration: 'underline'}}>{ this.state.currentStatsNFT + 1 }</span>
+              <span>/ { this.state.claimStats.length }</span>
+          </Col>
+          <Col span={3} style={{width: '20px', paddingTop: '10px'}}>
+            <CaretRightOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '20px'}}/>
+          </Col>
+      </Row>
     )
   }
 
   renderClaimModal() {
     return (
       <div>
+        { this.state.claimStats.length > 1 ? this.renderCarets() : null }
         <div>
-        <Col  span={24}>
-          <Row>
-            <Col xs={11} md={12} className="officeLine">Total NFT Updates: </Col>
-            <Col style={{width: '20px', paddingTop: '10px'}}>
-              <CaretLeftOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT - 1)} style={{cursor: 'pointer', fontSize: '20px'}}/>
-            </Col>
-            <Col style={{width: '30px', paddingTop: '10px'}}>
-            <span style={{textDecoration: 'underline'}}>{ this.state.currentStatsNFT + 1 }</span> / { this.state.claimStats.length }
-            </Col>
-            <Col span={3} style={{width: '20px', paddingTop: '10px'}}>
-              <CaretRightOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '20px'}}/>
-            </Col>
-          </Row>
-        </Col>
           { this.state.claimStats[this.state.currentStatsNFT] ? this.renderClaimStats(this.state.currentStatsNFT) : null }
         </div>
        {
@@ -2559,7 +2955,16 @@ Learn more about the rules in the <Link>Whitepaper</Link>.
               {this.props.address ? this.renderNfts() : this.renderNACard()}
             </div>
 
-            <Modal title="Claiming was successful" onOk={() => this.setState({isClaimModalVisible: false, claimStats: []})} visible={this.state.isClaimModalVisible}>
+            <Modal bodyStyle={{height: 480}} title={`This is what happened... ${this.state.claimStats.length} ${this.state.claimStats.length === 1 ? 'Event' : 'Events'}`}
+            onCancel={() => this.setState({isClaimModalVisible: false, claimStats: []})}
+            onOk={() => this.setState({isClaimModalVisible: false, claimStats: []})}
+            footer={[
+              <Button className="web3Button" key="submit" type="default"
+              onClick={() => this.setState({isClaimModalVisible: false, claimStats: []})}>
+                Close
+              </Button>
+            ]}
+            visible={this.state.isClaimModalVisible}>
               { this.renderClaimModal() }
             </Modal>
 

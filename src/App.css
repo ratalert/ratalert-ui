@@ -582,6 +582,92 @@ html {
     text-transform: uppercase;
   }
 
+
+  .eventHeader {
+    font-family: Pixellari;
+    font-size: 30px;
+    color: #fff;
+  }
+
+  .chefEfficiencyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #00ef55;
+  }
+
+  .chefToleranceContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #fc24ff;
+  }
+
+  .ratToleranceContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #ffae00;
+  }
+
+
+  .ratEfficiencyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #1eaeea;
+  }
+
+
+  .whiteContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #FFFFFF;
+  }
+
+  .eventTitle {
+    font-family: Pixellari;
+    font-size: 34px;
+    color: #ec6e6e;
+  }
+
+  .eventContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #ec6e6e;
+  }
+
+  .carets {
+    color: #FFF;
+  }
+
+  .upArrow {
+    background-image: url("img/up.svg");
+    width: 14px;
+    height: 13px;
+  }
+
+  .downArrow {
+    background-image: url("img/down.svg");
+    width: 14px;
+    height: 13px;
+  }
+
+
+  .chefEfficiency {
+    filter: invert(77%) sepia(67%) saturate(2497%) hue-rotate(85deg) brightness(98%) contrast(91%);
+  }
+
+  .chefInsanity {
+    filter: invert(29%) sepia(72%) saturate(4426%) hue-rotate(282deg) brightness(111%) contrast(115%);
+  }
+
+
+  .ratEfficiency {
+    filter: invert(60%) sepia(13%) saturate(4359%) hue-rotate(164deg) brightness(95%) contrast(93%);
+  }
+
+  .ratFatness {
+    filter: invert(72%) sepia(43%) saturate(3657%) hue-rotate(1deg) brightness(105%) contrast(103%);
+  }
+
+
   .nftDetailDetails {
     font-family: Pixellari;
     font-size: 10pt;
@@ -597,6 +683,36 @@ html {
     color: #13e969
   }
 
+  .nftDetailSkillBorder {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #13e969;
+    border-radius: 4px;
+    border: solid 2px #00ef55;
+    padding-left: 10px;
+    padding-right: 5px;
+  }
+
+  .nftDetailInsanityBorder {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #13e969;
+    border-radius: 4px;
+    border: solid 2px #fc24ff;
+    padding-left: 10px;
+    padding-right: 5px;
+  }
+
+  .nftDetailFatnessBorder {
+    font-family: Pixellari;
+    font-size: 14px;
+    border-radius: 4px;
+    border: solid 2px #ffae00;
+    padding-left: 10px;
+    padding-right: 5px;
+  }
+
+
   .nftDetailIntelligence {
     font-family: Pixellari;
     font-size: 14px;
@@ -604,6 +720,17 @@ html {
     padding-top: 5px;
     color: #1eaeea
   }
+
+  .nftDetailIntelligenceBorder {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #1eaeea;
+    border-radius: 4px;
+    border: solid 2px #1eaeea;
+    padding-left: 10px;
+    padding-right: 5px;
+  }
+
 
   .nftDetailInsanity {
     font-family: Pixellari;
@@ -928,6 +1055,89 @@ html {
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
 }
+
+
+.nftModal {
+  text-align: center !important;
+  margin-right: 20px;
+  border-left: 3px solid #443a31;
+  border-top: 3px solid #443a31;
+  border-top-left-radius: 5px;
+  width: 140px;
+
+  background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
+}
+.nftModal {
+  text-align: center !important;
+  margin-right: 20px;
+  border-left: 3px solid #443a31;
+  border-top: 3px solid #443a31;
+  border-top-left-radius: 5px;
+  width: 140px;
+
+  background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
+}
+
+.nftDetailsModal {
+  padding-top: 3px;
+  border-top: 3px solid #443a31;
+  border-right: 3px solid #443a31;
+  width: 140px;
+  padding-left: 15px;
+  padding-right: 5px;
+  margin-right: 10px;
+  padding-bottom: 5px;
+  -webkit-backface-visibility: hidden; /* Safari */
+  backface-visibility: hidden;
+  background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
+}
+
+.nftDetailIdModal {
+  width: 140px;
+  border-top: 3px solid #443a31;
+  border-left: 3px solid #443a31;
+  border-right: 3px solid #443a31;
+  font-weight: bold;
+  background: #524944;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.nftIdDetailModal {
+  padding-left: 10;
+  text-align: right !important;
+  width: 60px;
+  position: absolute;
+}
+
+.nftStatsModal {
+  border-left: 3px solid #443a31;
+  border-bottom: 3px solid #443a31;
+  padding-left: 15px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  background: rgba(80, 70, 64, 0.8);
+  border-bottom-left-radius: 5px;
+  width: 140px;
+}
+
+.nftStatsModalEnd {
+  border-right: 3px solid #443a31;
+  border-bottom: 3px solid #443a31;
+  padding-left: 15px;
+  padding-right: 5px;
+  padding-bottom: 5px;
+  background: rgba(80, 70, 64, 0.8);
+  border-bottom-right-radius: 5px;
+  width: 140px;
+}
+
+
+
 > .code-box-demo > .ant-layout + .ant-layout {
   margin-top: 48px;
 }
@@ -1137,7 +1347,7 @@ html {
 
 .web3Button:hover {
   height: 30px;
-  padding-top: 6px;
+  padding-top: 5px;
   margin-bottom: 10px;
   textAlign: center;
   background: #FFFFFF;
@@ -1309,4 +1519,29 @@ html {
 .sewer {
   background-image: url("img/tiles_sewer.png") !important;
   margin-left: 0px !important;
+}
+
+.ant-modal-header {
+  background-color: #514a4a;
+  color: #FFFFFF !important;
+  border-bottom: 0px;
+  font-family: "Pixellari";
+  font-size: 13px;
+}
+
+.ant-modal-title {
+  color: #FFFFFF !important;
+}
+
+.ant-modal-content {
+  border-radius: 5px;
+  border: solid 3px #443b35;
+  background-color: #514a4a;
+  width: 675px;
+}
+
+.ant-modal-footer {
+  border-top: 1px solid #6e6056;
+  margin-left: 28px;
+  margin-right: 24px;
 }
