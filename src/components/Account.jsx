@@ -4,6 +4,9 @@ import Address from "./Address";
 import Balance from "./Balance";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import {
+Row, Col
+} from "antd";
 import { INFURA_ID, NETWORK, NETWORKS } from "../constants";
 
 const { ethers } = require("ethers");
@@ -90,9 +93,7 @@ export default function Account({
 */
 
   const loadWeb3Modal = useCallback(async () => {
-    console.log('Starting connect');
     const provider = await web3Modal.connect();
-    console.log('PROVIDER', provider);
     setInjectedProvider(new ethers.providers.Web3Provider(provider));
 
     provider.on("chainChanged", chainId => {
@@ -130,28 +131,12 @@ export default function Account({
   if (web3Modal) {
     if (web3Modal.cachedProvider) {
       modalButtons.push(
-        <Button
-          key="logoutbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-          shape="round"
-          size="large"
-          onClick={logoutOfWeb3Modal}
-        >
-          Logout
-        </Button>,
+        <a onClick={logoutOfWeb3Modal} className="menuWeb3Button" href="#">Logout</a>,
       );
     } else {
+
       modalButtons.push(
-        <Button
-          key="loginbutton"
-          style={{ verticalAlign: "top", marginLeft: 8, marginTop: 4 }}
-          shape="round"
-          size="large"
-          /* type={minimized ? "default" : "primary"}     too many people just defaulting to MM and having a bad time */
-          onClick={loadWeb3Modal}
-        >
-          Connect
-        </Button>,
+        <a onClick={loadWeb3Modal} className="menuWeb3Button" href="#">Login</a>,
       );
       const urlParams = new URLSearchParams(window.location.search);
       const addr = urlParams.get('addr');
@@ -167,7 +152,9 @@ export default function Account({
   ) : (
     <span>
       {address ? (
-        <Address address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
+        <div style={{paddingTop: 10}}>
+        <Address fontSize={18} address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
+        </div>
       ) : (
         ''
       )}
@@ -176,8 +163,12 @@ export default function Account({
 
   return (
     <div>
-      {display}
-      {modalButtons}
+      <Row align="vertical">
+        <Col>{display}</Col>
+        <Col style={{paddingTop: 10}}>{modalButtons}</Col>
+      </Row>
+
+
     </div>
   );
 }

@@ -78,7 +78,7 @@ export default function Address(props) {
     text = (
       <Text editable={{ onChange: props.onChange }} copyable={{ text: address }}>
         <a
-          style={{ color: "#222222" }}
+          style={{ color: "#619cff" }}
           target="_blank"
           href={etherscanLink}
           rel="noopener noreferrer"
@@ -91,7 +91,7 @@ export default function Address(props) {
     text = (
       <Text>
         <a
-          style={{ color: "#222222" }}
+          style={{ color: "#619cff" }}
           target="_blank"
           href={etherscanLink}
           rel="noopener noreferrer"
@@ -105,7 +105,7 @@ export default function Address(props) {
   return (
     <span>
       <span style={{ verticalAlign: "middle" }}>
-        <Blockies seed={address.toLowerCase()} size={8} scale={props.fontSize ? props.fontSize / 7 : 4} />
+        <Blockies seed={address.toLowerCase()} size={8} scale={props.fontSize ? props.fontSize / 7 : 3} />
       </span>
       <span style={{ verticalAlign: "middle", paddingLeft: 5, fontSize: props.fontSize ? props.fontSize : 28 }}>
         {text}

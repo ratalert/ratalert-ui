@@ -81,13 +81,13 @@ class RatMenu extends React.Component {
   async getNFTObject(id) {
     const hex = `0x${this.decToHex(id)}`;
     const query = `{
-        chefRat(id:"${hex}") {
+        characters(id:"${hex}") {
           id, URI
         }
       }`;
     const result = await graphQLClient.request(query);
-    if (result.Character) {
-      const URI = result.Character.URI;
+    if (result.characters) {
+      const URI = result.characters.URI;
       const base64 = URI.split(",");
       const decoded = atob(base64[1]);
       const json = JSON.parse(decoded);
@@ -186,17 +186,26 @@ class RatMenu extends React.Component {
     }
     return (
       <div className="icons">
-        <img width={32} src="https://cdn-icons-png.flaticon.com/512/2922/2922037.png" style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}} onClick={this.addToken.bind(this)}/>
-        <a target="_new"
-          href={`https://app.uniswap.org/#/swap?inputCurrency=ETH&outputCurrency=${this.props.readContracts.FastFood && this.props.readContracts.FastFood.address ? this.props.readContracts.FastFood.address : null}`}
-            >
-          <img width={32} src="https://cryptologos.cc/logos/uniswap-uni-logo.png?v=014" style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}}/>
-        </a>
-        <a href="https://opensea.io/" target="_new">
-          <img width={32} src="https://user-images.githubusercontent.com/35243/140804979-0ef11e0d-d527-43c1-93cb-0f48d1aec542.png"
-            style={{marginTop: '5px', marginRight: '10px', border: '1px solid #000000', 'border-radius': '10px', cursor: 'pointer'}}
-          />
-        </a>
+      <a href="https://opensea.io/" target="_new">
+        <img width={30} src="/img/opensea.png"
+          style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+        />
+      </a>
+      <a href="https://app.uniswap.org/" target="_new">
+        <img width={30} src="/img/uniswap.png"
+          style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+        />
+      </a>
+      <a href="https://discord.gg/DP36aCq8P4" target="_new">
+        <img width={30} src="/img/discord.png"
+          style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+        />
+      </a>
+      <a href="https://twitter.com/RatAlertNFT" target="_new">
+        <img width={30} src="/img/twitter.png"
+          style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+        />
+      </a>
       </div>
     );
   };
@@ -212,9 +221,9 @@ class RatMenu extends React.Component {
         <Sider theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
          <div className="logo" />
           <Menu mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
-            <Menu.Item style={{marginRight: '0px'}} icon={<DashboardOutlined />} key={1}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item>
-            <Menu.Item icon={<OrderedListOutlined />} key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
-            <Menu.Item icon={<FileTextOutlined />} key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item style={{marginRight: '0px'}} key={1}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item>
+            <Menu.Item  key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
+            <Menu.Item  key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
           </Menu>
         </Sider>
       )
@@ -237,9 +246,9 @@ class RatMenu extends React.Component {
 
       <div>
         <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
-          <Menu.Item icon={<DashboardOutlined />} key={1}><Link to="/">Game</Link></Menu.Item>
-          <Menu.Item icon={<OrderedListOutlined />} key={2}><Link to="/leaderboard">Leaderboard</Link></Menu.Item>
-          <Menu.Item icon={<FileTextOutlined />} key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
+          <Menu.Item key={1}><Link to="/">Game</Link></Menu.Item>
+          <Menu.Item key={2}><Link to="/leaderboard">Leaderboard</Link></Menu.Item>
+          <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
         </Menu>
       </div>
     );
@@ -301,17 +310,52 @@ class RatMenu extends React.Component {
       </div>
     )
   }
+  renderTitle() {
+    return (
+      <div>
+        <span className="logoTextHeader">
+          RATalert
+        </span>
+        <div className="logoLineHeader"/>
+      </div>
+    )
+
+  }
+
+  getWidth(type = 'kitchen', stretch = false, originalWidth = false, originalHeight = false) {
+    let width = 0;
+
+    if (stretch) {
+      let factor;
+      let height;
+      if (type === 'sky') {
+        factor = window.innerWidth / originalWidth;
+        width = window.innerWidth;
+        height = factor * originalHeight;
+      } else {
+        factor = width / originalWidth;
+        height = factor * originalHeight;
+      }
+      return { width, height, type };
+    }
+    return { width: width, type };
+  }
 
   render() {
+    const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
+
+          <div>
+          <div className="sky" style={skyAttr}>
+          </div>
           <Layout>
             { this.renderMobileMenu() }
             <Layout>
-            <PageHeader ghost={false} title="Rat Alert" subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
+            <PageHeader ghost={false} title={this.renderTitle()} subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
             <Content>{ this.props.content }</Content>
-            <Footer>Footer</Footer>
             </Layout>
           </Layout>
+          </div>
     );
   }
 }

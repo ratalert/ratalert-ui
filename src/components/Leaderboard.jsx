@@ -45,6 +45,7 @@ import {
 class Leaderboard extends React.Component {
   constructor(props) {
     super(props);
+    this.tableRef = React.createRef();
     this.state = {
       windowHeight: window.innerHeight - 235,
       dataLoaded: false,
@@ -65,17 +66,17 @@ class Leaderboard extends React.Component {
     let address = "";
 
     const query = `{
-      chefRats
+      characters
       (orderBy: ${type}, orderDirection: desc, first: 100)
       {
-        id, staked, owner, URI, stakingOwner, stakedTimestamp, type,
+        id, staked, owner, URI, mcstakeStakingOwner, mcstakeStakedTimestamp, type,
         insanity, skill, intelligence, fatness, earned
       }
     }`;
 
     const result = await graphQLClient.request(query);
     let chefRats = this.state.results;
-    await result.chefRats.map(r => {
+    await result.characters.map(r => {
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
           const base64 = r.URI.split(",");
@@ -85,8 +86,8 @@ class Leaderboard extends React.Component {
           r.attributes = json.attributes;
 
           let found = 0;
-          if (this.state.results && this.state.results.chefRats) {
-            this.state.results.chefRats.map((s) => {
+          if (this.state.results && this.state.results.characters) {
+            this.state.results.characters.map((s) => {
               if (s.id === r.id) {
                 found = 1;
               }
@@ -94,10 +95,10 @@ class Leaderboard extends React.Component {
           }
           if (found === 0 && r.earned > 0) {
             if (r.insanity > 0) {
-              console.log(r);
+              //console.log(r);
             }
             chefRats.push({
-              owner: r.stakingOwner !== '0x00000000' ? r.stakingOwner : r.owner,
+              owner: r.stakingOwner !== '0x00000000' ? r.mcstakeStakingOwner : r.owner,
               name: json.name,
               type: r.attributes[0]['value'],
               attributes: r.attributes,
@@ -263,6 +264,25 @@ class Leaderboard extends React.Component {
     return (i+1).toString();
   }
 
+  getWidth(type = 'kitchen', stretch = false, originalWidth = false, originalHeight = false) {
+    let width = 0;
+
+    if (stretch) {
+      let factor;
+      let height;
+      if (type === 'sky') {
+        factor = window.innerWidth / originalWidth;
+        width = window.innerWidth;
+        height = factor * originalHeight;
+      } else {
+        factor = width / originalWidth;
+        height = factor * originalHeight;
+      }
+      return { width, height, type };
+    }
+    return { width: width, type };
+  }
+
   renderLeaderBoard() {
     let small = false;
     if (window.innerWidth < 1000) {
@@ -338,16 +358,28 @@ class Leaderboard extends React.Component {
     })
 
     chefRats = chefRats.sort((a, b) => parseInt(a.id) > parseInt(b.id));
-
+    const skyAttr = this.getWidth('sky', true, 1440, 1000);
+    const node = this.tableRef.current;
+    let height = chefRats.length * 120;
+    if (node) {
+      const rect = node.getBoundingClientRect();
+      if (rect.height) {
+        height = rect.height;
+      }
+    }
 
     return (
+      <div>
+      <div className="nightGradient" style={{top: skyAttr.height, height: height - 600}}>
+      </div>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={1}/>
-        <Col span={22}>
+        <Col span={22} ref={this.tableRef}>
           <Table pagination={false} style={{width: '100%'}} columns={columns} dataSource={chefRats} />
         </Col>
         <Col span={1}/>
       </Row>
+      </div>
     );
   }
 
