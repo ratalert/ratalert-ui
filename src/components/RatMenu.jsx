@@ -187,22 +187,22 @@ class RatMenu extends React.Component {
     return (
       <div className="icons">
       <a href="https://opensea.io/" target="_new">
-        <img width={30} src="/img/opensea.png"
+        <img width={30} src="/img/opensea.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </a>
       <a href="https://app.uniswap.org/" target="_new">
-        <img width={30} src="/img/uniswap.png"
+        <img width={30} src="/img/uniswap.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </a>
       <a href="https://discord.gg/DP36aCq8P4" target="_new">
-        <img width={30} src="/img/discord.png"
+        <img width={30} src="/img/discord.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </a>
       <a href="https://twitter.com/RatAlertNFT" target="_new">
-        <img width={30} src="/img/twitter.png"
+        <img width={30} src="/img/twitter.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </a>
