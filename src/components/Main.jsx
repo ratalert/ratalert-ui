@@ -277,13 +277,59 @@ class Main extends React.Component {
               claimInfo['oldInsanity'] = parseInt(oldNft.insanityLevel);
               claimInfo['oldSkillName'] = oldNft.skillName;
               claimInfo['oldInsanityName'] = oldNft.insanityName;
-
             }
             claimStats.push(claimInfo);
             window.scrollTo(0, 0);
             this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
           }
+      });
 
+      contract.on("RatClaimed", async(tokenId, earned, unstaked, intelligence, fatness, eventName) => {
+          const oldNft = this.nfts[parseInt(tokenId)];
+           console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
+//          eventName = 'burnout';
+          const claimInfo = {
+            tokenId: parseInt(tokenId),
+            earned: earned / 1000000000000000000,
+            event: eventName,
+            unstaked: unstaked,
+            intelligence: parseInt(intelligence),
+            fatness: parseInt(fatness),
+            lastUpdate: Math.floor(Date.now() / 1000),
+          };
+
+          const contract = new ethers.Contract(config[networkName].Character,
+            contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
+
+          const URI = await contract.tokenURI(parseInt(tokenId));
+          if (URI.indexOf("data:application/json;base64,") === 0) {
+            const base64 = URI.split(",");
+            const decoded = atob(base64[1]);
+            const json = JSON.parse(decoded);
+            const img = json.image;
+            claimInfo['image'] = img;
+            const hash = {};
+            json.attributes.map((m) => {
+              hash[m.trait_type] = m.value;
+            });
+            const claimStats = this.state.claimStats;
+            if (hash['Intelligence']) {
+              claimInfo.intelligenceLevel = hash.Intelligence;
+            }
+            if (hash['Fatness']) {
+              claimInfo.fatnessLevel = hash.Fatness;
+            }
+            if (oldNft && oldNft.image) {
+              claimInfo['oldIntelligence'] = parseInt(oldNft.intelligenceLevel);
+              claimInfo['oldFatness'] = parseInt(oldNft.fatnessLevel);
+              claimInfo['oldIntelligenceName'] = oldNft.intelligenceName;
+              claimInfo['oldFatnessName'] = oldNft.fatnessName;
+            }
+            claimStats.push(claimInfo);
+            console.log(claimInfo);
+            window.scrollTo(0, 0);
+            this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
+          }
       });
 /*
     const filter = {
@@ -1454,7 +1500,7 @@ class Main extends React.Component {
         if (gross < 0) {
           gross = 0;
         }
-        return parseFloat(gross).toFixed(2);
+        return parseFloat(net).toFixed(2);
       }
       return 0;
     } else {

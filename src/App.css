@@ -319,11 +319,10 @@ html {
   width: 100%;
   height: 1000px;
   position: absolute;
-  top: 80px;
   background: #000000;
   background-image: url("img/sky.png");
   background-size: cover;
-  z-index: -2;
+  z-index: -1;
 }
 
 @media only screen and (max-width: 1080px) {
@@ -914,6 +913,10 @@ html {
     margin-bottom: -15px !important;
   }
 
+  .ant-modal {
+    margin-left: 0 !important;
+  }
+
   .street {
     width: 100%;
     height: 12px;
@@ -1191,6 +1194,9 @@ html {
   background-color: #fff;
 }
 
+
+
+
 .officeFullScene {
   padding-bottom: 10px;
   padding-top: 20px;
@@ -1236,6 +1242,27 @@ html {
   color: #fff;
 }
 
+.logoTextHeader {
+  width: 120px;
+  height: 22px;
+  margin: 0 0 8px;
+  font-family: "Pixel";
+  font-size: 18px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  color: #fff;
+}
+
+.logoLineHeader {
+  width: 130px;
+  height: 6px;
+  margin: 0px 0 0;
+  background-color: #fff;
+}
+
 .subtitle {
   width: 175px;
   height: 22px;
@@ -1256,7 +1283,7 @@ html {
 
 .icons {
   float: left;
-  width: 130px;
+  width: 180px;
 }
 
 .account {
@@ -1537,11 +1564,88 @@ html {
   border-radius: 5px;
   border: solid 3px #443b35;
   background-color: #514a4a;
-  width: 675px;
+  width: 650px;
 }
 
 .ant-modal-footer {
   border-top: 1px solid #6e6056;
   margin-left: 28px;
   margin-right: 24px;
+}
+
+
+
+.eventBox {
+  margin-top: -60px !important;
+}
+
+.eventCarets {
+  position: absolute;
+  top: 350px;
+  width: 200px;
+  height: 50px;
+  z-index: 5;
+}
+
+.ant-page-header {
+  background: transparent !important;
+}
+
+.ant-layout {
+  background: transparent !important;
+}
+
+.ant-menu {
+  background: transparent;
+  font-family: Pixellari;
+  font-size: 18px;
+}
+
+.ant-menu-item a{
+  color: #FFFFFF !important;
+
+}
+
+
+.ant-page-header-heading-sub-title {
+  border-bottom: 0;
+}
+
+.ant-menu-item-selected a {
+  color: #619cff !important;
+  border-bottom-width: 0 !important;
+  border: 0;
+  border-bottom: 0;
+}
+
+.ant-menu-submenu-selected {
+  border-bottom-width: 0 !important;
+  border: 0;
+  border-bottom: 0;
+}
+
+.ant-menu-item-selected {
+  border-bottom: 0px;
+}
+
+.ant-menu-horizontal {
+  border-bottom-width: 0px;
+}
+
+.menuWeb3Button {
+  color: #FFF;
+  font-family: Pixellari;
+  font-size: 18px;
+  margin-left: 20px;
+  margin-top: 15px;
+}
+
+.nftEventEarned {
+  position: absolute;
+  top: 350px;
+  left: -290px;
+}
+
+.ant-layout-footer {
+  background: transparent;
 }
