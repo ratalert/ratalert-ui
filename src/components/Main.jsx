@@ -2476,9 +2476,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <div className="flowerpot2" style={{ left: this.getStreetLightPosition()+100} }>
         </div>
 
-        <div className="skyline" style={{width: window.innerWidth+150}}>
+        <div className="skyline" style={{width: '100%'}}>
         </div>
-        <div className="street" style={{width: window.innerWidth+150}}>
+        <div className="street" style={{width:'100%'}}>
         </div>
 
         <div className="darkBackground" style={{height: 900, width: window.innerWidth+100}}>

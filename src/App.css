@@ -3,7 +3,6 @@
 }
 
 html {
-    overflow-x: hidden;
 }
 
 
@@ -345,7 +344,7 @@ html {
 
 @media only screen and (min-width: 700px) {
   .skyline {
-    background-position: 46% 75%;
+    background-position: 43% 75%;
   }
   .streetlight2 {
     left: 0px;
@@ -354,7 +353,7 @@ html {
 
 @media only screen and (min-width: 800px) {
   .skyline {
-    background-position: 47% 75%;
+    background-position: 43% 75%;
   }
   .streetlight2 {
     left: 10px;
@@ -363,7 +362,7 @@ html {
 
 @media only screen and (min-width: 900px) {
   .skyline {
-    background-position: 49.5% 75%;
+    background-position: 45.5% 75%;
   }
   .streetlight2 {
     left: 0px;
@@ -372,7 +371,7 @@ html {
 
 @media only screen and (min-width: 950px) {
   .skyline {
-    background-position: 51% 75%;
+    background-position: 47% 75%;
   }
   .streetlight2 {
     left: 0px;
@@ -381,7 +380,7 @@ html {
 
 @media only screen and (min-width: 1000px) {
   .skyline {
-    background-position: 52% 75%;
+    background-position: 48% 75%;
   }
   .streetlight2 {
     left: 0px;
@@ -390,7 +389,7 @@ html {
 
 @media only screen and (min-width: 1100px) {
   .skyline {
-    background-position: 55% 75%;
+    background-position: 49% 75%;
   }
   .streetlight2 {
     left: 0px;
@@ -399,7 +398,7 @@ html {
 
 @media only screen and (min-width: 1200px) {
   .skyline {
-    background-position: 58% 75%;
+    background-position: 52% 75%;
   }
   .streetlight2 {
     left: 0px;
@@ -408,7 +407,7 @@ html {
 
 @media only screen and (min-width: 1300px) {
   .skyline {
-    background-position: 62% 75%;
+    background-position: 55% 75%;
   }
   .streetlight2 {
     left: 25px;
@@ -417,7 +416,7 @@ html {
 
 @media only screen and (min-width: 1400px) {
   .skyline {
-    background-position: 65% 75%;
+    background-position: 56% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -426,7 +425,7 @@ html {
 
 @media only screen and (min-width: 1500px) {
   .skyline {
-    background-position: 70% 75%;
+    background-position: 60% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -436,7 +435,7 @@ html {
 
 @media only screen and (min-width: 1600px) {
   .skyline {
-    background-position: 75% 75%;
+    background-position: 65% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -446,7 +445,7 @@ html {
 
 @media only screen and (min-width: 1700px) {
   .skyline {
-    background-position: 80% 75%;
+    background-position: 70% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -456,7 +455,7 @@ html {
 
 @media only screen and (min-width: 1800px) {
   .skyline {
-    background-position: 100% 75%;
+    background-position: 70% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -466,7 +465,7 @@ html {
 
 @media only screen and (min-width: 2000px) {
   .skyline {
-    background-position: 120% 75%;
+    background-position: 110% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -476,7 +475,7 @@ html {
 
 @media only screen and (min-width: 2200px) {
   .skyline {
-    background-position: 150% 75%;
+    background-position: 140% 75%;
   }
   .streetlight2 {
     left: 50px;
@@ -869,7 +868,7 @@ html {
     height: 12px;
     position: absolute;
     z-index: -1;
-    left: -110px;
+    left: 0px;
     margin-top: -12px;
     background-image: url("img/street.png");
   }
