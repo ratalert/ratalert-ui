@@ -46,6 +46,26 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
 const DEBUG = true;
 const NETWORKCHECK = true;
 
+let dayTime;
+
+if (!dayTime) {
+  const now = new Date();
+  const hour = now.getHours();
+  if (hour >= 7 && hour <= 9) {
+    dayTime = 'morning';
+  }
+  if (hour >= 10 && hour <= 17) {
+    dayTime = 'day';
+  }
+  if (hour >= 18 && hour <= 20) {
+    dayTime = 'evening';
+  }
+  if (hour >= 21 && hour <= 6) {
+    dayTime = 'night';
+  }
+}
+
+
 // 🛰 providers
 if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
 // const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
@@ -273,9 +293,38 @@ function App(props) {
     );
   }
 
+
+  const dayTimeSwitch = () => {
+    if (dayTime === 'morning') {
+      dayTime = 'day';
+    } else if (dayTime === 'day') {
+      dayTime = 'evening';
+    } else if (dayTime === 'evening') {
+      dayTime = 'night';
+    } else if (dayTime === 'night') {
+      dayTime = 'morning';
+    }
+    const dayTimeEvent = new CustomEvent('dayTime', {
+      bubbles: true,
+      detail: { dayTime }
+    });
+    window.dispatchEvent(dayTimeEvent);
+  }
+
   return (
     <div className="App">
-      {networkDisplay}
+{
+  /*
+    <div className="">
+      <div className="parallax__layer parallax__layer--back">
+        <div className="title">This is the background</div>
+      </div>
+      <div className="parallax__layer parallax__layer--base">
+        <div className="title">This is the foreground</div>
+      </div>
+    </div>
+    */
+  }
       <BrowserRouter>
         <Switch>
           <Route exact path="/">
@@ -292,6 +341,8 @@ function App(props) {
             setInjectedProvider={setInjectedProvider}
             injectedProvider={injectedProvider}
             active={1}
+            dayTime={dayTime}
+            dayTimeSwitch={dayTimeSwitch}
             content={<Main
               tx={tx}
               contractConfig={contractConfig}
@@ -302,6 +353,7 @@ function App(props) {
               targetNetwork={targetNetwork}
               chainId={chainId}
               lastBlockTime={lastBlockTime}
+              dayTime={dayTime}
             />}
             />
           </Route>
@@ -315,12 +367,15 @@ function App(props) {
               active={2}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              dayTimeSwitch={dayTimeSwitch}
               content={<Leaderboard
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}
                 address={address}
                 provider={localProvider}
+                dayTime={dayTime}
                 />}
               />
           </Route>
@@ -332,12 +387,15 @@ function App(props) {
               address={address}
               provider={localProvider}
               active={3}
+              dayTime={dayTime}
+              dayTimeSwitch={dayTimeSwitch}
               content={<Whitepaper
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}
                 address={address}
                 provider={localProvider}
+                dayTime={dayTime}
                 />}
               />
           </Route>

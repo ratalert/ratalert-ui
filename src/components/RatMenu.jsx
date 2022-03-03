@@ -59,6 +59,7 @@ class RatMenu extends React.Component {
       windowHeight: window.innerHeight - 235,
       collapsed: true,
       web3Loaded: false,
+      dayTime: this.props.dayTime,
     };
     this.Account = null;
     this.nftProfit = 0;
@@ -72,6 +73,9 @@ class RatMenu extends React.Component {
 
   componentDidMount() {
     window.addEventListener("resize", this.handleResize);
+    window.addEventListener("dayTime", (e) => {
+      this.setState({dayTime: e.detail.dayTime})
+    });
   }
 
   componentWillUnmount() {
@@ -185,9 +189,9 @@ class RatMenu extends React.Component {
       );
     }
     return (
-      <div className="icons">
+      <div className={`${this.getNavStyle()} icons`}>
       <a href="https://opensea.io/" target="_new">
-        <img width={30} src="/img/opensea.svg"
+        <img  width={30} src="/img/opensea.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </a>
@@ -220,11 +224,14 @@ class RatMenu extends React.Component {
       return (
         <Sider theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
          <div className="logo" />
-          <Menu mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
+         <div className={this.getNavStyle()}>
+
+          <Menu style={{marginLeft: 50}} mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
             <Menu.Item style={{marginRight: '0px'}} key={1}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item>
-            <Menu.Item  key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
-            <Menu.Item  key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
+            <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
           </Menu>
+          </div>
         </Sider>
       )
     }
@@ -242,9 +249,10 @@ class RatMenu extends React.Component {
         </div>
       );
     }
+
     return (
 
-      <div>
+      <div className={this.getNavStyle()}>
         <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
           <Menu.Item key={1}><Link to="/">Game</Link></Menu.Item>
           <Menu.Item key={2}><Link to="/leaderboard">Leaderboard</Link></Menu.Item>
@@ -291,6 +299,8 @@ class RatMenu extends React.Component {
           setAddress={this.props.setAddress}
           setInjectedProvider={this.props.setInjectedProvider}
           injectedProvider={this.props.injectedProvider}
+          dayTime={this.state.dayTime}
+          themeClass={this.getNavStyle()}
         />
         </Suspense>
 
@@ -313,10 +323,10 @@ class RatMenu extends React.Component {
   renderTitle() {
     return (
       <div>
-        <span className="logoTextHeader">
+        <span className={`${this.getNavStyle()} logoTextHeader`}>
           RATalert
         </span>
-        <div className="logoLineHeader"/>
+        <div className={`${this.getNavStyle('bg')} logoLineHeader`}/>
       </div>
     )
 
@@ -341,15 +351,68 @@ class RatMenu extends React.Component {
     return { width: width, type };
   }
 
+
+  getSkyClass() {
+    if (this.state.dayTime === 'night') {
+      return 'skyNight';
+    }
+    if (this.state.dayTime === 'day') {
+      return 'skyDay';
+    }
+    if (this.state.dayTime === 'morning') {
+      return 'skyMorning';
+    }
+    if (this.state.dayTime === 'evening') {
+      return 'skyEvening';
+    }
+
+  }
+
+  getNavStyle(bg = false) {
+    if (!bg) {
+      if (this.state.dayTime === 'night') {
+        return 'ratLight';
+      }
+      if (this.state.dayTime === 'day') {
+        return 'ratLight';
+      }
+      if (this.state.dayTime === 'morning') {
+        return 'ratDark';
+      }
+      if (this.state.dayTime === 'evening') {
+        return 'ratDark';
+      }
+    } else {
+      if (this.state.dayTime === 'night') {
+        return 'ratLightBg';
+      }
+      if (this.state.dayTime === 'day') {
+        return 'ratLightBg';
+      }
+      if (this.state.dayTime === 'morning') {
+        return 'ratDarkBg';
+      }
+      if (this.state.dayTime === 'evening') {
+        return 'ratDarkBg';
+      }
+    }
+
+
+  }
+
+
   render() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
 
           <div>
-          <div className="sky" style={skyAttr}>
+          <div onClick={this.props.dayTimeSwitch} style={{marginTop: skyAttr.height * 0.10, marginLeft: skyAttr.width * 0.82, cursor: 'pointer'}} className="daySwitcher">
+          </div>
+
+          <div className={this.getSkyClass()} style={skyAttr}>
+
           </div>
           <Layout>
-            { this.renderMobileMenu() }
             <Layout>
             <PageHeader ghost={false} title={this.renderTitle()} subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
             <Content>{ this.props.content }</Content>

@@ -1,11 +1,3 @@
-.App {
-  text-align: left;
-}
-
-html {
-}
-
-
 @font-face {
   font-family:"Pixel";
   src: url("fonts/pixel.ttf") format("truetype");
@@ -15,7 +7,6 @@ html {
   font-family:"Pixellari";
   src: url("fonts/pixellari.ttf") format("truetype");
 }
-
 
 .funds {
   font-family: "Pixel";
@@ -98,8 +89,8 @@ html {
 
 .fastFoodScene {
   background-image: url("img/fastfood_scene.gif");
-  width: 180px;
-  height: 300px;
+  min-width: 180px;
+  min-height: 300px;
 }
 
 .roof {
@@ -314,12 +305,52 @@ html {
   font-family: 'Pixel';
 }
 
-.sky {
+.daySwitcher {
+  width: 180px;
+  height: 180px;
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.skyNight {
   width: 100%;
   height: 1000px;
   position: absolute;
   background: #000000;
-  background-image: url("img/sky.png");
+  background-image: url("img/sky-night.png");
+  background-size: cover;
+  z-index: -1;
+}
+
+.skyDay {
+  width: 100%;
+  height: 1000px;
+  position: absolute;
+  background: #000000;
+  background-image: url("img/sky-day.jpg");
+  background-size: cover;
+  z-index: -1;
+}
+
+
+.skyMorning {
+  width: 100%;
+  height: 1000px;
+  position: absolute;
+  background: #000000;
+  background-image: url("img/sky-morning.jpg");
+  background-size: cover;
+  z-index: -1;
+}
+
+
+.skyEvening {
+  width: 100%;
+  height: 1000px;
+  position: absolute;
+  background: #000000;
+  background-image: url("img/sky-evening.jpg");
   background-size: cover;
   z-index: -1;
 }
@@ -492,6 +523,39 @@ html {
   border: solid 2px #fff;
   cursor: pointer;
   z-index: 5;
+}
+
+
+.nightGradient {
+  background-image: linear-gradient(to bottom, #021536, #46597a);
+  z-index: -2;
+  position: absolute;
+  left: 0px;
+  width: 100%;
+}
+
+.dayGradient {
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  background-image: linear-gradient(to bottom, #83d9fa, #ffffff);
+  z-index: -2;
+}
+
+.morningGradient {
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  background-image: linear-gradient(to bottom, #dcb5b3, #261e53);
+  z-index: -2;
+}
+
+.eveningGradient {
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  background-image: linear-gradient(to bottom, #eea2a7, #ffb288);
+  z-index: -2;
 }
 
 @media only screen and (min-width: 769px) {
@@ -873,13 +937,6 @@ html {
     background-image: url("img/street.png");
   }
 
-  .nightGradient {
-    width: 100%;
-    position: absolute;
-    left: 0px;
-    background-image: linear-gradient(to bottom, #021536, #46597a);
-    z-index: -2;
-  }
 
   .roof {
     margin-top: 150px !important;
@@ -997,16 +1054,10 @@ html {
     margin-left: -12px;
   }
 
-  .nightGradient {
-    width: 100%;
-    position: absolute;
-    left: 0px;
-    background-image: linear-gradient(to bottom, #021536, #46597a);
+  .gradient {
     top: 530px;
-    z-index: -2;
     overflow-x: hidden;
   }
-
 
 }
 
@@ -1252,15 +1303,9 @@ html {
   font-style: normal;
   line-height: normal;
   letter-spacing: normal;
-  color: #fff;
 }
 
-.logoLineHeader {
-  width: 130px;
-  height: 6px;
-  margin: 0px 0 0;
-  background-color: #fff;
-}
+
 
 .subtitle {
   width: 175px;
@@ -1503,6 +1548,19 @@ html {
   font-style: normal;
   line-height: normal;
   letter-spacing: normal;
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.selectDisabled {
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
 }
 
 .mintButton {
@@ -1576,6 +1634,7 @@ html {
 
 .eventBox {
   margin-top: -60px !important;
+
 }
 
 .eventCarets {
@@ -1600,11 +1659,47 @@ html {
   font-size: 18px;
 }
 
-.ant-menu-item a{
+.ratLight {
   color: #FFFFFF !important;
-
 }
 
+.ratLight .ant-menu-item a {
+  color: #FFFFFF !important;
+}
+
+.ratLight .ant-menu-item-selected a {
+  color: #619cff !important;
+}
+
+.ratDark {
+  color: #000000 !important;
+}
+
+.ratDark img {
+  filter: invert(100%);
+}
+
+.ratDarkBg {
+  width: 130px;
+  height: 6px;
+  margin: 0px 0 0;
+  background-color: #000 !important;
+}
+
+.ratLightBg {
+  width: 130px;
+  height: 6px;
+  margin: 0px 0 0;
+  background-color: #FFF !important;
+}
+
+.ratDark .ant-menu-item a {
+  color: #000000 !important;
+}
+
+.ratDark .ant-menu-item-selected a {
+  color: #619cff !important;
+}
 
 .ant-page-header-heading-sub-title {
   border-bottom: 0;

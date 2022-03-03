@@ -77,6 +77,7 @@ class Main extends React.Component {
     this.officeBreakpoint = 1160;
     this.nfts = {};
     this.state = {
+      dayTime: this.props.dayTime,
       isClaimModalVisible: false,
       currentStatsNFT: 0,
       windowHeight: window.innerHeight - 235,
@@ -236,6 +237,12 @@ class Main extends React.Component {
     const contract = new ethers.Contract(config[networkName].McStake,
       contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
 
+    const mintContract = new ethers.Contract(config[networkName].Mint,
+        contracts[chainId][networkName].contracts.Mint.abi, this.props.provider);
+
+      mintContract.on("RandomNumberRequested", async(requestId, sender) => {
+        console.log(`Randon number requested: ${requestId}`);
+      });
 
       contract.on("ChefClaimed", async(tokenId, earned, unstaked, skill, insanity, eventName, foodTokensPerRat) => {
           const oldNft = this.nfts[parseInt(tokenId)];
@@ -280,7 +287,7 @@ class Main extends React.Component {
             }
             claimStats.push(claimInfo);
             window.scrollTo(0, 0);
-            this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
+            this.setState({ claimStats, isClaimModalVisible: true });
           }
       });
 
@@ -331,31 +338,7 @@ class Main extends React.Component {
             this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
           }
       });
-/*
-    const filter = {
-      address: this.props.readContracts.McStake.address,
-      topics: [
-        // the name of the event, parnetheses containing the data type of each event, no spaces
-        //ethers.utils.id("TokenStaked(uint256,address,uint256"),
-        ethers.utils.id("ChefClaimed(uint256,uint256,bool,uint8,uint8,string,uint256)"),
-      ],
-    };
-    console.log('Starting claim hook at ', this.props.readContracts.McStake.address, filter);
-    let format = ["uint256", "uint256", "bool", "uint8", "uint8", "string", "uint256"];
 
-    this.props.provider.on(filter, async data => {
-      let i = 0;
-      const decoded = [];
-      console.log(data);
-      //console.log(data.topics);
-      data.topics.map(v => {
-        const tmp = ethers.utils.defaultAbiCoder.decode([format[i]], v);
-        i += 1;
-        decoded.push(tmp);
-      });
-      console.log('CLAIM', decoded);
-    });
-    */
   }
 
   async fetchGraph() {
@@ -550,7 +533,33 @@ class Main extends React.Component {
 
   }
 
+  isScrolledIntoView(el) {
+    var rect = el.getBoundingClientRect();
+    var elemTop = rect.top;
+    var elemBottom = rect.bottom;
+
+    // Only completely visible elements return true:
+    var isVisible = (elemTop >= 0) && (elemBottom <= window.innerHeight);
+    // Partially visible elements return true:
+    //isVisible = elemTop < window.innerHeight && elemBottom >= 0;
+    return isVisible;
+  }
+
   async componentWillMount() {
+    window.addEventListener('scroll', () => {
+      const scrollPosition = window.pageYOffset;
+      const bgParallax = document.getElementsByClassName('gourmetScene')[0];
+      if (bgParallax) {
+        const limit = bgParallax.offsetTop + bgParallax.offsetHeight;
+        const rect = bgParallax.getBoundingClientRect();
+        if (scrollPosition > bgParallax.offsetTop) {
+          bgParallax.style.backgroundPositionY = scrollPosition / 32 + 'px';
+        } else{
+          bgParallax.style.backgroundPositionY = '0';
+        }
+      }
+    });
+
     window.addEventListener("resize", this.handleResize);
     setTimeout(() => {
       if (!this.props.address) {
@@ -571,6 +580,10 @@ class Main extends React.Component {
 
   async componentDidMount() {
     this.getChainStats();
+    window.addEventListener("dayTime", (e) => {
+      this.setState({dayTime: e.detail.dayTime})
+    });
+
   }
 
   componentWillUnmount() {
@@ -622,7 +635,7 @@ class Main extends React.Component {
         }),
       );
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
-      renderNotification("info", `${amount} mint(s) requested`, "");
+      renderNotification("info", `${amount} mint(s) requested. Your NFTs will be delivered within a minute or two.`, "");
     } catch (e) {
       const regExp = /\"message\":\"(.+?)\"/;
       const d = e.message.match(regExp);
@@ -692,9 +705,10 @@ class Main extends React.Component {
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
         contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
 
+
     const minted = await CharacterContract.minted();
-    let totalSupply = await CharacterContract.MAX_TOKENS();
-    let paidTokens = await CharacterContract.PAID_TOKENS();
+    let totalSupply = await CharacterContract.maxTokens();
+    let paidTokens = await CharacterContract.gen0Tokens();
     let mintPrice = await CharacterContract.mintPrice();
     if (!mintPrice) {
       mintPrice = 0;
@@ -1424,6 +1438,10 @@ class Main extends React.Component {
         diff = this.state.stats.levelUpThreshold - (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold));
       }
 
+      if (diff < this.state.stats.levelUpThreshold) {
+        diff = this.state.stats.levelUpThreshold - diff;
+      }
+
       if (diff > this.state.stats.levelUpThreshold*0.9) {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
@@ -1444,6 +1462,9 @@ class Main extends React.Component {
       let diff = now - stakeDate;
       if ((diff > this.state.stats.levelUpThreshold) && (numberOfDays > 1)) {
         diff = this.state.stats.levelUpThreshold - (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold));
+      }
+      if (diff < this.state.stats.levelUpThreshold) {
+        diff = this.state.stats.levelUpThreshold - diff;
       }
 
       if (diff > this.state.stats.levelUpThreshold*0.9) {
@@ -1652,7 +1673,7 @@ class Main extends React.Component {
 
   async claimFunds(selectedToUnStakeNfts) {
     try {
-      this.setState({ selectedNfts: {} });
+      this.setState({ selectedNfts: {}, currentStatsNFT: 0 });
       const result = await this.props.tx(
         this.props.writeContracts.McStake.claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
@@ -2323,7 +2344,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       sewer.width += 18;
     }
     return (
-      <div className="stakeHouse" size="small" style={this.getWidth('townhouse')}>
+
+      <div className="stakeHouse" style={this.getWidth('townhouse')}>
         <Card className="house office kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             { window.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
@@ -2348,7 +2370,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
-              <div className="gourmetScene">
+              <div style={{marginTop: 0}} className="gourmetScene parallax__layer--back">
               </div>
               <div className="restaurantSign">
                 <img width={window.innerWidth < 1080 ? 75 : 150} src="img/le-stake.png"/>
@@ -2364,6 +2386,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
+
             <div className="casualScene">
             </div>
             <div className="restaurantSign">
@@ -2374,6 +2397,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             <Col>
             <div className="fade casualKitchen" style={this.getWidth()}>
             </div>
+
 
             </Col>
           </Row>
@@ -2788,12 +2812,12 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       <div>
         <Row>
           <Col span={12}>
-            <div>
+            <div class="selectDisabled">
             { this.renderNFTColumn(c, 0, 'modal') }
             <div style={{marginLeft: 140, marginTop: -294}}>{ this.renderNFTDetails(c, 0, 'modal', highlightEfficiency, highlightTolerance) }</div>
             </div>
           </Col>
-          <Col span={12} className="eventBox">
+          <Col span={12} className="eventBox selectDisabled">
           { events.map( (e) =>
                 this.renderEvent(e,c,hash)
           )}
@@ -3028,12 +3052,12 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
   renderCarets() {
     return (
-      <Row className="carets" style={{marginBottom: '20'}}>
+      <Row className="carets selectDisabled" style={{marginBottom: '20'}}>
          <Col xs={11} md={12}/>
           <Col style={{width: '30px', paddingTop: '10px'}}>
               <CaretLeftOutlined onClick={this.onChangeCurrentNFT.bind(this, this.state.currentStatsNFT - 1)} style={{cursor: 'pointer', fontSize: '20px'}}/>
           </Col>
-          <Col style={{width: '30px', paddingTop: '10px'}}>
+          <Col style={{width: '45px', paddingTop: '10px'}}>
               <span style={{textDecoration: 'underline'}}>{ this.state.currentStatsNFT + 1 }</span>
               <span>/ { this.state.claimStats.length }</span>
           </Col>
@@ -3059,11 +3083,27 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     )
   }
 
+  getGradientClass() {
+    if (this.state.dayTime === 'night') {
+      return 'nightGradient gradient';
+    }
+    if (this.state.dayTime === 'day') {
+      return 'dayGradient gradient';
+    }
+    if (this.state.dayTime === 'morning') {
+      return 'morningGradient gradient';
+    }
+    if (this.state.dayTime === 'evening') {
+      return 'eveningGradient gradient';
+    }
+
+  }
+
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
           <Row style={{ height: "100%" }}>
-            <div className="nightGradient" style={{top: skyAttr.height, height: this.townhouseHeight - 150}}>
+            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 150}}>
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }

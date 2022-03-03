@@ -47,6 +47,8 @@ export default function Account({
   setAddress,
   setInjectedProvider,
   injectedProvider,
+  dayTime,
+  themeClass,
 }) {
 
 
@@ -131,12 +133,12 @@ export default function Account({
   if (web3Modal) {
     if (web3Modal.cachedProvider) {
       modalButtons.push(
-        <a onClick={logoutOfWeb3Modal} className="menuWeb3Button" href="#">Logout</a>,
+        <a onClick={logoutOfWeb3Modal} className={`${themeClass} menuWeb3Button`} href="#">Logout</a>,
       );
     } else {
 
       modalButtons.push(
-        <a onClick={loadWeb3Modal} className="menuWeb3Button" href="#">Login</a>,
+        <a onClick={loadWeb3Modal} className={`${themeClass} menuWeb3Button`} href="#">Login</a>,
       );
       const urlParams = new URLSearchParams(window.location.search);
       const addr = urlParams.get('addr');

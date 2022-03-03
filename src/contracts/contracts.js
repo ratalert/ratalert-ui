@@ -129,34 +129,6 @@ export const contracts = {
               "type": "event"
             },
             {
-              "inputs": [],
-              "name": "MAX_TOKENS",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "PAID_TOKENS",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
               "inputs": [
                 {
                   "internalType": "address",
@@ -203,6 +175,20 @@ export const contracts = {
                 }
               ],
               "name": "existingCombinations",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "gen0Tokens",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -275,12 +261,51 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "maxTokens",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
               "name": "mintPrice",
               "outputs": [
                 {
                   "internalType": "uint256",
                   "name": "",
                   "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "mintRequests",
+              "outputs": [
+                {
+                  "internalType": "uint16",
+                  "name": "",
+                  "type": "uint16"
                 }
               ],
               "stateMutability": "view",
@@ -406,31 +431,6 @@ export const contracts = {
               "constant": true
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "name": "rarities",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
               "inputs": [],
               "name": "renounceOwnership",
               "outputs": [],
@@ -534,6 +534,20 @@ export const contracts = {
                   "internalType": "string",
                   "name": "",
                   "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "theMint",
+              "outputs": [
+                {
+                  "internalType": "contract IMint",
+                  "name": "",
+                  "type": "address"
                 }
               ],
               "stateMutability": "view",
@@ -658,14 +672,9 @@ export const contracts = {
             {
               "inputs": [
                 {
-                  "internalType": "address",
-                  "name": "_traits",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "_properties",
-                  "type": "address"
+                  "internalType": "address[]",
+                  "name": "_addresses",
+                  "type": "address[]"
                 },
                 {
                   "internalType": "uint256",
@@ -701,6 +710,118 @@ export const contracts = {
               "stateMutability": "payable",
               "type": "function",
               "payable": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "mintCost",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "bytes32",
+                      "name": "requestId",
+                      "type": "bytes32"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "sender",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "amount",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "stake",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IMint.VRFStruct",
+                  "name": "v",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bool",
+                      "name": "isChef",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hat",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "eyes",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "piercing",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "mouth",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "neck",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hand",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "tail",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "efficiency",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "tolerance",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct ICharacter.CharacterStruct[]",
+                  "name": "tokens",
+                  "type": "tuple[]"
+                }
+              ],
+              "name": "fulfillMint",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
             },
             {
               "inputs": [
@@ -835,7 +956,7 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "getPaidTokens",
+              "name": "getGen0Tokens",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -906,7 +1027,7 @@ export const contracts = {
               "stateMutability": "nonpayable",
               "type": "function"
             }
-          ],
+          ]
         },
         "McStake": {
           "address": config.localhost.McStake,
@@ -1475,6 +1596,31 @@ export const contracts = {
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "stakers",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
@@ -2105,6 +2251,31 @@ export const contracts = {
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "stakers",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
               "inputs": [],
               "name": "totalChefsStaked",
               "outputs": [
@@ -2632,7 +2803,388 @@ export const contracts = {
               "type": "function"
             }
           ],
-        }
+        },
+        "Mint": {
+          "address": config.localhost.Mint,
+          "abi": [
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                }
+              ],
+              "name": "RandomNumberRequested",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "Transfer",
+              "type": "event"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "existingCombinations",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rarities",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "randomness",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rawFulfillRandomness",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "vrfRequests",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "amount",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "stake",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "withdrawLink",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "success",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_vrfCoordinator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_link",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "_keyHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_fee",
+                  "type": "uint256"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_vrfCoordinator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_link",
+                  "type": "address"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_vrfCoordinator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_link",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "_keyHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_fee",
+                  "type": "uint256"
+                }
+              ],
+              "name": "setVrfParams",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "amount",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "stake",
+                  "type": "bool"
+                }
+              ],
+              "name": "requestRandomNumber",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
+                }
+              ],
+              "name": "setCharacter",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "getController",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "addController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "removeController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ],
+        },
       }
     }
   },
@@ -2765,34 +3317,6 @@ export const contracts = {
               "type": "event"
             },
             {
-              "inputs": [],
-              "name": "MAX_TOKENS",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
-              "inputs": [],
-              "name": "PAID_TOKENS",
-              "outputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
               "inputs": [
                 {
                   "internalType": "address",
@@ -2839,6 +3363,20 @@ export const contracts = {
                 }
               ],
               "name": "existingCombinations",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "gen0Tokens",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -2911,12 +3449,51 @@ export const contracts = {
             },
             {
               "inputs": [],
+              "name": "maxTokens",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
               "name": "mintPrice",
               "outputs": [
                 {
                   "internalType": "uint256",
                   "name": "",
                   "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "mintRequests",
+              "outputs": [
+                {
+                  "internalType": "uint16",
+                  "name": "",
+                  "type": "uint16"
                 }
               ],
               "stateMutability": "view",
@@ -3042,31 +3619,6 @@ export const contracts = {
               "constant": true
             },
             {
-              "inputs": [
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "",
-                  "type": "uint256"
-                }
-              ],
-              "name": "rarities",
-              "outputs": [
-                {
-                  "internalType": "uint8",
-                  "name": "",
-                  "type": "uint8"
-                }
-              ],
-              "stateMutability": "view",
-              "type": "function",
-              "constant": true
-            },
-            {
               "inputs": [],
               "name": "renounceOwnership",
               "outputs": [],
@@ -3170,6 +3722,20 @@ export const contracts = {
                   "internalType": "string",
                   "name": "",
                   "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "theMint",
+              "outputs": [
+                {
+                  "internalType": "contract IMint",
+                  "name": "",
+                  "type": "address"
                 }
               ],
               "stateMutability": "view",
@@ -3294,14 +3860,9 @@ export const contracts = {
             {
               "inputs": [
                 {
-                  "internalType": "address",
-                  "name": "_traits",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "_properties",
-                  "type": "address"
+                  "internalType": "address[]",
+                  "name": "_addresses",
+                  "type": "address[]"
                 },
                 {
                   "internalType": "uint256",
@@ -3337,6 +3898,118 @@ export const contracts = {
               "stateMutability": "payable",
               "type": "function",
               "payable": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "mintCost",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "requestId",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "sender",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "amount",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "bool",
+                      "name": "stake",
+                      "type": "bool"
+                    }
+                  ],
+                  "internalType": "struct IMint.VRFStruct",
+                  "name": "v",
+                  "type": "tuple"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "bool",
+                      "name": "isChef",
+                      "type": "bool"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hat",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "eyes",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "piercing",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "mouth",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "neck",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "hand",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "tail",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "efficiency",
+                      "type": "uint8"
+                    },
+                    {
+                      "internalType": "uint8",
+                      "name": "tolerance",
+                      "type": "uint8"
+                    }
+                  ],
+                  "internalType": "struct ICharacter.CharacterStruct[]",
+                  "name": "tokens",
+                  "type": "tuple[]"
+                }
+              ],
+              "name": "fulfillMint",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
             },
             {
               "inputs": [
@@ -3471,7 +4144,7 @@ export const contracts = {
             },
             {
               "inputs": [],
-              "name": "getPaidTokens",
+              "name": "getGen0Tokens",
               "outputs": [
                 {
                   "internalType": "uint256",
@@ -4113,6 +4786,31 @@ export const contracts = {
               "type": "function"
             },
             {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "stakers",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
               "inputs": [],
               "name": "totalChefsStaked",
               "outputs": [
@@ -4739,6 +5437,31 @@ export const contracts = {
               "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "stakers",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
             },
             {
               "inputs": [],
