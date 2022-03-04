@@ -37,10 +37,9 @@
 .belowTheSewer {
   background-image: url("img/below_the_sewer.png") !important;
   height: 300px;
-  z-index: 5;
+  z-index: 10;
   background: #000000;
 }
-
 
 .gourmetScene {
   background-image: url("img/gourmet_scene.gif");
@@ -123,6 +122,7 @@
   background-image: url("img/roof.png");
   background-repeat: no-repeat;
   background-size: 100%;
+  z-index: 1;
 }
 
 .roofCat {
@@ -132,6 +132,7 @@
   position: relative;
   left: 56.5%;
   top: 49.5%;
+  z-index: 1;
 }
 
 
@@ -254,8 +255,6 @@
   line-height: 120px;
   text-align: left;
   padding-top: 2em;
-  padding-bottom: 2em;
-  z-index: 1;
 }
 
 .logo {
@@ -346,7 +345,7 @@
   background: #000000;
   background-image: url("img/sky-night.png");
   background-size: cover;
-  z-index: -1;
+  z-index: -2;
 }
 
 .skyDay {
@@ -356,9 +355,12 @@
   background: #000000;
   background-image: url("img/sky-day.jpg");
   background-size: cover;
-  z-index: -1;
+  z-index: -2;
 }
 
+.townhouseBox {
+  z-index: -1;
+}
 
 .skyMorning {
   width: 100%;
@@ -367,7 +369,7 @@
   background: #000000;
   background-image: url("img/sky-morning.jpg");
   background-size: cover;
-  z-index: -1;
+  z-index: -2;
 }
 
 
@@ -378,7 +380,7 @@
   background: #000000;
   background-image: url("img/sky-evening.jpg");
   background-size: cover;
-  z-index: -1;
+  z-index: -2;
 }
 
 @media only screen and (max-width: 1080px) {

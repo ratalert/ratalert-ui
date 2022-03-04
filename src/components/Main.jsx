@@ -75,6 +75,7 @@ class Main extends React.Component {
     this.townhouseRef = React.createRef();
     this.mobileBreakpoint = 651;
     this.officeBreakpoint = 1160;
+    this.ratHeight = 0;
     this.nfts = {};
     this.state = {
       dayTime: this.props.dayTime,
@@ -611,6 +612,7 @@ class Main extends React.Component {
   }
 
   renderRats() {
+    this.ratHeight = 0;
     return this.renderNFT("Rat");
   }
 
@@ -1006,6 +1008,7 @@ class Main extends React.Component {
 
     const numberOfRows = parseInt(nft.length / nftsPerRow);
     const rows = [];
+
     for (let i=0;i <= numberOfRows; i += 1) {
         const rowNFTs = [];
         for (let j = 0; j < nftsPerRow; j += 1) {
@@ -1018,6 +1021,9 @@ class Main extends React.Component {
         if (rowNFTs.length > 0) {
           if (type !== 'chef') {
             this.townhouseHeight += 315; // Kitchen
+          }
+          if (type === 'Rat') {
+            this.ratHeight += 315;
           }
           rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type, location));
           if (i !== numberOfRows - 1) {
@@ -1034,7 +1040,6 @@ class Main extends React.Component {
       rows.push(this.renderNFTRow(0, 0, [], staked, type, location));
       //rows.push(emptyRow);
     }
-
     let rowId;
     if (!location) {
       rowId = type;
@@ -2329,10 +2334,48 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     )
   }
 
+  getRatHeight() {
+    if (this.ratHeight === 0) {
+      return 620;
+    } else {
+      return this.ratHeight + 315;
+    }
+  }
+
+  renderStreet() {
+    return (
+      <div>
+        <div className="streetlight2">
+        </div>
+        <div className="streetlight3" style={{ left: this.getStreetLightPosition(1)} }>
+        </div>
+        <div className="streetlight1" style={{ left: this.getStreetLightPosition(2)} }>
+        </div>
+
+        <div className="flowerpot1" style={{ left: this.getFlowerPot1Position()} }>
+        </div>
+
+        <div className="fence" style={{ left: this.getStreetLightPosition() }}>
+        </div>
+
+        <div className="flowerpot2" style={{ left: this.getStreetLightPosition()+100} }>
+        </div>
+
+        <div className="skyline" style={{width: '100%'}}>
+        </div>
+        <div className="street" style={{width:'100%'}}>
+        </div>
+        <div className="darkBackground" style={{height: this.getRatHeight(), width: window.innerWidth+100}}>
+        </div>
+      </div>
+    )
+  }
+
   renderNfts() {
     const { networkName, chainId } = this.getNetworkName();
     this.nftProfit = 0;
     this.townhouseHeight = 0;
+
     const roofHeight = this.getWidth('roof', true, 1000, 300);
     this.townhouseHeight += roofHeight.height; // Roof
     this.townhouseHeight += 315; // Office
@@ -2493,34 +2536,12 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </Col>
         </Row>
         </Card>
-        <div className="streetlight2">
-        </div>
-        <div className="streetlight3" style={{ left: this.getStreetLightPosition(1)} }>
-        </div>
-        <div className="streetlight1" style={{ left: this.getStreetLightPosition(2)} }>
-        </div>
-
-        <div className="flowerpot1" style={{ left: this.getFlowerPot1Position()} }>
-        </div>
-
-        <div className="fence" style={{ left: this.getStreetLightPosition() }}>
-        </div>
-
-        <div className="flowerpot2" style={{ left: this.getStreetLightPosition()+100} }>
-        </div>
-
-        <div className="skyline" style={{width: '100%'}}>
-        </div>
-        <div className="street" style={{width:'100%'}}>
-        </div>
-
-        <div className="darkBackground" style={{height: 900, width: window.innerWidth+100}}>
-        </div>
+        { this.renderStreet() }
 
         <div className="sewerEntrance">
           <div style={this.getWidth('kitchen')} className="ground"/>
         </div>
-        <Card className="house gym sewer" size="small" style={sewer}>
+        <Card className="house sewer" size="small" style={sewer}>
           <Row >
           <Col style={{width: '180px'}}>
             <div className="descriptionBox">
@@ -2532,7 +2553,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
               <div className="logoLine"/>
               { this.renderStakeButtons('Rat') }
-
               <div>
                 <div>
                   <div className="hintHeader">Hint</div>
@@ -2548,6 +2568,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </Col>
           </Row>
         </Card>
+
         <div className="belowTheSewer"/>
       </div>
     );
@@ -3116,7 +3137,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
           <Row style={{ height: "100%" }}>
-            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 150}}>
+            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 1500}}>
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
