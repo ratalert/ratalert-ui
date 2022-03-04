@@ -77,10 +77,24 @@ class Main extends React.Component {
     this.officeBreakpoint = 1160;
     this.ratHeight = 0;
     this.nfts = {};
+    this.kitchenSignFactor = 0.80;
+    if (window.innerWidth < 769) {
+      this.kitchenSignFactor = 0.7;
+    }
+
+    const { networkName, chainId } = this.getNetworkName();
+    let kitchenConfig;
+    if (this.props.address) {
+      kitchenConfig = config[networkName].loggedIn;
+    } else {
+      kitchenConfig = config[networkName].loggedOut;
+    }
+
     this.state = {
       dayTime: this.props.dayTime,
       isClaimModalVisible: false,
       currentStatsNFT: 0,
+      kitchenConfig,
       windowHeight: window.innerHeight - 235,
       nonStakedGraph: { characters: [] },
       stakedGraph: { characters: [] },
@@ -160,9 +174,19 @@ class Main extends React.Component {
   componentDidUpdate(prevProps) {
 
     if (this.props.address && !prevProps.address) {
+
+      const { networkName, chainId } = this.getNetworkName();
+      let kitchenConfig;
+      if (this.props.address) {
+        kitchenConfig = config[networkName].loggedIn;
+      } else {
+        kitchenConfig = config[networkName].loggedOut;
+      }
+
       this.setState({
-        loading: false
+        loading: false, kitchenConfig,
       });
+
 
       setTimeout(() => {
         this.getBalances();
@@ -792,13 +816,7 @@ class Main extends React.Component {
   renderMintContent() {
     if (!this.state.dataLoaded) {
       return (
-        <Card size="small">
-          <Row>
-            <Col span={24} style={{ textAlign: "center" }}>
-              <Spin/>
-            </Col>
-          </Row>
-        </Card>
+        <Spin/>
       )
     }
     const mintPrice = this.getMintPrice();
@@ -806,7 +824,7 @@ class Main extends React.Component {
       <div className="officeHeadline">
         <Row>
           <Col span={16}>
-            Mint your character here:
+            {this.getGreeting()} Mint your character here:
           </Col>
         </Row>
         <Row className="officeContent">
@@ -1054,12 +1072,11 @@ class Main extends React.Component {
   }
 
   renderNFTRow(i, nftsPerRow, nft, staked, type, location) {
-    const { networkName, chainId } = this.getNetworkName();
     let className;
     let widthType;
     let closed = false;
     if (staked === 1 && location === 'McStake') {
-      if (config[networkName].fastFoodKitchenClosed) {
+      if (this.state.kitchenConfig.fastFoodKitchenClosed) {
         closed = true;
         className = "parallax fastFoodKitchenClosed";
       } else {
@@ -1091,8 +1108,8 @@ class Main extends React.Component {
             return this.renderNFTCard(c, staked);
           })}
 
-          { closed && config[networkName].fastfoodClosedSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="closedSign"/> : null }
-          { closed && config[networkName].fastfoodForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="forSaleSign"/> : null }
+          { closed && this.state.kitchenConfig.fastfoodClosedSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="closedSign"/> : null }
+          { closed && this.state.kitchenConfig.fastfoodForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="forSaleSign"/> : null }
 
 
           </Row>
@@ -1397,7 +1414,7 @@ class Main extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col style={{marginRight: '0px'}} xs={5} span={4}>
+            <Col className="time" xs={5} span={4}>
               <img src={"/img/time.png"}/>
             </Col>
             <Col xs={16} span={17}>
@@ -2391,7 +2408,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     return (
 
       <div className="stakeHouse" style={this.getWidth('townhouse')}>
-        <Card className="house office kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house office kitchenMargin" size="small">
           <Row >
             { window.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
@@ -2412,62 +2429,62 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small">
           <Row >
             <Col style={{width: '180px'}}>
 
-              <div style={{marginTop: 0}} className={`parallax ${config[networkName].gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: 'gourmetScene' }`}>
+              <div style={{marginTop: 0}} className={`parallax ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: 'gourmetScene' }`}>
               </div>
 
               <div className="restaurantSign">
-                <img width={window.innerWidth < 1080 ? 75 : 150} src={`${config[networkName].gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
+                <img width={window.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
             </Col>
             <Col>
-              <div className={`fade parallax ${config[networkName].gourmetKitchenClosed ? 'gourmetKitchenClosed': 'gourmetKitchen' }`} style={this.getWidth()}>
-                { config[networkName].gourmetClosedSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="closedSign"/> : null }
-                { config[networkName].gourmetForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="forSaleSign"/> : null }
+              <div className={`fade parallax ${this.state.kitchenConfig.gourmetKitchenClosed ? 'gourmetKitchenClosed': 'gourmetKitchen' }`} style={this.getWidth()}>
+                { this.state.kitchenConfig.gourmetClosedSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="closedSign"/> : null }
+                { this.state.kitchenConfig.gourmetForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="forSaleSign"/> : null }
               </div>
             </Col>
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small">
           <Row>
             <Col style={{width: '180px'}}>
 
-            <div className={`parallax ${config[networkName].casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: 'casualScene' }`}>
+            <div className={`parallax ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: 'casualScene' }`}>
             </div>
 
             <div className="restaurantSign">
-              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${config[networkName].casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
+              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
             </div>
 
             </Col>
             <Col>
 
-            <div className={`parallax fade ${config[networkName].casualKitchenClosed ? 'casualKitchenClosed': 'casualKitchen' }`} style={this.getWidth()}>
-              { config[networkName].casualClosedSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="closedSign"/> : null }
-              { config[networkName].casualForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="forSaleSign"/> : null }
+            <div className={`parallax fade ${this.state.kitchenConfig.casualKitchenClosed ? 'casualKitchenClosed': 'casualKitchen' }`} style={this.getWidth()}>
+              { this.state.kitchenConfig.casualClosedSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="closedSign"/> : null }
+              { this.state.kitchenConfig.casualForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="forSaleSign"/> : null }
             </div>
 
             </Col>
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small">
           <Row>
             <Col style={{width: '180px'}}>
-            <div className={`parallax ${config[networkName].fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: 'fastFoodScene' }`}>
+            <div className={`parallax ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: 'fastFoodScene' }`}>
               <div style={{paddingTop: 210}}>
-                { !config[networkName].fastFoodKitchenClosed ? this.renderUnStakeButton() : null}
+                { !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderUnStakeButton() : null}
               </div>
               <div style={{paddingTop: 10}}>
-                { !config[networkName].fastFoodKitchenClosed ? this.renderClaimButton() : null }
+                { !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderClaimButton() : null }
               </div>
             </div>
             <div className="restaurantSign">
-              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${config[networkName].fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
+              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
             </div>
             </Col>
             <Col style={{marginLeft: '20px'}}>
@@ -2476,7 +2493,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small">
           <Row >
             <Col style={{width: '180px'}}>
               <div className="descriptionBox">
@@ -2510,7 +2527,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           </Row>
         </Card>
         <div className="floor"/>
-        <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
+        <Card className="house kitchenMargin" size="small">
           <Row >
           <Col style={{width: '180px'}}>
             <div className="descriptionBox">
@@ -3133,11 +3150,26 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     }
   }
 
+  getGreeting() {
+    if (this.state.dayTime === 'night') {
+      return 'Good night! ';
+    }
+    if (this.state.dayTime === 'day') {
+      return 'Have a nice day! ';
+    }
+    if (this.state.dayTime === 'morning') {
+      return 'Good morning! ';
+    }
+    if (this.state.dayTime === 'evening') {
+      return 'Good evening! ';
+    }
+  }
+
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
           <Row style={{ height: "100%" }}>
-            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 1500}}>
+            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 1300}}>
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }

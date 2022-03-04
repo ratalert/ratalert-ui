@@ -17,11 +17,9 @@
 
 .levelUpTime {
   font-family: "Pixel";
-  font-size: 12px;
   color: #d2b5a7;
   margin-top: 0px;
   height: 20px;
-  margin-left: 0px;
 }
 
 .levelUpDone {
@@ -248,15 +246,6 @@
   }
 }
 
-
-.ant-layout-content {
-  min-height: 120px;
-  color: #000;
-  line-height: 120px;
-  text-align: left;
-  padding-top: 2em;
-}
-
 .logo {
   float: left;
   width: 130px;
@@ -331,11 +320,10 @@
 }
 
 .daySwitcher {
-  width: 180px;
   height: 180px;
   position: absolute;
   cursor: pointer;
-  z-index: 10;
+  z-index: 2;
 }
 
 .skyNight {
@@ -356,10 +344,6 @@
   background-image: url("img/sky-day.jpg");
   background-size: cover;
   z-index: -2;
-}
-
-.townhouseBox {
-  z-index: -1;
 }
 
 .skyMorning {
@@ -586,10 +570,116 @@
   z-index: -2;
 }
 
+.nftDetailHeader {
+  font-family: Pixellari;
+  font-size: 9pt;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.nftDetailDetails {
+  font-family: Pixellari;
+  font-size: 10pt;
+  line-height: 1em;
+  color: #000;
+}
+
+.nftDetailSkill {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #000;
+  padding-top: 5px;
+  color: #13e969
+}
+
+.nftDetailSkillBorder {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #13e969;
+  border-radius: 4px;
+  border: solid 2px #00ef55;
+  padding-left: 10px;
+  padding-right: 5px;
+}
+
+.nftDetailInsanityBorder {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #13e969;
+  border-radius: 4px;
+  border: solid 2px #fc24ff;
+  padding-left: 10px;
+  padding-right: 5px;
+}
+
+.nftDetailFatnessBorder {
+  font-family: Pixellari;
+  font-size: 14px;
+  border-radius: 4px;
+  border: solid 2px #ffae00;
+  padding-left: 10px;
+  padding-right: 5px;
+}
+
+
+.nftDetailIntelligence {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #000;
+  padding-top: 5px;
+  color: #1eaeea
+}
+
+.nftDetailIntelligenceBorder {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #1eaeea;
+  border-radius: 4px;
+  border: solid 2px #1eaeea;
+  padding-left: 10px;
+  padding-right: 5px;
+}
+
+
+.nftDetailInsanity {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #000;
+  padding-top: 5px;
+  color: #fc24ff;
+}
+
+.nftDetailBodymass {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #000;
+  padding-top: 5px;
+  color: #ffae00;
+}
+
 @media only screen and (min-width: 769px) {
+
+  .loggedInButtons {
+    padding-left: 60px;
+  }
+
+  .loggedOutButtons {
+    padding-left: 120px;
+  }
+
   .house .ant-card-body {
     margin-right: 28px;
     padding-left: 15px;
+  }
+
+  .time {
+    margin-left: 4px;
+    margin-top: -2px;
+  }
+
+  .levelUpTime {
+    font-size: 12px;
+    margin-left: -3px;
   }
 
   .sewerEntrance {
@@ -665,12 +755,7 @@
     background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
   }
 
-  .nftDetailHeader {
-    font-family: Pixellari;
-    font-size: 9pt;
-    color: #fff;
-    text-transform: uppercase;
-  }
+
 
 
   .eventHeader {
@@ -758,85 +843,7 @@
   }
 
 
-  .nftDetailDetails {
-    font-family: Pixellari;
-    font-size: 10pt;
-    line-height: 1em;
-    color: #000;
-  }
 
-  .nftDetailSkill {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #000;
-    padding-top: 5px;
-    color: #13e969
-  }
-
-  .nftDetailSkillBorder {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #13e969;
-    border-radius: 4px;
-    border: solid 2px #00ef55;
-    padding-left: 10px;
-    padding-right: 5px;
-  }
-
-  .nftDetailInsanityBorder {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #13e969;
-    border-radius: 4px;
-    border: solid 2px #fc24ff;
-    padding-left: 10px;
-    padding-right: 5px;
-  }
-
-  .nftDetailFatnessBorder {
-    font-family: Pixellari;
-    font-size: 14px;
-    border-radius: 4px;
-    border: solid 2px #ffae00;
-    padding-left: 10px;
-    padding-right: 5px;
-  }
-
-
-  .nftDetailIntelligence {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #000;
-    padding-top: 5px;
-    color: #1eaeea
-  }
-
-  .nftDetailIntelligenceBorder {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #1eaeea;
-    border-radius: 4px;
-    border: solid 2px #1eaeea;
-    padding-left: 10px;
-    padding-right: 5px;
-  }
-
-
-  .nftDetailInsanity {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #000;
-    padding-top: 5px;
-    color: #fc24ff;
-  }
-
-  .nftDetailBodymass {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #000;
-    padding-top: 5px;
-    color: #ffae00;
-  }
 
   .clickToSelect {
     font-family: Pixellari;
@@ -992,9 +999,82 @@
 
 @media only screen and (max-width: 768px) {
 
+  .skyDay {
+    margin-top: 0px;
+  }
+
+  .loggedInButtons {
+    padding-left: 60px;
+  }
+
+  .ant-page-header-heading-left {
+    margin-top: -10px;
+    margin-bottom: 15px;
+  }
+
+  .loggedOutButtons {
+    padding-left: 120px;
+  }
+
   .roof {
     margin-top: 10px !important;
     margin-bottom: -15px !important;
+  }
+
+  .time {
+    margin-left: 4px;
+  }
+
+  .clickToSelect {
+    font-family: Pixellari;
+    font-size: 12px;
+    padding-top: 12px;
+    padding-left: 0px;
+    color: #ffffff;
+  }
+
+
+  .levelUpTime {
+    font-size: 10px;
+    margin-top: 5px;
+    margin-left: 2px;
+  }
+
+  .info {
+    width: 18px;
+    height: 18px;
+    margin-left: -135px;
+    margin-top: 20px;
+    padding: 4px 7px 3px;
+    border-radius: 10px;
+    border: solid 2px #fff;
+    background-image: linear-gradient(to bottom, #544a43, #706258);
+  }
+
+  .nftDetails {
+    padding-top: 3px;
+    border-top: 3px solid #443a31;
+    border-left: 3px solid #443a31;
+    border-right: 3px solid #443a31;
+    width: 117px;
+    padding-left: 15px;
+    padding-right: 5px;
+    margin-right: 20px;
+    padding-bottom: 5px;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+    background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
+  }
+
+  .nftDetailId {
+    width: 117px;
+    border-top: 3px solid #443a31;
+    border-left: 3px solid #443a31;
+    border-right: 3px solid #443a31;
+    font-weight: bold;
+    background: #524944;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
 
   .ant-modal {
@@ -1070,7 +1150,7 @@
   .kitchenRow_kitchen {
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 25px;
+    margin-top: 0px;
   }
 
   .house {
@@ -1767,6 +1847,30 @@
   background-color: #FFF !important;
 }
 
+/**/
+
+.ratMobileLight {
+  color: #FFFFFF !important;
+}
+
+.ratMobileLight .ant-menu-item a {
+  color: #FFFFFF !important;
+}
+
+.ratMobileLight .ant-menu-item-selected a {
+  color: #619cff !important;
+}
+
+.ratMobileDark {
+  color: #FFFFFF;
+}
+
+.ratMobileDark img {
+  filter: invert(100%);
+}
+
+
+
 .ratDark .ant-menu-item a {
   color: #000000 !important;
 }
@@ -1816,4 +1920,8 @@
 
 .ant-layout-footer {
   background: transparent;
+}
+
+.nftCard {
+  z-index: 10;
 }

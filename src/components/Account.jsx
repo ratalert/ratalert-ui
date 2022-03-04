@@ -138,7 +138,7 @@ export default function Account({
     } else {
 
       modalButtons.push(
-        <a onClick={loadWeb3Modal} className={`${themeClass} menuWeb3Button`} href="#">Login</a>,
+        <a onClick={loadWeb3Modal} className={`${themeClass} menuWeb3Button`} href="#">Connect wallet</a>,
       );
       const urlParams = new URLSearchParams(window.location.search);
       const addr = urlParams.get('addr');
@@ -165,7 +165,7 @@ export default function Account({
 
   return (
     <div>
-      <Row align="vertical">
+      <Row align="vertical" className={address ? 'loggedInButtons' : 'loggedOutButtons'}>
         <Col>{display}</Col>
         <Col style={{paddingTop: 10}}>{modalButtons}</Col>
       </Row>

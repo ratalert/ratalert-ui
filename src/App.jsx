@@ -193,7 +193,7 @@ function App(props) {
       );
     } else {
       networkDisplay = (
-        <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+        <div style={{ zIndex: 5, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
             message="⚠️ Wrong Network"
             description={
@@ -246,12 +246,6 @@ function App(props) {
         </div>
       );
     }
-  } else {
-    networkDisplay = (
-      <div style={{ zIndex: -1, position: "absolute", right: 154, top: 28, padding: 16, color: targetNetwork.color }}>
-        {targetNetwork.name}
-      </div>
-    );
   }
 
   useOnBlock(localProvider, async() => {
@@ -312,19 +306,9 @@ function App(props) {
 
   return (
     <div className="App">
-{
-  /*
-    <div className="">
-      <div className="parallax__layer parallax__layer--back">
-        <div className="title">This is the background</div>
-      </div>
-      <div className="parallax__layer parallax__layer--base">
-        <div className="title">This is the foreground</div>
-      </div>
-    </div>
-    */
-  }
+
       <BrowserRouter>
+        { networkDisplay }
         <Switch>
           <Route exact path="/">
             <RatMenu

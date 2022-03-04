@@ -221,12 +221,13 @@ class RatMenu extends React.Component {
           <div></div>
         )
       }
+      const style = this.getMobileNavStyle();
+      console.log(style);
       return (
-        <Sider theme="light" trigger={null} collapsible collapsed={this.state.collapsed}>
-         <div className="logo" />
-         <div className={this.getNavStyle()}>
+        <Sider theme={style === 'ratMobileLight' ? 'dark' : 'light'} trigger={null} collapsible collapsed={this.state.collapsed}>
+         <div className={style}>
 
-          <Menu style={{marginLeft: 50}} mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
+          <Menu mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
             <Menu.Item style={{marginRight: '0px'}} key={1}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item>
             <Menu.Item key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
             <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
@@ -315,7 +316,7 @@ class RatMenu extends React.Component {
       <div>
         { this.renderIcons() }
         { this.state.collapsed ?
-          !this.state.web3Loaded ? this.getAccountData() : this.getAccountData()
+          this.getAccountData()
           : null}
       </div>
     )
@@ -368,6 +369,21 @@ class RatMenu extends React.Component {
 
   }
 
+  getMobileNavStyle(bg = false) {
+    if (this.state.dayTime === 'night') {
+      return 'ratMobileLight';
+    }
+    if (this.state.dayTime === 'day') {
+      return 'ratMobileLight';
+    }
+    if (this.state.dayTime === 'morning') {
+      return 'ratMobileDark';
+    }
+    if (this.state.dayTime === 'evening') {
+      return 'ratMobileDark';
+    }
+  }
+
   getNavStyle(bg = false) {
     if (!bg) {
       if (this.state.dayTime === 'night') {
@@ -406,13 +422,13 @@ class RatMenu extends React.Component {
     return (
 
           <div>
-          <div onClick={this.props.dayTimeSwitch} style={{marginTop: skyAttr.height * 0.10, marginLeft: skyAttr.width * 0.82, cursor: 'pointer'}} className="daySwitcher">
+          <div onClick={this.props.dayTimeSwitch} style={{width: skyAttr.width * 0.15, marginTop: skyAttr.height * 0.10, marginLeft: skyAttr.width * 0.82, cursor: 'pointer'}} className="daySwitcher">
           </div>
 
           <div className={this.getSkyClass()} style={skyAttr}>
-
           </div>
           <Layout>
+            { this.renderMobileMenu() }
             <Layout>
             <PageHeader ghost={false} title={this.renderTitle()} subTitle={this.renderMenu()} extra={this.renderExtra()}></PageHeader>
             <Content>{ this.props.content }</Content>
