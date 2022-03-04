@@ -2382,7 +2382,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </div>
         <div className="street" style={{width:'100%'}}>
         </div>
-        <div className="darkBackground" style={{height: this.getRatHeight(), width: window.innerWidth+100}}>
+        <div className="darkBackground" style={{height: this.getRatHeight()+50, width: window.innerWidth+100}}>
         </div>
       </div>
     )
@@ -3169,7 +3169,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
           <Row style={{ height: "100%" }}>
-            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 1300}}>
+            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight}}>
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }

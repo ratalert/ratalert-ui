@@ -244,8 +244,8 @@ class RatMenu extends React.Component {
         <div>
         {
           this.state.collapsed ?
-          <MenuUnfoldOutlined className="trigger" onClick={this.toggle.bind(this)}/>
-          : <MenuFoldOutlined className="trigger" onClick={this.toggle.bind(this)}/>
+          <MenuUnfoldOutlined className={`trigger ${this.getNavStyle()}`} onClick={this.toggle.bind(this)}/>
+          : <MenuFoldOutlined className={`trigger ${this.getNavStyle()}`} onClick={this.toggle.bind(this)}/>
         }
         </div>
       );
