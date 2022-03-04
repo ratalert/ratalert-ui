@@ -181,7 +181,7 @@ export function renderNotification(type, msg, description) {
     notification.info({
       message: msg,
       description: description,
-      placement: "bottomRight",
+      placement: "topRight",
     });
   } else {
     notification.error({

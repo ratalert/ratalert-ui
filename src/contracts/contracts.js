@@ -1027,7 +1027,7 @@ export const contracts = {
               "stateMutability": "nonpayable",
               "type": "function"
             }
-          ]
+          ],
         },
         "McStake": {
           "address": config.localhost.McStake,
@@ -3478,9 +3478,9 @@ export const contracts = {
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
+                  "internalType": "bytes32",
                   "name": "",
-                  "type": "uint256"
+                  "type": "bytes32"
                 },
                 {
                   "internalType": "uint256",
@@ -3924,9 +3924,9 @@ export const contracts = {
                 {
                   "components": [
                     {
-                      "internalType": "uint256",
+                      "internalType": "bytes32",
                       "name": "requestId",
-                      "type": "uint256"
+                      "type": "bytes32"
                     },
                     {
                       "internalType": "address",
@@ -5991,6 +5991,387 @@ export const contracts = {
               "type": "function"
             }
           ],
+        },
+        "Mint": {
+          "address": config.rinkeby.Mint,
+          "abi": [
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "previousOwner",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "OwnershipTransferred",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                }
+              ],
+              "name": "RandomNumberRequested",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "from",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "address",
+                  "name": "to",
+                  "type": "address"
+                },
+                {
+                  "indexed": true,
+                  "internalType": "uint256",
+                  "name": "tokenId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "Transfer",
+              "type": "event"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "existingCombinations",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [],
+              "name": "owner",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rarities",
+              "outputs": [
+                {
+                  "internalType": "uint8",
+                  "name": "",
+                  "type": "uint8"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "randomness",
+                  "type": "uint256"
+                }
+              ],
+              "name": "rawFulfillRandomness",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "renounceOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "newOwner",
+                  "type": "address"
+                }
+              ],
+              "name": "transferOwnership",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "",
+                  "type": "bytes32"
+                }
+              ],
+              "name": "vrfRequests",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "amount",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "stake",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "withdrawLink",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "success",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_vrfCoordinator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_link",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "_keyHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_fee",
+                  "type": "uint256"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_vrfCoordinator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_link",
+                  "type": "address"
+                }
+              ],
+              "name": "initialize",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_vrfCoordinator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "_link",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "_keyHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "_fee",
+                  "type": "uint256"
+                }
+              ],
+              "name": "setVrfParams",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "sender",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "amount",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "stake",
+                  "type": "bool"
+                }
+              ],
+              "name": "requestRandomNumber",
+              "outputs": [
+                {
+                  "internalType": "bytes32",
+                  "name": "requestId",
+                  "type": "bytes32"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "_character",
+                  "type": "address"
+                }
+              ],
+              "name": "setCharacter",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "getController",
+              "outputs": [
+                {
+                  "internalType": "bool",
+                  "name": "",
+                  "type": "bool"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function",
+              "constant": true
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "addController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "address",
+                  "name": "controller",
+                  "type": "address"
+                }
+              ],
+              "name": "removeController",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            }
+          ]
         }
       }
     }

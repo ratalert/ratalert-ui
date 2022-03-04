@@ -48,6 +48,19 @@
   height: 300px;
 }
 
+.gourmetSceneClosedDay {
+  background-image: url("img/gourmet_scene_closed_day.png");
+  width: 180px;
+  height: 300px;
+}
+
+.gourmetSceneClosedNight {
+  background-image: url("img/gourmet_scene_closed_night.png");
+  width: 180px;
+  height: 300px;
+}
+
+
 .officeScene {
   width: 180px;
   height: 300px;
@@ -86,6 +99,19 @@
   width: 180px;
   height: 300px;
 }
+
+.casualSceneClosedDay {
+  background-image: url("img/casual_scene_closed_day.png");
+  width: 180px;
+  height: 300px;
+}
+
+.casualSceneClosedNight {
+  background-image: url("img/casual_scene_closed_night.png");
+  width: 180px;
+  height: 300px;
+}
+
 
 .fastFoodScene {
   background-image: url("img/fastfood_scene.gif");
@@ -1585,6 +1611,10 @@
   height: 300px;
 }
 
+.fastFoodKitchenClosed {
+  background-image: url("img/ffood_kitchen_closed.png");
+  height: 300px;
+}
 
 .gourmetKitchen {
   background-image: url("img/gourmet_kitchen.png");
@@ -1592,10 +1622,52 @@
   margin-left: 20px;
 }
 
+.gourmetKitchenClosed {
+  background-image: url("img/gourmet-restaurant-closed.png");
+  height: 300px;
+  margin-left: 20px;
+}
+
+.casualKitchenClosed {
+  background-image: url("img/casual-restaurant-closed.png");
+  height: 300px;
+  margin-left: 20px;
+}
+
+
+.fastFoodSceneClosedDay {
+  background-image: url("img/fastfood_scene_closed_day.png");
+  min-width: 180px;
+  min-height: 300px;
+}
+
+.fastFoodSceneClosedNight {
+  background-image: url("img/fastfood_scene_closed_night.png");
+  min-width: 180px;
+  min-height: 300px;
+}
+
+
 .casualKitchen {
   background-image: url("img/casual_kitchen.png");
   height: 300px;
   margin-left: 20px;
+}
+
+.closedSign {
+  width: 141px;
+  height: 82px;
+  background-image: url("img/closed.png");
+  position: absolute;
+  top: 100px;
+}
+
+.forSaleSign {
+  width: 141px;
+  height: 82px;
+  background-image: url("img/for-sale.png");
+  position: absolute;
+  top: 100px;
 }
 
 

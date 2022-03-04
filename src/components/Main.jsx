@@ -222,7 +222,7 @@ class Main extends React.Component {
     this.setState({pairs});
   }
 
-  async checkClaimHook() {
+  getNetworkName() {
     const chainId = this.props.chainId;
     let networkName;
     if (chainId === 1337) {
@@ -233,6 +233,11 @@ class Main extends React.Component {
     else {
       networkName = 'mainnet';
     }
+    return { networkName, chainId };
+  }
+
+  async checkClaimHook() {
+    const { networkName, chainId } = this.getNetworkName();
 
     const contract = new ethers.Contract(config[networkName].McStake,
       contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
@@ -548,14 +553,21 @@ class Main extends React.Component {
   async componentWillMount() {
     window.addEventListener('scroll', () => {
       const scrollPosition = window.pageYOffset;
-      const bgParallax = document.getElementsByClassName('gourmetScene')[0];
-      if (bgParallax) {
-        const limit = bgParallax.offsetTop + bgParallax.offsetHeight;
-        const rect = bgParallax.getBoundingClientRect();
-        if (scrollPosition > bgParallax.offsetTop) {
-          bgParallax.style.backgroundPositionY = scrollPosition / 32 + 'px';
-        } else{
-          bgParallax.style.backgroundPositionY = '0';
+      const bgElements = document.getElementsByClassName('parallax');
+      if (bgElements.length > 0) {
+        for (let i = 0; i <= bgElements.length; i += 1) {
+          if (i - 1 >= 0) {
+            const bgParallax = bgElements[i - 1];
+            const limit = bgParallax.offsetTop + bgParallax.offsetHeight;
+            const rect = bgParallax.getBoundingClientRect();
+
+              if (scrollPosition > rect.y) {
+                //console.log(scrollPosition, rect.y, scrollPosition / 24);
+                bgParallax.style.backgroundPositionY = `-${(scrollPosition-rect.y) / 40}px`;
+              } else{
+                bgParallax.style.backgroundPositionY = '0';
+              }
+          }
         }
       }
     });
@@ -568,7 +580,7 @@ class Main extends React.Component {
         this.setState({ loading: false, noAddressLoaded: false });
       }
 
-    }, 2800);
+    }, 0);
 
     setTimeout(() => {
       this.checkClaimHook();
@@ -648,16 +660,7 @@ class Main extends React.Component {
   }
 
   async checkContractApproved() {
-    const chainId = this.props.chainId;
-    let networkName;
-    if (chainId === 1337) {
-      networkName = 'localhost';
-    } else if (chainId === 4) {
-      networkName = 'rinkeby';
-    }
-    else {
-      networkName = 'mainnet';
-    }
+    const { networkName, chainId } = this.getNetworkName();
     const contract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
@@ -671,16 +674,7 @@ class Main extends React.Component {
   }
 
   async getBalances() {
-    const chainId = this.props.chainId;
-    let networkName;
-    if (chainId === 1337) {
-      networkName = 'localhost';
-    } else if (chainId === 4) {
-      networkName = 'rinkeby';
-    }
-    else {
-      networkName = 'mainnet';
-    }
+    const { networkName, chainId } = this.getNetworkName();
     const fastFoodContract = new ethers.Contract(config[networkName].FastFood,
       contracts[chainId][networkName].contracts.FastFood.abi, this.props.provider);
 
@@ -690,16 +684,7 @@ class Main extends React.Component {
   }
 
   async getChainStats() {
-    const chainId = this.props.chainId;
-    let networkName;
-    if (chainId === 1337) {
-      networkName = 'localhost';
-    } else if (chainId === 4) {
-      networkName = 'rinkeby';
-    }
-    else {
-      networkName = 'mainnet';
-    }
+    const { networkName, chainId } = this.getNetworkName();
     const CharacterContract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
@@ -968,11 +953,13 @@ class Main extends React.Component {
       }
     });
     nft.sort((a, b) => a.name - b.name);
+    /*
     if (!this.state.dataLoaded) {
       return (
         <Spin/>
       )
     }
+    */
 
     let nftsPerRow = 0;
     let offset = 0;
@@ -1062,35 +1049,47 @@ class Main extends React.Component {
   }
 
   renderNFTRow(i, nftsPerRow, nft, staked, type, location) {
+    const { networkName, chainId } = this.getNetworkName();
     let className;
     let widthType;
+    let closed = false;
     if (staked === 1 && location === 'McStake') {
-      className = "fastFoodKitchen";
+      if (config[networkName].fastFoodKitchenClosed) {
+        closed = true;
+        className = "parallax fastFoodKitchenClosed";
+      } else {
+        className = "parallax fastFoodKitchen";
+      }
       widthType = 'kitchen';
     }
     if (staked === 1 && location === 'Gym') {
-      className = "gym";
+      className = "parallax gym";
       widthType = 'kitchen';
     }
 
     if (type === 'Chef') {
-      className = "chefWaitingRoom"
+      className = "parallax chefWaitingRoom"
       widthType = 'kitchen';
     }
     if (type === 'Rat') {
       className = "ratSewer"
       widthType = 'kitchen';
     }
-
+    const kitchenWidth = this.getWidth('kitchen');
     return (
       <div className={className} style={this.getWidth(widthType)}>
-      <div className="fade">
+      <div className={ !closed ? 'fade' : null }>
       <Row >
         <Col span={24}>
           <Row className={`kitchenRow_${widthType}`}>
-          {nft.map(c => {
+          {!closed && nft.map(c => {
             return this.renderNFTCard(c, staked);
           })}
+
+          { closed && config[networkName].fastfoodClosedSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="closedSign"/> : null }
+          { closed && config[networkName].fastfoodForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="forSaleSign"/> : null }
+
+
           </Row>
         </Col>
       </Row>
@@ -2331,6 +2330,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   }
 
   renderNfts() {
+    const { networkName, chainId } = this.getNetworkName();
     this.nftProfit = 0;
     this.townhouseHeight = 0;
     const roofHeight = this.getWidth('roof', true, 1000, 300);
@@ -2343,6 +2343,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     if (window.innerWidth < 769) {
       sewer.width += 18;
     }
+    const kitchenWidth = this.getWidth('kitchen');
+
     return (
 
       <div className="stakeHouse" style={this.getWidth('townhouse')}>
@@ -2356,7 +2358,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
                     : null }
                     { this.state.officeView === 'balance' ?
-                      this.props.address ? this.renderBalances() : this.renderNACard("Balance")
+                      this.renderBalances()
                       : null }
                       { this.state.officeView === 'stats' ?
                         this.renderStats()
@@ -2370,14 +2372,18 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row >
             <Col style={{width: '180px'}}>
-              <div style={{marginTop: 0}} className="gourmetScene parallax__layer--back">
+
+              <div style={{marginTop: 0}} className={`parallax ${config[networkName].gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: 'gourmetScene' }`}>
               </div>
+
               <div className="restaurantSign">
-                <img width={window.innerWidth < 1080 ? 75 : 150} src="img/le-stake.png"/>
+                <img width={window.innerWidth < 1080 ? 75 : 150} src={`${config[networkName].gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
             </Col>
             <Col>
-              <div className="fade gourmetKitchen" style={this.getWidth()}>
+              <div className={`fade parallax ${config[networkName].gourmetKitchenClosed ? 'gourmetKitchenClosed': 'gourmetKitchen' }`} style={this.getWidth()}>
+                { config[networkName].gourmetClosedSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="closedSign"/> : null }
+                { config[networkName].gourmetForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="forSaleSign"/> : null }
               </div>
             </Col>
           </Row>
@@ -2387,17 +2393,20 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row>
             <Col style={{width: '180px'}}>
 
-            <div className="casualScene">
+            <div className={`parallax ${config[networkName].casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: 'casualScene' }`}>
             </div>
+
             <div className="restaurantSign">
-              <img width={window.innerWidth < 1080 ? 50 : 150} src="img/stake-house.png"/>
+              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${config[networkName].casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
             </div>
 
             </Col>
             <Col>
-            <div className="fade casualKitchen" style={this.getWidth()}>
-            </div>
 
+            <div className={`parallax fade ${config[networkName].casualKitchenClosed ? 'casualKitchenClosed': 'casualKitchen' }`} style={this.getWidth()}>
+              { config[networkName].casualClosedSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="closedSign"/> : null }
+              { config[networkName].casualForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*0.9}}className="forSaleSign"/> : null }
+            </div>
 
             </Col>
           </Row>
@@ -2406,16 +2415,16 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small" style={this.getWidth('building')}>
           <Row>
             <Col style={{width: '180px'}}>
-            <div className="fastFoodScene">
+            <div className={`parallax ${config[networkName].fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: 'fastFoodScene' }`}>
               <div style={{paddingTop: 210}}>
-                { this.renderUnStakeButton() }
+                { !config[networkName].fastFoodKitchenClosed ? this.renderUnStakeButton() : null}
               </div>
               <div style={{paddingTop: 10}}>
-                { this.renderClaimButton() }
+                { !config[networkName].fastFoodKitchenClosed ? this.renderClaimButton() : null }
               </div>
             </div>
             <div className="restaurantSign">
-              <img width={window.innerWidth < 1080 ? 50 : 150} src="img/mc-stake.png"/>
+              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${config[networkName].fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
             </div>
             </Col>
             <Col style={{marginLeft: '20px'}}>
@@ -2570,16 +2579,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   }
 
   renderStats() {
-    if (!this.state.dataLoaded) {
-      return (
-        <Row>
-          <Col span={24} style={{ textAlign: "center" }}>
-            <Spin/>
-          </Col>
-        </Row>
-      )
-    }
-
     return (
       <div className="officeHeadline">
       <Row>
@@ -3096,7 +3095,21 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     if (this.state.dayTime === 'evening') {
       return 'eveningGradient gradient';
     }
+  }
 
+  getDayTime() {
+    if (this.state.dayTime === 'night') {
+      return 'Night';
+    }
+    if (this.state.dayTime === 'day') {
+      return 'Day';
+    }
+    if (this.state.dayTime === 'morning') {
+      return 'Day';
+    }
+    if (this.state.dayTime === 'evening') {
+      return 'Night';
+    }
   }
 
   renderGame() {
@@ -3107,7 +3120,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
-              {this.props.address ? this.renderNfts() : this.renderNACard()}
+              { this.renderNfts() }
             </div>
 
             <Modal bodyStyle={{height: 480}} title={`This is what happened... ${this.state.claimStats.length} ${this.state.claimStats.length === 1 ? 'Event' : 'Events'}`}
@@ -3147,12 +3160,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </Row>
       );
     } else {
-      if (this.props.address) {
         return this.renderGame();
-      } else {
-        return this.renderSplash();
-      }
-
     }
   }
 }

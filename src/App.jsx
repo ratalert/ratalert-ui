@@ -40,7 +40,7 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
   chainId = 1337;
 }
 
-// targetNetwork = NETWORKS.rinkeby;
+//targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
 
 const DEBUG = true;
@@ -64,7 +64,6 @@ if (!dayTime) {
     dayTime = 'night';
   }
 }
-
 
 // 🛰 providers
 if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
