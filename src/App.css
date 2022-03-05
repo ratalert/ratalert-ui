@@ -39,7 +39,13 @@
   background: #000000;
 }
 
-.gourmetScene {
+.gourmetSceneDay {
+  background-image: url("img/gourmet_scene_day.gif");
+  width: 180px;
+  height: 300px;
+}
+
+.gourmetSceneNight {
   background-image: url("img/gourmet_scene.gif");
   width: 180px;
   height: 300px;
@@ -91,11 +97,18 @@
 }
 
 
-.casualScene {
+.casualSceneDay {
   background-image: url("img/casual_scene.gif");
   width: 180px;
   height: 300px;
 }
+
+.casualSceneNight {
+  background-image: url("img/casual_scene_night.gif");
+  width: 180px;
+  height: 300px;
+}
+
 
 .casualSceneClosedDay {
   background-image: url("img/casual_scene_closed_day.png");
@@ -110,11 +123,18 @@
 }
 
 
-.fastFoodScene {
+.fastFoodSceneDay {
   background-image: url("img/fastfood_scene.gif");
   min-width: 180px;
   min-height: 300px;
 }
+
+.fastFoodSceneNight {
+  background-image: url("img/fastfood_scene_night.gif");
+  min-width: 180px;
+  min-height: 300px;
+}
+
 
 .roof {
   background-image: url("img/roof.png");
@@ -1038,6 +1058,22 @@
     font-size: 10px;
     margin-top: 5px;
     margin-left: 2px;
+  }
+
+  .infoBox {
+    width: 40px;
+    height: 40px;
+    margin-left: -25px;
+    margin-top: -10px;
+    position: absolute;
+  }
+
+  .infoBoxStaked {
+    width: 40px;
+    height: 40px;
+    margin-left: -25px;
+    margin-top: 20px;
+    position: absolute;
   }
 
   .info {

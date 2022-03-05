@@ -1094,7 +1094,7 @@ class Main extends React.Component {
       widthType = 'kitchen';
     }
     if (type === 'Rat') {
-      className = "ratSewer"
+      className = "parallax ratSewer"
       widthType = 'kitchen';
     }
     const kitchenWidth = this.getWidth('kitchen');
@@ -1249,10 +1249,9 @@ class Main extends React.Component {
     return (
       <span className="nftCardBack">
         <div className={type === 'modal' ? 'nftDetailIdModal' : 'nftDetailId'}>
-          <span style={{color: '#000000', paddingLeft: 9}}>{hash.Generation}</span>
           { type !== 'modal' ? <span style={{color: '#FFFFFF', paddingLeft: 5}}>{hash.Type}</span> : null }
           <span className={type === 'modal' ? "nftIdDetailModal" : "nftIdDetail"}>
-            <span style={{color: '#000000'}}>#</span>
+            <span style={{color: '#000000'}}>&nbsp;#</span>
             <span style={{color: '#d1c0b6'}}>{c.name}</span>
           </span>
         </div>
@@ -1298,15 +1297,19 @@ class Main extends React.Component {
             ? `nftSelectedStats ${classNameStats}`
             : `nftNotSelected ${classNameStats}`
         }        >
+
+        { type !== 'modal' ? <div style={{marginTop: 64}} onClick={this.handleNFTLeave.bind(this,c.name) } className="infoBoxStaked"/> : null }
         { type !== 'modal' ?
         <div style={{position: 'absolute'}}>
-          <div style={{position: 'relative', left: 120, top: 54}} onClick={this.handleNFTLeave.bind(this,c.name) } className="info">
+
+          <div style={{position: 'relative', left: 120, top: staked ? 54 : 51}} onClick={this.handleNFTLeave.bind(this,c.name) } className="info">
             <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
           </div>
         </div> : null }
 
         { this.renderEfficiencyTitle(c, hash, highlightEfficiency) }
         { this.renderToleranceTitle(c,hash, highlightTolerance) }
+        <div style={{fontFamily: 'Pixellari', color: '#FFFFFF', marginLeft: 50}}>{hash.Generation}</div>
         </div>
 
       </span>
@@ -1394,6 +1397,7 @@ class Main extends React.Component {
         </Popover>
         {type !== 'modal' && c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
           <div>
+          { type !== 'modal' ? <div onClick={this.handleNFTEnter.bind(this,c.name) } className="infoBoxStaked"/> : null }
           { type !== 'modal' ? <div style={{position: 'absolute'}}>
             <div style={{position: 'relative', left: 120, top: 10}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
               <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
@@ -1427,7 +1431,8 @@ class Main extends React.Component {
         <div>
 
         { type !== 'modal' ? <div className="clickToSelect">Click to select</div> : null }
-        { type !== 'modal' ? <div style={{position: 'absolute'}}>
+        { type !== 'modal' ? <div onClick={this.handleNFTEnter.bind(this,c.name) } className="infoBox"/> : null }
+        { type !== 'modal' ? <div>
           <div style={{position: 'relative', left: 120, top: -24}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
             <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
           </div>
@@ -2433,7 +2438,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row >
             <Col style={{width: '180px'}}>
 
-              <div style={{marginTop: 0}} className={`parallax ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: 'gourmetScene' }`}>
+              <div style={{marginTop: 0}} className={`parallax ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
               </div>
 
               <div className="restaurantSign">
@@ -2453,7 +2458,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row>
             <Col style={{width: '180px'}}>
 
-            <div className={`parallax ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: 'casualScene' }`}>
+            <div className={`parallax ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
             </div>
 
             <div className="restaurantSign">
@@ -2475,7 +2480,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small">
           <Row>
             <Col style={{width: '180px'}}>
-            <div className={`parallax ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: 'fastFoodScene' }`}>
+            <div className={`parallax ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
               <div style={{paddingTop: 210}}>
                 { !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderUnStakeButton() : null}
               </div>
@@ -3169,7 +3174,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
           <Row style={{ height: "100%" }}>
-            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight}}>
+            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 1300}}>
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
