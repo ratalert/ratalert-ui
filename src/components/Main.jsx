@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom'
+
 import {
   PageHeader,
   Button,
@@ -41,6 +42,8 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
+
+import { isMobile } from 'react-device-detect';
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
 
 const graphQLClient = new GraphQLClient(APIURL, {
@@ -74,13 +77,15 @@ class Main extends React.Component {
     this.townhouseHeight = 0;
     this.townhouseRef = React.createRef();
     this.mobileBreakpoint = 651;
+    this.tableBreakpoint = 900;
     this.officeBreakpoint = 1160;
     this.ratHeight = 0;
     this.nfts = {};
     this.kitchenSignFactor = 0.80;
-    if (window.innerWidth < 769) {
+    if (this.innerWidth < 769) {
       this.kitchenSignFactor = 0.7;
     }
+    this.innerWidth = window.innerWidth;
 
     const { networkName, chainId } = this.getNetworkName();
     let kitchenConfig;
@@ -91,6 +96,10 @@ class Main extends React.Component {
     }
 
     this.state = {
+      flipState: {},
+      flipStateDone: {},
+      orientation: 0,
+      flipInProgress: false,
       dayTime: this.props.dayTime,
       isClaimModalVisible: false,
       currentStatsNFT: 0,
@@ -597,6 +606,13 @@ class Main extends React.Component {
       }
     });
 
+    window.addEventListener("orientationchange", (event) => {
+      this.setState({orientation: 'change'});
+       setTimeout(() => {
+         window.location.reload();
+       }, 0);
+    });
+
     window.addEventListener("resize", this.handleResize);
     setTimeout(() => {
       if (!this.props.address) {
@@ -627,8 +643,13 @@ class Main extends React.Component {
     window.removeEventListener("resize", this.handleResize);
   }
 
-  handleResize = e => {
+  handleResize = (e) => {
     this.setState({ windowHeight: window.innerHeight - 235 });
+    if (!isMobile) {
+      this.innerWidth = window.innerWidth;
+    }
+
+    console.log('Inner width is now', this.innerWidth, isMobile);
   };
 
   renderChefs() {
@@ -995,11 +1016,15 @@ class Main extends React.Component {
       nftWidth = 170;
     }
 
-    if (window.innerWidth <= this.mobileBreakpoint) {
+    if (this.innerWidth <= this.mobileBreakpoint) {
       nftWidth = 150;
     }
 
-    // let availableSpace = window.innerWidth - offset;
+    if (this.innerWidth <= this.tableBreakpoint) {
+      nftWidth = 150;
+    }
+
+    // let availableSpace = this.innerWidth - offset;
     // availableSpace = availableSpace * 0.70;
     let availableSpace = this.getWidth('kitchen');
     availableSpace = availableSpace.width;
@@ -1159,25 +1184,6 @@ class Main extends React.Component {
     return `percentage${zero} percentage${trait}`;
   }
 
-  handleNFTEnter(c) {
-    this.setState({ nftDetailsActive: {} });
-    if (c > 0) {
-      const nftDetailsActive = this.state.nftDetailsActive;
-      nftDetailsActive[c] = true;
-      this.setState({ nftDetailsActive });
-    }
-  }
-
-  handleNFTLeave(c) {
-    if (c > 0) {
-      setTimeout(() => {
-        const nftDetailsActive = this.state.nftDetailsActive;
-        nftDetailsActive[c] = false;
-        this.setState({ nftDetailsActive });
-      }, 100);
-    }
-  }
-
   renderToleranceTitle(c, hash, border = false) {
     let className = '';
     if (border) {
@@ -1218,6 +1224,32 @@ class Main extends React.Component {
           {c.type === 'Chef' ? hash.Skill : hash.Intelligence }
         </Col>
       </Row>
+      </div>
+    )
+  }
+
+  renderNFTDetailsStats(c, staked, type, classNameStats, height, hash, highlightEfficiency, highlightTolerance) {
+    return (
+      <div style={{height}}
+      className={
+        this.state.selectedNfts &&
+        this.state.selectedNfts[c.name] &&
+        this.state.selectedNfts[c.name]["status"] === true
+          ? `nftSelectedStats ${classNameStats}`
+          : `nftNotSelected ${classNameStats}`
+      }        >
+
+      { type !== 'modal' && window.innerHeight <= 768 ? <div style={{marginTop: 64}} onClick={ this.flipCard.bind(this, c.name) }  className="infoBoxStaked"/> : null }
+      { type !== 'modal' ?
+      <div style={{position: 'absolute'}}>
+        <div className="info" style={{position: 'relative', left: 120, top: staked ? 54 : 51}} onClick={ this.flipCard.bind(this, c.name) } >
+          <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
+        </div>
+      </div> : null }
+
+      { this.renderEfficiencyTitle(c, hash, highlightEfficiency) }
+      { this.renderToleranceTitle(c,hash, highlightTolerance) }
+      <div style={{fontFamily: 'Pixellari', color: '#FFFFFF', marginLeft: 50}}>{hash.Generation}</div>
       </div>
     )
   }
@@ -1267,7 +1299,6 @@ class Main extends React.Component {
 
         >
         { c.attributes.map( (key) => (
-
               <div>
               {
                 key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
@@ -1289,34 +1320,30 @@ class Main extends React.Component {
             )
         )}
         </div>
-        <div style={{height}}
-        className={
-          this.state.selectedNfts &&
-          this.state.selectedNfts[c.name] &&
-          this.state.selectedNfts[c.name]["status"] === true
-            ? `nftSelectedStats ${classNameStats}`
-            : `nftNotSelected ${classNameStats}`
-        }        >
+        { this.innerWidth < 900 && !this.state.flipState[c.name] ?
+          this.renderEmptyNFTStats(c, staked, type, classNameStats)
+          : this.renderNFTDetailsStats(c, staked, type, classNameStats, height, hash, highlightEfficiency, highlightTolerance) }
 
-        { type !== 'modal' ? <div style={{marginTop: 64}} onClick={this.handleNFTLeave.bind(this,c.name) } className="infoBoxStaked"/> : null }
-        { type !== 'modal' ?
-        <div style={{position: 'absolute'}}>
-
-          <div style={{position: 'relative', left: 120, top: staked ? 54 : 51}} onClick={this.handleNFTLeave.bind(this,c.name) } className="info">
-            <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
-          </div>
-        </div> : null }
-
-        { this.renderEfficiencyTitle(c, hash, highlightEfficiency) }
-        { this.renderToleranceTitle(c,hash, highlightTolerance) }
-        <div style={{fontFamily: 'Pixellari', color: '#FFFFFF', marginLeft: 50}}>{hash.Generation}</div>
-        </div>
 
       </span>
     );
   }
 
   renderNFTCard(c, staked) {
+
+    return (
+      <div className="scene">
+        <div className={`card ${this.state.flipState[c.name]}`}>
+          <div className="card__face card__face--front">
+          { !this.state.flipStateDone[c.name] ? this.renderNFTColumn(c, staked, 'app') : null}
+          </div>
+          <div className="card__face card__face--back">
+          { c && c.name ? this.renderNFTDetails(c, staked, 'app', false, false) : null }
+          </div>
+        </div>
+      </div>
+    );
+
     return (
       <div key={c.name} className="nftCardFlip">
 
@@ -1324,6 +1351,113 @@ class Main extends React.Component {
         </div>
 
     )
+  }
+
+  renderEmptyNFTStats(c, staked, type = 'app', classNameStats) {
+    return (
+      <div
+      style={{height: 99}}
+      className={
+        this.state.selectedNfts &&
+        this.state.selectedNfts[c.name] &&
+        this.state.selectedNfts[c.name]["status"] === true
+          ? `nftSelectedStats ${classNameStats}`
+          : `nftNotSelectedStats ${classNameStats}`
+      }>
+      </div>
+    )
+  }
+
+  renderNFTStats(c, staked, type = 'app', classNameStats) {
+    return (
+      <div
+      style={{height: 99}}
+      className={
+        this.state.selectedNfts &&
+        this.state.selectedNfts[c.name] &&
+        this.state.selectedNfts[c.name]["status"] === true
+          ? `nftSelectedStats ${classNameStats}`
+          : `nftNotSelectedStats ${classNameStats}`
+      }>
+      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill') : this.renderAttribute.bind(this, 'intelligence')}>
+      <Row>
+        <Col style={{marginRight: '0px'}} xs={5} span={4}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
+        <Col xs={16} span={18}>
+        <Progress
+          format={() => <span>100<div className={this.getPercentageClass(c, 100, 1)}></div></span>}
+          format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 1)}></div></span>}
+          className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
+          strokeColor={c.type === "Chef" ? "#13e969" : "#1eaeea"}
+          percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
+          size="small"
+        />
+        </Col>
+      </Row>
+      </Popover>
+      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'insanity') : this.renderAttribute.bind(this, 'bodymass')}>
+      <Row>
+      <Col style={{marginRight: '0px'}} xs={5} span={4}>
+        <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
+        <Col xs={16} span={18}>
+        <Progress
+        format={() => <span>100<div className={this.getPercentageClass(c, 100, 2)}></div></span>}
+        format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 2)}></div></span>}
+        className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
+        strokeColor={c.type === "Chef" ? "#fc24ff" : "#ffae00"}
+        percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
+        size="small"
+         />
+        </Col>
+      </Row>
+      </Popover>
+      {type !== 'modal' && c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
+        <div>
+        { type !== 'modal' ? <div onClick={ this.flipCard.bind(this, c.name) } className="infoBoxStaked"/> : null }
+        { type !== 'modal' ? <div style={{position: 'absolute'}}>
+          <div style={{position: 'relative', left: 120, top: 10}} onClick={ this.flipCard.bind(this, c.name) } className="info">
+            <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
+          </div>
+        </div> : null}
+
+
+        <Row>
+          <Col style={{marginRight: '5px', marginLeft: '0px'}} xs={3} span={2}>
+            <Popover content="Your NFT earns fastfood (FFOOD) tokens when staked into a kitchen.">
+            <img src="/img/ffood.png"/>
+            </Popover>
+          </Col>
+          <Col span={7} className="funds" style={{color: '#fee017'}}>
+            <Popover content="Amount of $FFOOD your NFTs have accumulated.">
+              {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.insanityLevel : c.fatnessLevel, c.name, c.owed)}
+            </Popover>
+          </Col>
+        </Row>
+        <Row>
+          <Col className="time" xs={5} span={4}>
+            <img src={"/img/time.png"}/>
+          </Col>
+          <Col xs={16} span={17}>
+            <div>{ this.renderTimeLeftForLevelUp(c.mcstakeLastClaimTimestamp, c.mcstakeTimestamp) }</div>
+          </Col>
+        </Row>
+
+        </div>
+      ) :
+      <div>
+
+      { type !== 'modal' ? <div className="clickToSelect">Click to select</div> : null }
+      { type !== 'modal' ? <div onClick={ this.flipCard.bind(this, c.name) } className="infoBox"/> : null }
+      { type !== 'modal' ? <div>
+        <div style={{position: 'relative', left: 120, top: -24}} onClick={ this.flipCard.bind(this, c.name) } className="info">
+          <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
+        </div>
+      </div> : null}
+
+      </div>
+    }
+
+      </div>
+    );
   }
 
   renderNFTColumn(c, staked, type = 'app') {
@@ -1355,93 +1489,7 @@ class Main extends React.Component {
         >
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
         </div>
-        <div
-        style={{height: 99}}
-        className={
-          this.state.selectedNfts &&
-          this.state.selectedNfts[c.name] &&
-          this.state.selectedNfts[c.name]["status"] === true
-            ? `nftSelectedStats ${classNameStats}`
-            : `nftNotSelectedStats ${classNameStats}`
-        }>
-        <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill') : this.renderAttribute.bind(this, 'intelligence')}>
-        <Row>
-          <Col style={{marginRight: '0px'}} xs={5} span={4}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
-          <Col xs={16} span={18}>
-          <Progress
-            format={() => <span>100<div className={this.getPercentageClass(c, 100, 1)}></div></span>}
-            format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 1)}></div></span>}
-            className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
-            strokeColor={c.type === "Chef" ? "#13e969" : "#1eaeea"}
-            percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
-            size="small"
-          />
-          </Col>
-        </Row>
-        </Popover>
-        <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'insanity') : this.renderAttribute.bind(this, 'bodymass')}>
-        <Row>
-        <Col style={{marginRight: '0px'}} xs={5} span={4}>
-          <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
-          <Col xs={16} span={18}>
-          <Progress
-          format={() => <span>100<div className={this.getPercentageClass(c, 100, 2)}></div></span>}
-          format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 2)}></div></span>}
-          className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
-          strokeColor={c.type === "Chef" ? "#fc24ff" : "#ffae00"}
-          percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
-          size="small"
-           />
-          </Col>
-        </Row>
-        </Popover>
-        {type !== 'modal' && c.stakingLocation === 'McStake' && c.mcstakeTimestamp > 0 ? (
-          <div>
-          { type !== 'modal' ? <div onClick={this.handleNFTEnter.bind(this,c.name) } className="infoBoxStaked"/> : null }
-          { type !== 'modal' ? <div style={{position: 'absolute'}}>
-            <div style={{position: 'relative', left: 120, top: 10}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
-              <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
-            </div>
-          </div> : null}
-
-
-          <Row>
-            <Col style={{marginRight: '5px', marginLeft: '0px'}} xs={3} span={2}>
-              <Popover content="Your NFT earns fastfood (FFOOD) tokens when staked into a kitchen.">
-              <img src="/img/ffood.png"/>
-              </Popover>
-            </Col>
-            <Col span={7} className="funds" style={{color: '#fee017'}}>
-              <Popover content="Amount of $FFOOD your NFTs have accumulated.">
-                {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.insanityLevel : c.fatnessLevel, c.name, c.owed)}
-              </Popover>
-            </Col>
-          </Row>
-          <Row>
-            <Col className="time" xs={5} span={4}>
-              <img src={"/img/time.png"}/>
-            </Col>
-            <Col xs={16} span={17}>
-              <div>{ this.renderTimeLeftForLevelUp(c.mcstakeLastClaimTimestamp, c.mcstakeTimestamp) }</div>
-            </Col>
-          </Row>
-
-          </div>
-        ) :
-        <div>
-
-        { type !== 'modal' ? <div className="clickToSelect">Click to select</div> : null }
-        { type !== 'modal' ? <div onClick={this.handleNFTEnter.bind(this,c.name) } className="infoBox"/> : null }
-        { type !== 'modal' ? <div>
-          <div style={{position: 'relative', left: 120, top: -24}} onClick={this.handleNFTEnter.bind(this,c.name) } className="info">
-            <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
-          </div>
-        </div> : null}
-
-        </div>
-      }
-
-        </div>
+        { this.innerWidth < 900 && this.state.flipState[c.name] ? this.renderEmptyNFTStats(c, staked, type, classNameStats) : this.renderNFTStats(c, staked, type, classNameStats) }
       </span>
       </div>
     )
@@ -1601,7 +1649,7 @@ class Main extends React.Component {
 
   getButtonHeight() {
     let height=32;
-    if (window.innerWidth <= this.mobileBreakpoint) {
+    if (this.innerWidth <= this.mobileBreakpoint) {
       height=50;
     }
     return height;
@@ -2165,7 +2213,7 @@ class Main extends React.Component {
 
   getTownhouseMargin() {
     const width = this.getWidth('building');
-    const margin = (window.innerWidth - width.width)/2;
+    const margin = (this.innerWidth - width.width)/2;
     return {
       margin: "0 auto",
     }
@@ -2190,7 +2238,7 @@ class Main extends React.Component {
       buildingMobileWidth: 750 // Building width mobile
     };
 
-    let maxWidth = window.innerWidth;
+    let maxWidth = this.innerWidth;
     if (maxWidth > 1400) {
       maxWidth = 1400;
     }
@@ -2200,14 +2248,14 @@ class Main extends React.Component {
         mobile = true;
     }
     else {
-      if (window.innerWidth > 1100) {
-        if (window.innerWidth - 650 > 400) {
+      if (this.innerWidth > 1100) {
+        if (this.innerWidth - 650 > 400) {
           width = maxWidth - offsets.normalLargeWidth;
         } else {
           width = maxWidth - offsets.normalLargeWidth;
         }
       } else {
-        width = window.innerWidth * 0.5;
+        width = this.innerWidth * 0.5;
       }
     }
 
@@ -2236,7 +2284,7 @@ class Main extends React.Component {
       width = tmp.width + 272;
     } else if (type === 'building') {
       const tmp = this.getWidth('kitchen');
-      if (window.innerWidth > this.mobileBreakpoint) {
+      if (this.innerWidth > this.mobileBreakpoint) {
         width = tmp.width + offsets.buildingNormal;
         if (width > 1022) {
           width = 1022;
@@ -2256,8 +2304,8 @@ class Main extends React.Component {
       let factor;
       let height;
       if (type === 'sky') {
-        factor = window.innerWidth / originalWidth;
-        width = window.innerWidth;
+        factor = this.innerWidth / originalWidth;
+        width = this.innerWidth;
         height = factor * originalHeight;
       } else {
         factor = width / originalWidth;
@@ -2387,10 +2435,33 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </div>
         <div className="street" style={{width:'100%'}}>
         </div>
-        <div className="darkBackground" style={{height: this.getRatHeight()+50, width: window.innerWidth+100}}>
+        <div className="darkBackground" style={{height: this.getRatHeight()+50, width: this.innerWidth+100}}>
         </div>
       </div>
     )
+  }
+
+  flipCard(id) {
+    if (this.state.flipInProgress)
+      return;
+    const flipState = this.state.flipState;
+    if (!flipState[id]) {
+      flipState[id] = {};
+    }
+    if (flipState[id] === 'is-flipped') {
+      delete flipState[id];
+      const flipStateDone = this.state.flipStateDone;
+      delete flipStateDone[id];
+      this.setState({ flipState, flipStateDone, flipInProgress: false });
+    } else {
+      flipState[id] = 'is-flipped';
+      this.setState({flipState, flipInProgress: true});
+      setTimeout(() => {
+        const flipStateDone = this.state.flipStateDone;
+        flipStateDone[id] = 'is-flipped';
+        this.setState({flipStateDone, flipInProgress: false});
+      }, 1000);
+    }
   }
 
   renderNfts() {
@@ -2405,19 +2476,24 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     this.townhouseHeight += 315; // Casual Kitchen
     this.townhouseHeight += 315; // Gym
     const sewer = this.getWidth('sewer');
-    if (window.innerWidth < 769) {
+    if (this.innerWidth < 769) {
       sewer.width += 18;
     }
     const kitchenWidth = this.getWidth('kitchen');
-
+    let c = {};
+    if (this.nfts && this.nfts[3]) {
+      c = this.nfts[3];
+    }
     return (
 
       <div className="stakeHouse" style={this.getWidth('townhouse')}>
+      { this.innerWidth } { isMobile ? 'Mobile' : 'Desktop' } { this.state.orientation }
         <Card className="house office kitchenMargin" size="small">
+
           <Row >
-            { window.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
+            { this.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
-              <div className={this.getOfficeBackground()} style={this.getWidth(window.innerWidth > this.officeBreakpoint ? 'kitchen' : null)}>
+              <div className={this.getOfficeBackground()} style={this.getWidth(this.innerWidth > this.officeBreakpoint ? 'kitchen' : null)}>
                 <div className="officeBoard">
                   { this.state.officeView === 'mint' ?
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
@@ -2442,7 +2518,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
 
               <div className="restaurantSign">
-                <img width={window.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
+                <img width={this.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
             </Col>
             <Col>
@@ -2462,7 +2538,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </div>
 
             <div className="restaurantSign">
-              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
+              <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
             </div>
 
             </Col>
@@ -2489,7 +2565,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
             </div>
             <div className="restaurantSign">
-              <img width={window.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
+              <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
             </div>
             </Col>
             <Col style={{marginLeft: '20px'}}>
@@ -3172,9 +3248,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
+    let offset = 0;
+    if (this.innerWidth >= 768) {
+      offset = 1000;
+    }
     return (
           <Row style={{ height: "100%" }}>
-            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - 1300}}>
+            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - skyAttr.height + 200}}>
             </div>
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
