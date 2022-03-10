@@ -375,7 +375,7 @@ class Leaderboard extends React.Component {
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={1}/>
         <Col span={22} ref={this.tableRef}>
-          <Table pagination={false} style={{width: '100%'}} columns={columns} dataSource={chefRats} />
+          <Table pagination={false} style={{width: window.innerWidth * 0.8}} columns={columns} dataSource={chefRats} />
         </Col>
         <Col span={1}/>
       </Row>

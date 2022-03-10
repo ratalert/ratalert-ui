@@ -1,0 +1,208 @@
+@import "reset.css";
+@font-face {
+    font-family: eightbit;
+    src: url(pixeloidsans-bold.woff);
+}
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+body {
+    background: #e3d6b6;
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 140%;
+}
+div#top, div#bottom {
+    margin: 0;
+    padding: 0;
+}
+div#top {
+    background: #fff;
+}
+div#bottom {
+    padding-bottom: 80px;
+}
+header {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 10px;
+    position: relative;
+}
+div#tagline {
+    background-color: #d8cba9;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-family: eightbit, Helvetica, sans-serif;
+    text-transform: uppercase;
+    padding: 4px 5px 4px 5px;
+}
+div#content {
+    margin: 0 10px;
+    padding-bottom: 40px;
+}
+main {
+    max-width: 720px;
+    margin: 50px auto 0 auto;
+    background: #eae0c7;
+    padding: 40px;
+}
+img#logo {
+    margin: 80px 0 8px 0;
+}
+div#container {
+    position: relative;
+    min-height: 100%;
+}
+footer {
+    color: white;
+    text-align: center;
+    background: #4f4c44;
+    position: absolute;
+    padding-top: 20px;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+}
+footer ul {
+    margin-bottom: 0;
+}
+footer ul li {
+    list-style: none;
+    display: inline-block;
+    margin: 0 10px 0 10px;
+}
+footer a {
+    text-decoration: none;
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+}
+footer a:hover {
+    position: relative;
+    top: -2px;
+}
+footer a.twitter { background: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"%3E%3Cg fill="none"%3E%3Cpath d="M23.643 4.937c-.835.37-1.732.62-2.675.733a4.67 4.67 0 0 0 2.048-2.578a9.3 9.3 0 0 1-2.958 1.13a4.66 4.66 0 0 0-7.938 4.25a13.229 13.229 0 0 1-9.602-4.868c-.4.69-.63 1.49-.63 2.342A4.66 4.66 0 0 0 3.96 9.824a4.647 4.647 0 0 1-2.11-.583v.06a4.66 4.66 0 0 0 3.737 4.568a4.692 4.692 0 0 1-2.104.08a4.661 4.661 0 0 0 4.352 3.234a9.348 9.348 0 0 1-5.786 1.995a9.5 9.5 0 0 1-1.112-.065a13.175 13.175 0 0 0 7.14 2.093c8.57 0 13.255-7.098 13.255-13.254c0-.2-.005-.402-.014-.602a9.47 9.47 0 0 0 2.323-2.41l.002-.003z" fill="white"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'); }
+footer a.discord { background: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"%3E%3Cg fill="none"%3E%3Cpath d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0a12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055a20.03 20.03 0 0 0 5.993 2.98a.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963c.021-.04.001-.088-.041-.104a13.201 13.201 0 0 1-1.872-.878a.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028a19.963 19.963 0 0 0 6.002-2.981a.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38c0-1.312.956-2.38 2.157-2.38c1.21 0 2.176 1.077 2.157 2.38c0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38c0-1.312.955-2.38 2.157-2.38c1.21 0 2.176 1.077 2.157 2.38c0 1.312-.946 2.38-2.157 2.38z" fill="white"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'); }
+footer a.telegram { background: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"%3E%3Cg fill="none"%3E%3Cpath fill-rule="evenodd" clip-rule="evenodd" d="M24 12c0 6.627-5.373 12-12 12S0 18.627 0 12S5.373 0 12 0s12 5.373 12 12zM12.43 8.859c-1.167.485-3.5 1.49-6.998 3.014c-.568.226-.866.447-.893.663c-.046.366.412.51 1.034.705c.085.027.173.054.263.084c.613.199 1.437.432 1.865.441c.389.008.823-.152 1.302-.48c3.268-2.207 4.955-3.322 5.061-3.346c.075-.017.179-.039.249.024c.07.062.063.18.056.212c-.046.193-1.84 1.862-2.77 2.726c-.29.269-.495.46-.537.504c-.094.097-.19.19-.282.279c-.57.548-.996.96.024 1.632c.49.323.882.59 1.273.856c.427.291.853.581 1.405.943c.14.092.274.187.405.28c.497.355.944.673 1.496.623c.32-.03.652-.331.82-1.23c.397-2.126 1.179-6.73 1.36-8.628a2.111 2.111 0 0 0-.02-.472a.506.506 0 0 0-.172-.325c-.143-.117-.365-.142-.465-.14c-.451.008-1.143.249-4.476 1.635z" fill="white"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'); }
+footer a.medium { background: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 16 16"%3E%3Cg fill="white"%3E%3Cpath d="M9.025 8c0 2.485-2.02 4.5-4.513 4.5A4.506 4.506 0 0 1 0 8c0-2.486 2.02-4.5 4.512-4.5A4.506 4.506 0 0 1 9.025 8zm4.95 0c0 2.34-1.01 4.236-2.256 4.236c-1.246 0-2.256-1.897-2.256-4.236c0-2.34 1.01-4.236 2.256-4.236c1.246 0 2.256 1.897 2.256 4.236zM16 8c0 2.096-.355 3.795-.794 3.795c-.438 0-.793-1.7-.793-3.795c0-2.096.355-3.795.794-3.795c.438 0 .793 1.699.793 3.795z"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'); }
+footer a.github { background: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"%3E%3Cg fill="none"%3E%3Cpath fill-rule="evenodd" clip-rule="evenodd" d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385c.6.105.825-.255.825-.57c0-.285-.015-1.23-.015-2.235c-3.015.555-3.795-.735-4.035-1.41c-.135-.345-.72-1.41-1.23-1.695c-.42-.225-1.02-.78-.015-.795c.945-.015 1.62.87 1.845 1.23c1.08 1.815 2.805 1.305 3.495.99c.105-.78.42-1.305.765-1.605c-2.67-.3-5.46-1.335-5.46-5.925c0-1.305.465-2.385 1.23-3.225c-.12-.3-.54-1.53.12-3.18c0 0 1.005-.315 3.3 1.23c.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23c.66 1.65.24 2.88.12 3.18c.765.84 1.23 1.905 1.23 3.225c0 4.605-2.805 5.625-5.475 5.925c.435.375.81 1.095.81 2.22c0 1.605-.015 2.895-.015 3.3c0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" fill="white"%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E'); }
+footer a.opensea { background: url('data:image/svg+xml,%3Csvg xmlns="http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg" width="40" height="40" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"%3E%3Cpath d="M12 0C5.374 0 0 5.374 0 12s5.374 12 12 12s12-5.374 12-12S18.629 0 12 0zM5.92 12.403l.051-.081l3.123-4.884a.107.107 0 0 1 .187.014c.52 1.169.972 2.623.76 3.528c-.088.372-.335.876-.614 1.342a2.405 2.405 0 0 1-.117.199a.106.106 0 0 1-.09.045H6.013a.106.106 0 0 1-.091-.163zm13.914 1.68a.109.109 0 0 1-.065.101c-.243.103-1.07.485-1.414.962c-.878 1.222-1.548 2.97-3.048 2.97H9.053a4.019 4.019 0 0 1-4.013-4.028v-.072c0-.058.048-.106.108-.106h3.485c.07 0 .12.063.115.132c-.026.226.017.459.125.67c.206.42.636.682 1.099.682h1.726v-1.347H9.99a.11.11 0 0 1-.089-.173l.063-.09c.16-.231.391-.586.621-.992c.156-.274.308-.566.43-.86c.024-.052.043-.107.065-.16c.033-.094.067-.182.091-.269a4.57 4.57 0 0 0 .065-.223c.057-.25.081-.514.081-.787c0-.108-.004-.221-.014-.327c-.005-.117-.02-.235-.034-.352a3.415 3.415 0 0 0-.048-.312a6.494 6.494 0 0 0-.098-.468l-.014-.06c-.03-.108-.056-.21-.09-.317a11.824 11.824 0 0 0-.328-.972a5.212 5.212 0 0 0-.142-.355c-.072-.178-.146-.339-.213-.49a3.564 3.564 0 0 1-.094-.197a4.658 4.658 0 0 0-.103-.213c-.024-.053-.053-.104-.072-.152l-.211-.388c-.029-.053.019-.118.077-.101l1.32.357h.01l.173.05l.192.054l.07.019v-.783c0-.379.302-.686.679-.686a.66.66 0 0 1 .477.202a.69.69 0 0 1 .2.484V6.65l.141.039c.01.005.022.01.031.017c.034.024.084.062.147.11c.05.038.103.086.165.137a10.351 10.351 0 0 1 .574.504c.214.199.454.432.684.691c.065.074.127.146.192.226c.062.079.132.156.19.232c.079.104.16.212.235.324c.033.053.074.108.105.161c.096.142.178.288.257.435c.034.067.067.141.096.213c.089.197.159.396.202.598a.65.65 0 0 1 .029.132v.01c.014.057.019.12.024.184a2.057 2.057 0 0 1-.106.874c-.031.084-.06.17-.098.254c-.075.17-.161.343-.264.502c-.034.06-.075.122-.113.182c-.043.063-.089.123-.127.18a3.89 3.89 0 0 1-.173.221c-.053.072-.106.144-.166.209c-.081.098-.16.19-.245.278c-.048.058-.1.118-.156.17c-.052.06-.108.113-.156.161c-.084.084-.15.147-.208.202l-.137.122a.102.102 0 0 1-.072.03h-1.051v1.346h1.322c.295 0 .576-.104.804-.298c.077-.067.415-.36.816-.802a.094.094 0 0 1 .05-.03l3.65-1.057a.108.108 0 0 1 .138.103z" fill="white"%2F%3E%3C%2Fsvg%3E'); }
+h1, h2, h3, h4, h5 {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    font-family: eightbit, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #3c352d;
+}
+h1 {
+    text-align: center;
+    font-size: 24px;
+    padding: 4px 5px 4px 5px;
+    text-transform: uppercase;
+}
+h2 {
+    margin-top: 80px;
+    background-color: #d8cba9;
+    color: white;
+    font-size: 20px;
+    padding: 4px 5px 4px 5px;
+}
+h3 {
+    font-size: 20px;
+}
+h4 {
+    font-size: 16px;
+}
+h5 {
+    font-size: 14px;
+}
+
+p {
+    font-family: Helvetica, sans-serif;
+    margin: 10px 0 20px 0;
+}
+
+#images {
+    text-align: center;
+}
+img#rat {
+    width: 64px;
+    position: relative;
+    top: 20px;
+}
+img#chef {
+    width: 152px;
+    position: relative;
+    top: 30px;
+}
+hr {
+    position: absolute;
+    height: 2px;
+    border-width: 0;
+    background-color: #e3d6b6;
+    bottom: 10px;
+    left: 40px;
+    right: 40px;
+}
+
+ul, ol {
+    margin-bottom: 20px;
+}
+li {
+  margin: 10px 0 10px 20px;
+  list-style-type: square;
+}
+
+
+table {
+    background-color: #e8dbb9;
+    margin-bottom: 20px;
+}
+table, th, td {
+    border: 1px solid black;
+}
+td, th {
+    padding: 5px;
+    vertical-align: top;
+}
+th {
+    background-color: #d8cba9;
+    font-weight: bold;
+}
+th.right, td.right {
+    text-align: right;
+}
+
+del {
+    text-decoration: line-through;
+}
+strong {
+    font-weight: bold;
+}
+em {
+    font-style: italic;
+}
+
+a {
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: bold;
+}
+a:hover {
+    text-decoration: none;
+}
+
+ul#tableofcontents ul {
+    margin-bottom: 0;
+}
+ul#tableofcontents li {
+    list-style: none;
+    margin: 5px 0 5px 0;
+}
+ul#tableofcontents li li {
+    list-style: none;
+    margin-left: 20px;
+}

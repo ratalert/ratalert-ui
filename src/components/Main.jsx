@@ -84,6 +84,7 @@ class Main extends React.Component {
     this.officeBreakpoint = 1160;
     this.ratHeight = 0;
     this.nfts = {};
+    this.oldNfts = {};
     this.kitchenSignFactor = 0.80;
     if (this.innerWidth < 769) {
       this.kitchenSignFactor = 0.7;
@@ -248,9 +249,9 @@ class Main extends React.Component {
       kitchenConfig = config[networkName].loggedIn;
 
       if (casualKitchenAmount === 0) {
-        kitchenConfig.casualKitchenClosed = true;
-        kitchenConfig.casualForSaleSign = true;
-        kitchenConfig.casualBuyButton = true;
+        //kitchenConfig.casualKitchenClosed = true;
+        //kitchenConfig.casualForSaleSign = true;
+        //kitchenConfig.casualBuyButton = true;
         //kitchenConfig.casualKitchenforSaleSign = true;
       } else {
         kitchenConfig.casualKitchenClosed = false;
@@ -258,9 +259,9 @@ class Main extends React.Component {
         kitchenConfig.casualBuyButton = false;
       }
       if (gourmetKitchenAmount === 0) {
-        kitchenConfig.gourmetKitchenClosed = true;
-        kitchenConfig.gourmetForSaleSign = true;
-        kitchenConfig.gourmetBuyButton = true;
+        //kitchenConfig.gourmetKitchenClosed = true;
+        //kitchenConfig.gourmetForSaleSign = true;
+        //kitchenConfig.gourmetBuyButton = true;
         // kitchenConfig.forSaleSign = true;
       } else {
         kitchenConfig.gourmetKitchenClosed = false;
@@ -368,8 +369,10 @@ class Main extends React.Component {
       if (!this.nfts[tokenId]) {
         return;
       }
-      const oldNft = this.nfts[parseInt(tokenId)];
-      console.log('TOKEN', tokenId);
+      const oldNft = this.oldNfts[tokenId];
+      if (oldNft) {
+        console.log('Old NFT found');
+      }
       //console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
 //          eventName = 'burnout';
       const claimInfo = {
@@ -411,6 +414,7 @@ class Main extends React.Component {
           claimInfo['oldInsanityName'] = oldNft.insanityName;
         }
         claimStats.push(claimInfo);
+        console.log(claimInfo);
         window.scrollTo(0, 0);
         this.setState({ claimStats, isClaimModalVisible: true });
       }
@@ -422,7 +426,10 @@ class Main extends React.Component {
       if (!this.nfts[tokenId]) {
         return;
       }
-      const oldNft = this.nfts[parseInt(tokenId)];
+      const oldNft = this.oldNfts[tokenId];
+      if (oldNft) {
+        console.log('Old NFT found');
+      }
        // console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
 //          eventName = 'burnout';
       const claimInfo = {
@@ -464,6 +471,7 @@ class Main extends React.Component {
           claimInfo['oldFatnessName'] = oldNft.fatnessName;
         }
         claimStats.push(claimInfo);
+        console.log(claimInfo);
         window.scrollTo(0, 0);
         this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
       }
@@ -1457,7 +1465,7 @@ class Main extends React.Component {
         <Col style={{marginRight: '0px'}} xs={5} span={2}>
           <img alt={c.type === 'Chef' ? 'Insanity' : 'Fatness'} src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
         <Col xs={16} span={22}
-          style={ key && type === 'modal' && key.length > 12 ? {fontSize: 12} : null }
+          style={ key && type === 'modal' && key.length > 12 ? {fontSize: 10} : null }
           className={c.type === 'Chef' ? 'nftDetailInsanity' : 'nftDetailBodymass'}>
           {c.type === 'Chef' ? hash.Insanity : hash.Fatness }
         </Col>
@@ -1491,7 +1499,7 @@ class Main extends React.Component {
           <img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
         <Col xs={16} span={22}
         className={c.type === 'Chef' ? 'nftDetailSkill' : 'nftDetailIntelligence'}
-        style={ key && type === 'modal' && key.length > 12 ? {fontSize: 12} : null }
+        style={ key && type === 'modal' && key.length > 12 ? {fontSize: 10} : null }
         >
           {c.type === 'Chef' ? hash.Skill : hash.Intelligence }
         </Col>
@@ -2035,7 +2043,9 @@ class Main extends React.Component {
     if (error) {
       return false;
     }
-
+    nft.map((s) => {
+      this.oldNfts[s] = this.nfts[s];
+    });
     const contract = this.getRestaurantContract(type);
     try {
       console.log('SELECTED:', nft);
@@ -2063,6 +2073,9 @@ class Main extends React.Component {
     try {
       console.log(selectedToUnStakeNfts);
       this.setState({ selectedNfts: {}, currentStatsNFT: 0 });
+      selectedToUnStakeNfts.map((s) => {
+        this.oldNfts[s] = this.nfts[s];
+      });
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
@@ -2187,6 +2200,9 @@ class Main extends React.Component {
     try {
       this.setState({ selectedNfts: {} });
       console.log('SELECTED:', selectedToUnStakeNfts);
+      selectedToUnStakeNfts.map((s) => {
+        this.oldNfts[s] = this.nfts[s];
+      });
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, true, {
           from: this.props.address,

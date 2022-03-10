@@ -131,7 +131,7 @@ class RatMenu extends React.Component {
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
     Contract.on("Transfer", async(origin, target, tokenId) => {
-      if (target === this.props.address) {
+      if (origin === '0x0000000000000000000000000000000000000000' && target === this.props.address) {
         const URI = await Contract.tokenURI(parseInt(tokenId));
         if (URI.indexOf("data:application/json;base64,") === 0) {
           const base64 = URI.split(",");

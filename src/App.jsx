@@ -371,8 +371,10 @@ function App(props) {
               address={address}
               provider={localProvider}
               active={3}
-              chainId={chainId}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
+              chainId={chainId}
               dayTimeSwitch={dayTimeSwitch}
               content={<Whitepaper
                 tx={tx}
@@ -381,6 +383,7 @@ function App(props) {
                 address={address}
                 provider={localProvider}
                 dayTime={dayTime}
+                setInjectedProvider={setInjectedProvider}
                 />}
               />
           </Route>
