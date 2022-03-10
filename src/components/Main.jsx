@@ -364,7 +364,12 @@ class Main extends React.Component {
 
   async chefClaimed(currency, tokenId, earned, unstaked, skill, insanity, eventName, foodTokensPerRat) {
       const { networkName, chainId } = this.getNetworkName();
+      tokenId = parseInt(tokenId);
+      if (!this.nfts[tokenId]) {
+        return;
+      }
       const oldNft = this.nfts[parseInt(tokenId)];
+      console.log('TOKEN', tokenId);
       //console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
 //          eventName = 'burnout';
       const claimInfo = {
@@ -413,6 +418,10 @@ class Main extends React.Component {
 
   async ratClaimed(currency, tokenId, earned, unstaked, intelligence, fatness, eventName) {
       const { networkName, chainId } = this.getNetworkName();
+      tokenId = parseInt(tokenId);
+      if (!this.nfts[tokenId]) {
+        return;
+      }
       const oldNft = this.nfts[parseInt(tokenId)];
        // console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
 //          eventName = 'burnout';
@@ -455,7 +464,6 @@ class Main extends React.Component {
           claimInfo['oldFatnessName'] = oldNft.fatnessName;
         }
         claimStats.push(claimInfo);
-        console.log(claimInfo);
         window.scrollTo(0, 0);
         this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
       }
@@ -470,7 +478,7 @@ class Main extends React.Component {
         contracts[chainId][networkName].contracts.Mint.abi, this.props.provider);
 
       mintContract.on("RandomNumberRequested", async(requestId, sender) => {
-        console.log(`Randon number requested: ${requestId}`);
+        console.log(`Random number requested: ${requestId}`);
       });
 
       const McStakeContract = new ethers.Contract(config[networkName].McStake,
@@ -681,8 +689,7 @@ class Main extends React.Component {
       totalChefsStaked,
       allStakedChefs,
     });
-
-    if (result1.characters.length > 0 && result2.characters.length > 0) {
+    if (result1.characters && result2.characters ) {
       const nfts = this.state.myNfts;
       nfts.chefWaitingRoom = this.parseNFTStruct(0, 'Chef', null, result2, result1);
       nfts.ratWaitingRoom = this.parseNFTStruct(0, 'Rat', null, result2, result1);
@@ -1920,13 +1927,15 @@ class Main extends React.Component {
     try {
       const result = await this.props.tx(
         this.props.writeContracts.Character.setApprovalForAll(this.props.readContracts[contract].address, true, {
-          gasPrice: 1000000000,
           from: this.props.address,
-          gasLimit: 85000,
+          gasLimit: 250000,
         }),
       );
       renderNotification("info", `Approval successful`, "");
-      this.checkContractApproved();
+      setTimeout(() => {
+        this.checkContractApproved();
+      }, 2000);
+
     } catch (e) {
       renderNotification("error", "Error", e.message);
     }
@@ -2485,7 +2494,7 @@ class Main extends React.Component {
      )) {
       return (
         <div>
-          In order to use the game, you will need to authorize the contracts first. Please press each Authorize button.
+          In order to play the game, you will need to authorize the contracts first. Please press each Authorize button.
         </div>
       );
       return;
@@ -2495,12 +2504,12 @@ class Main extends React.Component {
         return (
           <span>
             The break room represents your wallet, your chefs hang out here.<br/><br/>
-            From here, you can stake your chefs in a kitchen or in the gym here by selecting one chef or clicking 'Stake all'.
+            From here, you can stake your chefs in a kitchen or in the gym here by selecting one NFT or clicking 'Stake all'.
           </span>
         )
       }
       return (
-        <span>From here, you can stake your chefs in a kitchen or in the gym here by selecting one chef or clicking 'Stake all'.</span>
+        <span>From here, you can stake your chefs in a kitchen or in the gym here by selecting one NFT or clicking 'Stake all'.</span>
       )
     }
   }
@@ -2841,7 +2850,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </div>
         <div className="street" style={{width:'100%'}}>
         </div>
-        <div className="darkBackground" style={{height: this.getRatHeight()+50, width: this.innerWidth+100}}>
+        <div className="darkBackground" style={{height: this.getRatHeight()+50}}>
         </div>
       </div>
     )
@@ -3003,7 +3012,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
       <div className="stakeHouse" style={this.getWidth('townhouse')}>
         <Card className="house office kitchenMargin" size="small">
-
           <Row >
             { this.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
@@ -3458,6 +3466,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
        highlightTolerance = true;
       }
     } else {
+      if (key.earned === 0) {
+        events.push({ nft: `${c.type} #${c.name}`, event: 'earned', amount: key.earned, title: 'No new tokens earned', currency: key.currency});
+      }
       if (key.earned > 0) {
         events.push({ nft: `${c.type} #${c.name}`, event: 'earned', amount: key.earned, title: 'Tokens earned', currency: key.currency});
       }
@@ -3622,7 +3633,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       </Row>
       <Row>
         <Col className="whiteContent" span={24}>
-            {e.nft} has earned <u>{e.amount.toFixed(2)}</u> ${e.currency}
+            { e.amount > 0 ?
+              <span>{e.nft} has earned <u>{e.amount.toFixed(2)}</u> ${e.currency}</span>
+              : <span>{e.nft} has earned <u>no new</u> ${e.currency} tokens.</span> }
         </Col>
       </Row>
       </div>
@@ -3927,7 +3940,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   }
 
   numberWithCommas(x) {
-    return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+//    return x.toString();
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
   renderStakeOMeterModal() {

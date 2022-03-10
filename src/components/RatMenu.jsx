@@ -18,6 +18,8 @@ import {
 const { Header, Footer, Sider, Content } = Layout;
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
+import { contracts } from '../contracts/contracts.js';
+import config from '../config.js';
 import { GraphQLClient, gql } from 'graphql-request';
 
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
@@ -108,53 +110,52 @@ class RatMenu extends React.Component {
     return (+dec).toString(16);
   }
 
-  async componentWillMount() {
-    return;
-    setTimeout(async () => {
-      const filter = {
-        address: this.props.readContracts && this.props.readContracts.Character && this.props.readContracts.Character.address,
-        topics: [
-          // the name of the event, parnetheses containing the data type of each event, no spaces
-          ethers.utils.id("Transfer(address,address,uint256)"),
-        ],
-      };
-      let format = ["address", "address", "uint256"];
 
-      this.props.provider.on(filter, async data => {
-        data.topics.shift();
+  getNetworkName() {
+    const chainId = this.props.chainId;
+    let networkName;
+    if (chainId === 1337) {
+      networkName = 'localhost';
+    } else if (chainId === 4) {
+      networkName = 'rinkeby';
+    }
+    else {
+      networkName = 'mainnet';
+    }
+    return { networkName, chainId };
+  }
 
-        let i = 0;
-        const decoded = [];
-        data.topics.map(v => {
-          const tmp = ethers.utils.defaultAbiCoder.decode([format[i]], v);
-          i += 1;
-          decoded.push(tmp);
-        });
+  async listenForMints(contract) {
+    const { networkName, chainId } = this.getNetworkName();
+    const Contract = new ethers.Contract(config[networkName].Character,
+      contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
-        console.log(decoded);
-        if (
-          decoded[1] &&
-          decoded[0] &&
-          decoded[1].toString() === this.props.address &&
-          decoded[0].toString() === "0x0000000000000000000000000000000000000000"
-        ) {
-          setTimeout(async () => {
-            const { name, image } = await this.getNFTObject(decoded[2]);
-            console.log(`NFT ${name} minted`);
-            if (image) {
-              renderNotification(
-                "info",
-                "NFT minted",
-                <div>
-                  <img style={{ paddingRight: "10px" }} width={50} src={image} />
-                  <b>{name}</b> has been minted
-                </div>,
-              );
-            }
-          }, 10000);
+    Contract.on("Transfer", async(origin, target, tokenId) => {
+      if (target === this.props.address) {
+        const URI = await Contract.tokenURI(parseInt(tokenId));
+        if (URI.indexOf("data:application/json;base64,") === 0) {
+          const base64 = URI.split(",");
+          const decoded = atob(base64[1]);
+          const json = JSON.parse(decoded);
+          const img = json.image;
+          renderNotification(
+            "info",
+            '',
+            <div>
+              <img style={{ paddingRight: "10px" }} width={50} src={img} />
+              <b>{json.name}</b> has been minted!
+            </div>,
+          );
         }
-      });
-    }, 7500);
+      }
+    });
+  }
+
+  async componentWillMount() {
+    setTimeout(() => {
+      this.listenForMints();
+    }, 5000);
+    return;
   }
 
   handleResize = e => {

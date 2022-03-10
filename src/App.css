@@ -232,7 +232,7 @@
 .darkBackground {
   width: 100%;
   position: absolute;
-  left: -100px;
+  left: 0px;
   background: #000000;
   z-index: -2;
 }

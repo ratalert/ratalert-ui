@@ -324,6 +324,7 @@ function App(props) {
             dayTime={dayTime}
             dayTimeSwitch={dayTimeSwitch}
             debug={DEBUG}
+            chainId={chainId}
             content={<Main
               tx={tx}
               contractConfig={contractConfig}
@@ -350,6 +351,7 @@ function App(props) {
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
+              chainId={chainId}
               dayTimeSwitch={dayTimeSwitch}
               content={<Leaderboard
                 tx={tx}
@@ -369,6 +371,7 @@ function App(props) {
               address={address}
               provider={localProvider}
               active={3}
+              chainId={chainId}
               dayTime={dayTime}
               dayTimeSwitch={dayTimeSwitch}
               content={<Whitepaper
