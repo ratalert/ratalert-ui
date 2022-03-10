@@ -53,14 +53,11 @@ if (!dayTime) {
   const hour = now.getHours();
   if (hour >= 7 && hour <= 9) {
     dayTime = 'morning';
-  }
-  if (hour >= 10 && hour <= 17) {
+  } else if (hour >= 10 && hour <= 17) {
     dayTime = 'day';
-  }
-  if (hour >= 18 && hour <= 20) {
+  } else if (hour >= 18 && hour <= 20) {
     dayTime = 'evening';
-  }
-  if (hour >= 21 && hour <= 6) {
+  } else {
     dayTime = 'night';
   }
 }
@@ -326,6 +323,7 @@ function App(props) {
             active={1}
             dayTime={dayTime}
             dayTimeSwitch={dayTimeSwitch}
+            debug={DEBUG}
             content={<Main
               tx={tx}
               contractConfig={contractConfig}
@@ -337,6 +335,7 @@ function App(props) {
               chainId={chainId}
               lastBlockTime={lastBlockTime}
               dayTime={dayTime}
+              debug={DEBUG}
             />}
             />
           </Route>

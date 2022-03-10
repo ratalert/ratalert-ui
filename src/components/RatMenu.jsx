@@ -92,10 +92,14 @@ class RatMenu extends React.Component {
     const result = await graphQLClient.request(query);
     if (result.characters) {
       const URI = result.characters.URI;
-      const base64 = URI.split(",");
-      const decoded = atob(base64[1]);
-      const json = JSON.parse(decoded);
-      return { image: json.image, name: json.name };
+      if (URI) {
+        const base64 = URI.split(",");
+        const decoded = atob(base64[1]);
+        const json = JSON.parse(decoded);
+        return { image: json.image, name: json.name };
+      } else {
+        return { image: "", name: "" };
+      }
     }
     return { image: "", name: "" };
   }
@@ -105,10 +109,10 @@ class RatMenu extends React.Component {
   }
 
   async componentWillMount() {
+    return;
     setTimeout(async () => {
-      console.log('Start mint hook');
       const filter = {
-        address: this.props.readContracts.Character.address,
+        address: this.props.readContracts && this.props.readContracts.Character && this.props.readContracts.Character.address,
         topics: [
           // the name of the event, parnetheses containing the data type of each event, no spaces
           ethers.utils.id("Transfer(address,address,uint256)"),
@@ -157,30 +161,7 @@ class RatMenu extends React.Component {
     this.setState({ windowHeight: window.innerHeight - 235 });
   };
 
-  async addToken() {
-    const tokenAddress = this.props.readContracts.FastFood.address;
-    const tokenSymbol = 'FFOOD';
-    const tokenDecimals = 18;
-    const tokenImage = 'http://placekitten.com/200/300';
 
-    try {
-      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
-      const wasAdded = await window.ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20', // Initially only supports ERC20, but eventually more!
-          options: {
-            address: tokenAddress, // The address that the token is at.
-            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
-            decimals: tokenDecimals, // The number of decimals in the token
-            image: tokenImage, // A string url of the token logo
-          },
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   renderIcons() {
     if (!this.state.collapsed) {
@@ -190,7 +171,7 @@ class RatMenu extends React.Component {
     }
     return (
       <div className={`${this.getNavStyle()} icons`}>
-      <a href="https://opensea.io/" target="_new">
+      <a>
         <img  width={30} src="/img/opensea.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />

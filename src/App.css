@@ -15,6 +15,21 @@
   padding-left: 5px;
 }
 
+.foodToken {
+  width: 20px;
+  height: 12px;
+  background-image: url("img/food-token.png");
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.foodTokenName {
+  margin: 7px 0 0;
+  font-family: Pixellari;
+  font-size: 10px;
+  color: #fff;
+}
+
 .levelUpTime {
   font-family: "Pixel";
   color: #d2b5a7;
@@ -907,11 +922,72 @@
     color: #FFFFFF;
   }
 
+  .greyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #a09595;
+  }
+
+
   .eventTitle {
     font-family: Pixellari;
     font-size: 34px;
     color: #ec6e6e;
   }
+
+  .kitchenTitle {
+    font-family: Pixellari;
+    font-size: 34px;
+    color: #ffffff;
+  }
+
+  .kitchenPrice {
+    font-family: Pixellari;
+    font-size: 25px;
+    color: #fee017;
+  }
+
+  .kitchenPriceRed {
+    font-family: Pixellari;
+    font-size: 25px;
+    color: #ec6e6e;
+  }
+
+
+  .kitchenCurrency {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #ffe000;
+    margin-top: 8px;
+  }
+
+  .kitchenCurrencyRed {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #ec6e6e;
+    margin-top: 8px;
+  }
+
+
+  .theStakeHouse {
+    background-image: url("img/thestakehouse.png");
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+  }
+
+  .leStake {
+    background-image: url("img/lestake.png");
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+  }
+
+
+  .kitchenCaret {
+    color: #FFF;
+  }
+
 
   .eventContent {
     font-family: Pixellari;
@@ -1135,6 +1211,18 @@
   .roof {
     margin-top: 10px !important;
     margin-bottom: -15px !important;
+  }
+
+  .whiteContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #FFFFFF;
+  }
+
+  .greyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #a09595;
   }
 
   .time {
@@ -1391,6 +1479,7 @@
 
 .nftDetailIdModal {
   width: 140px;
+  height: 25px;
   border-top: 3px solid #443a31;
   border-left: 3px solid #443a31;
   border-right: 3px solid #443a31;
@@ -1618,6 +1707,11 @@
   z-index: 2;
 }
 
+.buyKitchen {
+  position: absolute;
+  top: 200px;
+  margin-left: -20px;
+}
 .web3ButtonTransparent {
   height: 35px !important;
   padding-top: 6px;
@@ -1788,6 +1882,14 @@
   font-style: normal;
   line-height: normal;
   letter-spacing: normal;
+  user-select: none; /* supported by Chrome and Opera */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+}
+
+.kitchenModal {
   user-select: none; /* supported by Chrome and Opera */
   -webkit-user-select: none; /* Safari */
   -khtml-user-select: none; /* Konqueror HTML */
@@ -2085,4 +2187,105 @@
 
 .card__face--back {
   transform: rotateY(180deg);
+}
+
+.stakeOMeter {
+  width: 28px;
+  height: 295px;
+  margin: 5px 193px 5px 16px;
+  padding: 88px 5px 8px;
+  border-radius: 5px;
+  border: solid 3px #242322;
+  background-image: linear-gradient(to bottom, #544a43, #706258);
+  position: absolute;
+  z-index: 10;
+  top: 0px;
+}
+
+.stakeOMeterTitle {
+  width: 100px;
+  height: 12px;
+  transform: rotate(90deg);
+  font-family: Pixellari;
+  font-size: 12px;
+  color: #fe5f34;
+  z-index: 10;
+  position: absolute;
+  left: -37px;
+  top: 50px;
+}
+
+.stakeOMeterCellInactive {
+  width: 16px;
+  height: 8px;
+  margin: 0 0 1px;
+  border-radius: 3px;
+  background-color: #433b34;
+  position: relative;
+  left: -2px;
+}
+
+.stakeOMeterCellInactiveBig {
+  width: 16px;
+  height: 15px;
+  margin: 15px 6px 7px 0;
+  border-radius: 3px;
+  border: solid 2px #64584f;
+  background-color: #433b34;
+}
+
+.stakeOMeterCellActive {
+  width: 16px;
+  height: 8px;
+  margin: 0 0 1px;
+  border-radius: 3px;
+  background-color: #fb6845;
+  position: relative;
+  left: -2px;
+}
+
+.stakeOMeterCellActiveBig {
+  width: 16px;
+  height: 15px;
+  margin: 15px 6px 7px 0;
+  border-radius: 3px;
+  border: solid 2px #64584f;
+  background-color: #fb6845;
+}
+
+.stakeOMeterCellRentedBig {
+  width: 16px;
+  height: 15px;
+  margin: 15px 6px 7px 0;
+  border-radius: 3px;
+  border: solid 2px #64584f;
+  background-color: #fba045;
+}
+
+
+
+.stakeOMeterBricks {
+  width: 166px;
+  height: 166px;
+  margin: 9px 0 62px;
+  background-image: url("img/wall.png") !important;
+  border-radius: 100px;
+  margin-top: 65px;
+  border: solid 3px #706258;
+}
+
+.generation {
+  font-family: 'Pixellari';
+  color: #FFFFFF;
+  margin-left: 50px;
+  position: absolute;
+  top: 275px;
+  left: 50px;
+}
+
+.buttonShade {
+  padding-top: 10px;
+  width: 180px;
+  background-color: rgba(0, 0, 0, 0.45);
+  position: absolute;
 }
