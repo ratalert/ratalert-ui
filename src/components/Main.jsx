@@ -101,6 +101,7 @@ class Main extends React.Component {
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
     this.state = {
       graphError: false,
+      contractsPaused: false,
       nftCount: 0,
       myNfts: {
         chefWaitingRoom: [],
@@ -545,6 +546,23 @@ class Main extends React.Component {
     );
   }
 
+  renderContractsPaused() {
+    return (
+      <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+      <Alert
+        message="⚠️ Contracts paused"
+        description={
+          <div>
+            The contracts are currently paused. Staking and minting is currently disabled. Please check back later.
+          </div>
+        }
+        type="error"
+        closable={false}
+        />
+      </div>
+    );
+  }
+
   async fetchGraph() {
     let address = "";
     if (this.props.address === "undefined" || !this.props.address || this.props.address.length < 5) {
@@ -969,12 +987,18 @@ class Main extends React.Component {
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
         contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
+    const TheStakeHouseContract = new ethers.Contract(config[networkName].TheStakeHouse,
+            contracts[chainId][networkName].contracts.TheStakeHouse.abi, this.props.provider);
+    const LeStakeContract = new ethers.Contract(config[networkName].LeStake,
+            contracts[chainId][networkName].contracts.LeStake.abi, this.props.provider);
+    const GymContract = new ethers.Contract(config[networkName].Gym,
+                    contracts[chainId][networkName].contracts.Gym.abi, this.props.provider);
+
 
     const PaywallContract = new ethers.Contract(config[networkName].Paywall,
             contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
 
 
-    console.log('CONTRACT', PaywallContract.address);
     if (this.props.debug) console.log('DEBUG Init Contracts');
 
 
@@ -982,6 +1006,15 @@ class Main extends React.Component {
     let totalSupply = await CharacterContract.maxTokens();
     let paidTokens = await CharacterContract.getGen0Tokens();
     let mintPrice = await PaywallContract.mintPrice();
+    let characterPaused = await CharacterContract.paused();
+    let mcStakePaused = await McStakeContract.paused();
+    let theStakeHousePaused = await TheStakeHouseContract.paused();
+    let leStakePaused = await LeStakeContract.paused();
+    let gymPaused = await GymContract.paused();
+    if (mcStakePaused || theStakeHousePaused || leStakePaused || gymPaused || characterPaused) {
+      this.setState({ contractsPaused: true });
+    }
+
     if (!mintPrice) {
       mintPrice = 0;
     }
@@ -1073,6 +1106,8 @@ class Main extends React.Component {
       this.setState({ mintAmountLocked: false, maxMintAmount: 10});
     }
 
+
+
     if (this.props.debug) console.log('DEBUG All mcStake stats');
     const stats = {
       minted,
@@ -1098,6 +1133,11 @@ class Main extends React.Component {
       paywallEnabled,
       whitelistCount,
       freeMints,
+      characterPaused,
+      mcStakePaused,
+      theStakeHousePaused,
+      leStakePaused,
+      gymPaused,
     };
 
 
@@ -1229,6 +1269,19 @@ class Main extends React.Component {
         <Spin/>
       )
     }
+
+    if (this.state.stats.characterPaused) {
+      return (
+        <div className="officeHeadline">
+          <Row>
+            <Col span={16}>
+              Minting has been disabled
+            </Col>
+          </Row>
+        </div>
+      );
+    }
+
     let mintPrice = this.getMintPrice();
     if (this.state.stats.whitelistCount > 0) {
       mintPrice = Decimal(mintPrice).times(0.9).toString()
@@ -2485,6 +2538,28 @@ class Main extends React.Component {
       enabled=false;
     }
 
+    let paused = false;
+    if ((this.state.stats.theStakeHousePaused)) {
+      paused = true;
+    }
+    if ((this.state.stats.leStakePaused)) {
+      paused = true;
+    }
+    if ((this.state.stats.mcStakePaused)) {
+      paused = true;
+    }
+    if ((this.state.stats.gymPaused)) {
+      paused = true;
+    }
+
+    if (paused) {
+      return (
+        <div>
+          <div style={{color: '#fff', width: 180, paddingLeft: 20, border: '3px solid #ec6e6e', height: 35, paddingLeft: 30, paddingTop: 5, marginBottom: 10 }}>Staking is paused!</div>
+        </div>
+      )
+    }
+
     const menuStakeAll = (
       <Menu onClick={this.stakeAll.bind(this, type)}>
         <Menu.Item key="McStake">to McStake</Menu.Item>
@@ -3150,6 +3225,28 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     } else if (type === 'McStake') {
       marginTop = 205;
     }
+    let paused = false;
+    if ((type === 'TheStakeHouse') && (this.state.stats.theStakeHousePaused)) {
+      paused = true;
+    }
+    if ((type === 'LeStake') && (this.state.stats.leStakePaused)) {
+      paused = true;
+    }
+    if ((type === 'McStake') && (this.state.stats.mcStakePaused)) {
+      paused = true;
+    }
+    if ((type === 'Gym') && (this.state.stats.gymPaused)) {
+      paused = true;
+    }
+
+    if (paused) {
+      return (
+        <div style={{marginTop, height}} className={type !== 'Gym' ? 'buttonShade' : null}>
+          <div style={{color: '#fff', paddingLeft: 20, border: '3px solid #ec6e6e', height: 35, marginTop: 50, paddingLeft: 30, paddingTop: 5 }}>Staking is paused!</div>
+        </div>
+      )
+    }
+
     return (
       <div style={{marginTop, height}} className={type !== 'Gym' ? 'buttonShade' : null}>
         { type === 'TheStakeHouse' || type === 'LeStake' ?
@@ -4025,6 +4122,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - skyAttr.height - offset}}>
             </div>
             { this.state.graphError ? this.renderGraphError() : null }
+            { this.state.contractsPaused ? this.renderContractsPaused() : null }
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
               { this.renderNfts() }
