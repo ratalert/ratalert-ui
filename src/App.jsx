@@ -11,7 +11,12 @@ import {
   useContractReader,
   useGasPrice,
   useOnBlock,
-  useUserProviderAndSigner,
+  u
+  seContractReader,
+  useGasPrice,
+  useOnBlock,
+  u
+  seUserProviderAndSigner,
 } from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 
@@ -35,7 +40,12 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
 } else if (process.env.REACT_APP_ETH_ENV === 'rinkeby') {
   targetNetwork = NETWORKS.rinkeby;
   chainId = 4;
-} else {
+} 
+else if (process.env.REACT_APP_ETH_ENV === 'mumbai') {
+ targetNetwork = NETWORKS.mumbai;
+ chainId = 80001;
+}
+else {
   targetNetwork = NETWORKS.localhost;
   chainId = 1337;
 }

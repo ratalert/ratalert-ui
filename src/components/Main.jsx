@@ -101,6 +101,7 @@ class Main extends React.Component {
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
     this.state = {
       graphError: false,
+      nftCount: 0,
       myNfts: {
         chefWaitingRoom: [],
         ratWaitingRoom: [],
@@ -145,6 +146,8 @@ class Main extends React.Component {
       totalRatsStaked: 0,
       totalCooksStaked: 0,
       mintAmount: 1,
+      mintAmountLocked: false,
+      maxMintAmount: 10,
       loading: true,
       nftDetailsActive: {},
       isApprovedForAll: {
@@ -176,6 +179,7 @@ class Main extends React.Component {
         ratTax: 0,
         maxSupply: 0,
         mintPrice: 0,
+        paywallEnabled: null,
       },
     };
     this.nftProfit = 0;
@@ -213,7 +217,6 @@ class Main extends React.Component {
     if (this.props.debug) console.log('DEBUG fetch kitchen start');
     const KitchenShopContract = new ethers.Contract(config[networkName].KitchenShop,
             contracts[chainId][networkName].contracts.KitchenShop.abi, this.props.provider);
-
     let casualKitchenAmount = 0;
     let gourmetKitchenAmount = 0;
     let casualKitchensMinted = 0;
@@ -292,6 +295,7 @@ class Main extends React.Component {
 
       setTimeout(() => {
         this.getBalances();
+        this.getChainStats();
         this.checkContractApproved();
       }, 500);
 
@@ -305,11 +309,14 @@ class Main extends React.Component {
 
   }
   onChangeAmount(mintAmount) {
-    if (mintAmount >= 1 && mintAmount <= 10) {
+    if (this.state.mintAmountLocked) {
+      return false;
+    }
+    if (mintAmount >= 1 && mintAmount <= this.state.maxMintAmount) {
       this.setState({ mintAmount });
     }
     if (mintAmount > 10) {
-      this.setState({ mintAmount: 10 });
+      this.setState({ mintAmount: this.state.maxMintAmount });
     }
     if (mintAmount < 1) {
       this.setState({ mintAmount: 1 });
@@ -482,12 +489,22 @@ class Main extends React.Component {
     const { networkName, chainId } = this.getNetworkName();
 
 
-    const mintContract = new ethers.Contract(config[networkName].Mint,
+      const mintContract = new ethers.Contract(config[networkName].Mint,
         contracts[chainId][networkName].contracts.Mint.abi, this.props.provider);
 
+      const claimContract = new ethers.Contract(config[networkName].Claim,
+            contracts[chainId][networkName].contracts.Claim.abi, this.props.provider);
+
+
       mintContract.on("RandomNumberRequested", async(requestId, sender) => {
-        console.log(`Random number requested: ${requestId}`);
+        console.log(`Mint Random number requested: ${requestId}`);
       });
+
+      claimContract.on("RandomNumberRequested", async(requestId, sender) => {
+        console.log(`Claim Random number requested: ${requestId}`);
+      });
+
+
 
       const McStakeContract = new ethers.Contract(config[networkName].McStake,
         contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
@@ -699,13 +716,20 @@ class Main extends React.Component {
     });
     if (result1.characters && result2.characters ) {
       const nfts = this.state.myNfts;
+      let nftCount = 0;
       nfts.chefWaitingRoom = this.parseNFTStruct(0, 'Chef', null, result2, result1);
+      nftCount += nfts.chefWaitingRoom.length;
       nfts.ratWaitingRoom = this.parseNFTStruct(0, 'Rat', null, result2, result1);
+      nftCount += nfts.ratWaitingRoom.length;
       nfts.Gym = this.parseNFTStruct(1, null, 'Gym', result2, result1);
+      nftCount += nfts.Gym.length;
       nfts.McStake = this.parseNFTStruct(1, null, 'McStake', result2, result1);
+      nftCount += nfts.McStake.length;
       nfts.TheStakeHouse = this.parseNFTStruct(1, null, 'TheStakeHouse', result2, result1);
+      nftCount += nfts.TheStakeHouse.length;
       nfts.LeStake = this.parseNFTStruct(1, null, 'LeStake', result2, result1);
-      this.setState({ myNfts: nfts });
+      nftCount += nfts.LeStake.length;
+      this.setState({ myNfts: nfts, nftCount });
     }
     /*
     setTimeout(() => {
@@ -799,7 +823,7 @@ class Main extends React.Component {
   }
 
   async componentDidMount() {
-    this.getChainStats();
+
     window.addEventListener("dayTime", (e) => {
       this.setState({dayTime: e.detail.dayTime})
     });
@@ -851,7 +875,7 @@ class Main extends React.Component {
       if (this.state.stats && this.state.stats.mintPrice) {
         mintPrice = parseFloat(this.state.stats.mintPrice);
       }
-      const sum = amount * mintPrice;
+      let sum = Decimal(amount).times(mintPrice);
       let gasLimit;
       if (amount === 1) {
         gasLimit = 350000;
@@ -859,16 +883,28 @@ class Main extends React.Component {
         gasLimit = amount * 350000;
       }
 
+      let value = ethers.utils.parseEther(sum.toString());
+      if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount > 0)) {
+        value = 0;
+      } else if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount === 0)) {
+        value = 0;
+      } else if ((this.state.stats.freeMints === 0) && (this.state.stats.whitelistCount > 0)) {
+        sum = Decimal(sum).times(0.9).toString()
+        value = ethers.utils.parseEther(sum);
+      }
 
       const result = await this.props.tx(
         this.props.writeContracts.Character.mint(amount, stake, {
           from: this.props.address,
-          value: ethers.utils.parseEther(sum.toString()),
+          value,
           gasLimit,
         }),
       );
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
       renderNotification("info", `${amount} mint(s) requested. Your NFTs will be delivered within a minute or two.`, "");
+      setTimeout(() => {
+        this.getChainStats();
+      }, 1000);
     } catch (e) {
       console.error(e);
       const regExp = /\"message\":\"(.+?)\"/;
@@ -933,13 +969,19 @@ class Main extends React.Component {
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
         contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
+
+    const PaywallContract = new ethers.Contract(config[networkName].Paywall,
+            contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
+
+
+    console.log('CONTRACT', PaywallContract.address);
     if (this.props.debug) console.log('DEBUG Init Contracts');
 
 
     const minted = await CharacterContract.minted();
     let totalSupply = await CharacterContract.maxTokens();
-    let paidTokens = await CharacterContract.gen0Tokens();
-    let mintPrice = await CharacterContract.mintPrice();
+    let paidTokens = await CharacterContract.getGen0Tokens();
+    let mintPrice = await PaywallContract.mintPrice();
     if (!mintPrice) {
       mintPrice = 0;
     }
@@ -1008,6 +1050,29 @@ class Main extends React.Component {
     if (!tokensClaimed) {
       tokensClaimed = 0;
     }
+
+    let paywallEnabled = await PaywallContract.onlyWhitelist();
+    let whitelistCount = 0;
+    let freeMints = 0;
+    whitelistCount = await PaywallContract.whitelist(this.props.address);
+    console.log('WHITELIST', whitelistCount);
+    freeMints = await PaywallContract.freeMints(this.props.address);
+    console.log('MINTS', freeMints);
+
+    if ((freeMints > 0) && (whitelistCount > 0)) {
+      if (freeMints > 10) {
+        freeMints = 10;
+      }
+      this.setState({ mintAmountLocked: true, mintAmount: freeMints });
+    } else if ((freeMints > 0) && (whitelistCount === 0)) {
+      this.setState({ mintAmountLocked: true, mintAmount: freeMints });
+    }
+    else if ((whitelistCount > 0) && (freeMints === 0)) {
+      this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
+    } else {
+      this.setState({ mintAmountLocked: false, maxMintAmount: 10});
+    }
+
     if (this.props.debug) console.log('DEBUG All mcStake stats');
     const stats = {
       minted,
@@ -1030,6 +1095,9 @@ class Main extends React.Component {
       ratEfficiencyOffset: parseInt(ratEfficiencyOffset),
       TheStakeHouseMinEfficiency: 28,
       LeStakeMinEfficiency: 72,
+      paywallEnabled,
+      whitelistCount,
+      freeMints,
     };
 
 
@@ -1054,13 +1122,117 @@ class Main extends React.Component {
     )
   }
 
+  renderNoWLOrMintErrorMessage() {
+    if (this.state.stats.paywallEnabled === null) {
+      return;
+    }
+    return (
+      <Row  className="officeContent" style={{paddingTop: 20}}>
+      <Col span={24}>
+      { this.state.nftCount === 0 ?
+        <div style={{color: '#ec6e6e'}}>Minting is not possible, you are not signed up for the Betatest.</div>
+        :
+        <div>You have minted the maximum NFTs allowed</div>
+      }
+      </Col>
+      </Row>
+    )
+  }
+
+  renderFreeMints(amount) {
+    return (
+        <Row  className="officeContent">
+          <Col className="officeLine" xs={11} md={12}>
+            3. Redeem <span style={{color: '#619cff'}}>{amount} free mint(s)</span>
+          </Col>
+          <Col span={3} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
+              Mint
+            </Button>
+          </Col>
+          <Col span={6} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
+              Mint & Stake
+            </Button>
+          </Col>
+        </Row>
+    )
+  }
+
+  renderWhitelist(amount) {
+    return (
+        <Row  className="officeContent">
+          <Col className="officeLine" xs={11} md={12}>
+            3. Mint <span style={{color: '#619cff'}}>whitelisted</span> NFTs with &nbsp;
+
+            <span  style={{color: '#619cff'}}>5% extra boost
+
+            <Popover mouseEnterDelay={0.25} content={'Whitelisted NFTs gain skill 5% faster than non-whitelisted NFTs, making them 5% better in the game. Use them wisely!'}>
+            <div className="info" style={{position: 'absolute', left: 130, top: 5}}>
+              <img style={{marginTop: -7, marginLeft: -2}} src="/img/i.png"/>
+            </div>
+            </Popover>
+</span> (max {amount})
+          </Col>
+          <Col span={3} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
+              Mint
+            </Button>
+          </Col>
+          <Col span={6} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
+              Mint & Stake
+            </Button>
+          </Col>
+        </Row>
+    )
+  }
+
+  renderMintButtons() {
+    if (this.state.stats.paywallEnabled === null) {
+      return;
+    }
+
+    if (this.state.stats.paywallEnabled  && this.state.stats.freeMints === 0 && this.state.stats.whitelistCount === 0) {
+      return this.renderNoWLOrMintErrorMessage();
+    }
+
+    if (this.state.stats.freeMints > 0 && this.state.stats.whitelistCount === 0) {
+      return this.renderFreeMints(this.state.stats.freeMints);
+    }
+    if (this.state.stats.freeMints === 0 && this.state.stats.whitelistCount > 0) {
+      return this.renderWhitelist(this.state.stats.whitelistCount);
+    }
+
+    return (
+        <Row  className="officeContent">
+          <Col className="officeLine" xs={11} md={12}>
+            3. Start minting
+          </Col>
+          <Col span={3} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
+              Mint
+            </Button>
+          </Col>
+          <Col span={6} style={{paddingTop: 5}}>
+            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
+              Mint & Stake
+            </Button>
+          </Col>
+        </Row>
+    )
+  }
+
   renderMintContent() {
     if (!this.state.dataLoaded) {
       return (
         <Spin/>
       )
     }
-    const mintPrice = this.getMintPrice();
+    let mintPrice = this.getMintPrice();
+    if (this.state.stats.whitelistCount > 0) {
+      mintPrice = Decimal(mintPrice).times(0.9).toString()
+    }
     return (
       <div className="officeHeadline">
         <Row>
@@ -1084,21 +1256,7 @@ class Main extends React.Component {
           </Radio.Group>
           </Col>
         </Row>
-        <Row  className="officeContent">
-          <Col className="officeLine" xs={11} md={12}>
-            3. Start minting
-          </Col>
-          <Col span={3} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
-              Mint
-            </Button>
-          </Col>
-          <Col span={6} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
-              Mint & Stake
-            </Button>
-          </Col>
-        </Row>
+          { this.renderMintButtons() }
         <Row  className="officeContent">
           <Col className="officeLine" span={3} style={{ textAlign: "left" }}>
             Gen {this.state.stats.minted > this.state.stats.paidTokens ? 1 : 0}
@@ -2069,9 +2227,13 @@ class Main extends React.Component {
   }
 
   async claimFunds(selectedToUnStakeNfts, type) {
+    const error = this.prepareUnstakeErrors(selectedToUnStakeNfts, 'claim profits');
+    if (error) {
+      return false;
+    }
     const contract = this.getRestaurantContract(type);
     try {
-      console.log(selectedToUnStakeNfts);
+      console.log(type, selectedToUnStakeNfts);
       this.setState({ selectedNfts: {}, currentStatsNFT: 0 });
       selectedToUnStakeNfts.map((s) => {
         this.oldNfts[s] = this.nfts[s];
@@ -2079,7 +2241,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
-          gasLimit: parseInt(selectedToUnStakeNfts.length * 450000),
+          gasLimit: parseInt(selectedToUnStakeNfts.length * 850000),
         }),
       );
       renderNotification("info", `Your NFTs have been leveled up & Funds from your NFTs have been claimed.`, "");
@@ -2164,7 +2326,7 @@ class Main extends React.Component {
     }
   }
 
-  prepareUnstakeErrors(selectedToUnStakeNfts) {
+  prepareUnstakeErrors(selectedToUnStakeNfts, wording = `unstake`) {
     let errors = [];
     let error = false;
     selectedToUnStakeNfts.map((m) => {
@@ -2178,7 +2340,7 @@ class Main extends React.Component {
       if (stakedFor <= this.state.stats.minimumToExit) {
         const diff = this.secondsToHms(this.state.stats.minimumToExit - stakedFor, true);
         errors.push({
-          text: `${nft.description} needs to to be staked for another ${diff} before you can unstake.`,
+          text: `${nft.description} needs to to be staked for another ${diff} before you can ${wording}.`,
           id: nft.name,
         });
       }

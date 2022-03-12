@@ -137,7 +137,8 @@ hr {
 ul, ol {
     margin-bottom: 20px;
 }
-li {
+
+.whitepaper-ul li {
   margin: 10px 0 10px 20px;
   list-style-type: square;
 }

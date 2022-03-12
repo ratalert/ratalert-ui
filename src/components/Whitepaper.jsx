@@ -121,7 +121,7 @@ class Whitepaper extends React.Component {
                           <li><a href="#mechanics">The Mechanics</a></li>
                           <li>
                               <a href="#venues">The Venues</a>
-                              <ul>
+                              <ul className="whitepaper-ul">
                                   <li><a href="#mcstake">FastFood Kitchen McStake©</a></li>
                                   <li><a href="#thestakehouse">CasualFood Kitchen TheStakeHouse©</a></li>
                                   <li><a href="#lestake">GourmetFood Kitchen LeStake©</a></li>
@@ -130,7 +130,7 @@ class Whitepaper extends React.Component {
                           </li>
                           <li>
                               <a href="#tokens">The Tokens</a>
-                              <ul>
+                              <ul className="whitepaper-ul">
                                   <li><a href="#ffood">FastFood ($FFOOD)</a></li>
                                   <li><a href="#cfood">CasualFood ($CFOOD)</a></li>
                                   <li><a href="#gfood">GourmetFood ($GFOOD)</a></li>
@@ -138,7 +138,7 @@ class Whitepaper extends React.Component {
                           </li>
                           <li>
                               <a href="#cast">The Cast</a>
-                              <ul>
+                              <ul className="whitepaper-ul">
                                   <li><a href="#chefs">Chefs</a></li>
                                   <li><a href="#rats">Rats</a></li>
                                   <li><a href="#cats">Cats</a></li>
@@ -170,7 +170,7 @@ class Whitepaper extends React.Component {
 
                       <h2 id="mechanics">The Mechanics</h2>
 
-                      <ul>
+                      <ul className="whitepaper-ul">
                           <li>Play to earn different ERC20 tokens by staking your ERC721 characters in one of three available <del>kitchens</del> contracts</li>
                           <li>For the first time, you can “train” and “recover” your ERC721 characters through clever staking in different contracts to make them extra valuable</li>
                           <li>The rules of the game are entirely on-chain</li>
@@ -205,14 +205,14 @@ class Whitepaper extends React.Component {
                               <td rowspan="3">Payout (claim)</td>
                               <td>
                                   Achievements:
-                                  <ul>
+                                  <ul className="whitepaper-ul">
                                       <li>2% skill per day</li>
                                       <li>4% insanity per day</li>
                                   </ul>
                               </td>
                               <td>
                                   Achievements:
-                                  <ul>
+                                  <ul className="whitepaper-ul">
                                       <li>2% intelligence per day</li>
                                       <li>8% body mass per day</li>
                                   </ul>
@@ -288,14 +288,14 @@ class Whitepaper extends React.Component {
                               <td rowspan="3">Payout (claim)</td>
                               <td>
                                   Achievements:
-                                  <ul>
+                                  <ul className="whitepaper-ul">
                                       <li>4% skill per day</li>
                                       <li>6% insanity per day</li>
                                   </ul>
                               </td>
                               <td>
                                   Achievements:
-                                  <ul>
+                                  <ul className="whitepaper-ul">
                                       <li>4% intelligence per day</li>
                                       <li>6% body mass per day</li>
                                   </ul>
@@ -373,7 +373,7 @@ class Whitepaper extends React.Component {
                               <td rowspan="3">Payout (claim)</td>
                               <td>
                                   Achievements:
-                                  <ul>
+                                  <ul className="whitepaper-ul">
                                       <li>6% skill per day</li>
                                       <li>
                                           8% insanity per day
@@ -383,7 +383,7 @@ class Whitepaper extends React.Component {
                               </td>
                               <td>
                                   Achievements:
-                                  <ul>
+                                  <ul className="whitepaper-ul">
                                       <li>6% intelligence per day</li>
                                       <li>
                                           4% body mass per day
@@ -607,7 +607,7 @@ class Whitepaper extends React.Component {
                       <h3 id="chefs">Chefs</h3>
 
                       <p>Chefs are the main character in the game and come with 5 different trait types:</p>
-                      <ul>
+                      <ul className="whitepaper-ul">
                           <li>Eyes: includes sunglasses or laser eyes</li>
 
                           <li>Hat: includes various hats, like the famous red cap from <em>McStake©</em></li>
@@ -917,7 +917,7 @@ class Whitepaper extends React.Component {
                       <h3 id="rats">Rats</h3>
 
                       <p>Rats are the villain characters in the game and can come with 5 different trait types:</p>
-                      <ul>
+                      <ul className="whitepaper-ul">
                           <li>Tail: includes tail decorations or injured tails</li>
                           <li>Eyes: includes various sunglasses or laser eyes</li>
                           <li>Piercings: includes various head piercings, like nose and ear piercings</li>
@@ -1227,7 +1227,7 @@ class Whitepaper extends React.Component {
                           not matter in this case).
                       </p>
                       <p>The cat is designed to be the risk reward when playing bold by staking:</p>
-                      <ul>
+                      <ul className="whitepaper-ul">
                           <li><strong>insane <a href="#chefs">chefs</a></strong> that can randomly suffer from burnout</li>
                           <li><strong>obese <a href="#rats">rats</a></strong> that can be randomly killed by a cat</li>
                       </ul>

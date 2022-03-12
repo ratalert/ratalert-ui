@@ -1,0 +1,26 @@
+const fs = require('fs');
+const network = 'localhost';
+(async () => {
+  const contracts = ['Character', 'McStake', 'TheStakeHouse', 'LeStake',
+  'Gym', 'Mint', 'Claim', 'FastFood', 'CasualFood', 'GourmetFood', 'KitchenShop', 'PayWall'];
+
+  const copyAbi = (contract) => {
+    console.log(`Writing ABI for ${contract}`);
+    const path = `../ratalert-contracts/build/contracts/${contract}.json`;
+    if (fs.existsSync(path)) {
+      let file = fs.readFileSync(path).toString();
+      file = JSON.parse(file);
+      if (file.abi) {
+        const abi = file.abi;
+        const destination = `./src/contracts/abis/${network}/${contract}.json`;
+        fs.writeFileSync(destination, JSON.stringify(abi), "utf8");
+      }
+    } else {
+      console.log(`Could not read ${path}`);
+    }
+  }
+
+  contracts.map(async(c) => {
+    await copyAbi(c);
+  })
+})();
