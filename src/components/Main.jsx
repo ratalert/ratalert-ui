@@ -98,6 +98,7 @@ class Main extends React.Component {
     } else {
       kitchenConfig = config[networkName].loggedOut;
     }
+    console.log(`Network name: ${networkName}, kitchenConfig: ${kitchenConfig}, chainId ${chainId}`);
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
     this.state = {
       graphError: false,
@@ -160,7 +161,7 @@ class Main extends React.Component {
       noAddressLoaded: true,
       dataLoaded: false,
       pairs: {},
-      currency: 'ETH',
+      currency: 'MATIC',
       officeView: 'mint',
       fFoodBalance: 0,
       cFoodBalance: 0,
@@ -364,6 +365,8 @@ class Main extends React.Component {
       networkName = 'localhost';
     } else if (chainId === 4) {
       networkName = 'rinkeby';
+    } else if (chainId === 80001) {
+      networkName = "mumbai";
     }
     else {
       networkName = 'mainnet';
@@ -906,10 +909,13 @@ class Main extends React.Component {
         value = 0;
       } else if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount === 0)) {
         value = 0;
+      } else if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount > 0)) {
+        value = 0;
       } else if ((this.state.stats.freeMints === 0) && (this.state.stats.whitelistCount > 0)) {
         sum = Decimal(sum).times(0.9).toString()
         value = ethers.utils.parseEther(sum);
       }
+      console.log('Mint value:', value);
 
       const result = await this.props.tx(
         this.props.writeContracts.Character.mint(amount, stake, {
@@ -1240,6 +1246,9 @@ class Main extends React.Component {
     if (this.state.stats.freeMints > 0 && this.state.stats.whitelistCount === 0) {
       return this.renderFreeMints(this.state.stats.freeMints);
     }
+    if (this.state.stats.freeMints > 0 && this.state.stats.whitelistCount > 0) {
+      return this.renderFreeMints(this.state.stats.freeMints);
+    }
     if (this.state.stats.freeMints === 0 && this.state.stats.whitelistCount > 0) {
       return this.renderWhitelist(this.state.stats.whitelistCount);
     }
@@ -1264,7 +1273,7 @@ class Main extends React.Component {
   }
 
   renderMintContent() {
-    if (!this.state.dataLoaded) {
+    if (!this.state.dataLoaded || this.state.stats.paywallEnabled === null) {
       return (
         <Spin/>
       )
@@ -1283,7 +1292,10 @@ class Main extends React.Component {
     }
 
     let mintPrice = this.getMintPrice();
-    if (this.state.stats.whitelistCount > 0) {
+    if (this.state.stats.freeMints > 0) {
+      mintPrice = 0;
+    } else if (this.state.stats.whitelistCount > 0) {
+      console.log(`MINT PRICE ${mintPrice} ${this.state.stats.freeMints} ${this.state.stats.whitelistCount}`);
       mintPrice = Decimal(mintPrice).times(0.9).toString()
     }
     return (
@@ -1304,8 +1316,8 @@ class Main extends React.Component {
           </Col>
           <Col span={12} style={{marginTop: -5}}>
           <Radio.Group onChange={this.setCurrency.bind(this)} value={this.state.currency} buttonStyle="solid">
-            <Radio.Button value="wETH">$wETH</Radio.Button>
-            <Radio.Button disabled={this.state.pairs['WOOL/WETH'] > 0 ? false : true} value="MATIC">$MATIC</Radio.Button>
+            <Radio.Button value="matic">$MATIC</Radio.Button>
+            <Radio.Button disabled={true} value="wETH">$wETH</Radio.Button>
           </Radio.Group>
           </Col>
         </Row>
@@ -2845,13 +2857,16 @@ class Main extends React.Component {
   }
 
   renderNACard(title) {
-    if (this.state.loading) {
-      return (
-        <Card size="small" title={title}>
-          {!this.state.noAddressLoaded ? <Skeleton /> : <p>Connect your wallet with metamask!</p>}
-        </Card>
-      );
-    }
+    return (
+      <div>
+      {!this.state.noAddressLoaded ? <Skeleton /> :
+        <div>
+        <div className="officeHeadline">Welcome to RatAlert!</div>
+        </div>
+
+      }
+      </div>
+    );
   }
 
 
