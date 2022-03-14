@@ -207,6 +207,14 @@ class AdminDashboard extends React.Component {
 
   }
 
+  renderDuration(c) {
+    if (c.requestFulfilled) {
+      return c.requestFulfilled - c.requestCreated;
+    } else {
+      return 0;
+    }
+
+  }
   renderDate(text) {
     if (text) {
       const d = new Date(text * 1000);
@@ -283,6 +291,12 @@ class AdminDashboard extends React.Component {
         dataIndex: 'requestFulfilled',
         key: 'requestFulfilled',
         render: (text, c, i) => this.renderDate(text),
+      },
+      {
+        title: 'Duration',
+        dataIndex: 'id',
+        key: 'duration',
+        render: (text, c, i) => this.renderDuration(c),
       },
 
     ];
