@@ -1104,9 +1104,9 @@ class Main extends React.Component {
       if (freeMints > 10) {
         freeMints = 10;
       }
-      this.setState({ mintAmountLocked: true, mintAmount: freeMints });
+      this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: freeMints });
     } else if ((freeMints > 0) && (whitelistCount === 0)) {
-      this.setState({ mintAmountLocked: true, mintAmount: freeMints });
+      this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: freeMints });
     }
     else if ((whitelistCount > 0) && (freeMints === 0)) {
       this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });

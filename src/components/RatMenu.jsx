@@ -118,6 +118,8 @@ class RatMenu extends React.Component {
       networkName = 'localhost';
     } else if (chainId === 4) {
       networkName = 'rinkeby';
+    } else if (chainId === 80001) {
+      networkName = "mumbai";
     }
     else {
       networkName = 'mainnet';
@@ -127,6 +129,7 @@ class RatMenu extends React.Component {
 
   async listenForMints(contract) {
     const { networkName, chainId } = this.getNetworkName();
+    console.log(`LISTENFORMINTS network ${networkName} chain ID ${chainId}`);
     const Contract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
@@ -154,7 +157,7 @@ class RatMenu extends React.Component {
   async componentWillMount() {
     setTimeout(() => {
       this.listenForMints();
-    }, 5000);
+    }, 10000);
     return;
   }
 
@@ -233,7 +236,13 @@ class RatMenu extends React.Component {
       );
     }
     const { networkName, chainId } = this.getNetworkName();
-    const admin = config[networkName].admin;
+    let admin = {};
+    if (networkName) {
+      admin = config[networkName].admin;
+    } else {
+      console.log(`No network name, ${networkName}, chainId ${chainId}`);
+    }
+
 
     return (
 
@@ -242,7 +251,7 @@ class RatMenu extends React.Component {
           <Menu.Item key={1}><Link to="/">Game</Link></Menu.Item>
           <Menu.Item key={2}><Link to="/leaderboard">Leaderboard</Link></Menu.Item>
           <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
-          { admin.includes(this.props.address) ? <Menu.Item key={4}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+          { admin && admin.includes(this.props.address) ? <Menu.Item key={4}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
         </Menu>
       </div>
     );
