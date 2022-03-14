@@ -205,7 +205,9 @@ class Main extends React.Component {
       mintPrice = this.state.stats.mintPrice;
     }
     switch (this.state.currency) {
-      case 'ETH':
+      case 'MATIC':
+        return mintPrice;
+      case 'wETH':
         return mintPrice;
       case 'WOOL':
           return parseInt(this.state.pairs['WOOL/WETH'] * mintPrice);
@@ -1294,8 +1296,7 @@ class Main extends React.Component {
     let mintPrice = this.getMintPrice();
     if (this.state.stats.freeMints > 0) {
       mintPrice = 0;
-    } else if (this.state.stats.whitelistCount > 0) {
-      console.log(`MINT PRICE ${mintPrice} ${this.state.stats.freeMints} ${this.state.stats.whitelistCount}`);
+    } else if ((this.state.stats.whitelistCount > 0) && (this.state.stats.freeMints === 0) && mintPrice > 0) {
       mintPrice = Decimal(mintPrice).times(0.9).toString()
     }
     return (
@@ -1339,7 +1340,7 @@ class Main extends React.Component {
         <Row  className="officeContent">
           <Col className="officeLine" xs={11} md={12}/>
           <Col className="officeLine" xs={11} md={12} style={{ textAlign: "left" }}>
-            <b>Total price: { Decimal(mintPrice).times(this.state.mintAmount).toString() } { this.state.currency }</b>
+            <b>Total price: { mintPrice > 0 ? Decimal(mintPrice).times(this.state.mintAmount).toString() : 0 } { this.state.currency }</b>
           </Col>
         </Row>
       </div>
@@ -2230,7 +2231,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[contract].stakeMany(this.props.address, nfts, {
           from: this.props.address,
-          gasLimit: parseInt(nfts.length * 220000),
+          gasLimit: parseInt(nfts.length * 280000),
         }),
       );
       this.setState({ selectedNfts: {} });

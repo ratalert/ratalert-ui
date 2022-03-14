@@ -232,6 +232,8 @@ class RatMenu extends React.Component {
         </div>
       );
     }
+    const { networkName, chainId } = this.getNetworkName();
+    const admin = config[networkName].admin;
 
     return (
 
@@ -240,6 +242,7 @@ class RatMenu extends React.Component {
           <Menu.Item key={1}><Link to="/">Game</Link></Menu.Item>
           <Menu.Item key={2}><Link to="/leaderboard">Leaderboard</Link></Menu.Item>
           <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
+          { admin.includes(this.props.address) ? <Menu.Item key={4}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
         </Menu>
       </div>
     );

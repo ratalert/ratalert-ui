@@ -13,6 +13,7 @@ export default config = {
     LeStake: '0x6035CA63bA37442a2FeAC6Dc43fb87c5a8CC3969',
     Claim: '0x9C95F62797e11C68E5611d0D21eC49c3a89604bE',
     Paywall: '0x5B19Da4AA0aC50634687B1E3bB7aB5240c1B572F',
+    admin: ['0x2f7CdD90AB83405654eE10FC916a582a3cDe7E69'],
     loggedIn: {
       gourmetKitchenClosed: true,
       fastFoodKitchenClosed: false,
@@ -59,6 +60,7 @@ export default config = {
     LeStake: '0xe4795c714F9DBd2320990C0dEe124777dA4650A2',
     Claim: '0x5F1c524FE6793139a8578FF9dD5c85dE99c2C3D1',
     Paywall: '0xb446C75A2A78b890b11807cEF276745C5c321a2d',
+    admin: ['0x2f7CdD90AB83405654eE10FC916a582a3cDe7E69'],
     loggedIn: {
       gourmetKitchenClosed: true,
       fastFoodKitchenClosed: false,
