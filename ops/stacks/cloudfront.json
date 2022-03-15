@@ -11,7 +11,7 @@
     "Environment": {
       "Description": "The service's environment",
       "Type": "String",
-      "AllowedValues": [ "int", "test", "prod" ],
+      "AllowedValues": [ "test", "beta", "prod" ],
       "Default": "prod"
     },
     "ServiceDomain": {
@@ -83,8 +83,8 @@
 
   "Mappings": {
     "ServiceParameters": {
-      "int": {
-        "BucketSubDomain": "int.",
+      "test": {
+        "BucketSubDomain": "test.",
         "DefaultTTL": 3600,
         "MinTTL": 300,
         "MaxTTL": 86400,
@@ -92,8 +92,8 @@
         "MinTTLIndex": 30,
         "MaxTTLIndex": 600
       },
-      "test": {
-        "BucketSubDomain": "test.",
+      "beta": {
+        "BucketSubDomain": "beta.",
         "DefaultTTL": 3600,
         "MinTTL": 300,
         "MaxTTL": 86400,
