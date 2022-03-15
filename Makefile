@@ -69,6 +69,7 @@ deploy-cloudfront:
 	CLOUDFRONT_POLICY=$$(echo $$POLICY | base64 | tr '+=/' '-_~'); \
 	CLOUDFRONT_SIGNATURE=$$(echo $$POLICY | openssl sha1 -sign ops/stacks/cloudfront/pk-${CLOUDFRONT_KEYPAIR}.pem | base64 | tr '+=/' '-_~'); \
 	PROTECTED="true" && [[ "${ENV}" == "prod" || "${ENV}" == "beta" ]] && PROTECTED=false; \
+	ERROR_DOCUMENT="index.html" && [[ "${ENV}" == "prod" ]] && ERROR_DOCUMENT="error.html"; \
 	WEBSITE_HOSTING="false" && [[ "${ENV}" == "prod" || "${ENV}" == "beta" ]] && WEBSITE_HOSTING=true; \
 	URL=https://${FULL_DOMAIN_NAME}/index.html; \
 	aws cloudformation deploy \
@@ -86,6 +87,7 @@ deploy-cloudfront:
 			CloudFrontSignature="$$CLOUDFRONT_SIGNATURE" \
 			WebsiteHosting="$$WEBSITE_HOSTING" \
 			Protected="$$PROTECTED" \
+			ErrorDocument="$$ERROR_DOCUMENT" \
 		--capabilities CAPABILITY_IAM \
 		$(CFN_TAGS) service-name=${SERVICE_NAME}; \
 	echo "curl -v -H 'Cookie: CloudFront-Key-Pair-Id="${CLOUDFRONT_KEYPAIR}";CloudFront-Policy="$$CLOUDFRONT_POLICY";CloudFront-Signature="$$CLOUDFRONT_SIGNATURE";' $$URL"; \

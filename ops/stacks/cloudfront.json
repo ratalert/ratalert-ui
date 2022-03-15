@@ -78,6 +78,11 @@
       "Type": "String",
       "AllowedValues": [ "true", "false" ],
       "Default": "false"
+    },
+    "ErrorDocument": {
+      "Description": "The name of the error document for the website",
+      "Type": "String",
+      "Default": "error.html"
     }
   },
 
@@ -131,6 +136,7 @@
         "AccessControl": "Private",
         "WebsiteConfiguration": {
           "IndexDocument": "index.html",
+          "ErrorDocument": { "Ref": "ErrorDocument" },
           "RoutingRules": [
             {
               "RoutingRuleCondition": {
