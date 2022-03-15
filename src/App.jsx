@@ -339,6 +339,7 @@ function App(props) {
               contractConfig={contractConfig}
               readContracts={readContracts}
               writeContracts={writeContracts}
+              userSigner={userSigner}
               address={address}
               provider={localProvider}
               targetNetwork={targetNetwork}

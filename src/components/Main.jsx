@@ -120,6 +120,7 @@ class Main extends React.Component {
       selectedKitchen: 0,
       orientation: 0,
       isErrorModalVisible: false,
+      isApprovalModalVisible: false,
       errors: [],
       flipInProgress: false,
       dayTime: this.props.dayTime,
@@ -2231,6 +2232,7 @@ class Main extends React.Component {
       enabled = false;
     }
 
+    enabled = true;
     if (!enabled){
       return (
         <div></div>
@@ -2250,14 +2252,24 @@ class Main extends React.Component {
   }
 
   async stakeAll(type, data) {
-    const contract = this.getRestaurantContract(data.key);
-
+    let contract;
+    if (data && data.key) {
+      contract = this.getRestaurantContract(data.key);
+    }
+    else {
+      contract = this.getRestaurantContract(data);
+    }
     const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(type);
     let nfts = [];
     if (type === 'Rat') {
       nfts = this.state.unstakedRats;
     } else {
       nfts = this.state.unstakedChefs;
+    }
+
+    if (!this.state.isApprovedForAll['McStake']) {
+        this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stakeAll', nftsToStake: nfts, approvalType: contract });
+        return;
     }
 
     const error = this.prepareStakeErrors(nfts, data.key);
@@ -2407,9 +2419,19 @@ class Main extends React.Component {
       return false;
     }
 
+    let contract;
+    if (data && data.key) {
+      contract = this.getRestaurantContract(data.key);
+    }
+    else {
+      contract = this.getRestaurantContract(data);
+    }
 
-    const contract = this.getRestaurantContract(data.key);
-    console.log(contract, data.key);
+    if (!this.state.isApprovedForAll['McStake']) {
+        this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stake', nftsToStake: selectedToStakeNfts, approvalType: contract });
+        return;
+    }
+
     try {
       const result = await this.props.tx(
         this.props.writeContracts[contract].stakeMany(this.props.address, selectedToStakeNfts, {
@@ -2813,7 +2835,7 @@ class Main extends React.Component {
         )
       }
       return (
-        <span>From here, you can stake your chefs in a kitchen or in the gym here by selecting one NFT or clicking 'Stake all'.</span>
+        <span>From here, you can stake your chefs in a kitchen or in the gym by selecting one NFT or by 'Stake all'.</span>
       )
     }
   }
@@ -2832,7 +2854,7 @@ class Main extends React.Component {
         return (
           <span>
             The sewer represents your wallet, your rats hang out here.<br/><br/>
-            From here, you can stake your rats in a kitchen or in the gym here by selecting one chef or clicking 'Stake all'.
+            From here, you can stake your rats in a kitchen or in the gym by selecting one rat or by 'Stake all'.
           </span>
         )
       }
@@ -2851,6 +2873,7 @@ class Main extends React.Component {
       amount = this.state.unstakedRats.length;
     }
 
+/*
     if (amount !== 0 &&
       (
         !this.state.isApprovedForAll['McStake'] || !this.state.isApprovedForAll['Gym'] ||
@@ -2884,6 +2907,7 @@ class Main extends React.Component {
       </div>
       );
     }
+    */
     return (
       <div style={{marginTop: 20}}>
         <Row>
@@ -4238,8 +4262,58 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               { this.renderErrors() }
             </Modal>
 
+            <Modal bodyStyle={{height: 150}} title={'Approve Contract'}
+            onCancel={() => this.setState({isApprovalModalVisible: false})}
+            onOk={() => this.setState({isApprovalModalVisible: false})}
+            footer={[
+              <Button className="web3Button" key="submit" type="default"
+              onClick={() => this.setState({isApprovalModalVisible: false})}>
+                Close
+              </Button>
+            ]}
+            visible={this.state.isApprovalModalVisible}>
+              { this.renderApprovalModal() }
+            </Modal>
+
           </Row>
     );
+  }
+
+  renderApprovalModal() {
+    /*
+
+            isApprovalModalVisible: true, stakeAction: 'stakeAll', nftsToStake: nfts, approvalType: contract
+    */
+    return (
+      <div>
+
+        { !this.state.isApprovedForAll[this.state.approvalType] ?
+          <p className="whiteContent">You need to approve the {this.state.approvalType} Contract first in order to stake.</p>
+          :
+            <p className="whiteContent">Now click the stake button to stake your NFTs.</p>
+        }
+
+        { !this.state.isApprovedForAll[this.state.approvalType] ? this.renderApprovalButton(this.state.approvalType) : null }
+
+        { this.state.stakeAction === 'stakeAll' && this.state.isApprovedForAll[this.state.approvalType]
+        ?
+        <Button style={{height: 30}} className="web3Button" type={"default"} onClick={this.stakeAll.bind(this, this.state.stakeType, this.state.approvalType)}>
+          Stake all
+        </Button>
+        : null
+        }
+
+        { this.state.stakeAction === 'stake' && this.state.isApprovedForAll[this.state.approvalType]
+        ?
+        <Button style={{height: 30}} className="web3Button" type={"default"} onClick={this.stake.bind(this, this.state.stakeType, this.state.nftsToStake, this.state.approvalType)}>
+          Stake selected NFTs
+        </Button>
+        : null
+        }
+
+      </div>
+    )
+
   }
 
   renderError(e) {
