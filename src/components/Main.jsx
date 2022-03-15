@@ -112,6 +112,8 @@ class Main extends React.Component {
         TheStakeHouse: [],
         LeStake: [],
       },
+      noBalance: false,
+      localBalance: 0,
       flipState: {},
       flipStateDone: {},
       hasSufficientFundsForKitchen: false,
@@ -568,6 +570,23 @@ class Main extends React.Component {
     );
   }
 
+  renderNoBalance() {
+    return (
+      <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
+      <Alert
+        message="⚠️ No mumbai testnet MATIC"
+        description={
+          <div>
+            You have no funds on your testnet matic wallet. Please go to <a target="_new" href="https://faucet.polygon.technology/">https://faucet.polygon.technology/</a> to obtain testnet MATIC. <br/>You will need it to mint testnet NFTs.
+          </div>
+        }
+        type="error"
+        closable={true}
+        />
+      </div>
+    );
+  }
+
   async fetchGraph() {
     let address = "";
     if (this.props.address === "undefined" || !this.props.address || this.props.address.length < 5) {
@@ -980,11 +999,21 @@ class Main extends React.Component {
     let gfoodBalance = await GourmetFoodContract.balanceOf(this.props.address);
     gfoodBalance = ethers.utils.formatEther(gfoodBalance);
 
-
+    let localBalance = 0;
+    if (this.props.localBalance) {
+      localBalance = this.props.localBalance;
+    }
+    let noBalance = false;
+    if (parseInt(localBalance) === 0 && chainId === 80001) {
+      noBalance = true;
+    }
+    console.log(localBalance, parseInt(localBalance), chainId, noBalance);
     this.setState({
       fFoodBalance: parseFloat(ffoodBalance).toFixed(4),
       cFoodBalance: parseFloat(cfoodBalance).toFixed(4),
       gFoodBalance: parseFloat(gfoodBalance).toFixed(4),
+      localBalance,
+      noBalance,
     });
   }
 
@@ -1096,9 +1125,7 @@ class Main extends React.Component {
     let whitelistCount = 0;
     let freeMints = 0;
     whitelistCount = await PaywallContract.whitelist(this.props.address);
-    console.log('WHITELIST', whitelistCount);
     freeMints = await PaywallContract.freeMints(this.props.address);
-    console.log('MINTS', freeMints);
 
     if ((freeMints > 0) && (whitelistCount > 0)) {
       if (freeMints > 10) {
@@ -1277,8 +1304,19 @@ class Main extends React.Component {
   renderMintContent() {
     if (!this.state.dataLoaded || this.state.stats.paywallEnabled === null) {
       return (
-        <Spin/>
-      )
+        <div>
+          <Row>
+            <Col span={16}>
+              <div className="officeHeadline">Welcome to RatAlert!</div>
+            </Col>
+          </Row>
+          <Row className="officeContent">
+            <Col  span={24}>
+              Loading data from blockchain... <Spin/>
+            </Col>
+          </Row>
+        </div>
+      );
     }
 
     if (this.state.stats.characterPaused) {
@@ -2001,7 +2039,7 @@ class Main extends React.Component {
       let stakeDate = d.getTime() / 1000;
       const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
       if (isNaN(numberOfDays)) {
-        return 0;
+        return <div className="levelUpTime">loading</div>;
       }
       let diff = now - stakeDate;
 
@@ -4139,6 +4177,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </div>
             { this.state.graphError ? this.renderGraphError() : null }
             { this.state.contractsPaused ? this.renderContractsPaused() : null }
+            { this.state.noBalance ? this.renderNoBalance() : null }
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
               { this.renderNfts() }

@@ -11,6 +11,7 @@ import {
   useContractReader,
   useGasPrice,
   useOnBlock,
+  useBalance,
   useUserProviderAndSigner,
 } from "eth-hooks";
 import { useEventListener } from "eth-hooks/events/useEventListener";
@@ -116,6 +117,9 @@ function App(props) {
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
   const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
   const userSigner = userProviderAndSigner.signer;
+
+  let localBalance = useBalance(localProvider, address);
+  localBalance = ethers.utils.formatEther(localBalance);
 
   function loadDataFromChain() {
     if (lastCall === 0) {
@@ -342,6 +346,7 @@ function App(props) {
               lastBlockTime={lastBlockTime}
               dayTime={dayTime}
               debug={DEBUG}
+              localBalance={localBalance}
             />}
             />
           </Route>

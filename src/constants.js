@@ -78,6 +78,7 @@ export const NETWORKS = {
     name: "mumbai",
     color: "#92D9FA",
     chainId: 80001,
+    nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
     price: 1,
     gasPrice: 1000000000,
     rpcUrl: "https://polygon-mumbai.infura.io/v3/4bbf1017995e445f87886476bc349132",
