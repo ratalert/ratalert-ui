@@ -81,7 +81,7 @@ export const NETWORKS = {
     nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://polygon-mumbai.infura.io/v3/4bbf1017995e445f87886476bc349132",
+    rpcUrl: "https://billowing-blue-butterfly.matic-testnet.quiknode.pro/c5ede70feeed689a05c10d5dd6d399fb4e7fb7db/",
     faucet: "https://faucet.matic.network/",
     blockExplorer: "https://mumbai-explorer.matic.today/",
   },

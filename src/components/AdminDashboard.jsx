@@ -232,6 +232,7 @@ class AdminDashboard extends React.Component {
     }
     const admin = config[networkName].admin;
     if (!admin.includes(this.props.address)) {
+      console.log('Not included in list');
       return <div></div>;
     }
 
@@ -262,8 +263,8 @@ class AdminDashboard extends React.Component {
         title: 'Last Used',
         dataIndex: 'lastUsed',
         key: 'lastUsed',
+        sorter: (a, b) => a.lastUsed - b.lastUsed,
         render: (text, c, i) => this.renderDate(text),
-
       }
 
     ];
@@ -284,6 +285,8 @@ class AdminDashboard extends React.Component {
         title: 'Request Created',
         dataIndex: 'requestCreated',
         key: 'requestCreated',
+        defaultSortOrder: 'ascend',
+        sorter: (a, b) => a.requestCreated - b.requestCreated,
         render: (text, c, i) => this.renderDate(text),
       },
       {
@@ -300,6 +303,7 @@ class AdminDashboard extends React.Component {
       },
 
     ];
+    console.log(this.state.vrfMints.length);
     return (
       <div ref={this.whitepaperRef} style={{width: window.innerWidth * 0.9, borderRadius: 30, marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>

@@ -100,10 +100,24 @@ class Main extends React.Component {
     }
     console.log(`Network name: ${networkName}, kitchenConfig: ${kitchenConfig}, chainId ${chainId}`);
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
+    this.maxSelectedNFTs = 6;
     this.state = {
       graphError: false,
       contractsPaused: false,
       nftCount: 0,
+      mintDisabled: false,
+      mintActive: false,
+      claimActive: false,
+      claimDisabled: false,
+      mintActiveTimer: 0,
+      mintActiveTimerMax: 110,
+      claimActiveTimer: 0,
+      claimActiveTimerMax: 110,
+      foodTokensPerRat: {
+        McStake: 0,
+        TheStakeHouse: 0,
+        LeStake: 0,
+      },
       myNfts: {
         chefWaitingRoom: [],
         ratWaitingRoom: [],
@@ -169,6 +183,11 @@ class Main extends React.Component {
       fFoodBalance: 0,
       cFoodBalance: 0,
       gFoodBalance: 0,
+      paywall: {
+        paywallEnabled: null,
+        whitelistCount: 0,
+        freeMints: 0,
+      },
       stats: {
 
         minted: 0,
@@ -184,7 +203,6 @@ class Main extends React.Component {
         ratTax: 0,
         maxSupply: 0,
         mintPrice: 0,
-        paywallEnabled: null,
       },
     };
     this.nftProfit = 0;
@@ -303,8 +321,12 @@ class Main extends React.Component {
       setTimeout(() => {
         this.getBalances();
         this.getChainStats();
-        this.checkContractApproved();
       }, 500);
+
+      setTimeout(() => {
+        this.fetchPaywallData()
+        this.getFoodTokensPerRat()
+      }, 2000);
 
     }
   }
@@ -432,7 +454,7 @@ class Main extends React.Component {
         claimStats.push(claimInfo);
         console.log(claimInfo);
         window.scrollTo(0, 0);
-        this.setState({ claimStats, isClaimModalVisible: true });
+        this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true, claimActive: false, claimDisabled: false, claimActiveTimer: 0 });
       }
   }
 
@@ -489,7 +511,7 @@ class Main extends React.Component {
         claimStats.push(claimInfo);
         console.log(claimInfo);
         window.scrollTo(0, 0);
-        this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true });
+        this.setState({ currentStatsNFT: 0, claimStats, isClaimModalVisible: true, claimActive: false, claimDisabled: false, claimActiveTimer: 0 });
       }
   }
 
@@ -504,6 +526,8 @@ class Main extends React.Component {
       const claimContract = new ethers.Contract(config[networkName].Claim,
             contracts[chainId][networkName].contracts.Claim.abi, this.props.provider);
 
+      console.log(`Loading RandomNumberRequested with address ${mintContract.address}`);
+      console.log(`Loading RandomNumberRequested with address ${claimContract.address}`);
 
       mintContract.on("RandomNumberRequested", async(requestId, sender) => {
         console.log(`Mint Random number requested: ${requestId}`);
@@ -571,6 +595,60 @@ class Main extends React.Component {
     );
   }
 
+  renderMintActive() {
+    const diff = Math.floor(Date.now() / 1000) - this.state.mintActiveTimer;
+    const p = parseInt(( diff /this.state.mintActiveTimerMax)*100);
+    return (
+      <div style={{ zIndex: 2, position: "absolute", left: 0, top: 60, padding: 16 }}>
+      <Alert
+        message={<span><b>MINT</b>: Waiting for Chainlink VRF (Verifiable Random Function)...</span>}
+        description={
+          <div>
+          <Progress
+            percent={ p }
+            size="small"
+          />
+            { diff } / { this.state.mintActiveTimerMax} seconds elapsed
+            <p>Chainlink VRF usually sends a response within <b>50</b> and <b>110</b> seconds.<br/>
+            Using an external random number for <b>mints</b> makes sure the game cannot be exploited.
+            </p>
+
+          </div>
+        }
+        type="info"
+        closable={false}
+        />
+      </div>
+    );
+  }
+
+  renderClaimActive() {
+    const diff = Math.floor(Date.now() / 1000) - this.state.claimActiveTimer;
+    const p = parseInt(( diff /this.state.claimActiveTimerMax)*100);
+    return (
+      <div style={{ zIndex: 2, position: "absolute", left: 0, top: this.state.mintActive ? 250 : 60, padding: 16 }}>
+      <Alert
+        message={<span><b>Claim Profits</b>: Waiting for Chainlink VRF (Verifiable Random Function)...</span>}
+        description={
+          <div>
+          <Progress
+            percent={ p }
+            size="small"
+          />
+            { diff } / { this.state.claimActiveTimerMax} seconds elapsed
+            <p>Chainlink VRF usually sends a response within <b>50</b> and <b>110</b> seconds.<br/>
+            Using an external random number for <b>claims</b> makes sure the game cannot be exploited.
+            </p>
+
+          </div>
+        }
+        type="info"
+        closable={false}
+        />
+      </div>
+    );
+  }
+
   renderNoBalance() {
     return (
       <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
@@ -586,6 +664,22 @@ class Main extends React.Component {
         />
       </div>
     );
+  }
+
+  async getFoodToken(location) {
+    const query = `{
+        characters(
+          first: 1,
+          where: {
+            foodTokensPerRat_gt: 0
+            stakingLocation: "${location}"
+          },
+          orderDirection: desc,
+          orderBy: mcstakeLastClaimTimestamp,
+        ) {
+          foodTokensPerRat, mcstakeLastClaimTimestamp, stakingLocation
+        }
+      }`;
   }
 
   async fetchGraph() {
@@ -818,6 +912,34 @@ class Main extends React.Component {
     return isVisible;
   }
 
+  async listenForMints() {
+    const { networkName, chainId } = this.getNetworkName();
+    console.log(`MAIN LISTENFORMINTS network ${networkName} chain ID ${chainId}`);
+    const Contract = new ethers.Contract(config[networkName].Character,
+      contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
+
+    Contract.on("Transfer", async(origin, target, tokenId) => {
+      if (origin === '0x0000000000000000000000000000000000000000' && target === this.props.address) {
+        const URI = await Contract.tokenURI(parseInt(tokenId));
+        if (URI.indexOf("data:application/json;base64,") === 0) {
+          const base64 = URI.split(",");
+          const decoded = atob(base64[1]);
+          const json = JSON.parse(decoded);
+          const img = json.image;
+          this.setState({ mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
+          renderNotification(
+            "info",
+            '',
+            <div>
+              <img style={{ paddingRight: "10px" }} width={50} src={img} />
+              <b>{json.name}</b> has been minted!
+            </div>,
+          );
+        }
+      }
+    });
+  }
+
   async componentWillMount() {
     window.addEventListener('scroll', () => {
       const scrollPosition = window.pageYOffset;
@@ -859,9 +981,16 @@ class Main extends React.Component {
 
     setTimeout(() => {
       this.checkClaimHook();
+      this.listenForMints();
+      this.checkContractApproved();
     }, 5000);
-    this.fetchGraph();
 
+    setTimeout(() => {
+      // this.getBalances();
+      // this.getChainStats();
+    }, 500);
+
+    this.fetchGraph();
     this.getUniswapprice();
   }
 
@@ -909,10 +1038,20 @@ class Main extends React.Component {
     return this.renderNFT(null, 1, "LeStake");
   }
 
-
+  async updateMintTimer() {
+    console.log('Updating mint timer..');
+    const mintActiveTimer = this.state.mintActiveTimer;
+    if (mintActiveTimer < this.state.mintActiveTimerMax) {
+      this.setState({ mintActiveTimer: mintActiveTimer + 1})
+      setTimeout(() => {
+        this.updateMintTimer();
+      }, 1000)
+    }
+  }
 
   async mint(stake = false) {
     try {
+      this.setState({ mintDisabled: true });
       const amount = this.state.mintAmount;
       let mintPrice = 0;
       if (this.state.stats && this.state.stats.mintPrice) {
@@ -927,18 +1066,18 @@ class Main extends React.Component {
       }
 
       let value = ethers.utils.parseEther(sum.toString());
-      if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount > 0)) {
+      if ((this.state.paywall.freeMints > 0) && (this.state.paywall.whitelistCount > 0)) {
         value = 0;
-      } else if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount === 0)) {
+      } else if ((this.state.paywall.freeMints > 0) && (this.state.paywall.whitelistCount === 0)) {
         value = 0;
-      } else if ((this.state.stats.freeMints > 0) && (this.state.stats.whitelistCount > 0)) {
+      } else if ((this.state.paywall.freeMints > 0) && (this.state.paywall.whitelistCount > 0)) {
         value = 0;
-      } else if ((this.state.stats.freeMints === 0) && (this.state.stats.whitelistCount > 0)) {
+      } else if ((this.state.paywall.freeMints === 0) && (this.state.paywall.whitelistCount > 0)) {
         sum = Decimal(sum).times(0.9).toString()
         value = ethers.utils.parseEther(sum);
       }
       console.log('Mint value:', value);
-
+      this.setState({ mintDisabled: true });
       const result = await this.props.tx(
         this.props.writeContracts.Character.mint(amount, stake, {
           from: this.props.address,
@@ -946,12 +1085,15 @@ class Main extends React.Component {
           gasLimit,
         }),
       );
+      window.scrollTo(0, 0);
+      this.setState({ mintActive: true, mintActiveTimer: Math.floor(Date.now() / 1000) });
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
-      renderNotification("info", `${amount} mint(s) requested. Your NFTs will be delivered within a minute or two.`, "");
+      renderNotification("info", `${amount} mint(s) requested.`, "");
       setTimeout(() => {
         this.getChainStats();
       }, 1000);
     } catch (e) {
+      this.setState({ mintDisabled: false });
       console.error(e);
       const regExp = /\"message\":\"(.+?)\"/;
       const d = e.message.match(regExp);
@@ -1005,7 +1147,7 @@ class Main extends React.Component {
       localBalance = this.props.localBalance;
     }
     let noBalance = false;
-    if (parseInt(localBalance) === 0 && chainId === 80001) {
+    if (parseFloat(localBalance) === 0 && chainId === 80001) {
       noBalance = true;
     }
     console.log(localBalance, parseInt(localBalance), chainId, noBalance);
@@ -1018,7 +1160,78 @@ class Main extends React.Component {
     });
   }
 
+  async cacheLocalStorage(name, func, eth = false) {
+    const { networkName, chainId } = this.getNetworkName();
+    let key = `${chainId}_${name}`;
+    const expKey = `${key}_exp`
+    const entry = localStorage.getItem(key);
+    const expDate = localStorage.getItem(expKey);
+    let expired = false;
+    if (expDate) {
+      const now = Math.floor(Date.now() / 1000);
+      if (now > expDate) {
+        expired = true;
+      }
+    }
+    if (entry && !expired) {
+      return entry;
+    } else {
+      const val = await func;
+      let num = val;
+      if (val._hex && !eth) {
+        num = parseInt(val);
+      } else {
+        num = ethers.utils.formatEther(num);
+        num = parseInt(num);
+      }
+      if (!num) {
+        num = 0;
+      }
+
+      localStorage.setItem(key, num);
+      const expKey = `${key}_exp`
+      localStorage.setItem(expKey, Math.floor(Date.now() / 1000)+86400);
+      return num;
+    }
+  }
+
+  async getFoodTokensPerRat() {
+    const { networkName, chainId } = this.getNetworkName();
+    const McStakeContract = new ethers.Contract(config[networkName].McStake,
+        contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
+    const TheStakeHouseContract = new ethers.Contract(config[networkName].TheStakeHouse,
+            contracts[chainId][networkName].contracts.TheStakeHouse.abi, this.props.provider);
+    const LeStakeContract = new ethers.Contract(config[networkName].LeStake,
+            contracts[chainId][networkName].contracts.LeStake.abi, this.props.provider);
+
+    let foodTokensPerRatMcStake = await McStakeContract.foodTokensPerRat();
+    if (!foodTokensPerRatMcStake) {
+      foodTokensPerRatMcStake = 0;
+    }
+    let foodTokensPerRatTheStakeHouse = await TheStakeHouseContract.foodTokensPerRat();
+    if (!foodTokensPerRatTheStakeHouse) {
+      foodTokensPerRatTheStakeHouse = 0;
+    }
+    let foodTokensPerRatLeStake = await LeStakeContract.foodTokensPerRat();
+    if (!foodTokensPerRatLeStake) {
+      foodTokensPerRatLeStake = 0;
+    }
+
+    const foodTokensPerRat = {
+      'McStake': parseInt(ethers.utils.formatEther(foodTokensPerRatMcStake)),
+      'TheStakeHouse': parseInt(ethers.utils.formatEther(foodTokensPerRatTheStakeHouse)),
+      'LeStake': parseInt(ethers.utils.formatEther(foodTokensPerRatLeStake)),
+    }
+    this.setState({ foodTokensPerRat });
+    console.log('foodTokensPerRat', foodTokensPerRat);
+
+    setTimeout(() => {
+      this.getFoodTokensPerRat();
+    }, 120000);
+  }
+
   async getChainStats() {
+
     if (this.props.debug) console.log('DEBUG Get chain stats');
     const { networkName, chainId } = this.getNetworkName();
     const CharacterContract = new ethers.Contract(config[networkName].Character,
@@ -1031,24 +1244,36 @@ class Main extends React.Component {
             contracts[chainId][networkName].contracts.LeStake.abi, this.props.provider);
     const GymContract = new ethers.Contract(config[networkName].Gym,
                     contracts[chainId][networkName].contracts.Gym.abi, this.props.provider);
-
-
     const PaywallContract = new ethers.Contract(config[networkName].Paywall,
-            contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
+                    contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
+
 
 
     if (this.props.debug) console.log('DEBUG Init Contracts');
+    let totalSupply;
+    let minted;
+    let paidTokens
+    let mintPrice;
+    let characterPaused;
+    let mcStakePaused;
+    let theStakeHousePaused;
+    let gymPaused;
+    let leStakePaused;
+    try {
+      minted = await CharacterContract.minted();
+      totalSupply = await CharacterContract.maxTokens();
+      totalSupply = await this.cacheLocalStorage('CharacterContract.maxTokens()', CharacterContract.maxTokens());
+      paidTokens = await this.cacheLocalStorage('CharacterContract.paidTokens()', CharacterContract.getGen0Tokens());
+      mintPrice = await PaywallContract.mintPrice();
+      characterPaused = await CharacterContract.paused();
+      mcStakePaused = await McStakeContract.paused();
+      theStakeHousePaused = await TheStakeHouseContract.paused();
+      leStakePaused = await LeStakeContract.paused();
+      gymPaused = await GymContract.paused();
+    } catch (e) {
+      console.log('ERROR', e);
+    }
 
-
-    const minted = await CharacterContract.minted();
-    let totalSupply = await CharacterContract.maxTokens();
-    let paidTokens = await CharacterContract.getGen0Tokens();
-    let mintPrice = await PaywallContract.mintPrice();
-    let characterPaused = await CharacterContract.paused();
-    let mcStakePaused = await McStakeContract.paused();
-    let theStakeHousePaused = await TheStakeHouseContract.paused();
-    let leStakePaused = await LeStakeContract.paused();
-    let gymPaused = await GymContract.paused();
     if (mcStakePaused || theStakeHousePaused || leStakePaused || gymPaused || characterPaused) {
       this.setState({ contractsPaused: true });
     }
@@ -1059,59 +1284,20 @@ class Main extends React.Component {
     const rats = await CharacterContract.numRats();
     const chefs = await CharacterContract.numChefs();
 
-    let dailyFFoodRate = await McStakeContract.dailyChefEarnings();
-    if (!dailyFFoodRate) {
-      dailyFFoodRate = 0;
-    }
+    let dailyFFoodRate = await this.cacheLocalStorage('McStakeContract.dailyChefEarnings()', McStakeContract.dailyChefEarnings(), true);
+    let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
+    let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier()', McStakeContract.chefEfficiencyMultiplier());
+    let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod()', McStakeContract.vestingPeriod());
+    let ratTax = await this.cacheLocalStorage('McStakeContract.ratTheftPercentage()', McStakeContract.ratTheftPercentage());
+    let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
+    let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
+    let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
 
-    let accrualPeriod = await McStakeContract.accrualPeriod();
-    if (!accrualPeriod) {
-      accrualPeriod = 0;
-    }
-
-    let chefEfficiencyMultiplier = await McStakeContract.chefEfficiencyMultiplier();
-    if (!chefEfficiencyMultiplier) {
-      chefEfficiencyMultiplier = 0;
-    }
-
-
-
-    let minimumToExit = await McStakeContract.vestingPeriod();
-    if (!minimumToExit) {
-      minimumToExit = 0;
-    }
-
-    let ratTax = await McStakeContract.ratTheftPercentage();
-    if (!ratTax) {
-      ratTax = 0;
-    }
-
-    let maxSupply = await McStakeContract.foodTokenMaxSupply();
-    if (!maxSupply) {
-      maxSupply = 0;
-    }
-
-    // TODO get once every 5-10 minutes
-    let foodTokensPerRat = await McStakeContract.foodTokensPerRat();
-    if (!foodTokensPerRat) {
-      foodTokensPerRat = 0;
-    }
-
-    let ratEfficiencyMultiplier = await McStakeContract.ratEfficiencyMultiplier();
-    if (!ratEfficiencyMultiplier) {
-      ratEfficiencyMultiplier = 0;
-    }
-
-    let ratEfficiencyOffset = await McStakeContract.ratEfficiencyOffset();
-    if (!ratEfficiencyOffset) {
-      ratEfficiencyOffset = 0;
-    }
 
     let ratsStaked = await McStakeContract.totalRatsStaked();
     if (!ratsStaked) {
       ratsStaked = 0;
     }
-
     let chefsStaked = await McStakeContract.totalChefsStaked();
     if (!chefsStaked) {
       chefsStaked = 0;
@@ -1121,27 +1307,6 @@ class Main extends React.Component {
     if (!tokensClaimed) {
       tokensClaimed = 0;
     }
-
-    let paywallEnabled = await PaywallContract.onlyWhitelist();
-    let whitelistCount = 0;
-    let freeMints = 0;
-    whitelistCount = await PaywallContract.whitelist(this.props.address);
-    freeMints = await PaywallContract.freeMints(this.props.address);
-
-    if ((freeMints > 0) && (whitelistCount > 0)) {
-      if (freeMints > 10) {
-        freeMints = 10;
-      }
-      this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: freeMints });
-    } else if ((freeMints > 0) && (whitelistCount === 0)) {
-      this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: freeMints });
-    }
-    else if ((whitelistCount > 0) && (freeMints === 0)) {
-      this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
-    } else {
-      this.setState({ mintAmountLocked: false, maxMintAmount: 10});
-    }
-
 
 
     if (this.props.debug) console.log('DEBUG All mcStake stats');
@@ -1154,31 +1319,72 @@ class Main extends React.Component {
       chefsStaked: parseInt(chefsStaked),
       tokensClaimed: parseFloat(ethers.utils.formatEther(tokensClaimed)).toFixed(8),
       paidTokens: parseInt(paidTokens),
-      dailyFFoodRate: parseInt(ethers.utils.formatEther(dailyFFoodRate)),
+      dailyFFoodRate: dailyFFoodRate,
       minimumToExit: parseInt(minimumToExit),
       ratTax: parseInt(ratTax),
       maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
       mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
       levelUpThreshold: parseInt(accrualPeriod),
       chefEfficiencyMultiplier: parseInt(chefEfficiencyMultiplier),
-      foodTokensPerRat: parseInt(foodTokensPerRat),
       ratEfficiencyMultiplier: parseInt(ratEfficiencyMultiplier),
       ratEfficiencyOffset: parseInt(ratEfficiencyOffset),
       TheStakeHouseMinEfficiency: 28,
       LeStakeMinEfficiency: 72,
-      paywallEnabled,
-      whitelistCount,
-      freeMints,
       characterPaused,
       mcStakePaused,
       theStakeHousePaused,
       leStakePaused,
       gymPaused,
     };
-
-
     this.setState({ stats });
 
+  }
+
+  async fetchPaywallData() {
+    const { networkName, chainId } = this.getNetworkName();
+    const PaywallContract = new ethers.Contract(config[networkName].Paywall,
+            contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
+
+    let paywallEnabled = null;
+    if (this.state.paywall.paywallEnabled === null) {
+      let paywallEnabled = await PaywallContract.onlyWhitelist();
+      let whitelistCount = 0;
+      let freeMints = 0;
+      whitelistCount = await PaywallContract.whitelist(this.props.address);
+      freeMints = await PaywallContract.freeMints(this.props.address);
+      console.log(`Paywall fetch ${this.props.address} WL ${whitelistCount} MINT ${freeMints}`);
+      if ((freeMints > 0) && (whitelistCount > 0)) {
+        let max = freeMints;
+        if (freeMints > 10) {
+          freeMints = 10;
+        }
+        if (max > 3) {
+          max = 3;
+        }
+        this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
+      } else if ((freeMints > 0) && (whitelistCount === 0)) {
+        let max = freeMints;
+        if (freeMints > 10) {
+          freeMints = 10;
+        }
+        if (max > 3) {
+          max = 3;
+        }
+        this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
+      }
+      else if ((whitelistCount > 0) && (freeMints === 0)) {
+        this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
+      } else {
+        this.setState({ mintAmountLocked: false, maxMintAmount: 10});
+      }
+
+      const paywall = this.state.paywall;
+      paywall['paywallEnabled'] = paywallEnabled;
+      paywall['whitelistCount'] = whitelistCount;
+      paywall['freeMints'] = freeMints;
+      console.log('PAYWALL', paywall);
+      this.setState({ paywall });
+    }
   }
 
   renderMintCarets() {
@@ -1199,17 +1405,13 @@ class Main extends React.Component {
   }
 
   renderNoWLOrMintErrorMessage() {
-    if (this.state.stats.paywallEnabled === null) {
+    if (this.state.paywall.paywallEnabled === null) {
       return;
     }
     return (
       <Row  className="officeContent" style={{paddingTop: 20}}>
       <Col span={24}>
-      { this.state.nftCount === 0 ?
-        <div style={{color: '#ec6e6e'}}>Minting is not possible, you are not signed up for the Betatest.</div>
-        :
-        <div>You have minted the maximum NFTs allowed</div>
-      }
+        <div style={{color: '#ec6e6e'}}>You have minted the maximum NFTs allowed or<br/>you're not signed up for the beta.</div>
       </Col>
       </Row>
     )
@@ -1222,12 +1424,12 @@ class Main extends React.Component {
             3. Redeem <span style={{color: '#619cff'}}>{amount} free mint(s)</span>
           </Col>
           <Col span={3} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
+            <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, false)}>
               Mint
             </Button>
           </Col>
           <Col span={6} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
+            <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, true)}>
               Mint & Stake
             </Button>
           </Col>
@@ -1241,9 +1443,9 @@ class Main extends React.Component {
           <Col className="officeLine" xs={11} md={12}>
             3. Mint <span style={{color: '#619cff'}}>whitelisted</span> NFTs with &nbsp;
 
-            <span  style={{color: '#619cff'}}>5% extra boost
+            <span  style={{color: '#619cff'}}>1% extra boost per day
 
-            <Popover mouseEnterDelay={0.25} content={'Whitelisted NFTs gain skill 5% faster than non-whitelisted NFTs, making them 5% better in the game. Use them wisely!'}>
+            <Popover mouseEnterDelay={0.25} content={'Whitelisted NFTs gain an additional 1% skill (chefs) or intelligence (rats) per day in the kitchen, compared to non-whitelisted NFTs.'}>
             <div className="info" style={{position: 'absolute', left: 130, top: 5}}>
               <img style={{marginTop: -7, marginLeft: -2}} src="/img/i.png"/>
             </div>
@@ -1251,12 +1453,12 @@ class Main extends React.Component {
 </span> (max {amount})
           </Col>
           <Col span={3} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
+            <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, false)}>
               Mint
             </Button>
           </Col>
           <Col span={6} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
+            <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, true)}>
               Mint & Stake
             </Button>
           </Col>
@@ -1265,22 +1467,22 @@ class Main extends React.Component {
   }
 
   renderMintButtons() {
-    if (this.state.stats.paywallEnabled === null) {
+    if (this.state.paywall.paywallEnabled === null) {
       return;
     }
-
-    if (this.state.stats.paywallEnabled  && this.state.stats.freeMints === 0 && this.state.stats.whitelistCount === 0) {
+    console.log(this.state.paywall);
+    if (this.state.paywall.paywallEnabled  && this.state.paywall.freeMints === 0 && this.state.paywall.whitelistCount === 0) {
       return this.renderNoWLOrMintErrorMessage();
     }
 
-    if (this.state.stats.freeMints > 0 && this.state.stats.whitelistCount === 0) {
-      return this.renderFreeMints(this.state.stats.freeMints);
+    if (this.state.paywall.freeMints > 0 && this.state.paywall.whitelistCount === 0) {
+      return this.renderFreeMints(this.state.paywall.freeMints);
     }
-    if (this.state.stats.freeMints > 0 && this.state.stats.whitelistCount > 0) {
-      return this.renderFreeMints(this.state.stats.freeMints);
+    if (this.state.paywall.freeMints > 0 && this.state.paywall.whitelistCount > 0) {
+      return this.renderFreeMints(this.state.paywall.freeMints);
     }
-    if (this.state.stats.freeMints === 0 && this.state.stats.whitelistCount > 0) {
-      return this.renderWhitelist(this.state.stats.whitelistCount);
+    if (this.state.paywall.freeMints === 0 && this.state.paywall.whitelistCount > 0) {
+      return this.renderWhitelist(this.state.paywall.whitelistCount);
     }
 
     return (
@@ -1289,12 +1491,12 @@ class Main extends React.Component {
             3. Start minting
           </Col>
           <Col span={3} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, false)}>
+            <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, false)}>
               Mint
             </Button>
           </Col>
           <Col span={6} style={{paddingTop: 5}}>
-            <Button className="mintButton" onClick={this.mint.bind(this, true)}>
+            <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, true)}>
               Mint & Stake
             </Button>
           </Col>
@@ -1303,7 +1505,7 @@ class Main extends React.Component {
   }
 
   renderMintContent() {
-    if (!this.state.dataLoaded || this.state.stats.paywallEnabled === null) {
+    if (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null) {
       return (
         <div>
           <Row>
@@ -1427,7 +1629,7 @@ class Main extends React.Component {
               fatness: parseInt(r.fatness),
               fatnessLevel: hash['Fatness percentage'],
               fatnessName: hash['Fatness'],
-              owed: parseInt(r.owed),
+              owed: parseFloat(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
             };
             this.nfts[nftObj.name] = nftObj;
@@ -1451,7 +1653,7 @@ class Main extends React.Component {
               intelligenceLevel: parseInt(r.intelligence),
               fatness: parseInt(r.fatness),
               fatnessLevel: parseInt(r.fatness),
-              owed: parseInt(r.owed),
+              owed: parseFloat(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
               fatnessName: hash['Fatness'],
               intelligenceName: hash['Intelligence'],
@@ -1637,6 +1839,7 @@ class Main extends React.Component {
       widthType = 'kitchen';
     }
     const kitchenWidth = this.getWidth('kitchen');
+    const stillLoading = (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null);
     return (
       <div className={className} style={this.getWidth(widthType)}>
       <div className={ !closed ? 'fade' : null }>
@@ -1653,8 +1856,14 @@ class Main extends React.Component {
           { location === 'TheStakeHouse' && closed && this.state.kitchenConfig.casualForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="forSaleSign"/> : null }
           { location === 'LeStake' && closed && this.state.kitchenConfig.gourmetClosedSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="closedSign"/> : null }
           { location === 'LeStake' && closed && this.state.kitchenConfig.gourmetForSaleSign ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="forSaleSign"/> : null }
-          { location === 'TheStakeHouse' && this.state.kitchenConfig.casualBuyButton ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="buyKitchen"><Button onClick={this.showKitchenModal.bind(this, 1)} type="default" className="web3ButtonTransparent">Buy kitchen</Button></div> : null }
-          { location === 'LeStake' && this.state.kitchenConfig.gourmetBuyButton ? <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="buyKitchen"><Button onClick={this.showKitchenModal.bind(this, 2)} type="default" className="web3ButtonTransparent">Buy kitchen</Button></div> : null }
+          { location === 'TheStakeHouse' && this.state.kitchenConfig.casualBuyButton ?
+          <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="buyKitchen">
+          <Button disabled={stillLoading} onClick={this.showKitchenModal.bind(this, 1)} type="default" className="web3ButtonTransparent">Buy kitchen</Button>
+          </div> : null }
+          { location === 'LeStake' && this.state.kitchenConfig.gourmetBuyButton ?
+          <div style={{left: (kitchenWidth.width / 2)*this.kitchenSignFactor}}className="buyKitchen">
+          <Button disabled={stillLoading} onClick={this.showKitchenModal.bind(this, 2)} type="default" className="web3ButtonTransparent">Buy kitchen</Button>
+          </div> : null }
 
 
           </Row>
@@ -1782,7 +1991,7 @@ class Main extends React.Component {
           : `nftNotSelected ${classNameStats}`
       }        >
 
-      { type !== 'modal' && window.innerHeight <= 768 ? <div style={{marginTop: 64}} onClick={ this.flipCard.bind(this, c.name) }  className="infoBoxStaked"/> : null }
+      { type !== 'modal' && window.innerWidth <= 768 ? <div style={{marginTop: 64}} onClick={ this.flipCard.bind(this, c.name) }  className="infoBoxStaked"/> : null }
       { type !== 'modal' ?
       <div style={{position: 'absolute'}}>
         <div className="info" style={{position: 'relative', left: 120, top: staked ? 54 : 51}} onClick={ this.flipCard.bind(this, c.name) } >
@@ -1964,7 +2173,7 @@ class Main extends React.Component {
           <Col span={7} className="funds" style={{color: '#fee017'}}>
             { c.stakingLocation !== 'Gym' ?
             <Popover content="Amount of $FFOOD your NFTs have accumulated.">
-              {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.insanityLevel : c.fatnessLevel, c.name, c.owed)}
+              {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.insanityLevel : c.fatnessLevel, c.name, c.owed, c.stakingLocation)}
             </Popover> : null }
           </Col>
         </Row>
@@ -2067,7 +2276,7 @@ class Main extends React.Component {
       let stakeDate = d.getTime() / 1000;
       const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
       if (isNaN(numberOfDays)) {
-        return 0;
+        return <div className="levelUpTime">loading</div>;
       }
       let diff = now - stakeDate;
       if ((diff > this.state.stats.levelUpThreshold) && (numberOfDays > 1)) {
@@ -2111,7 +2320,7 @@ class Main extends React.Component {
     return <span>{h}<img className="colon" src="/img/colon.svg"/>{m}<img className="colon" src="/img/colon.svg"/>{s}</span>;
   }
 
-  renderNftProfit(type, timestamp, lastClaimTimestamp, skill = 1, tolerance = 1, name, owed) {
+  renderNftProfit(type, timestamp, lastClaimTimestamp, skill = 1, tolerance = 1, name, owed, stakingLocation) {
 
     if (lastClaimTimestamp > timestamp) {
       timestamp = lastClaimTimestamp;
@@ -2140,15 +2349,33 @@ class Main extends React.Component {
       }
       return 0;
     } else {
-
-
-      const nominal = this.newestfoodTokensPerRat - owed; // stake.value ist der fastFoodPerRat Betrag zum Zeitpunkt des stakens
+      let foodTokensPerRat = 0;
+      switch (stakingLocation) {
+        case 'McStake':
+          foodTokensPerRat = this.state.foodTokensPerRat.McStake;
+        break;
+        case 'TheStakeHouse':
+          foodTokensPerRat = this.state.foodTokensPerRat.TheStakeHouse;
+        break;
+        case 'LeStake':
+          foodTokensPerRat = this.state.foodTokensPerRat.LeStake;
+        break;
+      }
+//      console.log('RAT PROFIT', stakingLocation, foodTokensPerRat);
+      const nominal = foodTokensPerRat - owed; // stake.value ist der fastFoodPerRat Betrag zum Zeitpunkt des stakens
       const multiplier = (tolerance <= 50 ? tolerance : 100 - tolerance * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
+
       // console.log('RAT', owed, this.newestfoodTokensPerRat, nominal, multiplier);
       let net = nominal * multiplier / 100000;
+      if (isNaN(net)) {
+        net = 0;
+      }
       if (net < 0) {
         net = 0;
       }
+      //if (foodTokensPerRat > 0) {
+      //  console.log(`${name}: nominal: ${nominal}, foodTokenPerRat: ${foodTokensPerRat}, owed ${owed}, ratEfficiencyMultiplier ${this.state.stats.ratEfficiencyMultiplier}, ratEfficiencyOffset ${this.state.stats.ratEfficiencyOffset}, net=${net}`)
+      //}
       return parseFloat(net).toFixed(2);
     }
   }
@@ -2158,11 +2385,31 @@ class Main extends React.Component {
       return;
     }
     const selectedNfts = this.state.selectedNfts;
+    let count = 0;
+    Object.keys(selectedNfts).map((s) => {
+      const status = this.state.selectedNfts[s];
+      if (status.status && status.location === location) {
+        count += 1;
+      }
+    })
+
     if (this.state.selectedNfts[item]) {
-      delete selectedNfts[item];
+      count -= 1;
     } else {
-      selectedNfts[item] = { status: true, staked, type, location };
+      count += 1;
     }
+    if (count <= this.maxSelectedNFTs) {
+      if (this.state.selectedNfts[item]) {
+        count -= 1;
+        delete selectedNfts[item];
+      } else {
+        selectedNfts[item] = { status: true, staked, type, location };
+        count += 1;
+      }
+    } else {
+      renderNotification("error", "Maximum of selected NFTs reached", `You can only select up to ${this.maxSelectedNFTs} NFTs at a time.`);
+    }
+
     this.setState({ selectedNfts });
   }
 
@@ -2267,8 +2514,9 @@ class Main extends React.Component {
       nfts = this.state.unstakedChefs;
     }
 
-    if (!this.state.isApprovedForAll['McStake']) {
-        this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stakeAll', nftsToStake: nfts, approvalType: contract });
+
+    if (!this.state.isApprovedForAll[contract]) {
+        this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stakeAll', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
     }
 
@@ -2317,6 +2565,7 @@ class Main extends React.Component {
     if (error) {
       return false;
     }
+    this.setState({ claimDisabled : true })
     nft.map((s) => {
       this.oldNfts[s] = this.nfts[s];
     });
@@ -2326,17 +2575,19 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[contract].claimMany(nft, true, {
           from: this.props.address,
-          gasLimit: parseInt(nft.length) * 300000,
+          gasLimit: parseInt(nft.length) * 350000,
         }),
       );
-      this.setState({ selectedNfts: {} });
-      renderNotification("info", `All your NFTs have been unstaked.`, "");
+      window.scrollTo(0, 0);
+      this.setState({ selectedNfts: {}, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      renderNotification("info", `Your unstaking request was received.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
       let message = e.message;
       if (e.data && e.data.message) {
         message = e.data.message;
       }
+      this.setState({ claimDisabled : false })
       console.log(e);
       renderNotification("error", "Error", message);
     }
@@ -2348,6 +2599,8 @@ class Main extends React.Component {
       return false;
     }
     const contract = this.getRestaurantContract(type);
+    this.setState({ claimDisabled: true});
+
     try {
       console.log(type, selectedToUnStakeNfts);
       this.setState({ selectedNfts: {}, currentStatsNFT: 0 });
@@ -2357,10 +2610,12 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
-          gasLimit: parseInt(selectedToUnStakeNfts.length * 850000),
+          gasLimit: parseInt(selectedToUnStakeNfts.length * 450000),
         }),
       );
-      renderNotification("info", `Your NFTs have been leveled up & Funds from your NFTs have been claimed.`, "");
+      window.scrollTo(0, 0);
+      this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      renderNotification("info", `Your claim request was successful.`, "");
       setTimeout(() => {
         this.getBalances();
       }, 1000);
@@ -2371,6 +2626,7 @@ class Main extends React.Component {
         message = e.data.message;
       }
       console.log(message);
+      this.setState({ claimDisabled: false});
       renderNotification("error", "Error", message);
     }
   }
@@ -2427,7 +2683,7 @@ class Main extends React.Component {
       contract = this.getRestaurantContract(data);
     }
 
-    if (!this.state.isApprovedForAll['McStake']) {
+    if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stake', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
     }
@@ -2483,6 +2739,7 @@ class Main extends React.Component {
     if (error) {
       return false;
     }
+    this.setState({ claimDisabled : true })
 
     const contract = this.getRestaurantContract(type);
     try {
@@ -2494,16 +2751,19 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, true, {
           from: this.props.address,
-          gasLimit: selectedToUnStakeNfts.length * 500000,
+          gasLimit: selectedToUnStakeNfts.length * 350000,
         }),
       );
-      renderNotification("info", `All your NFTs have been unstaked.`, "");
+      window.scrollTo(0, 0);
+      this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      renderNotification("info", `Your unstaking request has been received.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
       let message = e.message;
       if (e.data && e.data.message) {
         message = e.data.message;
       }
+      this.setState({ claimDisabled : false })
       console.log(e);
       renderNotification("error", "Error", message);
     }
@@ -2660,12 +2920,20 @@ class Main extends React.Component {
         nfts = this.state.unstakedChefs;
       }
 
+      const stillLoading = (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null);
+
       if (nfts.length > 0) {
 
-
+        if (nfts.length > this.maxSelectedNFTs) {
+          return (
+            <Button disabled={true} className="web3Button" type={"default"}>
+              Select {type}s to stake
+            </Button>
+          )
+        }
 
         return (
-          <Dropdown className="web3Button" type={"default"} overlay={menuStakeAll}>
+          <Dropdown disabled={stillLoading} className="web3Button" type={"default"} overlay={menuStakeAll}>
             <Button>
               Stake all {type}s <DownOutlined/>
             </Button>
@@ -2675,8 +2943,9 @@ class Main extends React.Component {
         return <div></div>
       }
     } else if (enabled) {
+      const stillLoading = (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null);
       return (
-        <Dropdown className="web3Button"
+        <Dropdown disabled={stillLoading} className="web3Button"
           type={"default"}
           overlay={menuStake}
           className="web3Button"
@@ -2694,6 +2963,23 @@ class Main extends React.Component {
 
   }
 
+  getStakedNFTs(location) {
+    let nft;
+    if (location === 'Gym') {
+      nft = Object.assign([], this.state.myNfts.Gym.map((i) => i.name));
+    }
+    if (location === 'McStake') {
+      nft = Object.assign([], this.state.myNfts.McStake.map((i) => i.name));
+    }
+    if (location === 'TheStakeHouse') {
+      nft = Object.assign([], this.state.myNfts.TheStakeHouse.map((i) => i.name));
+    }
+    if (location === 'LeStake') {
+      nft = Object.assign([], this.state.myNfts.LeStake.map((i) => i.name));
+    }
+    return nft;
+  }
+
   renderUnStakeButton(location) {
     const {selectedToStakeNfts, selectedToUnStakeNfts} = this.getStakeStats(false, location);
     let enabled=true;
@@ -2701,11 +2987,21 @@ class Main extends React.Component {
     if (!this.state.isApprovedForAll) {
       enabled=false;
     }
-
     const height = this.getButtonHeight();
+    const stillLoading = (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null);
+    if (stillLoading) {
+      enabled = false;
+    }
     if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
-      const nfts = this.state.stakedNfts;
-      if (nfts.length > 0) {
+      const nft = this.getStakedNFTs(location);
+      if (nft.length > 0) {
+        if (nft.length > this.maxSelectedNFTs) {
+          return (
+            <Button disabled={true} style={{fontSize: 13}} className="web3ButtonTransparent" type={"default"}>
+              Select NFTs to unstake
+            </Button>
+          )
+        }
         return (
           <Button style={{height}} disabled={!enabled} className="web3ButtonTransparent" type={"default"} onClick={this.unstakeAll.bind(this, location)}>
             Unstake all
@@ -2774,14 +3070,44 @@ class Main extends React.Component {
     } else {
       nfts = this.state.stakedNfts;
     }
+
+    const stillLoading = (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null);
+    if (stillLoading) {
+      enabled = false;
+    }
+
     const height = this.getButtonHeight();
     let activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}}src="/img/ffood.png"/></span>
-    if (nfts.length > 0) {
+    const nft = this.getStakedNFTs(type);
+    if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
+      if (nft.length > 0) {
+        if (nft.length > this.maxSelectedNFTs) {
+          return (
+            <Button style={{fontSize: 13}} disabled={true} className="web3ButtonTransparent" type={"default"}>
+              Select NFTs to claim
+            </Button>
+          )
+        } else {
+          return (
+            <Button
+              className="web3ButtonTransparent"
+              style={{height}}
+              type={'default'}
+              disabled={!enabled}
+              onClick={this.claimFunds.bind(this, nfts, type)}
+            >
+              {activeText}
+            </Button>
+          );
+        }
+      }
+    } else {
       return (
         <Button
           className="web3ButtonTransparent"
           style={{height}}
           type={'default'}
+          disabled={!enabled}
           onClick={this.claimFunds.bind(this, nfts, type)}
         >
           {activeText}
@@ -3279,11 +3605,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       kitchenId = 2;
     }
     const height = this.getButtonHeight();
+    const stillLoading = (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null);
     return (
       <Button
         className="web3ButtonTransparent"
         style={{height}}
         type={'default'}
+        disabled={stillLoading}
         onClick={this.showKitchenModal.bind(this, kitchenId)}
       >
         Buy kitchen space
@@ -3324,7 +3652,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </div>
       )
     }
-
     return (
       <div style={{marginTop, height}} className={type !== 'Gym' ? 'buttonShade' : null}>
         { type === 'TheStakeHouse' || type === 'LeStake' ?
@@ -4202,6 +4529,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             { this.state.graphError ? this.renderGraphError() : null }
             { this.state.contractsPaused ? this.renderContractsPaused() : null }
             { this.state.noBalance ? this.renderNoBalance() : null }
+            { this.state.mintActive ? this.renderMintActive() : null }
+            { this.state.claimActive ? this.renderClaimActive() : null }
             <div ref={this.townhouseRef} className="townhouseBox" style={this.getTownhouseMargin()}>
               { this.renderRoof() }
               { this.renderNfts() }

@@ -198,6 +198,12 @@ function App(props) {
         </div>
       );
     } else {
+      const maticTargetNetwork = 'https://matic-mumbai.chainstacklabs.com/';
+      let rpcUrl = targetNetwork ? targetNetwork.rpcUrl : '';
+      if (targetNetwork && targetNetwork.name === 'mumbai') {
+        rpcUrl = maticTargetNetwork;
+      }
+      console.log(targetNetwork);
       networkDisplay = (
         <div style={{ zIndex: 5, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
@@ -213,7 +219,7 @@ function App(props) {
                         chainId: "0x" + targetNetwork.chainId.toString(16),
                         chainName: targetNetwork.name,
                         nativeCurrency: targetNetwork.nativeCurrency,
-                        rpcUrls: [targetNetwork.rpcUrl],
+                        rpcUrls: [rpcUrl],
                         blockExplorerUrls: [targetNetwork.blockExplorer],
                       },
                     ];

@@ -65,6 +65,7 @@ class RatMenu extends React.Component {
     };
     this.Account = null;
     this.nftProfit = 0;
+    this.mintedNfts = {};
   }
 
   toggle() {
@@ -127,7 +128,7 @@ class RatMenu extends React.Component {
     return { networkName, chainId };
   }
 
-  async listenForMints(contract) {
+  async listenForMints() {
     const { networkName, chainId } = this.getNetworkName();
     console.log(`LISTENFORMINTS network ${networkName} chain ID ${chainId}`);
     const Contract = new ethers.Contract(config[networkName].Character,
@@ -141,6 +142,10 @@ class RatMenu extends React.Component {
           const decoded = atob(base64[1]);
           const json = JSON.parse(decoded);
           const img = json.image;
+          if (this.mintedNfts[json.name]) {
+            return;
+          }
+          this.mintedNfts[json.name] = 1;
           renderNotification(
             "info",
             '',
@@ -153,14 +158,15 @@ class RatMenu extends React.Component {
       }
     });
   }
-
+/*
   async componentWillMount() {
+
     setTimeout(() => {
       this.listenForMints();
     }, 10000);
     return;
   }
-
+*/
   handleResize = e => {
     this.setState({ windowHeight: window.innerHeight - 235 });
   };
