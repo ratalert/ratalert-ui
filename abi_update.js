@@ -5,7 +5,6 @@ const network = 'localhost';
   'Gym', 'Mint', 'Claim', 'FastFood', 'CasualFood', 'GourmetFood', 'KitchenShop', 'PayWall'];
 
   const copyAbi = (contract) => {
-    console.log(`Writing ABI for ${contract}`);
     const path = `../ratalert-contracts/build/contracts/${contract}.json`;
     if (fs.existsSync(path)) {
       let file = fs.readFileSync(path).toString();
@@ -13,6 +12,7 @@ const network = 'localhost';
       if (file.abi) {
         const abi = file.abi;
         const destination = `./src/contracts/abis/${network}/${contract}.json`;
+        console.log(`Writing ABI for ${destination}`);
         fs.writeFileSync(destination, JSON.stringify(abi), "utf8");
       }
     } else {

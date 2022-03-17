@@ -162,6 +162,8 @@ class Main extends React.Component {
       claimStats: [],
       totalRats: 0,
       totalCooks: 0,
+      oldRatCount: 0,
+      oldChefCount: 0,
       totalRatsStaked: 0,
       totalCooksStaked: 0,
       mintAmount: 1,
@@ -609,6 +611,8 @@ class Main extends React.Component {
             size="small"
           />
             { diff } / { this.state.mintActiveTimerMax} seconds elapsed
+            Old rats { this.state.oldRatCount} Old chefs {this.state.oldChefCount}
+            Total rats { this.state.totalRats} Total chefs {this.state.totalChefs}
             <p>Chainlink VRF usually sends a response within <b>50</b> and <b>110</b> seconds.<br/>
             Using an external random number for <b>mints</b> makes sure the game cannot be exploited.
             </p>
@@ -833,6 +837,7 @@ class Main extends React.Component {
 
 
 
+
     this.setState({
 
       loading: false,
@@ -851,6 +856,12 @@ class Main extends React.Component {
       totalChefsStaked,
       allStakedChefs,
     });
+
+    if ((totalRats !== this.state.oldRatCount) || (totalChefs !== this.state.oldChefCount)) {
+      console.log('NFT count changed');
+      this.setState({ mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
+    }
+
     if (result1.characters && result2.characters ) {
       const nfts = this.state.myNfts;
       let nftCount = 0;
@@ -1077,7 +1088,7 @@ class Main extends React.Component {
         value = ethers.utils.parseEther(sum);
       }
       console.log('Mint value:', value);
-      this.setState({ mintDisabled: true });
+      this.setState({ mintDisabled: true, oldRatCount: this.state.totalRats, oldChefCount: this.state.totalChefs });
       const result = await this.props.tx(
         this.props.writeContracts.Character.mint(amount, stake, {
           from: this.props.address,
@@ -1234,6 +1245,7 @@ class Main extends React.Component {
 
     if (this.props.debug) console.log('DEBUG Get chain stats');
     const { networkName, chainId } = this.getNetworkName();
+    console.log(networkName, chainId);
     const CharacterContract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
@@ -1249,7 +1261,7 @@ class Main extends React.Component {
 
 
 
-    if (this.props.debug) console.log('DEBUG Init Contracts');
+    if (this.props.debug) console.log('DEBUG Init Contracts', CharacterContract.address, JSON.stringify(contracts[chainId][networkName].contracts.Character.abi));
     let totalSupply;
     let minted;
     let paidTokens
@@ -1261,7 +1273,6 @@ class Main extends React.Component {
     let leStakePaused;
     try {
       minted = await CharacterContract.minted();
-      totalSupply = await CharacterContract.maxTokens();
       totalSupply = await this.cacheLocalStorage('CharacterContract.maxTokens()', CharacterContract.maxTokens());
       paidTokens = await this.cacheLocalStorage('CharacterContract.paidTokens()', CharacterContract.getGen0Tokens());
       mintPrice = await PaywallContract.mintPrice();
@@ -1382,7 +1393,6 @@ class Main extends React.Component {
       paywall['paywallEnabled'] = paywallEnabled;
       paywall['whitelistCount'] = whitelistCount;
       paywall['freeMints'] = freeMints;
-      console.log('PAYWALL', paywall);
       this.setState({ paywall });
     }
   }
@@ -1470,7 +1480,6 @@ class Main extends React.Component {
     if (this.state.paywall.paywallEnabled === null) {
       return;
     }
-    console.log(this.state.paywall);
     if (this.state.paywall.paywallEnabled  && this.state.paywall.freeMints === 0 && this.state.paywall.whitelistCount === 0) {
       return this.renderNoWLOrMintErrorMessage();
     }
