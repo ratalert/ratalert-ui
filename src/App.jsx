@@ -203,7 +203,6 @@ function App(props) {
       if (targetNetwork && targetNetwork.name === 'mumbai') {
         rpcUrl = maticTargetNetwork;
       }
-      console.log(targetNetwork);
       networkDisplay = (
         <div style={{ zIndex: 5, position: "absolute", right: 0, top: 60, padding: 16 }}>
           <Alert
@@ -262,9 +261,12 @@ function App(props) {
 
   useOnBlock(localProvider, async() => {
     lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
+    const blockTimeEvent = new CustomEvent('blockTime', {
+      bubbles: true,
+      detail: { lastBlockTime }
+    });
+    window.dispatchEvent(blockTimeEvent);
   });
-
-
 
   const [route, setRoute] = useState();
   useEffect(() => {

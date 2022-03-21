@@ -85,6 +85,7 @@ class Main extends React.Component {
     this.ratHeight = 0;
     this.nfts = {};
     this.oldNfts = {};
+    this.enableApprovals = true;
     this.kitchenSignFactor = 0.80;
     if (this.innerWidth < 769) {
       this.kitchenSignFactor = 0.7;
@@ -102,6 +103,7 @@ class Main extends React.Component {
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
     this.maxSelectedNFTs = 6;
     this.state = {
+      lastBlockTime: 0,
       graphError: false,
       contractsPaused: false,
       nftCount: 0,
@@ -172,10 +174,10 @@ class Main extends React.Component {
       loading: true,
       nftDetailsActive: {},
       isApprovedForAll: {
-        "McStake": false,
-        "Gym": false,
-        "LeStake": false,
-        "TheStakeHouse": false,
+        "McStake": this.enableApprovals : false ? true,
+        "Gym": this.enableApprovals : false ? true,
+        "LeStake": this.enableApprovals : false ? true,
+        "TheStakeHouse": this.enableApprovals : false ? true,
       },
       noAddressLoaded: true,
       dataLoaded: false,
@@ -309,6 +311,12 @@ class Main extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+
+    if (prevProps.lastBlockTime > this.state.lastBlockTime) {
+      this.setState({
+        lastBlockTime: prevProps.lastBlockTime
+      });
+    }
 
     if (this.props.address && !prevProps.address) {
 
@@ -611,8 +619,6 @@ class Main extends React.Component {
             size="small"
           />
             { diff } / { this.state.mintActiveTimerMax} seconds elapsed
-            Old rats { this.state.oldRatCount} Old chefs {this.state.oldChefCount}
-            Total rats { this.state.totalRats} Total chefs {this.state.totalChefs}
             <p>Chainlink VRF usually sends a response within <b>50</b> and <b>110</b> seconds.<br/>
             Using an external random number for <b>mints</b> makes sure the game cannot be exploited.
             </p>
@@ -860,6 +866,8 @@ class Main extends React.Component {
     if ((totalRats !== this.state.oldRatCount) || (totalChefs !== this.state.oldChefCount)) {
       console.log('NFT count changed');
       this.setState({ mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
+      this.getChainStats();
+      this.getBalances();
     }
 
     if (result1.characters && result2.characters ) {
@@ -1009,6 +1017,10 @@ class Main extends React.Component {
 
     window.addEventListener("dayTime", (e) => {
       this.setState({dayTime: e.detail.dayTime})
+    });
+
+    window.addEventListener("blockTime", (e) => {
+      this.setState({lastBlockTime: e.detail.lastBlockTime})
     });
 
   }
@@ -1261,7 +1273,7 @@ class Main extends React.Component {
 
 
 
-    if (this.props.debug) console.log('DEBUG Init Contracts', CharacterContract.address, JSON.stringify(contracts[chainId][networkName].contracts.Character.abi));
+    // if (this.props.debug) console.log('DEBUG Init Contracts', CharacterContract.address, JSON.stringify(contracts[chainId][networkName].contracts.Character.abi));
     let totalSupply;
     let minted;
     let paidTokens
@@ -1367,7 +1379,7 @@ class Main extends React.Component {
       if ((freeMints > 0) && (whitelistCount > 0)) {
         let max = freeMints;
         if (freeMints > 10) {
-          freeMints = 10;
+          //freeMints = 10;
         }
         if (max > 3) {
           max = 3;
@@ -1497,7 +1509,7 @@ class Main extends React.Component {
     return (
         <Row  className="officeContent">
           <Col className="officeLine" xs={11} md={12}>
-            3. Start minting
+            2. Start minting
           </Col>
           <Col span={3} style={{paddingTop: 5}}>
             <Button disabled={this.state.mintDisabled} className="mintButton" onClick={this.mint.bind(this, false)}>
@@ -1561,6 +1573,8 @@ class Main extends React.Component {
             { this.renderMintCarets() }
           </Col>
         </Row>
+{
+  /*
         <Row className="officeContent">
           <Col className="officeLine" xs={11} md={12} style={{ textAlign: "left"}}>
             2. Select currency for payment
@@ -1572,6 +1586,8 @@ class Main extends React.Component {
           </Radio.Group>
           </Col>
         </Row>
+        */
+      }
           { this.renderMintButtons() }
         <Row  className="officeContent">
           <Col className="officeLine" span={3} style={{ textAlign: "left" }}>
@@ -1632,11 +1648,11 @@ class Main extends React.Component {
               skill: parseInt(r.skill),
               skillLevel: hash['Skill percentage'],
               skillName: hash['Skill'],
-              intelligence: parseInt(r.intelligence),
               intelligenceName: hash['Intelligence'],
-              intelligenceLevel: hash['Intelligence percentage'],
+              intelligence: parseInt(r.intelligence),
+              intelligenceLevel: parseInt(r.intelligence),
               fatness: parseInt(r.fatness),
-              fatnessLevel: hash['Fatness percentage'],
+              fatnessLevel: parseInt(r.fatness),
               fatnessName: hash['Fatness'],
               owed: parseFloat(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
@@ -1892,7 +1908,7 @@ class Main extends React.Component {
       case 'intelligence':
           return <div style={{width: '200px'}}>The rats's <img src="/img/intelligence.png"/> intelligence level increases 4% per day. </div>;
       case 'bodymass':
-          return <div style={{width: '200px'}}>The rats's <img src="/img/fatness.png"/> body mass level increases 2% per day. When the body mass reaches the state "obese" your rat might be killed by a cat. </div>;
+          return <div style={{width: '200px'}}>The rats's <img src="/img/fatness.png"/> body mass level increases 8% per day. When the body mass reaches the state "obese" your rat might be kidnapped by a cat. </div>;
 
       break;
     }
@@ -2270,7 +2286,7 @@ class Main extends React.Component {
         diff = this.state.stats.levelUpThreshold - diff;
       }
 
-      if (numberOfDays > 1 && diff > this.state.stats.levelUpThreshold*0.9 ) {
+      if (numberOfDays > 1) {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
 
@@ -2281,7 +2297,7 @@ class Main extends React.Component {
     } else {
       // Already claimed at least once
       let now = Math.floor(Date.now() / 1000);
-      const d = new Date(stakeTimestamp * 1000);
+      const d = new Date(lastClaim * 1000);
       let stakeDate = d.getTime() / 1000;
       const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
       if (isNaN(numberOfDays)) {
@@ -2295,7 +2311,7 @@ class Main extends React.Component {
         diff = this.state.stats.levelUpThreshold - diff;
       }
 
-      if (numberOfDays > 1 && diff > this.state.stats.levelUpThreshold*0.9 ) {
+      if (numberOfDays > 1) {
         return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
       }
 
@@ -2336,9 +2352,18 @@ class Main extends React.Component {
     }
     if (type !== "Rat") {
       if (this.state.stats && this.state.stats.dailyFFoodRate > 0) {
-        const nominal = (this.props.lastBlockTime - timestamp) * parseInt(this.state.stats.dailyFFoodRate) / parseInt(this.state.stats.levelUpThreshold);
+        const nominal = (this.state.lastBlockTime - timestamp) * parseInt(this.state.stats.dailyFFoodRate) / parseInt(this.state.stats.levelUpThreshold);
         const multiplier = 100000 + (skill * this.state.stats.chefEfficiencyMultiplier * 10);
         let gross = nominal * multiplier / 100000;
+
+        let limit = this.state.stats.dailyFFoodRate * this.state.stats.chefEfficiencyMultiplier;
+        if (limit === 0) {
+            limit = this.state.stats.dailyFFoodRate;
+        }
+
+        if (gross >= limit) {
+          gross = this.state.stats.dailyFFoodRate;
+        }
         let net = gross * (100 - this.state.stats.ratTax) / 100;
         /*
         console.log(`----NFT ${name}`);
@@ -2348,6 +2373,7 @@ class Main extends React.Component {
         console.log(`Gross: ${gross} Net: ${net}`);
         console.log(`----END`);
         */
+
         if (gross < 0) {
           gross = 0;
         }
@@ -2584,7 +2610,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[contract].claimMany(nft, true, {
           from: this.props.address,
-          gasLimit: parseInt(nft.length) * 350000,
+          gasLimit: parseInt(nft.length) * 400000,
         }),
       );
       window.scrollTo(0, 0);
@@ -2760,7 +2786,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, true, {
           from: this.props.address,
-          gasLimit: selectedToUnStakeNfts.length * 350000,
+          gasLimit: selectedToUnStakeNfts.length * 400000,
         }),
       );
       window.scrollTo(0, 0);
@@ -4523,6 +4549,12 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     }
   }
 
+  hideClaimModal() {
+    this.setState({isClaimModalVisible: false, claimStats: []});
+    this.getBalances();
+    this.getChainStats();
+  }
+
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     let offset = 0;
@@ -4545,11 +4577,11 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               { this.renderNfts() }
             </div>
             <Modal bodyStyle={{height: 480}} title={`This is what happened... ${this.state.claimStats.length} ${this.state.claimStats.length === 1 ? 'Event' : 'Events'}`}
-            onCancel={() => this.setState({isClaimModalVisible: false, claimStats: []})}
-            onOk={() => this.setState({isClaimModalVisible: false, claimStats: []})}
+            onCancel={ this.hideClaimModal.bind(this) }
+            onOk={ this.hideClaimModal.bind(this) }
             footer={[
               <Button className="web3Button" key="submit" type="default"
-              onClick={() => this.setState({isClaimModalVisible: false, claimStats: []})}>
+              onClick={ this.hideClaimModal.bind(this) }>
                 Close
               </Button>
             ]}
