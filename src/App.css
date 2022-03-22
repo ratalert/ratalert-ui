@@ -2293,3 +2293,7 @@
     background: rgba(224, 224, 224, 0.5);
     color: #FFF;
   }
+
+.ant-layout-content {
+  padding: 0px !important;
+}

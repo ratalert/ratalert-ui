@@ -544,11 +544,17 @@ class Main extends React.Component {
       console.log(`Loading RandomNumberRequested with address ${claimContract.address}`);
 
       mintContract.on("RandomNumberRequested", async(requestId, sender) => {
-        console.log(`Mint Random number requested: ${requestId}`);
+        if (sender === this.props.address) {
+          console.log(`Mint Random number requested: ${requestId}`);
+          this.setState({ mintActive: true, mintActiveTimer: Math.floor(Date.now() / 1000) });
+        }
       });
 
       claimContract.on("RandomNumberRequested", async(requestId, sender) => {
-        console.log(`Claim Random number requested: ${requestId}`);
+        if (sender === this.props.address) {
+          console.log(`Claim Random number requested: ${requestId}`);
+          this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+        }
       });
 
 
@@ -613,7 +619,7 @@ class Main extends React.Component {
     const diff = Math.floor(Date.now() / 1000) - this.state.mintActiveTimer;
     const p = parseInt(( diff /this.state.mintActiveTimerMax)*100);
     return (
-      <div style={{ zIndex: 2, position: "absolute", left: 0, top: 60, padding: 16 }}>
+      <div style={{ zIndex: 5, position: "fixed", left: 0, top: 60, padding: 16 }}>
       <Alert
         message={<span><b>MINT</b>: Waiting for Chainlink VRF (Verifiable Random Function)...</span>}
         description={
@@ -640,7 +646,7 @@ class Main extends React.Component {
     const diff = Math.floor(Date.now() / 1000) - this.state.claimActiveTimer;
     const p = parseInt(( diff /this.state.claimActiveTimerMax)*100);
     return (
-      <div style={{ zIndex: 2, position: "absolute", left: 0, top: this.state.mintActive ? 250 : 60, padding: 16 }}>
+      <div style={{ zIndex: 5, position: "fixed", left: 0, top: this.state.mintActive ? 250 : 60, padding: 16 }}>
       <Alert
         message={<span><b>Claim Profits</b>: Waiting for Chainlink VRF (Verifiable Random Function)...</span>}
         description={
@@ -955,6 +961,9 @@ class Main extends React.Component {
   async listenForMints() {
     const { networkName, chainId } = this.getNetworkName();
     console.log(`MAIN LISTENFORMINTS network ${networkName} chain ID ${chainId}`);
+    if (!this.props.address) {
+      return;
+    }
     const Contract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
@@ -1022,7 +1031,6 @@ class Main extends React.Component {
     setTimeout(() => {
       this.checkClaimHook();
       this.listenForMints();
-      this.checkContractApproved();
     }, 5000);
 
     setTimeout(() => {
@@ -1043,6 +1051,12 @@ class Main extends React.Component {
     window.addEventListener("blockTime", (e) => {
       this.setState({lastBlockTime: e.detail.lastBlockTime})
     });
+
+    this.storyHeight = 315;
+
+    if (this.innerWidth < 900) {
+      this.storyHeight = 385;
+    }
 
   }
 
@@ -1129,7 +1143,6 @@ class Main extends React.Component {
           gasLimit,
         }),
       );
-      window.scrollTo(0, 0);
       this.setState({ mintActive: true, mintActiveTimer: Math.floor(Date.now() / 1000) });
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
       renderNotification("info", `${amount} mint(s) requested.`, "");
@@ -1244,7 +1257,6 @@ class Main extends React.Component {
 
   async getFoodTokensPerRat() {
     const { networkName, chainId } = this.getNetworkName();
-    /*
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
         contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
     const TheStakeHouseContract = new ethers.Contract(config[networkName].TheStakeHouse,
@@ -1264,21 +1276,18 @@ class Main extends React.Component {
     if (!foodTokensPerRatLeStake) {
       foodTokensPerRatLeStake = 0;
     }
-    */
-
+/*
     const mcStakeResult = await this.getFoodToken('McStake');
     const theStakeHouseResult = await this.getFoodToken('TheStakeHouse');
     const leStakeResult = await this.getFoodToken('LeStake');
-
+*/
 
     const foodTokensPerRat = {
-      'McStake': mcStakeResult.foodTokensPerRat,
-      'TheStakeHouse': theStakeHouseResult.foodTokensPerRat,
-      'LeStake': leStakeResult.foodTokensPerRat,
-      'lastMcStakeClaim': mcStakeResult.lastChefClaim,
-      'lastTheStakehouseClaim': theStakeHouseResult.lastChefClaim,
-      'lastLeStakeClaim': leStakeResult.lastChefClaim,
+      'McStake': parseInt(ethers.utils.formatEther(foodTokensPerRatMcStake)),
+      'TheStakeHouse': parseInt(ethers.utils.formatEther(foodTokensPerRatTheStakeHouse)),
+      'LeStake': parseInt(ethers.utils.formatEther(foodTokensPerRatLeStake)),
     }
+    console.log(foodTokensPerRat);
     this.setState({ foodTokensPerRat });
 
 
@@ -1825,10 +1834,10 @@ class Main extends React.Component {
         }
         if (rowNFTs.length > 0) {
           if (type !== 'chef') {
-            this.townhouseHeight += 315; // Kitchen
+            this.townhouseHeight += this.storyHeight; // Kitchen
           }
           if (type === 'Rat') {
-            this.ratHeight += 315;
+            this.ratHeight += this.storyHeight;
           }
           rows.push(this.renderNFTRow(i, nftsPerRow, rowNFTs, staked, type, location));
           if (i !== numberOfRows - 1) {
@@ -1840,7 +1849,7 @@ class Main extends React.Component {
 
     if (rows.length === 0) {
       if (type !== 'chef') {
-        this.townhouseHeight += 315; // Kitchen
+        this.townhouseHeight += this.storyHeight; // Kitchen
       }
       rows.push(this.renderNFTRow(0, 0, [], staked, type, location));
       //rows.push(emptyRow);
@@ -2420,19 +2429,15 @@ class Main extends React.Component {
       return 0;
     } else {
       let foodTokensPerRat = 0;
-      let lastChefClaim = 0;
       switch (stakingLocation) {
         case 'McStake':
           foodTokensPerRat = this.state.foodTokensPerRat.McStake;
-          lastChefClaim = this.state.foodTokensPerRat.lastMcStakeClaim;
         break;
         case 'TheStakeHouse':
           foodTokensPerRat = this.state.foodTokensPerRat.TheStakeHouse;
-          lastChefClaim = this.state.foodTokensPerRat.lastTheStakehouseClaim;
         break;
         case 'LeStake':
           foodTokensPerRat = this.state.foodTokensPerRat.LeStake;
-          lastChefClaim = this.state.foodTokensPerRat.lastLeStakeClaim;
         break;
       }
       /*
@@ -2667,7 +2672,7 @@ class Main extends React.Component {
           gasLimit: parseInt(nft.length) * 400000,
         }),
       );
-      window.scrollTo(0, 0);
+
       this.setState({ selectedNfts: {}, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
       renderNotification("info", `Your unstaking request was received.`, "");
     } catch (e) {
@@ -2705,7 +2710,6 @@ class Main extends React.Component {
           gasLimit: parseInt(selectedToUnStakeNfts.length * 450000),
         }),
       );
-      window.scrollTo(0, 0);
       this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
       renderNotification("info", `Your claim request was successful.`, "");
       setTimeout(() => {
@@ -2855,7 +2859,6 @@ class Main extends React.Component {
           gasLimit: selectedToUnStakeNfts.length * 400000,
         }),
       );
-      window.scrollTo(0, 0);
       this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
       renderNotification("info", `Your unstaking request has been received.`, "");
     } catch (e) {
@@ -3567,7 +3570,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     if (this.ratHeight === 0) {
       return 620;
     } else {
-      return this.ratHeight + 315;
+      return this.ratHeight + this.storyHeight;
     }
   }
 
@@ -3765,10 +3768,10 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
     const roofHeight = this.getWidth('roof', true, 1000, 300);
     this.townhouseHeight += roofHeight.height; // Roof
-    this.townhouseHeight += 315; // Office
-    this.townhouseHeight += 315; // Gourmet Kitchen
-    this.townhouseHeight += 315; // Casual Kitchen
-    this.townhouseHeight += 315; // Gym
+    this.townhouseHeight += this.storyHeight; // Office
+    this.townhouseHeight += this.storyHeight; // Gourmet Kitchen
+    this.townhouseHeight += this.storyHeight; // Casual Kitchen
+    this.townhouseHeight += this.storyHeight; // Gym
     const sewer = this.getWidth('sewer');
     if (this.innerWidth < 769) {
       sewer.width += 18;
