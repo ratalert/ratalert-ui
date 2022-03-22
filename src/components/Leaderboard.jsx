@@ -70,7 +70,7 @@ class Leaderboard extends React.Component {
       (orderBy: ${type}, orderDirection: desc, first: 100)
       {
         id, staked, owner, URI, mcstakeStakingOwner, mcstakeStakedTimestamp, type,
-        insanity, skill, intelligence, fatness, earned
+        freak, skill, intelligence, bodymass, earned
       }
     }`;
 

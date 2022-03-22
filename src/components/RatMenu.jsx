@@ -62,6 +62,7 @@ class RatMenu extends React.Component {
       collapsed: true,
       web3Loaded: false,
       dayTime: this.props.dayTime,
+      buttonsDisabled: true,
     };
     this.Account = null;
     this.nftProfit = 0;
@@ -79,6 +80,11 @@ class RatMenu extends React.Component {
     window.addEventListener("dayTime", (e) => {
       this.setState({dayTime: e.detail.dayTime})
     });
+
+    window.addEventListener("loadingComplete", (e) => {
+      this.setState({ buttonsDisabled: false })
+    });
+
   }
 
   componentWillUnmount() {
@@ -114,6 +120,8 @@ class RatMenu extends React.Component {
 
   getNetworkName() {
     const chainId = this.props.chainId;
+    const networkName = this.props.networkName;
+    /*
     let networkName;
     if (chainId === 1337) {
       networkName = 'localhost';
@@ -125,6 +133,7 @@ class RatMenu extends React.Component {
     else {
       networkName = 'mainnet';
     }
+    */
     return { networkName, chainId };
   }
 
@@ -248,16 +257,14 @@ class RatMenu extends React.Component {
     } else {
       console.log(`No network name, ${networkName}, chainId ${chainId}`);
     }
-
-
     return (
 
       <div className={this.getNavStyle()}>
         <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
           <Menu.Item key={1}><Link to="/">Game</Link></Menu.Item>
-          <Menu.Item key={2}><Link to="/leaderboard">Leaderboard</Link></Menu.Item>
-          <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
-          { admin && admin.includes(this.props.address) ? <Menu.Item key={4}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+          <Menu.Item key={2}><Link disabled={this.state.buttonsDisabled} to="/leaderboard">Leaderboard</Link></Menu.Item>
+          <Menu.Item key={3}><Link disabled={this.state.buttonsDisabled} to="/whitepaper">Whitepaper</Link></Menu.Item>
+          { admin && admin.includes(this.props.address) ? <Menu.Item key={4}><Link disabled={this.state.buttonsDisabled} to="/admin">Admin Dashboard</Link></Menu.Item> : null }
         </Menu>
       </div>
     );

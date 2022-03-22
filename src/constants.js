@@ -85,6 +85,17 @@ export const NETWORKS = {
     faucet: "https://faucet.matic.network/",
     blockExplorer: "https://mumbai-explorer.matic.today/",
   },
+  beta: {
+    name: "mumbai",
+    color: "#92D9FA",
+    chainId: 80001,
+    nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
+    price: 1,
+    gasPrice: 1000000000,
+    rpcUrl: "https://billowing-blue-butterfly.matic-testnet.quiknode.pro/",
+    faucet: "https://faucet.matic.network/",
+    blockExplorer: "https://mumbai-explorer.matic.today/",
+  },
   localArbitrum: {
     name: "localArbitrum",
     color: "#50a0ea",

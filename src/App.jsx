@@ -27,21 +27,30 @@ const { ethers } = require("ethers");
 let targetNetwork;
 let chainId = 0;
 let lastBlockTime = 0;
+let networkName;
 if (process.env.REACT_APP_ETH_ENV === 'local') {
   targetNetwork = NETWORKS.localhost;
+  networkName = 'localhost';
   chainId = 1337;
 } else if (process.env.REACT_APP_ETH_ENV === 'mainnet') {
   targetNetwork = NETWORKS.mainnet;
+  networkName = 'mainnet';
   chainId = 1;
 } else if (process.env.REACT_APP_ETH_ENV === 'rinkeby') {
   targetNetwork = NETWORKS.rinkeby;
+  networkName = 'rinkeby';
   chainId = 4;
-}
-else if (process.env.REACT_APP_ETH_ENV === 'mumbai') {
+} else if (process.env.REACT_APP_ETH_ENV === 'beta') {
+ targetNetwork = NETWORKS.beta;
+ networkName = 'beta';
+ chainId = 80001;
+} else if (process.env.REACT_APP_ETH_ENV === 'mumbai') {
  targetNetwork = NETWORKS.mumbai;
+ networkName = 'mumbai';
  chainId = 80001;
 }
 else {
+  networkName='localhost'
   targetNetwork = NETWORKS.localhost;
   chainId = 1337;
 }
@@ -342,6 +351,7 @@ function App(props) {
             dayTimeSwitch={dayTimeSwitch}
             debug={DEBUG}
             chainId={chainId}
+            networkName={networkName}
             content={<Main
               tx={tx}
               contractConfig={contractConfig}
@@ -356,6 +366,7 @@ function App(props) {
               dayTime={dayTime}
               debug={DEBUG}
               localBalance={localBalance}
+              networkName={networkName}
             />}
             />
           </Route>
@@ -371,6 +382,7 @@ function App(props) {
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
               chainId={chainId}
+              networkName={networkName}
               dayTimeSwitch={dayTimeSwitch}
               content={<Leaderboard
                 tx={tx}
@@ -379,6 +391,7 @@ function App(props) {
                 address={address}
                 provider={localProvider}
                 dayTime={dayTime}
+                networkName={networkName}
                 />}
               />
           </Route>
@@ -395,6 +408,7 @@ function App(props) {
               dayTime={dayTime}
               chainId={chainId}
               dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
               content={<Whitepaper
                 tx={tx}
                 readContracts={readContracts}
@@ -403,6 +417,7 @@ function App(props) {
                 provider={localProvider}
                 dayTime={dayTime}
                 setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
                 />}
               />
           </Route>
@@ -419,6 +434,7 @@ function App(props) {
               dayTime={dayTime}
               chainId={chainId}
               dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
               content={<AdminDashboard
                 tx={tx}
                 chainId={chainId}
@@ -428,6 +444,7 @@ function App(props) {
                 provider={localProvider}
                 dayTime={dayTime}
                 setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
                 />}
               />
           </Route>

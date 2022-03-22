@@ -27,6 +27,20 @@ const MintMumbai = require('./abis/mumbai/Mint.json');
 const TheStakeHouseMumbai = require('./abis/mumbai/TheStakeHouse.json');
 const PaywallMumbai = require('./abis/mumbai/Paywall.json');
 
+const CasualFoodBeta = require('./abis/beta/CasualFood.json');
+const CharacterBeta = require('./abis/beta/Character.json');
+const ClaimBeta = require('./abis/beta/Claim.json');
+const FastFoodBeta = require('./abis/beta/FastFood.json');
+const GourmetFoodBeta = require('./abis/beta/GourmetFood.json');
+const GymBeta = require('./abis/beta/Gym.json');
+const KitchenShopBeta = require('./abis/beta/KitchenShop.json');
+const LeStakeBeta = require('./abis/beta/LeStake.json');
+const McStakeBeta = require('./abis/beta/McStake.json');
+const MintBeta = require('./abis/beta/Mint.json');
+const TheStakeHouseBeta = require('./abis/beta/TheStakeHouse.json');
+const PaywallBeta = require('./abis/beta/Paywall.json');
+
+
 
 export const contracts = {
   1337: {
@@ -137,6 +151,60 @@ export const contracts = {
         "LeStake": {
           "address": config.mumbai.LeStake,
           "abi": LeStakeMumbai,
+        }
+      }
+    },
+    "beta": {
+      "name": "Beta",
+      "chainId": "80001",
+      "contracts": {
+        "Character": {
+          "address": config.beta.Character,
+          "abi": CharacterBeta,
+        },
+        "McStake": {
+          "address": config.beta.McStake,
+          "abi": McStakeBeta,
+        },
+        "Gym": {
+          "address": config.beta.Gym,
+          "abi": GymBeta,
+        },
+        "FastFood": {
+          "address": config.beta.FastFood,
+          "abi": FastFoodBeta,
+        },
+        "Mint": {
+          "address": config.beta.Mint,
+          "abi": MintBeta,
+        },
+        "Claim": {
+          "address": config.beta.Claim,
+          "abi": ClaimBeta,
+        },
+        "Paywall": {
+          "address": config.beta.Paywall,
+          "abi": PaywallBeta,
+        },
+        "CasualFood": {
+          "address": config.beta.CasualFood,
+          "abi": CasualFoodBeta,
+        },
+        "GourmetFood": {
+          "address": config.beta.GourmetFood,
+          "abi": GourmetFoodBeta,
+        },
+        "KitchenShop": {
+          "address": config.beta.KitchenShop,
+          "abi": KitchenShopBeta,
+        },
+        "TheStakeHouse": {
+          "address": config.beta.TheStakeHouse,
+          "abi": TheStakeHouseBeta,
+        },
+        "LeStake": {
+          "address": config.beta.LeStake,
+          "abi": LeStakeBeta,
         }
       }
     }

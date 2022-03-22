@@ -884,152 +884,6 @@
 
 
 
-  .eventHeader {
-    font-family: Pixellari;
-    font-size: 30px;
-    color: #fff;
-  }
-
-  .chefEfficiencyContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #00ef55;
-  }
-
-  .chefToleranceContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #fc24ff;
-  }
-
-  .ratToleranceContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #ffae00;
-  }
-
-
-  .ratEfficiencyContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #1eaeea;
-  }
-
-
-  .whiteContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #FFFFFF;
-  }
-
-  .greyContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #a09595;
-  }
-
-
-  .eventTitle {
-    font-family: Pixellari;
-    font-size: 34px;
-    color: #ec6e6e;
-  }
-
-  .kitchenTitle {
-    font-family: Pixellari;
-    font-size: 34px;
-    color: #ffffff;
-  }
-
-  .kitchenPrice {
-    font-family: Pixellari;
-    font-size: 25px;
-    color: #fee017;
-  }
-
-  .kitchenPriceRed {
-    font-family: Pixellari;
-    font-size: 25px;
-    color: #ec6e6e;
-  }
-
-
-  .kitchenCurrency {
-    font-family: Pixellari;
-    font-size: 12px;
-    color: #ffe000;
-    margin-top: 8px;
-  }
-
-  .kitchenCurrencyRed {
-    font-family: Pixellari;
-    font-size: 12px;
-    color: #ec6e6e;
-    margin-top: 8px;
-  }
-
-
-  .theStakeHouse {
-    background-image: url("img/thestakehouse.png");
-    width: 200px;
-    height: 200px;
-    background-size: cover;
-  }
-
-  .leStake {
-    background-image: url("img/lestake.png");
-    width: 200px;
-    height: 200px;
-    background-size: cover;
-  }
-
-
-  .kitchenCaret {
-    color: #FFF;
-  }
-
-
-  .eventContent {
-    font-family: Pixellari;
-    font-size: 14px;
-    color: #ec6e6e;
-  }
-
-  .carets {
-    color: #FFF;
-  }
-
-  .upArrow {
-    background-image: url("img/up.svg");
-    width: 14px;
-    height: 13px;
-  }
-
-  .downArrow {
-    background-image: url("img/down.svg");
-    width: 14px;
-    height: 13px;
-  }
-
-
-  .chefEfficiency {
-    filter: invert(77%) sepia(67%) saturate(2497%) hue-rotate(85deg) brightness(98%) contrast(91%);
-  }
-
-  .chefInsanity {
-    filter: invert(29%) sepia(72%) saturate(4426%) hue-rotate(282deg) brightness(111%) contrast(115%);
-  }
-
-
-  .ratEfficiency {
-    filter: invert(60%) sepia(13%) saturate(4359%) hue-rotate(164deg) brightness(95%) contrast(93%);
-  }
-
-  .ratFatness {
-    filter: invert(72%) sepia(43%) saturate(3657%) hue-rotate(1deg) brightness(105%) contrast(103%);
-  }
-
-
 
 
   .clickToSelect {
@@ -2289,3 +2143,151 @@
   background-color: rgba(0, 0, 0, 0.45);
   position: absolute;
 }
+
+.kitchenTitle {
+  font-family: Pixellari;
+  font-size: 34px;
+  color: #ffffff;
+}
+
+
+
+  .eventHeader {
+    font-family: Pixellari;
+    font-size: 30px;
+    color: #fff;
+  }
+
+  .chefEfficiencyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #00ef55;
+  }
+
+  .chefToleranceContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #fc24ff;
+  }
+
+  .ratToleranceContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #ffae00;
+  }
+
+
+  .ratEfficiencyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #1eaeea;
+  }
+
+
+  .whiteContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #FFFFFF;
+  }
+
+  .greyContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #a09595;
+  }
+
+
+  .eventTitle {
+    font-family: Pixellari;
+    font-size: 34px;
+    color: #ec6e6e;
+  }
+
+
+  .kitchenPrice {
+    font-family: Pixellari;
+    font-size: 25px;
+    color: #fee017;
+  }
+
+  .kitchenPriceRed {
+    font-family: Pixellari;
+    font-size: 25px;
+    color: #ec6e6e;
+  }
+
+
+  .kitchenCurrency {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #ffe000;
+    margin-top: 8px;
+  }
+
+  .kitchenCurrencyRed {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #ec6e6e;
+    margin-top: 8px;
+  }
+
+
+  .theStakeHouse {
+    background-image: url("img/thestakehouse.png");
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+  }
+
+  .leStake {
+    background-image: url("img/lestake.png");
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+  }
+
+
+  .kitchenCaret {
+    color: #FFF;
+  }
+
+
+  .eventContent {
+    font-family: Pixellari;
+    font-size: 14px;
+    color: #ec6e6e;
+  }
+
+  .carets {
+    color: #FFF;
+  }
+
+  .upArrow {
+    background-image: url("img/up.svg");
+    width: 14px;
+    height: 13px;
+  }
+
+  .downArrow {
+    background-image: url("img/down.svg");
+    width: 14px;
+    height: 13px;
+  }
+
+
+  .chefEfficiency {
+    filter: invert(77%) sepia(67%) saturate(2497%) hue-rotate(85deg) brightness(98%) contrast(91%);
+  }
+
+  .chefInsanity {
+    filter: invert(29%) sepia(72%) saturate(4426%) hue-rotate(282deg) brightness(111%) contrast(115%);
+  }
+
+
+  .ratEfficiency {
+    filter: invert(60%) sepia(13%) saturate(4359%) hue-rotate(164deg) brightness(95%) contrast(93%);
+  }
+
+  .ratFatness {
+    filter: invert(72%) sepia(43%) saturate(3657%) hue-rotate(1deg) brightness(105%) contrast(103%);
+  }

@@ -85,7 +85,7 @@ class Main extends React.Component {
     this.ratHeight = 0;
     this.nfts = {};
     this.oldNfts = {};
-    this.enableApprovals = true;
+    this.enableApprovals = false;
     this.kitchenSignFactor = 0.80;
     if (this.innerWidth < 769) {
       this.kitchenSignFactor = 0.7;
@@ -174,10 +174,10 @@ class Main extends React.Component {
       loading: true,
       nftDetailsActive: {},
       isApprovedForAll: {
-        "McStake": this.enableApprovals : false ? true,
-        "Gym": this.enableApprovals : false ? true,
-        "LeStake": this.enableApprovals : false ? true,
-        "TheStakeHouse": this.enableApprovals : false ? true,
+        "McStake": this.enableApprovals ? false : true,
+        "Gym": this.enableApprovals ? false : true,
+        "LeStake": this.enableApprovals ? false : true,
+        "TheStakeHouse": this.enableApprovals ? false : true,
       },
       noAddressLoaded: true,
       dataLoaded: false,
@@ -330,6 +330,7 @@ class Main extends React.Component {
 
       setTimeout(() => {
         this.getBalances();
+        console.log('Start get chain stats');
         this.getChainStats();
       }, 500);
 
@@ -397,6 +398,8 @@ class Main extends React.Component {
 
   getNetworkName() {
     const chainId = this.props.chainId;
+    const networkName = this.props.networkName;
+    /*
     let networkName;
     if (chainId === 1337) {
       networkName = 'localhost';
@@ -408,10 +411,11 @@ class Main extends React.Component {
     else {
       networkName = 'mainnet';
     }
+    */
     return { networkName, chainId };
   }
 
-  async chefClaimed(currency, tokenId, earned, unstaked, skill, insanity, eventName, foodTokensPerRat) {
+  async chefClaimed(currency, tokenId, earned, unstaked, skill, freak, eventName, foodTokensPerRat) {
       const { networkName, chainId } = this.getNetworkName();
       tokenId = parseInt(tokenId);
       if (!this.nfts[tokenId]) {
@@ -429,7 +433,7 @@ class Main extends React.Component {
         event: eventName,
         unstaked: unstaked,
         skill: parseInt(skill),
-        insanity: parseInt(insanity),
+        freak: parseInt(freak),
         lastUpdate: Math.floor(Date.now() / 1000),
         currency,
       };
@@ -452,14 +456,14 @@ class Main extends React.Component {
         if (hash['Skill']) {
           claimInfo.skillLevel = hash.Skill;
         }
-        if (hash['Insanity']) {
-          claimInfo.insanityLevel = hash.Insanity;
+        if (hash['Freak']) {
+          claimInfo.freakLevel = hash.Freak;
         }
         if (oldNft && oldNft.image) {
           claimInfo['oldSkill'] = parseInt(oldNft.skillLevel);
-          claimInfo['oldInsanity'] = parseInt(oldNft.insanityLevel);
+          claimInfo['oldFreak'] = parseInt(oldNft.freakLevel);
           claimInfo['oldSkillName'] = oldNft.skillName;
-          claimInfo['oldInsanityName'] = oldNft.insanityName;
+          claimInfo['oldFreakName'] = oldNft.freakName;
         }
         claimStats.push(claimInfo);
         console.log(claimInfo);
@@ -468,7 +472,7 @@ class Main extends React.Component {
       }
   }
 
-  async ratClaimed(currency, tokenId, earned, unstaked, intelligence, fatness, eventName) {
+  async ratClaimed(currency, tokenId, earned, unstaked, intelligence, bodymass, eventName) {
       const { networkName, chainId } = this.getNetworkName();
       tokenId = parseInt(tokenId);
       if (!this.nfts[tokenId]) {
@@ -486,7 +490,7 @@ class Main extends React.Component {
         event: eventName,
         unstaked: unstaked,
         intelligence: parseInt(intelligence),
-        fatness: parseInt(fatness),
+        bodymass: parseInt(bodymass),
         lastUpdate: Math.floor(Date.now() / 1000),
         currency,
       };
@@ -509,14 +513,14 @@ class Main extends React.Component {
         if (hash['Intelligence']) {
           claimInfo.intelligenceLevel = hash.Intelligence;
         }
-        if (hash['Fatness']) {
-          claimInfo.fatnessLevel = hash.Fatness;
+        if (hash['Body mass']) {
+          claimInfo.bodymassLevel = hash.Bodymass;
         }
         if (oldNft && oldNft.image) {
           claimInfo['oldIntelligence'] = parseInt(oldNft.intelligenceLevel);
-          claimInfo['oldFatness'] = parseInt(oldNft.fatnessLevel);
+          claimInfo['oldBodymass'] = parseInt(oldNft.bodymassLevel);
           claimInfo['oldIntelligenceName'] = oldNft.intelligenceName;
-          claimInfo['oldFatnessName'] = oldNft.fatnessName;
+          claimInfo['oldBodymassName'] = oldNft.bodymassName;
         }
         claimStats.push(claimInfo);
         console.log(claimInfo);
@@ -687,9 +691,24 @@ class Main extends React.Component {
           orderDirection: desc,
           orderBy: mcstakeLastClaimTimestamp,
         ) {
-          foodTokensPerRat, mcstakeLastClaimTimestamp, stakingLocation
+          foodTokensPerRat, mcstakeLastClaimTimestamp
         }
       }`;
+
+      let result;
+      try {
+        result = await graphQLClient.request(query);
+        if (result.characters && result.characters[0]) {
+          return { foodTokensPerRat: parseInt(result.characters[0].foodTokensPerRat), lastChefClaim: parseInt(result.characters[0].mcstakeLastClaimTimestamp) }
+        } else {
+          return { foodTokensPerRat: 0, lastChefClaim: 0 }
+        }
+      } catch (e) {
+        console.log('ERROR', e);
+        //this.fetchGraph();
+        this.setState({ graphError: true });
+        return { foodTokensPerRat: 0, lastChefClaim: 0 }
+      }
   }
 
   async fetchGraph() {
@@ -705,8 +724,8 @@ class Main extends React.Component {
           owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
           id, staked, owner, mcstakeStakedTimestamp, mcstakeLastClaimTimestamp, URI, type,
-          insanity,  skill,
-          intelligence, fatness, owed, foodTokensPerRat, stakingLocation
+          freak,  skill,
+          intelligence, bodymass, owed, foodTokensPerRat, stakingLocation
         }
       }`;
 
@@ -715,9 +734,9 @@ class Main extends React.Component {
         }) {
           id, staked, owner, mcstakeStakedTimestamp, mcstakeLastClaimTimestamp, URI,
           type,
-          insanity, skill,
+          freak, skill,
           intelligence,
-          fatness, owed, foodTokensPerRat, stakingLocation
+          bodymass, owed, foodTokensPerRat, stakingLocation
         }
       }`;
 
@@ -864,8 +883,8 @@ class Main extends React.Component {
     });
 
     if ((totalRats !== this.state.oldRatCount) || (totalChefs !== this.state.oldChefCount)) {
-      console.log('NFT count changed');
-      this.setState({ mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
+      console.log(`NFT count changed ${totalRats} ${totalChefs} <--> ${this.state.oldRatCount} ${this.state.oldChefCount}`);
+      this.setState({ oldRatCount: totalRats, oldChefCount: totalChefs,  mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
       this.getChainStats();
       this.getBalances();
     }
@@ -913,8 +932,10 @@ class Main extends React.Component {
 
     setTimeout(async () => {
       this.fetchGraph();
+/*
       this.fetchFromUniswap('WOOL', 'WETH', '0x8355dbe8b0e275abad27eb843f3eaf3fc855e525', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // WOOL-WETH
       this.fetchFromUniswap('GP', 'WETH','0x38ec27c6f05a169e7ed03132bca7d0cfee93c2c5', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // GP-WETH
+      */
     }, 3000);
 
   }
@@ -1114,6 +1135,7 @@ class Main extends React.Component {
       renderNotification("info", `${amount} mint(s) requested.`, "");
       setTimeout(() => {
         this.getChainStats();
+        this.fetchPaywallData(true);
       }, 1000);
     } catch (e) {
       this.setState({ mintDisabled: false });
@@ -1204,7 +1226,9 @@ class Main extends React.Component {
       if (val._hex && !eth) {
         num = parseInt(val);
       } else {
-        num = ethers.utils.formatEther(num);
+        if (num > 1000000) {
+          num = ethers.utils.formatEther(num);
+        }
         num = parseInt(num);
       }
       if (!num) {
@@ -1220,6 +1244,7 @@ class Main extends React.Component {
 
   async getFoodTokensPerRat() {
     const { networkName, chainId } = this.getNetworkName();
+    /*
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
         contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
     const TheStakeHouseContract = new ethers.Contract(config[networkName].TheStakeHouse,
@@ -1239,14 +1264,23 @@ class Main extends React.Component {
     if (!foodTokensPerRatLeStake) {
       foodTokensPerRatLeStake = 0;
     }
+    */
+
+    const mcStakeResult = await this.getFoodToken('McStake');
+    const theStakeHouseResult = await this.getFoodToken('TheStakeHouse');
+    const leStakeResult = await this.getFoodToken('LeStake');
+
 
     const foodTokensPerRat = {
-      'McStake': parseInt(ethers.utils.formatEther(foodTokensPerRatMcStake)),
-      'TheStakeHouse': parseInt(ethers.utils.formatEther(foodTokensPerRatTheStakeHouse)),
-      'LeStake': parseInt(ethers.utils.formatEther(foodTokensPerRatLeStake)),
+      'McStake': mcStakeResult.foodTokensPerRat,
+      'TheStakeHouse': theStakeHouseResult.foodTokensPerRat,
+      'LeStake': leStakeResult.foodTokensPerRat,
+      'lastMcStakeClaim': mcStakeResult.lastChefClaim,
+      'lastTheStakehouseClaim': theStakeHouseResult.lastChefClaim,
+      'lastLeStakeClaim': leStakeResult.lastChefClaim,
     }
     this.setState({ foodTokensPerRat });
-    console.log('foodTokensPerRat', foodTokensPerRat);
+
 
     setTimeout(() => {
       this.getFoodTokensPerRat();
@@ -1309,8 +1343,8 @@ class Main extends React.Component {
 
     let dailyFFoodRate = await this.cacheLocalStorage('McStakeContract.dailyChefEarnings()', McStakeContract.dailyChefEarnings(), true);
     let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
-    let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier()', McStakeContract.chefEfficiencyMultiplier());
-    let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod()', McStakeContract.vestingPeriod());
+    let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier2()', McStakeContract.chefEfficiencyMultiplier());
+    let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod2()', McStakeContract.vestingPeriod());
     let ratTax = await this.cacheLocalStorage('McStakeContract.ratTheftPercentage()', McStakeContract.ratTheftPercentage());
     let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
     let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
@@ -1363,13 +1397,13 @@ class Main extends React.Component {
 
   }
 
-  async fetchPaywallData() {
+  async fetchPaywallData(force = false) {
     const { networkName, chainId } = this.getNetworkName();
     const PaywallContract = new ethers.Contract(config[networkName].Paywall,
             contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
 
     let paywallEnabled = null;
-    if (this.state.paywall.paywallEnabled === null) {
+    if (force || this.state.paywall.paywallEnabled === null) {
       let paywallEnabled = await PaywallContract.onlyWhitelist();
       let whitelistCount = 0;
       let freeMints = 0;
@@ -1406,6 +1440,12 @@ class Main extends React.Component {
       paywall['whitelistCount'] = whitelistCount;
       paywall['freeMints'] = freeMints;
       this.setState({ paywall });
+      const loadingCompleteEvent = new CustomEvent('loadingComplete', {
+        bubbles: true,
+        detail: { }
+      });
+      window.dispatchEvent(loadingCompleteEvent);
+
     }
   }
 
@@ -1642,18 +1682,18 @@ class Main extends React.Component {
               type,
               attributes: json.attributes,
               stakingLocation: r.stakingLocation,
-              insanity: parseInt(r.insanity),
-              insanityLevel: hash['Insanity percentage'],
-              insanityName: hash['Insanity'],
+              freak: parseInt(r.freak),
+              freakLevel: hash['Freak percentage'],
+              freakName: hash['Freak'],
               skill: parseInt(r.skill),
               skillLevel: hash['Skill percentage'],
               skillName: hash['Skill'],
               intelligenceName: hash['Intelligence'],
               intelligence: parseInt(r.intelligence),
               intelligenceLevel: parseInt(r.intelligence),
-              fatness: parseInt(r.fatness),
-              fatnessLevel: parseInt(r.fatness),
-              fatnessName: hash['Fatness'],
+              bodymass: parseInt(r.bodymass),
+              bodymassLevel: parseInt(r.bodymass),
+              bodymassName: hash['Body mass'],
               owed: parseFloat(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
             };
@@ -1670,19 +1710,19 @@ class Main extends React.Component {
               mcstakeLastClaimTimestamp: parseInt(r.mcstakeLastClaimTimestamp),
               type: json.attributes[0].value,
               attributes: json.attributes,
-              insanity: parseInt(r.insanity),
-              insanityLevel: parseInt(r.insanity),
+              freak: parseInt(r.freak),
+              freakLevel: parseInt(r.freak),
               skill: parseInt(r.skill),
               skillLevel: parseInt(r.skill),
               intelligence: parseInt(r.intelligence),
               intelligenceLevel: parseInt(r.intelligence),
-              fatness: parseInt(r.fatness),
-              fatnessLevel: parseInt(r.fatness),
+              bodymass: parseInt(r.bodymass),
+              bodymassLevel: parseInt(r.bodymass),
               owed: parseFloat(r.owed),
               foodTokensPerRat: parseInt(r.foodTokensPerRat),
-              fatnessName: hash['Fatness'],
+              bodymassName: hash['Body Mass'],
               intelligenceName: hash['Intelligence'],
-              insanityName: hash['Insanity'],
+              freakName: hash['Freak'],
               skillName: hash['Skill'],
             }
             this.nfts[nftObj.name] = nftObj;
@@ -1903,7 +1943,7 @@ class Main extends React.Component {
     switch (type) {
       case 'skill':
         return <div style={{width: '200px'}}>The chef's <img src="/img/skill.png"/> skill level increases 4% per day. </div>;
-      case 'insanity':
+      case 'freak':
         return <div style={{width: '200px'}}>The chef's <img src="/img/insanity.png"/> freak level increases 2% per day. When freak level reaches the state "insane" your chef might burn out.</div>;
       case 'intelligence':
           return <div style={{width: '200px'}}>The rats's <img src="/img/intelligence.png"/> intelligence level increases 4% per day. </div>;
@@ -1950,21 +1990,21 @@ class Main extends React.Component {
     let key;
     if (type === 'modal') {
       if (c.type === 'Chef') {
-        key = hash.Insanity;
+        key = hash.Freak;
       }
       if (c.type === 'Rat') {
-        key = hash.Fatness;
+        key = hash.Bodymass;
       }
     }
     return (
       <div className={className}>
       <Row>
         <Col style={{marginRight: '0px'}} xs={5} span={2}>
-          <img alt={c.type === 'Chef' ? 'Insanity' : 'Fatness'} src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
+          <img alt={c.type === 'Chef' ? 'Freak level' : 'Body mass'} src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
         <Col xs={16} span={22}
           style={ key && type === 'modal' && key.length > 12 ? {fontSize: 10} : null }
           className={c.type === 'Chef' ? 'nftDetailInsanity' : 'nftDetailBodymass'}>
-          {c.type === 'Chef' ? hash.Insanity : hash.Fatness }
+          {c.type === 'Chef' ? hash.Freak : hash['Body mass'] }
         </Col>
       </Row>
       </div>
@@ -2078,10 +2118,10 @@ class Main extends React.Component {
         { c.attributes.map( (key) => (
               <div>
               {
-                key.trait_type !== 'Insanity' && key.trait_type !== 'Insanity percentage' &&
+                key.trait_type !== 'Freak' && key.trait_type !== 'Freak percentage' &&
                 key.trait_type !== 'Skill' && key.trait_type !== 'Skill percentage' &&
                 key.trait_type !== 'Intelligence' && key.trait_type !== 'Intelligence percentage' &&
-                key.trait_type !== 'Fatness' && key.trait_type !== 'Fatness percentage' &&
+                key.trait_type !== 'Body mass' && key.trait_type !== 'Body mass percentage' &&
                 key.trait_type !== 'Generation' && key.trait_type !== 'Type' &&
                 key.value.length > 0
                 ?
@@ -2163,7 +2203,7 @@ class Main extends React.Component {
         </Col>
       </Row>
       </Popover>
-      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'insanity') : this.renderAttribute.bind(this, 'bodymass')}>
+      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'freak') : this.renderAttribute.bind(this, 'bodymass')}>
       <Row>
       <Col style={{marginRight: '0px'}} xs={5} span={4}>
         <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
@@ -2173,7 +2213,7 @@ class Main extends React.Component {
         format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 2)}></div></span>}
         className={c.type === 'Chef' ? "nftProgressSecondRow chef-insanity" : "nftProgressSecondRow rat-fatness"}
         strokeColor={c.type === "Chef" ? "#fc24ff" : "#ffae00"}
-        percent={ c.type === 'Chef' ? c.insanityLevel : c.fatnessLevel }
+        percent={ c.type === 'Chef' ? c.freakLevel : c.bodymassLevel }
         size="small"
          />
         </Col>
@@ -2198,7 +2238,7 @@ class Main extends React.Component {
           <Col span={7} className="funds" style={{color: '#fee017'}}>
             { c.stakingLocation !== 'Gym' ?
             <Popover content="Amount of $FFOOD your NFTs have accumulated.">
-              {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.insanityLevel : c.fatnessLevel, c.name, c.owed, c.stakingLocation)}
+              {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.freakLevel : c.bodymassLevel, c.name, c.owed, c.stakingLocation)}
             </Popover> : null }
           </Col>
         </Row>
@@ -2351,23 +2391,18 @@ class Main extends React.Component {
       timestamp = lastClaimTimestamp;
     }
     if (type !== "Rat") {
+      let stakingPeriod = this.state.lastBlockTime - timestamp;
+      if (stakingPeriod > this.state.stats.levelUpThreshold) {
+        stakingPeriod = this.state.stats.levelUpThreshold;
+      }
       if (this.state.stats && this.state.stats.dailyFFoodRate > 0) {
-        const nominal = (this.state.lastBlockTime - timestamp) * parseInt(this.state.stats.dailyFFoodRate) / parseInt(this.state.stats.levelUpThreshold);
+        const nominal = (stakingPeriod * parseInt(this.state.stats.dailyFFoodRate)) / parseInt(this.state.stats.levelUpThreshold);
         const multiplier = 100000 + (skill * this.state.stats.chefEfficiencyMultiplier * 10);
         let gross = nominal * multiplier / 100000;
-
-        let limit = this.state.stats.dailyFFoodRate * this.state.stats.chefEfficiencyMultiplier;
-        if (limit === 0) {
-            limit = this.state.stats.dailyFFoodRate;
-        }
-
-        if (gross >= limit) {
-          gross = this.state.stats.dailyFFoodRate;
-        }
         let net = gross * (100 - this.state.stats.ratTax) / 100;
-        /*
+/*
         console.log(`----NFT ${name}`);
-        console.log(`last blocktime ${this.props.lastBlockTime} Staked Time ${timestamp} Diff ${this.props.lastBlockTime - timestamp} DailyFoodRate ${this.state.stats.dailyFFoodRate} accrualPeriod ${this.state.stats.levelUpThreshold}`);
+        console.log(`stakingperiod ${stakingPeriod} last blocktime ${this.props.lastBlockTime} Staked Time ${timestamp} Diff ${this.props.lastBlockTime - timestamp} DailyFoodRate ${this.state.stats.dailyFFoodRate} accrualPeriod ${this.state.stats.levelUpThreshold}`);
         console.log(`efficiency ${skill} chefEfficiencyMultiplier ${this.state.stats.chefEfficiencyMultiplier }`);
         console.log(`Nominal: ${nominal} Multiplier: ${multiplier}`);
         console.log(`Gross: ${gross} Net: ${net}`);
@@ -2385,17 +2420,27 @@ class Main extends React.Component {
       return 0;
     } else {
       let foodTokensPerRat = 0;
+      let lastChefClaim = 0;
       switch (stakingLocation) {
         case 'McStake':
           foodTokensPerRat = this.state.foodTokensPerRat.McStake;
+          lastChefClaim = this.state.foodTokensPerRat.lastMcStakeClaim;
         break;
         case 'TheStakeHouse':
           foodTokensPerRat = this.state.foodTokensPerRat.TheStakeHouse;
+          lastChefClaim = this.state.foodTokensPerRat.lastTheStakehouseClaim;
         break;
         case 'LeStake':
           foodTokensPerRat = this.state.foodTokensPerRat.LeStake;
+          lastChefClaim = this.state.foodTokensPerRat.lastLeStakeClaim;
         break;
       }
+      /*
+      //return lastClaimTimestamp - lastChefClaim;
+      if (lastClaimTimestamp > lastChefClaim) {
+        return 'stealing...';
+      }
+      */
 //      console.log('RAT PROFIT', stakingLocation, foodTokensPerRat);
       const nominal = foodTokensPerRat - owed; // stake.value ist der fastFoodPerRat Betrag zum Zeitpunkt des stakens
       const multiplier = (tolerance <= 50 ? tolerance : 100 - tolerance * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
@@ -2411,6 +2456,11 @@ class Main extends React.Component {
       //if (foodTokensPerRat > 0) {
       //  console.log(`${name}: nominal: ${nominal}, foodTokenPerRat: ${foodTokensPerRat}, owed ${owed}, ratEfficiencyMultiplier ${this.state.stats.ratEfficiencyMultiplier}, ratEfficiencyOffset ${this.state.stats.ratEfficiencyOffset}, net=${net}`)
       //}
+      /*
+      if (parseFloat(net) === 0) {
+        return 'stealing...';
+      }
+      */
       return parseFloat(net).toFixed(2);
     }
   }
@@ -2549,12 +2599,12 @@ class Main extends React.Component {
       nfts = this.state.unstakedChefs;
     }
 
-
+/*
     if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stakeAll', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
     }
-
+*/
     const error = this.prepareStakeErrors(nfts, data.key);
     if (error) {
       return false;
@@ -2578,7 +2628,11 @@ class Main extends React.Component {
       if (message.indexOf("while formatting outputs") !== -1) {
         message = "Error while submitting transaction";
       }
-      renderNotification("error", "Error", message);
+      if (message.indexOf('transaction failed') !== -1) {
+        renderNotification("error", "Error", 'Transaction failed, please try again.');
+      } else {
+        renderNotification("error", "Error", message);
+      }
     }
   }
 
@@ -2624,7 +2678,11 @@ class Main extends React.Component {
       }
       this.setState({ claimDisabled : false })
       console.log(e);
-      renderNotification("error", "Error", message);
+      if (message.indexOf('transaction failed') !== -1) {
+        renderNotification("error", "Error", 'Transaction failed, please try again.');
+      } else {
+        renderNotification("error", "Error", message);
+      }
     }
   }
 
@@ -2637,7 +2695,6 @@ class Main extends React.Component {
     this.setState({ claimDisabled: true});
 
     try {
-      console.log(type, selectedToUnStakeNfts);
       this.setState({ selectedNfts: {}, currentStatsNFT: 0 });
       selectedToUnStakeNfts.map((s) => {
         this.oldNfts[s] = this.nfts[s];
@@ -2660,9 +2717,12 @@ class Main extends React.Component {
       if (e.data && e.data.message) {
         message = e.data.message;
       }
-      console.log(message);
       this.setState({ claimDisabled: false});
-      renderNotification("error", "Error", message);
+      if (message.indexOf('transaction failed') !== -1) {
+        renderNotification("error", "Error", 'Transaction failed, please try again.');
+      } else {
+        renderNotification("error", "Error", message);
+      }
     }
   }
 
@@ -2718,10 +2778,12 @@ class Main extends React.Component {
       contract = this.getRestaurantContract(data);
     }
 
+/*
     if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stake', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
     }
+*/
 
     try {
       const result = await this.props.tx(
@@ -2739,7 +2801,11 @@ class Main extends React.Component {
         message = e.data.message;
       }
       console.error(e);
-      renderNotification("error", "Error", message);
+      if (message.indexOf('transaction failed') !== -1) {
+        renderNotification("error", "Error", 'Transaction failed, please try again.');
+      } else {
+        renderNotification("error", "Error", message);
+      }
     }
   }
 
@@ -2800,7 +2866,11 @@ class Main extends React.Component {
       }
       this.setState({ claimDisabled : false })
       console.log(e);
-      renderNotification("error", "Error", message);
+      if (message.indexOf('transaction failed') !== -1) {
+        renderNotification("error", "Error", 'Transaction failed, please try again.');
+      } else {
+        renderNotification("error", "Error", message);
+      }
     }
   }
 
@@ -3665,7 +3735,10 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       height = 140;
     } else if (type === 'McStake') {
       marginTop = 205;
+    } else if (type === 'Gym') {
+      height = 30;
     }
+
     let paused = false;
     if ((type === 'TheStakeHouse') && (this.state.stats.theStakeHousePaused)) {
       paused = true;
@@ -4046,14 +4119,14 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     delete c.image;
     c.image = key.image;
 
-    if (key.insanity) {
-      c.insanityLevel = key.insanity;
+    if (key.freak) {
+      c.freakLevel = key.freak;
     }
     if (key.skill) {
       c.skillLevel = key.skill;
     }
-    if (key.fatness) {
-      c.fatnessLevel = key.fatness;
+    if (key.bodymass) {
+      c.bodymassLevel = key.bodymass;
     }
     if (key.intelligence) {
       c.intelligenceLevel = key.intelligence;
@@ -4068,17 +4141,17 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           hash['Skill'] = key.skillLevel;
           c.attributes[i].value = key.skillLevel;
         }
-        if (key.insanityLevel && m.trait_type === 'Insanity') {
-          hash['Insanity'] = key.insanityLevel;
-          c.attributes[i].value = key.insanityLevel;
+        if (key.freakLevel && m.trait_type === 'Freak') {
+          hash['Freak'] = key.freakLevel;
+          c.attributes[i].value = key.freakLevel;
         }
         if (key.intelligenceLevel && m.trait_type === 'Intelligence') {
           hash['Intelligence'] = key.intelligenceLevel;
           c.attributes[i].value = key.intelligenceLevel;
         }
-        if (key.fatnessLevel && m.trait_type === 'Fatness') {
-          hash['Fatness'] = key.fatnessLevel;
-          c.attributes[i].value = key.fatnessLevel;
+        if (key.bodymassLevel && m.trait_type === 'Bodymass') {
+          hash['Body mass'] = key.bodymassLevel;
+          c.attributes[i].value = key.bodymassLevel;
         }
         i += 1;
       });
@@ -4098,13 +4171,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
          title: 'Rat Trap!',
          description: 'Your rat was caught in a rat trap! Eating and stealing healthier food lowers the chance of getting caught in the rat trap.',
          efficiencyLost: `-${key.oldIntelligence - key.intelligence}`,
-         toleranceLost: `-${key.oldFatness - key.fatness}`,
+         toleranceLost: `-${key.oldBodymass - key.bodymass}`,
          effiencyName: 'Intelligence',
          toleranceName: 'Bodymass',
          effiency: key.intelligence,
-         tolerance: key.fatness,
+         tolerance: key.bodymass,
          efficiencyLevel: hash['Intelligence'],
-         toleranceLevel: hash['Fatness'],
+         toleranceLevel: hash['Bodymass'],
          amount: key.earned,
          currency: key.currency,
          earnedTitle: 'Tokens earned',
@@ -4120,13 +4193,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
          title: 'Kidnapped by the cat!',
          description: 'Your rat was kidnapped by a cat because your rat got too fat and slow. Send your rats to the gym to lower the chance of getting caught by the cat in the future.',
          efficiencyLost: `-${key.oldIntelligence - key.intelligence}`,
-         toleranceLost: `-${key.oldFatness - key.fatness}`,
+         toleranceLost: `-${key.oldBodymass - key.bodymass}`,
          effiencyName: 'Intelligence',
          toleranceName: 'Bodymass',
          effiency: key.intelligence,
-         tolerance: key.fatness,
+         tolerance: key.bodymass,
          efficiencyLevel: hash['Intelligence'],
-         toleranceLevel: hash['Insanity'],
+         toleranceLevel: hash['Freak'],
          amount: key.earned,
          currency: key.currency,
          earnedTitle: 'Tokens earned',
@@ -4143,13 +4216,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
          title: 'Food Inspector!',
          description: 'Your chef was visited by the food inspector because he is collaborating with the rats. More skilled chefs know how to avoid the food inspector more often.',
          efficiencyLost: `-${key.oldSkill - key.skill}`,
-         toleranceLost: `-${key.oldInsanity - key.insanity}`,
+         toleranceLost: `-${key.oldFreak - key.freak}`,
          effiencyName: 'Skill',
          toleranceName: 'Freak ',
          effiency: key.skill,
-         tolerance: key.insanity,
+         tolerance: key.freak,
          efficiencyLevel: hash['Skill'],
-         toleranceLevel: hash['Fatness'],
+         toleranceLevel: hash['Body mass'],
          amount: key.earned,
          currency: key.currency,
          earnedTitle: 'Tokens earned',
@@ -4166,13 +4239,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
          title: 'Burnout!',
          description: 'Your chef has suffered a burnout because you had him work too much in the kitchen. Instead of working too hard in the kitchen try sending your Chef to the gym so he can stay mentally sane.',
          efficiencyLost: `-${key.oldSkill - key.skill}`,
-         toleranceLost: `-${key.oldInsanity - key.insanity}`,
+         toleranceLost: `-${key.oldFreak - key.freak}`,
          effiencyName: 'Skill',
-         toleranceName: 'Freak ',
+         toleranceName: 'Freak',
          effiency: key.skill,
-         tolerance: key.insanity,
+         tolerance: key.freak,
          efficiencyLevel: hash['Skill'],
-         toleranceLevel: hash['Fatness'],
+         toleranceLevel: hash['Freak'],
          amount: key.earned,
          currency: key.currency,
          earnedTitle: 'Tokens earned',
@@ -4197,13 +4270,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         events.push({ event: 'skill_earned', type: 'skill', nft: `${c.type} #${c.name}`, name: 'Skill', value: key.skill, title: 'Skill earned', gained: `${key.skill - key.oldSkill}%`, level: key.skillLevel});
       }
 
-      if (c.type === 'Chef' && (key.oldInsanityName === hash['Insanity']) && (key.insanity > key.oldInsanity)) {
-        events.push({ event: 'insanity_increased', type: 'insanity', nft: `${c.type} #${c.name}`, name: 'Insanity', value: key.insanity, title: 'Insanity increased', gained: `${key.insanity - key.oldInsanity}%`, level: key.skillLevel});
+      if (c.type === 'Chef' && (key.oldFreakName === hash['Freak']) && (key.freak > key.oldFreak)) {
+        events.push({ event: 'insanity_increased', type: 'insanity', nft: `${c.type} #${c.name}`, name: 'Freak level', value: key.freak, title: 'Freak level increased', gained: `${key.freak - key.oldFreak}%`, level: key.freakLevel});
         highlightTolerance = true;
       }
 
-      if (c.type === 'Chef' && (key.oldInsanityName !== hash['Insanity']) && (key.insanity > key.oldInsanity)) {
-        events.push({ event: 'new_insanity_level', type: 'insanity', nft: `${c.type} #${c.name}`, name: 'Insanity', value: key.insanity, title: 'New insanity level', gained: `${key.insanity - key.oldInsanity}%`, level: key.insanityLevel});
+      if (c.type === 'Chef' && (key.oldFreakName !== hash['Freak']) && (key.freak > key.oldFreak)) {
+        events.push({ event: 'new_insanity_level', type: 'insanity', nft: `${c.type} #${c.name}`, name: 'Freak level', value: key.freak, title: 'New freak level', gained: `${key.freak - key.oldFreak}%`, level: key.freakLevel});
         highlightTolerance = true;
       }
 
@@ -4216,12 +4289,12 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         events.push({ event: 'intelligence_earned', type: 'intelligence', nft: `${c.type} #${c.name}`, name: 'Intelligence', value: key.intelligence, title: 'Intelligence earned', gained: `${key.intelligence - key.oldIntelligence}%`, level: hash['Intelligence']});
       }
 
-      if (c.type === 'Rat' && (key.oldFatnessName === hash['Fatness']) && (key.fatness > key.oldFatness)) {
-        events.push({ event: 'bodymass_gained', type: 'bodymass', nft: `${c.type} #${c.name}`, name: 'Bodymass', value: key.fatness, title: 'Bodymass gained', gained: `${key.fatness - key.oldFatness}%`, level: hash['Fatness']});
+      if (c.type === 'Rat' && (key.oldBodymassName === hash['Bodymass']) && (key.bodymass > key.oldBodymass)) {
+        events.push({ event: 'bodymass_gained', type: 'bodymass', nft: `${c.type} #${c.name}`, name: 'Bodymass', value: key.bodymass, title: 'Bodymass gained', gained: `${key.bodymass - key.oldBodymass}%`, level: hash['Bodymass']});
       }
 
-      if (c.type === 'Rat' && (key.oldFatnessName !== hash['Fatness']) && (key.fatness > key.oldFatness)) {
-        events.push({ event: 'new_fatness_level', type: 'bodymass', nft: `${c.type} #${c.name}`, name: 'Body mass', value: key.fatness, title: 'New bodymass level', gained: `${key.fatness - key.oldFatness}%`, level: hash['Fatness']});
+      if (c.type === 'Rat' && (key.oldBodymassName !== hash['Bodymass']) && (key.bodymass > key.oldBodymass)) {
+        events.push({ event: 'new_fatness_level', type: 'bodymass', nft: `${c.type} #${c.name}`, name: 'Body mass', value: key.bodymass, title: 'New bodymass level', gained: `${key.bodymass - key.oldBodymass}%`, level: hash['Bodymass']});
         highlightTolerance = true;
       }
     }
@@ -4805,7 +4878,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Col span={14}>
             <Row>
               <Col span={24}>
-                <span className="kitchenTitle">{ this.state.kitchenType === 1 ? 'The Stakehouse Kitchen' : 'Le Gourmet Kitchen'}</span>
+                <span className="kitchenTitle">{ this.state.kitchenType === 1 ? 'The Stakehouse Kitchen' : 'LeStake Kitchen'}</span>
               </Col>
               <Col span={24}>
                 <span className="whiteContent">{ this.state.kitchenType === 1 ?
