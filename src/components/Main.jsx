@@ -3244,23 +3244,10 @@ class Main extends React.Component {
   }
 
   renderChefHint() {
-    if (this.state.unstakedChefs.length !== 0 &&
-       (
-         !this.state.isApprovedForAll['McStake'] || !this.state.isApprovedForAll['Gym'] ||
-         !this.state.isApprovedForAll['TheStakeHouse'] || !this.state.isApprovedForAll['LeStake']
-     )) {
-      return (
-        <div>
-          In order to play the game, you will need to authorize the contracts first. Please press each Authorize button.
-        </div>
-      );
-      return;
-    } else {
-
       if (this.state.unstakedChefs.length === 0) {
         return (
           <span>
-            The break room represents your wallet, your chefs hang out here.<br/><br/>
+            The break room represents your wallet, your chefs hang out here.<br/>
             From here, you can stake your chefs in a kitchen or in the gym here by selecting one NFT or clicking 'Stake all'.
           </span>
         )
@@ -3268,23 +3255,13 @@ class Main extends React.Component {
       return (
         <span>From here, you can stake your chefs in a kitchen or in the gym by selecting one NFT or by 'Stake all'.</span>
       )
-    }
   }
 
   renderRatHint() {
-    if (this.state.unstakedChefs.length !== 0 && (!this.state.isApprovedForAll['McStake'] || !this.state.isApprovedForAll['Gym'])) {
-      return (
-        <div>
-          In order to use the game, you will need to authorize the contracts first. Please press each Authorize button.
-        </div>
-      );
-      return;
-    } else {
-
       if (this.state.unstakedChefs.length === 0) {
         return (
           <span>
-            The sewer represents your wallet, your rats hang out here.<br/><br/>
+            The sewer represents your wallet, your rats hang out here.<br/>
             From here, you can stake your rats in a kitchen or in the gym by selecting one rat or by 'Stake all'.
           </span>
         )
@@ -3292,7 +3269,6 @@ class Main extends React.Component {
       return (
         <span>From here, you can stake your rats in a kitchen or in the gym here by selecting one chef or clicking 'Stake all'.</span>
       )
-    }
   }
 
   renderStakeButtons(type) {
@@ -3401,16 +3377,16 @@ class Main extends React.Component {
     let mobile = false;
 
     const offsets = {
-      mobileWidth: 310,
+      mobileWidth: 480,
       normalLargeWidth: 650, // kitchen width
       buildingNormal: 450, // whole width for the kitchen
       buildingSmall: 271,
       normalWidth: 500,
-      roofSmall: 600,
+      roofSmall: 80,
       roofNormal: 272,
       rat: 220,
       noKitchen: 200,
-      townhouseMobile: 290,
+      townhouseMobile: 80,
       townhouseNormal: 272, // outer box, not visible
       buildingMobileWidth: 750 // Building width mobile
     };
@@ -3421,7 +3397,8 @@ class Main extends React.Component {
     }
 
     if (maxWidth <= 900) {
-        width = offsets.mobileWidth;
+        width = maxWidth - 145;
+        //width = offsets.mobileWidth;
         mobile = true;
     }
     else {
@@ -3441,7 +3418,7 @@ class Main extends React.Component {
     if (type === 'roof') {
       const tmp = this.getWidth('kitchen');
       if (maxWidth <= this.mobileBreakpoint) {
-        width = offsets.roofSmall;
+        width = tmp.width + offsets.roofSmall;
       } else {
         width = tmp.width + offsets.roofNormal;
       }
@@ -3457,8 +3434,13 @@ class Main extends React.Component {
       }
     }
     else if (type === 'sewer') {
+
       const tmp = this.getWidth('kitchen');
-      width = tmp.width + 272;
+      if (this.innerWidth > 900) {
+        width = tmp.width + 272;
+      } else {
+        width = tmp.width + 62;
+      }
     } else if (type === 'building') {
       const tmp = this.getWidth('kitchen');
       if (this.innerWidth > this.mobileBreakpoint) {
@@ -3612,7 +3594,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </div>
         <div className="street" style={{width:'100%'}}>
         </div>
-        <div className="darkBackground" style={{height: this.getRatHeight()+50}}>
+        <div className="darkBackground" style={{height: this.getRatHeight()+180}}>
         </div>
       </div>
     )
@@ -3761,7 +3743,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       )
     }
     return (
-      <div style={{marginTop, height}} className={type !== 'Gym' ? 'buttonShade' : null}>
+      <div style={{marginTop, height, width: '100%' }} className={type !== 'Gym' ? 'buttonShade' : null}>
         { type === 'TheStakeHouse' || type === 'LeStake' ?
         <div style={{marginBottom: 10}}>
           { !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderBuyKitchenButton(type) : null}
@@ -3803,7 +3785,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row >
             { this.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
-              <div className={this.getOfficeBackground()} style={this.getWidth(this.innerWidth > this.officeBreakpoint ? 'kitchen' : null)}>
+              <div className={this.getOfficeBackground()} style={this.innerWidth > 900 ? this.getWidth('kitchen') : { width: '105%'}}>
                 <div className="officeBoard">
                   { this.state.officeView === 'mint' ?
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
@@ -3822,7 +3804,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <div className="floor"/>
         <Card className="house kitchenMargin" size="small">
           <Row >
-            <Col style={{width: '180px'}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
 
               <div style={{marginTop: 0}} className={`parallax ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
                 { this.renderRestaurantCallToActions('LeStake') }
@@ -3832,7 +3814,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 <img width={this.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
             </Col>
-            <Col>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: 20} : { marginTop: 20}}>
               { !this.state.loading ? this.renderStakedAtLeStake() : <Skeleton />}
               { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderStakeOMeter(2) : null}
             </Col>
@@ -3842,7 +3824,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <div className="floor"/>
         <Card className="house kitchenMargin" size="small">
           <Row>
-            <Col style={{width: '180px'}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
 
             <div className={`parallax ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
               { this.renderRestaurantCallToActions('TheStakeHouse') }
@@ -3853,7 +3835,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </div>
 
             </Col>
-            <Col>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 20}}>
               { !this.state.loading ? this.renderStakedAtTheStakeHouse() : <Skeleton />}
               { !this.state.kitchenConfig.casualKitchenClosed ? this.renderStakeOMeter(1) : null}
             </Col>
@@ -3862,7 +3844,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <div className="floor"/>
         <Card className="house kitchenMargin" size="small">
           <Row>
-            <Col style={{width: '180px'}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
             <div className={`parallax ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
               { this.renderRestaurantCallToActions('McStake') }
             </div>
@@ -3870,7 +3852,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
             </div>
             </Col>
-            <Col style={{marginLeft: '20px'}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 20}}>
               { !this.state.loading ? this.renderStakedAtMcStake() : <Skeleton /> }
             </Col>
           </Row>
@@ -3890,9 +3872,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 <div className="logoLine"/>
                 { this.renderRestaurantCallToActions('Gym') }
                 <div className="gymDescription">
-                <div style={{paddingTop: 20}}>
-                  <div className="hintHeader">Hint</div>
-                  <div className="hintContent">
+                <div className="hintGym" style={{paddingTop: 20}}>
+                  <div className="hintHeader hintContentWide">Hint</div>
+                  <div className="hintContent hintContentWide">
                   Time in the gym is good for your NFTs health. No tokens are earned.
 
                   { this.state.myNfts.Gym.length !== 5 ? <div>
@@ -3905,7 +3887,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 </div>
               </div>
             </Col>
-            <Col style={{marginLeft: '20px'}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 50}}>
               <div style={this.getWidth()}>
               {!this.state.loading ? this.renderStakedAtGym() : <Skeleton />}
               </div>
@@ -3926,15 +3908,15 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               <div className="logoLine"/>
 
               { this.renderStakeButtons('Chef') }
-              <div>
-                <div className="hintHeader">Hint</div>
-                <div className="hintContent">
+              <div className="hint">
+                <div className="hintHeader hintContentWide ">Hint</div>
+                <div className="hintContent hintContentWide">
                   { this.renderChefHint() }
                 </div>
               </div>
             </div>
           </Col>
-            <Col style={{marginLeft: '20px'}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 40}}>
             {!this.state.loading ? this.renderChefs() : <Skeleton />}
             </Col>
         </Row>
@@ -3942,7 +3924,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         { this.renderStreet() }
 
         <div className="sewerEntrance">
-          <div style={this.getWidth('kitchen')} className="ground"/>
+          <div style={this.innerWidth > 900 ? this.getWidth('kitchen') : null} className="ground"/>
         </div>
         <Card className="house sewer" size="small" style={sewer}>
           <Row >
@@ -3956,17 +3938,17 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
               <div className="logoLine"/>
               { this.renderStakeButtons('Rat') }
-              <div>
+              <div className="hint">
                 <div>
-                  <div className="hintHeader">Hint</div>
-                  <div className="hintContent">
+                  <div className="hintHeader hintContentWide">Hint</div>
+                  <div className="hintContent hintContentWide">
                     { this.renderRatHint() }
                   </div>
                 </div>
               </div>
             </div>
           </Col>
-            <Col className="marginSewer">
+            <Col span={this.innerWidth < 900 ? 24 : 14} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 40}}>
             {!this.state.loading ? this.renderRats() : <Skeleton />}
             </Col>
           </Row>

@@ -56,25 +56,21 @@
 
 .gourmetSceneDay {
   background-image: url("img/gourmet_scene_day.gif");
-  width: 180px;
   height: 300px;
 }
 
 .gourmetSceneNight {
   background-image: url("img/gourmet_scene.gif");
-  width: 180px;
   height: 300px;
 }
 
 .gourmetSceneClosedDay {
   background-image: url("img/gourmet_scene_closed_day.png");
-  width: 180px;
   height: 300px;
 }
 
 .gourmetSceneClosedNight {
   background-image: url("img/gourmet_scene_closed_night.png");
-  width: 180px;
   height: 300px;
 }
 
@@ -114,26 +110,22 @@
 
 .casualSceneDay {
   background-image: url("img/casual_scene.gif");
-  width: 180px;
   height: 300px;
 }
 
 .casualSceneNight {
   background-image: url("img/casual_scene_night.gif");
-  width: 180px;
   height: 300px;
 }
 
 
 .casualSceneClosedDay {
   background-image: url("img/casual_scene_closed_day.png");
-  width: 180px;
   height: 300px;
 }
 
 .casualSceneClosedNight {
   background-image: url("img/casual_scene_closed_night.png");
-  width: 180px;
   height: 300px;
 }
 
@@ -969,11 +961,6 @@
     margin-top: -308px;
   }
 
-
-  .marginSewer {
-    margin-left: 20px;
-  }
-
   .flowerpot1 {
     position: absolute;
     width: 76px;
@@ -1035,7 +1022,7 @@
 }
 
 .descriptionBox {
-  padding: 20px 3px 106px 2px;
+  padding: 20px 3px 0px 2px;
 }
 
 @media only screen and (max-width: 768px) {
@@ -1524,7 +1511,7 @@
   }
   .icons {
     float: left;
-    width: 130px;
+    width: 105px;
   }
   .account {
     float: left;
@@ -1575,19 +1562,6 @@
   width: 160px;
   margin-left: 10px;
   color: #FFFFFF;
-  border: 3px solid #FFFFFF;
-  font-family: Pixellari;
-}
-
-.web3ButtonTransparent:hover {
-  height: 35px !important;
-  padding-top: 6px;
-  textAlign: center;
-  background: #FFFFFF;
-  font-weight: bold;
-  width: 160px;
-  margin-left: 10px;
-  color: #000000;
   border: 3px solid #FFFFFF;
   font-family: Pixellari;
 }
@@ -1683,6 +1657,28 @@
   .house2 {
     background: transparent !important;
   }
+
+  .hint {
+    position: absolute;
+    left: 200px;
+    top: 20px;
+  }
+  .web3ButtonTransparent {
+      width: 90% !important;
+      margin-left: 30px;
+  }
+
+  .hintGym {
+    position: absolute;
+    left: 200px;
+    top: 0px;
+    width: 120px;
+  }
+
+  .hintContentWide {
+    width: 282px !important;
+  }
+
   .officeBackground1 {
     margin-left: 0px;
   }
@@ -1693,6 +1689,7 @@
     margin-left: 0px;
   }
 }
+
 
 
 
@@ -1794,14 +1791,15 @@
 
 .gourmetKitchenClosed {
   background-image: url("img/gourmet-restaurant-closed.png");
-  height: 300px;
-  margin-left: 20px;
+  min-width: 180px;
+  min-height: 300px;
 }
 
 .casualKitchenClosed {
   background-image: url("img/casual-restaurant-closed.png");
-  height: 300px;
-  margin-left: 20px;
+  min-width: 180px;
+  min-height: 300px;
+
 }
 
 
@@ -1821,7 +1819,6 @@
 .casualKitchen {
   background-image: url("img/casual_kitchen.png");
   height: 300px;
-  margin-left: 20px;
 }
 
 .closedSign {
@@ -2139,7 +2136,6 @@
 
 .buttonShade {
   padding-top: 10px;
-  width: 180px;
   background-color: rgba(0, 0, 0, 0.45);
   position: absolute;
 }
@@ -2290,4 +2286,10 @@
 
   .ratFatness {
     filter: invert(72%) sepia(43%) saturate(3657%) hue-rotate(1deg) brightness(105%) contrast(103%);
+  }
+
+  .ant-btn[disabled] {
+    background: transparent;
+    background: rgba(224, 224, 224, 0.5);
+    color: #FFF;
   }
