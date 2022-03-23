@@ -79,7 +79,7 @@ class Main extends React.Component {
 
     this.townhouseHeight = 0;
     this.townhouseRef = React.createRef();
-    this.mobileBreakpoint = 651;
+    this.mobileBreakpoint = 899;
     this.tableBreakpoint = 900;
     this.officeBreakpoint = 1160;
     this.ratHeight = 0;
@@ -3398,9 +3398,10 @@ class Main extends React.Component {
     if (maxWidth > 1400) {
       maxWidth = 1400;
     }
-
     if (maxWidth <= 900) {
-        width = maxWidth - 145;
+        if (maxWidth > 0 && maxWidth <= 899) {
+          width = maxWidth - 145;
+        }
         //width = offsets.mobileWidth;
         mobile = true;
     }
@@ -3425,10 +3426,14 @@ class Main extends React.Component {
       } else {
         width = tmp.width + offsets.roofNormal;
       }
+    } else if (type === 'office') {
+      const tmp = this.getWidth('kitchen');
+      width = tmp.width;
+      if (this.innerWidth >= 900 && this.innerWidth <= 1160) {
+        width += 200;
+      }
     }
     else if (type === 'townhouse') {
-
-
       const tmp = this.getWidth('kitchen');
       if (maxWidth <= this.mobileBreakpoint) {
         width = tmp.width + offsets.townhouseMobile;
@@ -3587,8 +3592,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <div className="flowerpot1" style={{ left: this.getFlowerPot1Position()} }>
         </div>
 
+        { this.innerWidth > 1000 ?
         <div className="fence" style={{ left: this.getStreetLightPosition() }}>
-        </div>
+        </div> : null }
 
         <div className="flowerpot2" style={{ left: this.getStreetLightPosition()+100} }>
         </div>
@@ -3673,15 +3679,15 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     }
     const width = this.getWidth('kitchen');
     return (
-      <div className="stakeOMeter" style={type === 3 ? { left: 50} : {left: width.width+10}}>
+      <div className="stakeOMeter" style={type === 3 ? { left: 50} : {left: this.innerWidth < 901 ? width.width-13 : width.width-9}}>
         <div className="stakeOMeterTitle">Stake-o-meter</div>
 
         { cells.map( (e) =>
             <div className={e ? 'stakeOMeterCellActive' : 'stakeOMeterCellInactive'} />
         )}
 
-        <div style={{position: 'absolute'}}>
-          <div onClick={() => this.setState({ isStakeOMeterModalVisible: true, selectedKitchen: type }) } className="info" style={{position: 'relative', left: -4, top: -17}}  >
+        <div style={{cursor: 'pointer', position: 'absolute', left: 6, top: 286}}>
+          <div onClick={() => this.setState({ isStakeOMeterModalVisible: true, selectedKitchen: type }) } className="infoStakeOmeter" style={{position: 'relative', left: -4, top: -17}}  >
             <img style={{marginTop: -19, marginLeft: -2}} src="/img/i.png"/>
           </div>
         </div>
@@ -3711,7 +3717,31 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
   renderRestaurantCallToActions(type) {
     if (this.state.myNfts[type].length === 0) {
-      return <div/>;
+      if ((type === 'TheStakeHouse') || (type === 'LeStake')) {
+        let show = false;
+        if ((type === 'TheStakeHouse') && (this.state.casualKitchenAmount > 0)) {
+          show = true;
+        }
+        if ((type === 'LeStake') && (this.state.gourmetKitchenAmount > 0)) {
+          show = true;
+        }
+        if (show) {
+          let marginTop = 245;
+          let height = 55;
+          return (
+            <div style={{marginTop, height, width: '100%' }} className={type !== 'Gym' ? 'buttonShade' : null}>
+              <div style={{marginBottom: 10}}>
+                { this.renderBuyKitchenButton(type) }
+                </div>
+            </div>
+          );
+        } else {
+          return <div/>;
+        }
+      } else {
+          return <div/>;
+      }
+
     }
     let marginTop = 10;
     let height = 95;
@@ -3788,8 +3818,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row >
             { this.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
-              <div className={this.getOfficeBackground()} style={this.innerWidth > 900 ? this.getWidth('kitchen') : { width: '105%'}}>
-                <div className="officeBoard">
+              <div className={this.getOfficeBackground()} style={this.getWidth('office')}>
+                <div className="officeBoard" style={{width: 400 }}>
                   { this.state.officeView === 'mint' ?
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
                     : null }
@@ -3809,7 +3839,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row >
             <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
 
-              <div style={{marginTop: 0}} className={`parallax ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }} className={`parallax gourmetScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
                 { this.renderRestaurantCallToActions('LeStake') }
               </div>
 
@@ -3829,7 +3859,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row>
             <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
 
-            <div className={`parallax ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
+            <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
               { this.renderRestaurantCallToActions('TheStakeHouse') }
             </div>
 
@@ -3848,7 +3878,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small">
           <Row>
             <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
-            <div className={`parallax ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
+            <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
               { this.renderRestaurantCallToActions('McStake') }
             </div>
             <div className="restaurantSign">
@@ -4616,14 +4646,17 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     let offset = 0;
-    if (this.innerWidth >= 768) {
-      offset = 200;
+    if (this.innerWidth > 1000) {
+      offset = 50;
     } else {
-      offset = 100;
+      offset = 50;
     }
+    const sky = document.getElementsByClassName('sky')[0];
+    const rect = sky.getBoundingClientRect();
+
     return (
           <Row style={{ height: "100%" }}>
-            <div className={this.getGradientClass()} style={{top: skyAttr.height, height: this.townhouseHeight - skyAttr.height - offset}}>
+            <div className={this.getGradientClass()} style={{top: rect.height, height: this.townhouseHeight - skyAttr.height - offset}}>
             </div>
             { this.state.graphError ? this.renderGraphError() : null }
             { this.state.contractsPaused ? this.renderContractsPaused() : null }

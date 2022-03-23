@@ -174,10 +174,6 @@
   margin-right: 30px;
 }
 
-.invisibleWall .ant-card-bordered {
-  border: 5px solid red;
-}
-
 .ant-card-bordered {
   border: 0px !important;
 }
@@ -430,6 +426,20 @@
   }
 }
 
+
+
+@media only screen and (min-width: 1000px) {
+  .casualScene {
+    width: 180px !important;
+  }
+  .gourmetScene {
+    width: 180px !important;
+  }
+  .fastfoodScene {
+    width: 180px !important;
+  }
+}
+
 @media only screen and (min-width: 900px) {
   .skyline {
     background-position: 45.5% 75%;
@@ -437,6 +447,17 @@
   .streetlight2 {
     left: 0px;
   }
+
+
+  .generation {
+    font-family: 'Pixellari';
+    color: #FFFFFF;
+    margin-left: 50px;
+    position: absolute;
+    top: 275px;
+    left: 50px;
+  }
+
 }
 
 @media only screen and (min-width: 950px) {
@@ -697,6 +718,8 @@
     width: 145px;
     perspective: 600px;
   }
+
+
 
   .nft {
     width: 135px !important;
@@ -1025,12 +1048,70 @@
   padding: 20px 3px 0px 2px;
 }
 
+.infoStakeOmeter {
+  width: 18px;
+  height: 18px;
+  padding: 4px 7px 3px;
+  border-radius: 10px;
+  border: solid 2px #fff;
+  background-image: linear-gradient(to bottom, #544a43, #706258);
+}
+
+@media only screen and (max-width: 800px) {
+  .hintContentWide {
+    width: 282px !important;
+  }
+  .generation {
+    font-family: 'Pixellari';
+    color: #FFFFFF;
+    margin-left: 50px;
+    position: absolute;
+    top: 275px;
+    left: 20px;
+  }
+  .hint {
+    position: absolute;
+    left: 200px;
+    top: 20px;
+  }
+
+}
+
+@media only screen and (min-width: 801px) and (max-width: 999px) {
+  .generation {
+    font-family: 'Pixellari';
+    color: #FFFFFF;
+    margin-left: 50px;
+    position: absolute;
+    top: 275px;
+    left: 20px;
+  }
+
+  .hint {
+    position: absolute;
+    left: 200px;
+    top: 20px;
+  }
+
+  .hintGym {
+    position: absolute;
+    left: 200px;
+    top: 0px !important;
+  }
+
+  .hintContentWide {
+    width: 382px !important;
+  }
+}
+
 @media only screen and (max-width: 768px) {
 
   .scene {
     width: 140px;
     perspective: 600px;
   }
+
+
 
   .skyDay {
     margin-top: 0px;
@@ -1111,6 +1192,8 @@
     border: solid 2px #fff;
     background-image: linear-gradient(to bottom, #544a43, #706258);
   }
+
+
 
   .nftDetails {
     padding-top: 3px;
@@ -1658,11 +1741,6 @@
     background: transparent !important;
   }
 
-  .hint {
-    position: absolute;
-    left: 200px;
-    top: 20px;
-  }
   .web3ButtonTransparent {
       width: 90% !important;
       margin-left: 30px;
@@ -1675,9 +1753,6 @@
     width: 120px;
   }
 
-  .hintContentWide {
-    width: 282px !important;
-  }
 
   .officeBackground1 {
     margin-left: 0px;
@@ -1709,7 +1784,6 @@
 }
 
 .officeBoard {
-  width: 470px;
   height: 190px;
   margin-left: 100px;
   padding-top: 15px;
@@ -2125,14 +2199,7 @@
   border: solid 3px #706258;
 }
 
-.generation {
-  font-family: 'Pixellari';
-  color: #FFFFFF;
-  margin-left: 50px;
-  position: absolute;
-  top: 275px;
-  left: 50px;
-}
+
 
 .buttonShade {
   padding-top: 10px;

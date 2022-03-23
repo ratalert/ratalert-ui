@@ -362,16 +362,16 @@ class RatMenu extends React.Component {
 
   getSkyClass() {
     if (this.state.dayTime === 'night') {
-      return 'skyNight';
+      return 'sky skyNight';
     }
     if (this.state.dayTime === 'day') {
-      return 'skyDay';
+      return 'sky skyDay';
     }
     if (this.state.dayTime === 'morning') {
-      return 'skyMorning';
+      return 'sky skyMorning';
     }
     if (this.state.dayTime === 'evening') {
-      return 'skyEvening';
+      return 'sky skyEvening';
     }
 
   }
