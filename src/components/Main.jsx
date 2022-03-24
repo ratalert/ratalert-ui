@@ -102,9 +102,12 @@ class Main extends React.Component {
     console.log(`Network name: ${networkName}, kitchenConfig: ${kitchenConfig}, chainId ${chainId}`);
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
     this.maxSelectedNFTs = 6;
+    this.firstGraphLoad = true;
     this.state = {
       lastBlockTime: 0,
+      loadingPercent: 0,
       graphError: false,
+      mintedNfts: {},
       contractsPaused: false,
       nftCount: 0,
       mintDisabled: false,
@@ -169,6 +172,7 @@ class Main extends React.Component {
       totalRatsStaked: 0,
       totalCooksStaked: 0,
       mintAmount: 1,
+      kitchenMintAmount: 1,
       mintAmountLocked: false,
       maxMintAmount: 10,
       loading: true,
@@ -260,13 +264,16 @@ class Main extends React.Component {
       casualKitchenAmount = parseInt(casualKitchenAmount);
       if (this.props.debug) console.log('DEBUG balance of 2');
       gourmetKitchenAmount = await KitchenShopContract.balanceOf(this.props.address, 2);
+      this.setState({ loadingPercent: 10 });
       gourmetKitchenAmount = parseInt(gourmetKitchenAmount);
       console.log('Kitchen Status', casualKitchenAmount, gourmetKitchenAmount);
       if (this.props.debug) console.log('DEBUG minted 1');
       casualKitchensMinted = await KitchenShopContract.minted(1);
+      this.setState({ loadingPercent: 20 });
       casualKitchensMinted = parseInt(casualKitchensMinted);
       if (this.props.debug) console.log('DEBUG mint cost 1');
       casualKitchensPrice = await KitchenShopContract.mintCost(1, casualKitchensMinted + 1);
+      this.setState({ loadingPercent: 30 });
 
       casualKitchensPrice = parseFloat(ethers.utils.formatEther(casualKitchensPrice)).toFixed(8)
 
@@ -276,6 +283,7 @@ class Main extends React.Component {
 
       if (this.props.debug) console.log('DEBUG mint cost 2');
       gourmetKitchensPrice = await KitchenShopContract.mintCost(2, gourmetKitchensPrice + 1);
+      this.setState({ loadingPercent: 40 });
       gourmetKitchensPrice = parseFloat(ethers.utils.formatEther(gourmetKitchensPrice)).toFixed(8)
       if (this.props.debug) console.log('DEBUG fetch kitchen done');
       kitchenConfig = config[networkName].loggedIn;
@@ -348,6 +356,20 @@ class Main extends React.Component {
     }
 
   }
+
+  onKitchenChangeAmount(mintAmount) {
+    if (mintAmount > 10) {
+      this.setState({ kitchenMintAmount: 10 });
+    }
+    if (mintAmount < 1) {
+      this.setState({ kitchenMintAmount: 1 });
+    }
+    if (mintAmount >= 1 && mintAmount <= 10) {
+      this.setState({ kitchenMintAmount: mintAmount });
+    }
+
+  }
+
   onChangeAmount(mintAmount) {
     if (this.state.mintAmountLocked) {
       return false;
@@ -530,7 +552,6 @@ class Main extends React.Component {
   }
 
   async checkClaimHook() {
-    console.log('Claim hook done');
     const { networkName, chainId } = this.getNetworkName();
 
 
@@ -539,9 +560,6 @@ class Main extends React.Component {
 
       const claimContract = new ethers.Contract(config[networkName].Claim,
             contracts[chainId][networkName].contracts.Claim.abi, this.props.provider);
-
-      console.log(`Loading RandomNumberRequested with address ${mintContract.address}`);
-      console.log(`Loading RandomNumberRequested with address ${claimContract.address}`);
 
       mintContract.on("RandomNumberRequested", async(requestId, sender) => {
         if (sender === this.props.address) {
@@ -777,6 +795,7 @@ class Main extends React.Component {
     const unstakedRats = [];
     const stakedChefs = [];
     const stakedRats = [];
+    const nfts = [];
 
 
     const allStakedChefs = [];
@@ -787,6 +806,7 @@ class Main extends React.Component {
           const base64 = r.URI.split(",");
           const decoded = atob(base64[1]);
           const json = JSON.parse(decoded);
+          nfts[parseInt(r.id)] = 1;
           if (json.attributes[0].value === "Rat") {
             totalRats++;
           }
@@ -826,6 +846,7 @@ class Main extends React.Component {
       }
       if (r.URI) {
         if (r.URI.indexOf("data:application/json;base64,") === 0) {
+          nfts[parseInt(r.id)] = 1;
           const base64 = r.URI.split(",");
           const decoded = atob(base64[1]);
           const json = JSON.parse(decoded);
@@ -850,6 +871,26 @@ class Main extends React.Component {
         }
       }
     }, Promise.resolve());
+
+    if ((totalRats !== this.state.oldRatCount) || (totalChefs !== this.state.oldChefCount)) {
+      const { networkName, chainId } = this.getNetworkName();
+      const Contract = new ethers.Contract(config[networkName].Character,
+        contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
+      // Fallback mint confirmation using Graph when events dont work
+      Object.keys(nfts).map((tokenId) => {
+        const mintedNfts =  this.state.mintedNfts;
+        let isMinted = mintedNfts[parseInt(tokenId)];
+        if (!isMinted) {
+          isMinted = false;
+        }
+        if (!this.nfts[tokenId] && !isMinted && !this.firstGraphLoad) {
+          this.renderMintConfirmation(Contract, tokenId);
+        }
+      });
+      this.setState({ oldRatCount: totalRats, oldChefCount: totalChefs,  mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
+      this.getChainStats();
+      this.getBalances();
+    }
     // console.log('Newest foodTokenperRat: ', newestfoodTokensPerRat);
     // console.log('Newest claim:', newestClaim );
 
@@ -888,30 +929,28 @@ class Main extends React.Component {
       allStakedChefs,
     });
 
-    if ((totalRats !== this.state.oldRatCount) || (totalChefs !== this.state.oldChefCount)) {
-      console.log(`NFT count changed ${totalRats} ${totalChefs} <--> ${this.state.oldRatCount} ${this.state.oldChefCount}`);
-      this.setState({ oldRatCount: totalRats, oldChefCount: totalChefs,  mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
-      this.getChainStats();
-      this.getBalances();
-    }
 
-    if (result1.characters && result2.characters ) {
-      const nfts = this.state.myNfts;
-      let nftCount = 0;
-      nfts.chefWaitingRoom = this.parseNFTStruct(0, 'Chef', null, result2, result1);
-      nftCount += nfts.chefWaitingRoom.length;
-      nfts.ratWaitingRoom = this.parseNFTStruct(0, 'Rat', null, result2, result1);
-      nftCount += nfts.ratWaitingRoom.length;
-      nfts.Gym = this.parseNFTStruct(1, null, 'Gym', result2, result1);
-      nftCount += nfts.Gym.length;
-      nfts.McStake = this.parseNFTStruct(1, null, 'McStake', result2, result1);
-      nftCount += nfts.McStake.length;
-      nfts.TheStakeHouse = this.parseNFTStruct(1, null, 'TheStakeHouse', result2, result1);
-      nftCount += nfts.TheStakeHouse.length;
-      nfts.LeStake = this.parseNFTStruct(1, null, 'LeStake', result2, result1);
-      nftCount += nfts.LeStake.length;
-      this.setState({ myNfts: nfts, nftCount });
-    }
+    this.firstGraphLoad = false;
+    setTimeout(() => {
+      if (result1.characters && result2.characters ) {
+        const nfts = this.state.myNfts;
+        let nftCount = 0;
+        nfts.chefWaitingRoom = this.parseNFTStruct(0, 'Chef', null, result2, result1);
+        nftCount += nfts.chefWaitingRoom.length;
+        nfts.ratWaitingRoom = this.parseNFTStruct(0, 'Rat', null, result2, result1);
+        nftCount += nfts.ratWaitingRoom.length;
+        nfts.Gym = this.parseNFTStruct(1, null, 'Gym', result2, result1);
+        nftCount += nfts.Gym.length;
+        nfts.McStake = this.parseNFTStruct(1, null, 'McStake', result2, result1);
+        nftCount += nfts.McStake.length;
+        nfts.TheStakeHouse = this.parseNFTStruct(1, null, 'TheStakeHouse', result2, result1);
+        nftCount += nfts.TheStakeHouse.length;
+        nfts.LeStake = this.parseNFTStruct(1, null, 'LeStake', result2, result1);
+        nftCount += nfts.LeStake.length;
+        this.setState({ myNfts: nfts, nftCount });
+      }
+    }, 150);
+
     /*
     setTimeout(() => {
       const claimStats = this.state.claimStats;
@@ -958,33 +997,51 @@ class Main extends React.Component {
     return isVisible;
   }
 
+  async renderMintConfirmation(Contract, tokenId) {
+    const { networkName, chainId } = this.getNetworkName();
+    const URI = await Contract.tokenURI(parseInt(tokenId));
+    if (URI.indexOf("data:application/json;base64,") === 0) {
+      const base64 = URI.split(",");
+      const decoded = atob(base64[1]);
+      const json = JSON.parse(decoded);
+      const img = json.image;
+
+      const mintedNfts =  this.state.mintedNfts;
+      if (!mintedNfts[parseInt(tokenId)]) {
+        mintedNfts[parseInt(tokenId)] = 1;
+        this.setState({ mintedNfts, mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
+        renderNotification(
+          "info",
+          '',
+          <div>
+            <img style={{ paddingRight: "10px" }} width={50} src={img} />
+            <b>{json.name}</b> has been minted!
+          </div>,
+        );
+      }
+    }
+
+  }
+
   async listenForMints() {
     const { networkName, chainId } = this.getNetworkName();
-    console.log(`MAIN LISTENFORMINTS network ${networkName} chain ID ${chainId}`);
     if (!this.props.address) {
       return;
     }
     const Contract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
 
+    const McStakeContract = new ethers.Contract(config[networkName].McStake,
+      contracts[chainId][networkName].contracts.McStake.abi, this.props.provider);
+
+
     Contract.on("Transfer", async(origin, target, tokenId) => {
-      if (origin === '0x0000000000000000000000000000000000000000' && target === this.props.address) {
-        const URI = await Contract.tokenURI(parseInt(tokenId));
-        if (URI.indexOf("data:application/json;base64,") === 0) {
-          const base64 = URI.split(",");
-          const decoded = atob(base64[1]);
-          const json = JSON.parse(decoded);
-          const img = json.image;
-          this.setState({ mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
-          renderNotification(
-            "info",
-            '',
-            <div>
-              <img style={{ paddingRight: "10px" }} width={50} src={img} />
-              <b>{json.name}</b> has been minted!
-            </div>,
-          );
-        }
+      console.log(origin, target, tokenId);
+      if (
+        (origin === '0x0000000000000000000000000000000000000000' && target === this.props.address)
+        //|| (origin === '0x0000000000000000000000000000000000000000' && target === McStakeContract.address)
+      ) {
+        this.renderMintConfirmation(Contract, tokenId);
       }
     });
   }
@@ -1143,7 +1200,7 @@ class Main extends React.Component {
           gasLimit,
         }),
       );
-      this.setState({ mintActive: true, mintActiveTimer: Math.floor(Date.now() / 1000) });
+      //this.setState({ mintActive: true, mintActiveTimer: Math.floor(Date.now() / 1000) });
       // {gasPrice: 1000000000, from: this.props.address, gasLimit: 85000}
       renderNotification("info", `${amount} mint(s) requested.`, "");
       setTimeout(() => {
@@ -1351,6 +1408,7 @@ class Main extends React.Component {
     const chefs = await CharacterContract.numChefs();
 
     let dailyFFoodRate = await this.cacheLocalStorage('McStakeContract.dailyChefEarnings()', McStakeContract.dailyChefEarnings(), true);
+    //this.setState({ loadingPercent: 50 });
     let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
     let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier2()', McStakeContract.chefEfficiencyMultiplier());
     let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod2()', McStakeContract.vestingPeriod());
@@ -1358,21 +1416,28 @@ class Main extends React.Component {
     let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
     let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
     let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
+    //this.setState({ loadingPercent: 60 });
 
 
     let ratsStaked = await McStakeContract.totalRatsStaked();
     if (!ratsStaked) {
       ratsStaked = 0;
     }
+    this.setState({ loadingPercent: 70 });
+
     let chefsStaked = await McStakeContract.totalChefsStaked();
     if (!chefsStaked) {
       chefsStaked = 0;
     }
+    this.setState({ loadingPercent: 80 });
+
 
     let tokensClaimed = await McStakeContract.totalFoodTokensEarned();
     if (!tokensClaimed) {
       tokensClaimed = 0;
     }
+    this.setState({ loadingPercent: 90 });
+
 
 
     if (this.props.debug) console.log('DEBUG All mcStake stats');
@@ -1413,6 +1478,7 @@ class Main extends React.Component {
 
     let paywallEnabled = null;
     if (force || this.state.paywall.paywallEnabled === null) {
+      this.setState({ loadingPercent: 100 });
       let paywallEnabled = await PaywallContract.onlyWhitelist();
       let whitelistCount = 0;
       let freeMints = 0;
@@ -1443,6 +1509,7 @@ class Main extends React.Component {
       } else {
         this.setState({ mintAmountLocked: false, maxMintAmount: 10});
       }
+
 
       const paywall = this.state.paywall;
       paywall['paywallEnabled'] = paywallEnabled;
@@ -1514,7 +1581,7 @@ class Main extends React.Component {
           <Col className="officeLine" xs={11} md={12}>
             3. Mint <span style={{color: '#619cff'}}>whitelisted</span> NFTs with &nbsp;
 
-            <span  style={{color: '#619cff'}}>1% extra boost per day
+            <span  style={{color: '#619cff'}}>1% extra boost
 
             <Popover mouseEnterDelay={0.25} content={'Whitelisted NFTs gain an additional 1% skill (chefs) or intelligence (rats) per day in the kitchen, compared to non-whitelisted NFTs.'}>
             <div className="info" style={{position: 'absolute', left: 130, top: 5}}>
@@ -1575,6 +1642,7 @@ class Main extends React.Component {
   }
 
   renderMintContent() {
+    const c = { type: 'Chef', skillLevel: this.state.loadingPercent };
     if (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null) {
       return (
         <div>
@@ -1588,6 +1656,22 @@ class Main extends React.Component {
               Loading data from blockchain... <Spin/>
             </Col>
           </Row>
+          <Row className="officeContent">
+            <Col span={12}>
+            <Progress
+              format={() => <span>100<div className={this.getPercentageClass(c, 100, 1)}></div></span>}
+              format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 1)}></div></span>}
+              className={c.type === 'Chef' ? "nftProgress chef-skill" : "nftProgress rat-intelligence"}
+              strokeColor={c.type === "Chef" ? "#13e969" : "#1eaeea"}
+              percent={ c.type === 'Chef' ? c.skillLevel : c.intelligenceLevel }
+              size="small"
+              />
+            </Col>
+          </Row>
+
+
+
+
         </div>
       );
     }
@@ -1613,7 +1697,7 @@ class Main extends React.Component {
     return (
       <div className="officeHeadline">
         <Row>
-          <Col span={16}>
+          <Col span={24}>
             {this.getGreeting()} Mint your character here:
           </Col>
         </Row>
@@ -1948,16 +2032,39 @@ class Main extends React.Component {
     )
   }
 
-  renderAttribute(type) {
+  renderAttribute(type, location) {
+    let skill;
+    let insanity;
+    let intelligence;
+    let bodymass;
+    if (location === 'McStake') {
+      skill = 2;
+      insanity = 4;
+      intelligence = 2;
+      bodymass = 8;
+    }
+    else if (location === 'TheStakeHouse') {
+      skill = 4;
+      insanity = 6;
+      intelligence = 4;
+      bodymass = 6;
+    }
+    else if (location === 'LeStake') {
+      skill = 6;
+      insanity = 8;
+      intelligence = 6;
+      bodymass = 4;
+    }
+
     switch (type) {
       case 'skill':
-        return <div style={{width: '200px'}}>The chef's <img src="/img/skill.png"/> skill level increases 4% per day. </div>;
+        return <div style={{width: '200px'}}>In the {location} kitchen, the chef's <img src="/img/skill.png"/> skill level increases {skill}% per day. </div>;
       case 'freak':
-        return <div style={{width: '200px'}}>The chef's <img src="/img/insanity.png"/> freak level increases 2% per day. When freak level reaches the state "insane" your chef might burn out.</div>;
+        return <div style={{width: '200px'}}>In the {location} kitchen, the chef's <img src="/img/insanity.png"/> freak level increases {insanity}% per day. When freak level reaches the state "insane" your chef might burn out.</div>;
       case 'intelligence':
-          return <div style={{width: '200px'}}>The rats's <img src="/img/intelligence.png"/> intelligence level increases 4% per day. </div>;
+          return <div style={{width: '200px'}}>In the {location} kitchen, the rats's <img src="/img/intelligence.png"/> intelligence level increases {intelligence}% per day. </div>;
       case 'bodymass':
-          return <div style={{width: '200px'}}>The rats's <img src="/img/fatness.png"/> body mass level increases 8% per day. When the body mass reaches the state "obese" your rat might be kidnapped by a cat. </div>;
+          return <div style={{width: '200px'}}>In the {location} kitchen, the rats's <img src="/img/fatness.png"/> body mass level increases {bodymass}% per day. When the body mass reaches the state "obese" your rat might be kidnapped by a cat. </div>;
 
       break;
     }
@@ -1997,13 +2104,11 @@ class Main extends React.Component {
       }
     }
     let key;
-    if (type === 'modal') {
-      if (c.type === 'Chef') {
-        key = hash.Freak;
-      }
-      if (c.type === 'Rat') {
-        key = hash.Bodymass;
-      }
+    if (c.type === 'Chef') {
+      key = hash.Freak;
+    }
+    if (c.type === 'Rat') {
+      key = hash.Bodymass;
     }
     return (
       <div className={className}>
@@ -2011,9 +2116,9 @@ class Main extends React.Component {
         <Col style={{marginRight: '0px'}} xs={5} span={2}>
           <img alt={c.type === 'Chef' ? 'Freak level' : 'Body mass'} src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
         <Col xs={16} span={22}
-          style={ key && type === 'modal' && key.length > 12 ? {fontSize: 10} : null }
+          style={ key && key.length > 12 && this.innerWidth < 901 ? {fontSize: 11} : null }
           className={c.type === 'Chef' ? 'nftDetailInsanity' : 'nftDetailBodymass'}>
-          {c.type === 'Chef' ? hash.Freak : hash['Body mass'] }
+          {c.type === 'Chef' ? `${hash.Freak}` : hash['Body mass'] }
         </Col>
       </Row>
       </div>
@@ -2045,7 +2150,7 @@ class Main extends React.Component {
           <img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
         <Col xs={16} span={22}
         className={c.type === 'Chef' ? 'nftDetailSkill' : 'nftDetailIntelligence'}
-        style={ key && type === 'modal' && key.length > 12 ? {fontSize: 10} : null }
+        style={ key && key.length > 12 ? {fontSize: 10} : null }
         >
           {c.type === 'Chef' ? hash.Skill : hash.Intelligence }
         </Col>
@@ -2186,7 +2291,17 @@ class Main extends React.Component {
     )
   }
 
-  renderNFTStats(c, staked, type = 'app', classNameStats) {
+  renderNFTStats(c, staked, type = 'app', classNameStats, location = false) {
+    let token;
+    if (location === 'McStake') {
+      token = 'Fast Food ($FFOOD)';
+    }
+    else if (location === 'TheStakeHouse') {
+      token = 'Casual Food ($CFOOD)';
+    }
+    else if (location === 'LeStake') {
+      token = 'Gourmet Food ($GFOOD)';
+    }
     return (
       <div
       style={{height: 99}}
@@ -2197,7 +2312,7 @@ class Main extends React.Component {
           ? `nftSelectedStats ${classNameStats}`
           : `nftNotSelectedStats ${classNameStats}`
       }>
-      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill') : this.renderAttribute.bind(this, 'intelligence')}>
+      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill', location) : this.renderAttribute.bind(this, 'intelligence', location)}>
       <Row>
         <Col style={{marginRight: '0px'}} xs={5} span={4}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
         <Col xs={16} span={18}>
@@ -2212,7 +2327,7 @@ class Main extends React.Component {
         </Col>
       </Row>
       </Popover>
-      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'freak') : this.renderAttribute.bind(this, 'bodymass')}>
+      <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'freak', location) : this.renderAttribute.bind(this, 'bodymass', location)}>
       <Row>
       <Col style={{marginRight: '0px'}} xs={5} span={4}>
         <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
@@ -2240,13 +2355,13 @@ class Main extends React.Component {
 
         <Row>
           <Col style={{marginRight: '5px', marginLeft: '0px'}} xs={3} span={2}>
-            { c.stakingLocation !== 'Gym' ? <Popover content="Your NFT earns fastfood (FFOOD) tokens when staked into a kitchen.">
+            { c.stakingLocation !== 'Gym' ? <Popover content={`Your NFT earns ${token} tokens when staked into a kitchen.`}>
             <img src="/img/ffood.png"/>
             </Popover> : null }
           </Col>
           <Col span={7} className="funds" style={{color: '#fee017'}}>
             { c.stakingLocation !== 'Gym' ?
-            <Popover content="Amount of $FFOOD your NFTs have accumulated.">
+            <Popover content={`Amount of ${token} your NFTs have accumulated. Claim or unstake the NFT to retrieve the profit.`}>
               {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.freakLevel : c.bodymassLevel, c.name, c.owed, c.stakingLocation)}
             </Popover> : null }
           </Col>
@@ -2280,6 +2395,25 @@ class Main extends React.Component {
   }
 
   renderNFTColumn(c, staked, type = 'app', location = false) {
+    let hint;
+    if (c.type === 'Rat') {
+      if (c.bodymass < 42) {
+        const multiplier = (c.bodymass <= 50 ? c.bodymass : 100 - c.bodymass * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>! Earning {parseInt(multiplier / 1000)}%.</span>
+      } else if (c.bodymass >= 42 && c.bodymass <= 58) {
+        hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>, earns 100%</span>
+      } else {
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>! Go to the gym!</span>
+      }
+    } else {
+      if (c.skill < 86) {
+        const multiplier = 100000 + (c.skill * this.state.stats.chefEfficiencyMultiplier * 10);
+        hint = `Chef is earning ${parseInt(multiplier / 1000)}% rewards.`;
+      } else {
+        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>! Go to the gym!</span>
+      }
+    }
+
     if (!c || !c.name) {
       return <div>&nbsp;</div>
     }
@@ -2307,8 +2441,11 @@ class Main extends React.Component {
           }
         >
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
+        <div className="nftLeftLine"></div>
+        <div className="nftRightLine"></div>
+        <div className="nftHintBox">{hint}</div>
         </div>
-        { this.innerWidth < 900 && this.state.flipState[c.name] ? this.renderEmptyNFTStats(c, staked, type, classNameStats) : this.renderNFTStats(c, staked, type, classNameStats) }
+        { this.innerWidth < 900 && this.state.flipState[c.name] ? this.renderEmptyNFTStats(c, staked, type, classNameStats) : this.renderNFTStats(c, staked, type, classNameStats, location) }
       </span>
       </div>
     )
@@ -3791,6 +3928,52 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     )
   }
 
+  renderMinimumRequirements(minimum) {
+    let left = 0;
+    const kitchenWidth = this.getWidth('kitchen');
+    let factor = 0.5;
+    if (this.innerWidth > 1000) {
+      factor = 0.6;
+    }
+    left = kitchenWidth.width * factor;
+    return (
+      <div>
+        <div style={{left}} className="kitchenRequirementsBox">
+        <div className="whiteContent">
+        Minimum requirements to stake in this kitchen:
+        <Row>
+          <Col span={6}>
+            Chefs
+          </Col>
+          <Col span={5}>
+            {minimum}%
+          </Col>
+          <Col span={12}>
+            <img src="/img/skill.png"/>
+            Skill
+          </Col>
+        </Row>
+        <Row>
+          <Col span={6}>
+            Rats
+          </Col>
+          <Col span={5}>
+            {minimum}%
+          </Col>
+          <Col span={12}>
+            <img src="/img/intelligence.png"/>
+            Intelligence
+          </Col>
+        </Row>
+
+        </div>
+        </div>
+        <div className="kitchenRequirementsLeft"/>
+        <div className="kitchenRequirementsRight"/>
+      </div>
+    )
+  }
+
   renderNfts() {
     const { networkName, chainId } = this.getNetworkName();
     this.nftProfit = 0;
@@ -3819,7 +4002,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             { this.innerWidth > this.officeBreakpoint ? this.renderRatAlertOfficeInfo(false) : this.renderRatAlertOfficeInfo(true) }
             <Col>
               <div className={this.getOfficeBackground()} style={this.getWidth('office')}>
-                <div className="officeBoard" style={{width: 400 }}>
+                <div className="officeBoard" style={{width: 460 }}>
                   { this.state.officeView === 'mint' ?
                     this.props.address ? this.renderMintContent() : this.renderNACard("Mint")
                     : null }
@@ -3848,6 +4031,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
             </Col>
             <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: 20} : { marginTop: 20}}>
+              { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderMinimumRequirements(this.state.stats.LeStakeMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtLeStake() : <Skeleton />}
               { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderStakeOMeter(2) : null}
             </Col>
@@ -3869,6 +4053,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
             </Col>
             <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 20}}>
+              { !this.state.kitchenConfig.casualKitchenClosed ? this.renderMinimumRequirements(this.state.stats.TheStakeHouseMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtTheStakeHouse() : <Skeleton />}
               { !this.state.kitchenConfig.casualKitchenClosed ? this.renderStakeOMeter(1) : null}
             </Col>
@@ -4881,9 +5066,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   }
 
   renderKitchenModal() {
-    let price = this.state.casualKitchensPrice;
+    let price = this.state.casualKitchensPrice * this.state.kitchenMintAmount;
     if (this.state.kitchenType === 2) {
-      price = this.state.gourmetKitchensPrice;
+      price = this.state.gourmetKitchensPrice * this.state.kitchenMintAmount;
     }
     price = this.numberWithCommas(parseInt(price));
 
@@ -4913,13 +5098,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 </Row>
                 <Row>
                   <Col style={{width: '20px', paddingTop: '0px'}}>
-                    <MinusSquareOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount - 1)} style={{cursor: 'pointer', fontSize: '20px', marginTop: 6}}/>
+                    <MinusSquareOutlined onClick={this.onKitchenChangeAmount.bind(this, this.state.kitchenMintAmount - 1)} style={{cursor: 'pointer', fontSize: '20px', marginTop: 6}}/>
                   </Col>
                   <Col style={{width: '30px'}}>
-                    <div style={{textDecoration: 'underline', paddingLeft: 11, marginTop: 5}}>{this.state.mintAmount}</div>
+                    <div style={{textDecoration: 'underline', paddingLeft: 11, marginTop: 5}}>{this.state.kitchenMintAmount}</div>
                   </Col>
                   <Col span={3}>
-                    <PlusSquareOutlined onClick={this.onChangeAmount.bind(this, this.state.mintAmount + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '20px', marginTop: 6}}/>
+                    <PlusSquareOutlined onClick={this.onKitchenChangeAmount.bind(this, this.state.kitchenMintAmount + 1)} style={{cursor: 'pointer', marginLeft: '8px', fontSize: '20px', marginTop: 6}}/>
                   </Col>
                   <Col span={12} style={{marginLeft: 10, marginTop: 5, color: '#929292'}}>
                     kitchens
@@ -4950,7 +5135,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   }
 
   async mintKitchen() {
-    const amount = this.state.mintAmount;
+    const amount = this.state.kitchenMintAmount;
     console.log(`Buying kitchen ${this.state.kitchenType} with amount ${this.state.mintAmount}`)
     this.setState({ isKitchenModalVisible: false, mintAmount: 0 });
     let gasLimit = 0;

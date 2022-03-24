@@ -448,7 +448,6 @@
     left: 0px;
   }
 
-
   .generation {
     font-family: 'Pixellari';
     color: #FFFFFF;
@@ -720,6 +719,9 @@
   }
 
 
+  .nftHintBox {
+    width: 135px !important;
+  }
 
   .nft {
     width: 135px !important;
@@ -798,6 +800,7 @@
 @media only screen and (min-width: 769px) {
 
 
+
   .loggedInButtons {
     padding-left: 60px;
   }
@@ -825,6 +828,12 @@
     background: #362f2d;
     margin-top: -12px;
   }
+
+  .nftHintBox {
+    width: 155px !important;
+  }
+
+
 
 
   .nft {
@@ -1057,7 +1066,7 @@
   background-image: linear-gradient(to bottom, #544a43, #706258);
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 899px) {
   .hintContentWide {
     width: 282px !important;
   }
@@ -1074,7 +1083,6 @@
     left: 200px;
     top: 20px;
   }
-
 }
 
 @media only screen and (min-width: 801px) and (max-width: 999px) {
@@ -1355,6 +1363,8 @@
   border-top: 3px solid #443a31;
   border-top-left-radius: 5px;
   border-top-right-radius: 2px;
+
+
 
   background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
   -webkit-backface-visibility: hidden; /* Safari */
@@ -2363,4 +2373,37 @@
 
 .ant-layout-content {
   padding: 0px !important;
+}
+
+.kitchenRequirementsBox {
+  width: 245px;
+  height: 120px;
+  padding: 17px 38px 21px 20px;
+  border: solid 2px #5e5555;
+  background-color: #252525;
+  position: absolute;
+  top: 160px;
+  z-index: 6;
+  background: rgba(37, 37, 37, 0.5);
+}
+
+.nftLeftLine {
+  position: absolute;
+  width: 10px;
+  height: 15px;
+  border-left: 3px solid #443a31;
+  left: 0px;
+}
+
+.nftHintBox {
+  font-family: Pixellari;
+  font-size: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #FFFFFF;
+  height: 20px;
+  position: absolute;
+  top: 175px;
+  z-index: 4;
+  padding-top: 3px;
+  left: 2.5px;
 }
