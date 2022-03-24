@@ -2399,18 +2399,18 @@ class Main extends React.Component {
     if (c.type === 'Rat') {
       if (c.bodymass < 42) {
         const multiplier = (c.bodymass <= 50 ? c.bodymass : 100 - c.bodymass * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>! Earning {parseInt(multiplier / 1000)}%.</span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>!{ this.innerWidth >= 900 ? <span>Earning {parseInt(multiplier / 1000)}%.</span> : null }</span>
       } else if (c.bodymass >= 42 && c.bodymass <= 58) {
-        hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>, earns 100%</span>
+        hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>{ this.innerWidth >= 900 ? <span>, earns 100%</span> : null }</span>
       } else {
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>! Go to the gym!</span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>!{ this.innerWidth >= 900 ? <span>Go to the gym!</span> : null }</span>
       }
     } else {
       if (c.skill < 86) {
         const multiplier = 100000 + (c.skill * this.state.stats.chefEfficiencyMultiplier * 10);
-        hint = `Chef is earning ${parseInt(multiplier / 1000)}% rewards.`;
+        hint = <span>Chef is earning ${parseInt(multiplier / 1000)}%{ this.innerWidth > 900 ? <span>rewards.</span> : null }</span>
       } else {
-        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>! Go to the gym!</span>
+        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>!{ this.innerWidth >= 900 ? <span>Go to the gym!</span> : null }</span>
       }
     }
 

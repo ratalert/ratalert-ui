@@ -719,9 +719,6 @@
   }
 
 
-  .nftHintBox {
-    width: 135px !important;
-  }
 
   .nft {
     width: 135px !important;
@@ -829,9 +826,6 @@
     margin-top: -12px;
   }
 
-  .nftHintBox {
-    width: 155px !important;
-  }
 
 
 
@@ -1066,9 +1060,18 @@
   background-image: linear-gradient(to bottom, #544a43, #706258);
 }
 
+@media only screen and (min-width: 900px) {
+  .nftHintBox {
+    width: 155px !important;
+  }
+}
+
 @media only screen and (max-width: 899px) {
   .hintContentWide {
     width: 282px !important;
+  }
+  .nftHintBox {
+    width: 112px !important;
   }
   .generation {
     font-family: 'Pixellari';
@@ -2383,7 +2386,7 @@
   background-color: #252525;
   position: absolute;
   top: 160px;
-  z-index: 6;
+  z-index: 10;
   background: rgba(37, 37, 37, 0.5);
 }
 
