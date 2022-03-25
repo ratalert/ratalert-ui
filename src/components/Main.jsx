@@ -2399,18 +2399,18 @@ class Main extends React.Component {
     if (c.type === 'Rat') {
       if (c.bodymass < 42) {
         const multiplier = (c.bodymass <= 50 ? c.bodymass : 100 - c.bodymass * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>!{ this.innerWidth >= 900 ? <span>Earning {parseInt(multiplier / 1000)}%.</span> : null }</span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>!{ this.innerWidth >= 900 ? <span> Earning {parseInt(multiplier / 1000)}%.</span> : null }</span>
       } else if (c.bodymass >= 42 && c.bodymass <= 58) {
         hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>{ this.innerWidth >= 900 ? <span>, earns 100%</span> : null }</span>
       } else {
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>!{ this.innerWidth >= 900 ? <span>Go to the gym!</span> : null }</span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>!{ this.innerWidth >= 900 ? <span> Go to the gym!</span> : null }</span>
       }
     } else {
       if (c.skill < 86) {
         const multiplier = 100000 + (c.skill * this.state.stats.chefEfficiencyMultiplier * 10);
-        hint = <span>Chef is earning ${parseInt(multiplier / 1000)}%{ this.innerWidth > 900 ? <span>rewards.</span> : null }</span>
+        hint = <span>Chef is earning <span style={{color: '#13e969'}}>{parseInt(multiplier / 1000)}</span> %{ this.innerWidth > 900 ? <span> rewards.</span> : null }</span>
       } else {
-        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>!{ this.innerWidth >= 900 ? <span>Go to the gym!</span> : null }</span>
+        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>!{ this.innerWidth >= 900 ? <span> Go to the gym!</span> : null }</span>
       }
     }
 
@@ -2441,9 +2441,11 @@ class Main extends React.Component {
           }
         >
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
-        <div className="nftLeftLine"></div>
-        <div className="nftRightLine"></div>
+        { type === 'app' && location !== false ? <div>
+          <div className="nftLeftLine"></div>
+          <div className="nftRightLine"></div>
         <div className="nftHintBox">{hint}</div>
+        </div> : null }
         </div>
         { this.innerWidth < 900 && this.state.flipState[c.name] ? this.renderEmptyNFTStats(c, staked, type, classNameStats) : this.renderNFTStats(c, staked, type, classNameStats, location) }
       </span>
@@ -4031,7 +4033,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
             </Col>
             <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: 20} : { marginTop: 20}}>
-              { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderMinimumRequirements(this.state.stats.LeStakeMinEfficiency) : null }
+              { !this.state.kitchenConfig.gourmetKitchenClosed && this.state.myNfts.LeStake && this.state.myNfts.LeStake.length === 0 ? this.renderMinimumRequirements(this.state.stats.LeStakeMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtLeStake() : <Skeleton />}
               { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderStakeOMeter(2) : null}
             </Col>
@@ -4053,7 +4055,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
             </Col>
             <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 20}}>
-              { !this.state.kitchenConfig.casualKitchenClosed ? this.renderMinimumRequirements(this.state.stats.TheStakeHouseMinEfficiency) : null }
+              { !this.state.kitchenConfig.casualKitchenClosed && this.state.myNfts.TheStakeHouse && this.state.myNfts.TheStakeHouse.length === 0  ? this.renderMinimumRequirements(this.state.stats.TheStakeHouseMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtTheStakeHouse() : <Skeleton />}
               { !this.state.kitchenConfig.casualKitchenClosed ? this.renderStakeOMeter(1) : null}
             </Col>
