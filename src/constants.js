@@ -81,7 +81,7 @@ export const NETWORKS = {
     nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://polygon-mumbai.g.alchemy.com/v2/EzxSKRpnt-mCJ8jfavhJsSlZNxrosF5R",
+    rpcUrl: "https://rpc-mumbai.maticvigil.com/",
     faucet: "https://faucet.matic.network/",
     blockExplorer: "https://mumbai-explorer.matic.today/",
   },

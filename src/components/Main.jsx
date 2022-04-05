@@ -104,6 +104,7 @@ class Main extends React.Component {
     this.maxSelectedNFTs = 6;
     this.firstGraphLoad = true;
     this.state = {
+      toggleHint: false,
       lastBlockTime: 0,
       loadingPercent: 0,
       graphError: false,
@@ -1047,6 +1048,9 @@ class Main extends React.Component {
   }
 
   async componentWillMount() {
+    window.addEventListener('toggleHint', (h) => {
+      this.setState({ toggleHint: h.detail.hint });
+    });
     window.addEventListener('scroll', () => {
       const scrollPosition = window.pageYOffset;
       const bgElements = document.getElementsByClassName('parallax');
@@ -1097,6 +1101,8 @@ class Main extends React.Component {
 
     this.fetchGraph();
     this.getUniswapprice();
+    const hints = await this.getHintStatus();
+    this.setState({ toggleHint: hints });
   }
 
   async componentDidMount() {
@@ -1273,6 +1279,20 @@ class Main extends React.Component {
       localBalance,
       noBalance,
     });
+  }
+
+  async getHintStatus() {
+    const hint = localStorage.getItem('hints')
+    if (hint) {
+      if (hint === 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      localStorage.setItem('hints', 'true');
+      return true;
+    }
   }
 
   async cacheLocalStorage(name, func, eth = false) {
@@ -2403,14 +2423,14 @@ class Main extends React.Component {
       } else if (c.bodymass >= 42 && c.bodymass <= 58) {
         hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>{ this.innerWidth >= 900 ? <span>, earns 100%</span> : null }</span>
       } else {
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>!{ this.innerWidth >= 900 ? <span> Go to the gym!</span> : null }</span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span></span>
       }
     } else {
-      if (c.skill < 86) {
+      if (c.freak < 86) {
         const multiplier = 100000 + (c.skill * this.state.stats.chefEfficiencyMultiplier * 10);
-        hint = <span>Chef is earning <span style={{color: '#13e969'}}>{parseInt(multiplier / 1000)}</span> %{ this.innerWidth > 900 ? <span> rewards.</span> : null }</span>
+        hint = <span>Chef is earning <span style={{color: '#13e969'}}>{parseInt(multiplier / 1000)}</span> %</span>
       } else {
-        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>!{ this.innerWidth >= 900 ? <span> Go to the gym!</span> : null }</span>
+        hint = <span>⚠️ Chef is <span style={{color: '#ec6e6e'}}>INSANE</span>!</span>
       }
     }
 
@@ -2441,9 +2461,7 @@ class Main extends React.Component {
           }
         >
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
-        { type === 'app' && location !== false ? <div>
-          <div className="nftLeftLine"></div>
-          <div className="nftRightLine"></div>
+        { type === 'app' && location !== false && this.state.toggleHint ? <div>
         <div className="nftHintBox">{hint}</div>
         </div> : null }
         </div>
@@ -2846,7 +2864,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
-          gasLimit: parseInt(selectedToUnStakeNfts.length * 450000),
+          gasLimit: parseInt(selectedToUnStakeNfts.length * 480000),
         }),
       );
       this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
@@ -4032,7 +4050,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 <img width={this.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
             </Col>
-            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: 20} : { marginTop: 20}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? null : { marginTop: 20}}>
               { !this.state.kitchenConfig.gourmetKitchenClosed && this.state.myNfts.LeStake && this.state.myNfts.LeStake.length === 0 ? this.renderMinimumRequirements(this.state.stats.LeStakeMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtLeStake() : <Skeleton />}
               { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderStakeOMeter(2) : null}

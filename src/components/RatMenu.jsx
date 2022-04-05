@@ -63,7 +63,9 @@ class RatMenu extends React.Component {
       web3Loaded: false,
       dayTime: this.props.dayTime,
       buttonsDisabled: true,
+      hintsEnabled: false
     };
+
     this.Account = null;
     this.nftProfit = 0;
     this.mintedNfts = {};
@@ -75,7 +77,7 @@ class RatMenu extends React.Component {
     });
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("dayTime", (e) => {
       this.setState({dayTime: e.detail.dayTime})
@@ -85,6 +87,8 @@ class RatMenu extends React.Component {
       this.setState({ buttonsDisabled: false })
     });
 
+    const hints = await this.getHintStatus();
+    this.setState({ hintsEnabled: hints });
   }
 
   componentWillUnmount() {
@@ -270,6 +274,38 @@ class RatMenu extends React.Component {
     );
   }
 
+  async getHintStatus() {
+    const hint = localStorage.getItem('hints')
+    if (hint) {
+      console.log('Cached', hint);
+      if (hint === 'true') {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      localStorage.setItem('hints', 'true');
+      console.log('Not cached');
+      return true;
+    }
+  }
+
+  toggleHints() {
+    const hint = !this.state.hintsEnabled;
+    if (hint) {
+      localStorage.setItem('hints', 'true');
+    } else {
+      localStorage.setItem('hints', 'false');
+    }
+    this.setState({ hintsEnabled: hint });
+
+    const toggleHint = new CustomEvent('toggleHint', {
+      bubbles: true,
+      detail: { hint }
+    });
+    window.dispatchEvent(toggleHint);
+  }
+
   getAccountData() {
     let Account;
     const Loading = props => {
@@ -296,6 +332,9 @@ class RatMenu extends React.Component {
       <div className="account"><Row><Col>
         </Col>
         <Col>
+        <div className="hintRectangle" onClick={this.toggleHints.bind(this)}>
+          { this.state.hintsEnabled ? <span class="hintOn">On</span> : <span class="hintOff">Off</span> }
+        </div>
         <Suspense fallback={<div>Loading...</div>}>
         <Account
           address={this.props.address}
