@@ -9,8 +9,8 @@
 }
 
 .funds {
-  font-family: "Pixel";
-  font-size: 14px;
+  font-family: Pixellari;
+  font-size: 16px;
   color: #fee017;
   padding-left: 5px;
 }
@@ -31,15 +31,15 @@
 }
 
 .levelUpTime {
-  font-family: "Pixel";
+  font-family: Pixellari;
   color: #d2b5a7;
   margin-top: 0px;
   height: 20px;
 }
 
 .levelUpDone {
-  font-family: "Pixel";
-  font-size: 10px;
+  font-family: Pixellari;
+  font-size: 16px;
   color: #d2b5a7;
   margin-top: 0px;
   height: 20px;
@@ -208,7 +208,7 @@
   border: 0px solid #000000;
   position: relative;
   margin-top: -11px;
-  margin-left: 32px;
+  margin-left: 25px;
 }
 
 
@@ -317,21 +317,24 @@
 {
   color: #13e969;
   font-weight: bold;
-  font-family: 'Pixel';
+  font-family: Pixellari;
+  font-size: 12px;
 }
 
 .rat-intelligence > .ant-progress-text
 {
   color: #1eaeea;
   font-weight: bold;
-  font-family: 'Pixel';
+  font-family: Pixellari;
+  font-size: 12px;
 }
 
 .chef-insanity > .ant-progress-text
 {
   color: #fc24ff;
   font-weight: bold;
-  font-family: 'Pixel';
+  font-family: Pixellari;
+  font-size: 12px;
 
 }
 
@@ -339,7 +342,8 @@
 {
   color: #ffae00;
   font-weight: bold;
-  font-family: 'Pixel';
+  font-family: Pixellari;
+  font-size: 12px;
 }
 
 .daySwitcher {
@@ -817,8 +821,8 @@
   }
 
   .levelUpTime {
-    font-size: 12px;
-    margin-left: -3px;
+    font-size: 15px;
+    margin-left: -5px;
   }
 
   .sewerEntrance {
@@ -1174,7 +1178,7 @@
 
 
   .levelUpTime {
-    font-size: 10px;
+    font-size: 14px;
     margin-top: 5px;
     margin-left: 2px;
   }
@@ -1608,8 +1612,9 @@
       margin-top: 20px;
   }
   .icons {
-    float: left;
-    width: 105px;
+    width: 180px;
+    padding-left: 20px;
+    padding-top: 20px;
   }
   .account {
     float: left;
@@ -2116,8 +2121,6 @@
 
 .card__face {
   position: absolute;
-  width: 100%;
-  height: 100%;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden; /* Safari */
 }
@@ -2413,6 +2416,13 @@
   left: 2.5px;
 }
 
+
+.hintText {
+  position: absolute;
+  color: #519bff;
+  padding-left: 13px;
+  font-size: 12px;
+}
 .hintRectangle {
  width: 46px;
  height: 26px;
@@ -2423,6 +2433,7 @@
  border: solid 1px #519bff;
  position: absolute;
  cursor: pointer;
+ margin-top: 20px;
 }
 
 .hintOn {
@@ -2453,4 +2464,10 @@
   padding-top: 1px;
   left: 0px;
   top: 0px;
+}
+
+.kitchenInfoContent {
+  font-family: Pixellari;
+  font-size: 13px;
+  color: #FFFFFF;
 }

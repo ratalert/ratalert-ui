@@ -187,11 +187,6 @@ class RatMenu extends React.Component {
 
 
   renderIcons() {
-    if (!this.state.collapsed) {
-      return (
-        <div></div>
-      );
-    }
     return (
       <div className={`${this.getNavStyle()} icons`}>
       <a>
@@ -236,6 +231,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
             <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
           </Menu>
+          { this.renderIcons() }
           </div>
         </Sider>
       )
@@ -277,7 +273,6 @@ class RatMenu extends React.Component {
   async getHintStatus() {
     const hint = localStorage.getItem('hints')
     if (hint) {
-      console.log('Cached', hint);
       if (hint === 'true') {
         return true;
       } else {
@@ -285,7 +280,6 @@ class RatMenu extends React.Component {
       }
     } else {
       localStorage.setItem('hints', 'true');
-      console.log('Not cached');
       return true;
     }
   }
@@ -332,6 +326,7 @@ class RatMenu extends React.Component {
       <div className="account"><Row><Col>
         </Col>
         <Col>
+        <div className="hintText">Hints</div>
         <div className="hintRectangle" onClick={this.toggleHints.bind(this)}>
           { this.state.hintsEnabled ? <span class="hintOn">On</span> : <span class="hintOff">Off</span> }
         </div>
@@ -360,7 +355,7 @@ class RatMenu extends React.Component {
   renderExtra() {
     return (
       <div>
-        { this.renderIcons() }
+        { window.innerWidth > 900 ? this.renderIcons() : null }
         { this.state.collapsed ?
           this.getAccountData()
           : null}

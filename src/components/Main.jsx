@@ -136,6 +136,8 @@ class Main extends React.Component {
       localBalance: 0,
       flipState: {},
       flipStateDone: {},
+      kitchenFlipState: {},
+      kitchenFlipStateDone: {},
       hasSufficientFundsForKitchen: false,
       selectedKitchen: 0,
       orientation: 0,
@@ -2419,11 +2421,11 @@ class Main extends React.Component {
     if (c.type === 'Rat') {
       if (c.bodymass < 42) {
         const multiplier = (c.bodymass <= 50 ? c.bodymass : 100 - c.bodymass * this.state.stats.ratEfficiencyMultiplier * 1000 / 100) + (this.state.stats.ratEfficiencyOffset * 1000);
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>!{ this.innerWidth >= 900 ? <span> Earning {parseInt(multiplier / 1000)}%.</span> : null }</span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>THIN</span>!</span>
       } else if (c.bodymass >= 42 && c.bodymass <= 58) {
-        hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>{ this.innerWidth >= 900 ? <span>, earns 100%</span> : null }</span>
+        hint = <span>Rat has <span style={{color: '#13e969'}}>good health</span>!</span>
       } else {
-        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span></span>
+        hint = <span>⚠️ Rat is too <span style={{color: '#ec6e6e'}}>FAT</span>!</span>
       }
     } else {
       if (c.freak < 86) {
@@ -2461,7 +2463,7 @@ class Main extends React.Component {
           }
         >
         <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
-        { type === 'app' && location !== false && this.state.toggleHint ? <div>
+        { type === 'app' && location !== 'Gym' && location !== false && this.state.toggleHint ? <div>
         <div className="nftHintBox">{hint}</div>
         </div> : null }
         </div>
@@ -2887,17 +2889,53 @@ class Main extends React.Component {
     }
   }
 
+  prepareKitchenErrors(selectedToStakeNfts, location) {
+    let errors = [];
+    let error = false;
+    selectedToStakeNfts.map((m) => {
+      const nft = this.nfts[m];
+
+    });
+
+    if (errors.length > 0) {
+      this.setState({ isErrorModalVisible: true, errors });
+      error = true;
+    }
+    return error;
+  }
+
   prepareStakeErrors(selectedToStakeNfts, location) {
     let errors = [];
     let error = false;
     selectedToStakeNfts.map((m) => {
       const nft = this.nfts[m];
       let minEfficiency = 0;
+      let limit;
+      let limitReached = false;
       if (location === 'TheStakeHouse') {
         minEfficiency = this.state.stats.TheStakeHouseMinEfficiency;
       }
       if (location === 'LeStake') {
         minEfficiency = this.state.stats.LeStakeMinEfficiency;
+      }
+
+      if (location === 'TheStakeHouse') {
+        limit = this.state.casualKitchenAmount * 10;
+        if (this.state.myNfts.TheStakeHouse.length > limit) {
+          limitReached = true;
+        }
+      }
+      if (location === 'LeStake') {
+        limit = this.state.gourmetKitchenAmount * 10;
+        if (this.state.myNfts.LeStake.length > limit) {
+          limitReached = true;
+        }
+      }
+      if (limitReached) {
+        errors.push({
+          text: `${nft.description} cannot be staked into ${location} because your kitchen is full. Click on Buy kitchen Space to buy more kitchen space.`,
+          id: nft.name,
+        });
       }
 
       if ((nft.type === 'Chef') && (minEfficiency > 0) && (nft.skill < minEfficiency)) {
@@ -2926,17 +2964,17 @@ class Main extends React.Component {
       return;
     }
 
-    const error = this.prepareStakeErrors(selectedToStakeNfts, data.key);
-    if (error) {
-      return false;
-    }
-
     let contract;
     if (data && data.key) {
       contract = this.getRestaurantContract(data.key);
     }
     else {
       contract = this.getRestaurantContract(data);
+    }
+
+    const error = this.prepareStakeErrors(selectedToStakeNfts, data.key);
+    if (error) {
+      return false;
     }
 
 /*
@@ -3342,7 +3380,13 @@ class Main extends React.Component {
     }
 
     const height = this.getButtonHeight();
-    let activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}}src="/img/ffood.png"/></span>
+    let activeText;
+    if (type !== 'Gym') {
+      activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}}src="/img/ffood.png"/></span>
+    } else {
+      activeText = <span>Level up!</span>
+    }
+
     const nft = this.getStakedNFTs(type);
     if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
       if (nft.length > 0) {
@@ -3766,6 +3810,29 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     )
   }
 
+  flipKitchen(id) {
+    if (this.state.flipInProgress)
+      return;
+    const kitchenFlipState = this.state.kitchenFlipState;
+    if (!kitchenFlipState[id]) {
+      kitchenFlipState[id] = {};
+    }
+    if (kitchenFlipState[id] === 'is-flipped') {
+      delete kitchenFlipState[id];
+      const kitchenFlipStateDone = this.state.kitchenFlipStateDone;
+      delete kitchenFlipStateDone[id];
+      this.setState({ kitchenFlipState, kitchenFlipStateDone, flipInProgress: false });
+    } else {
+      kitchenFlipState[id] = 'is-flipped';
+      this.setState({kitchenFlipState, flipInProgress: true});
+      setTimeout(() => {
+        const kitchenFlipStateDone = this.state.flipStateDone;
+        kitchenFlipStateDone[id] = 'is-flipped';
+        this.setState({kitchenFlipStateDone, flipInProgress: false});
+      }, 1000);
+    }
+  }
+
   flipCard(id) {
     if (this.state.flipInProgress)
       return;
@@ -3872,6 +3939,150 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     );
   }
 
+  renderRestaurantInfo(type) {
+    let minimum;
+    let chefEarnings;
+    let ratEarnings;
+    let chefFreak;
+    let ratBodymass;
+    let earnings;
+    let currency;
+    if (type === 'McStake') {
+      minimum = 0;
+      chefEarnings = 2;
+      ratEarnings = 2;
+      chefFreak = 4;
+      ratBodymass = 8;
+      earnings = 250;
+      currency = '$FFOOD';
+    }
+    if (type === 'TheStakeHouse') {
+      minimum = 28;
+      chefEarnings = 4;
+      ratEarnings = 4;
+      chefFreak = 6;
+      ratBodymass = 6;
+      earnings = 250;
+      currency = '$CFOOD';
+    }
+    if (type === 'LeStake') {
+      minimum = 72;
+      chefEarnings = 6;
+      ratEarnings = 6;
+      chefFreak = 8;
+      ratBodymass = 4;
+      earnings = 250;
+      currency = '$GFOOD';
+    }
+
+    return (
+      <div style={{height: 300, width: '100%', paddingLeft: 20, paddingTop: 0 }} className={'buttonShade'}>
+        { minimum > 0 ? <div className="kitchenInfoContent">
+        <Row>
+        <Col span={24}>
+          <span style={{textDecoration: 'underline'}}>Minimum requirements:</span>
+        </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            Chefs
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            {minimum}%
+          </Col>
+          <Col span={19}>
+            <img src="/img/skill.png"/>
+            Skill
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            Rats
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            {minimum}%
+          </Col>
+          <Col span={19}>
+            <img src="/img/intelligence.png"/>
+            Intelligence
+          </Col>
+        </Row>
+
+        </div> : null }
+
+
+        <div className="kitchenInfoContent">
+        <Row style={{paddingTop: 8}}>
+        <Col span={24}>
+          <span style={{textDecoration: 'underline'}}>Experience points per day:</span>
+        </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            Chefs
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            {chefEarnings}%
+          </Col>
+          <Col span={19}>
+            <img src="/img/skill.png"/>
+            Skill
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            {chefFreak}%
+          </Col>
+          <Col span={19}>
+            <img src="/img/insanity.png"/>
+            Freak
+          </Col>
+        </Row>
+        <Row>
+          <Col span={24}>
+            Rats
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            {ratEarnings}%
+          </Col>
+          <Col span={19}>
+            <img src="/img/intelligence.png"/>
+            Intelligence
+          </Col>
+        </Row>
+        <Row>
+          <Col span={5}>
+            {ratBodymass}%
+          </Col>
+          <Col span={19}>
+            <img src="/img/fatness.png"/>
+            Bodymass
+          </Col>
+        </Row>
+        <Row style={{paddingTop: 8}}>
+        <Col span={24}>
+          <span style={{textDecoration: 'underline'}}>Earnings per day:</span>
+        </Col>
+        </Row>
+        <Row>
+        <Col span={24}>
+          {earnings} {currency}
+        </Col>
+        </Row>
+
+        </div>
+      </div>
+    )
+  }
+
   renderRestaurantCallToActions(type) {
     if (this.state.myNfts[type].length === 0) {
       if ((type === 'TheStakeHouse') || (type === 'LeStake')) {
@@ -3942,7 +4153,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           { !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderUnStakeButton(type) : null}
         </div>
         <div style={{paddingTop: 10}}>
-          { type !== 'Gym' && !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderClaimButton(type) : null }
+          { !this.state.kitchenConfig.fastFoodKitchenClosed ? this.renderClaimButton(type) : null }
         </div>
       </div>
     )
@@ -3988,8 +4199,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
         </div>
         </div>
-        <div className="kitchenRequirementsLeft"/>
-        <div className="kitchenRequirementsRight"/>
       </div>
     )
   }
@@ -4042,15 +4251,27 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row >
             <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
 
-              <div style={{ marginTop: 0, width: kitchenWidth.width }} className={`parallax gourmetScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
+
+            <div className={`card ${this.state.kitchenFlipState['LeStake']}`}>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax casualScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
                 { this.renderRestaurantCallToActions('LeStake') }
               </div>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                { this.renderRestaurantInfo('LeStake') }
+              </div>
+            </div>
 
               <div className="restaurantSign">
                 <img width={this.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
             </Col>
-            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? null : { marginTop: 20}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? this.state.kitchenConfig.gourmetKitchenClosed ? { marginLeft: 20 } : null : { marginTop: 20}}>
               { !this.state.kitchenConfig.gourmetKitchenClosed && this.state.myNfts.LeStake && this.state.myNfts.LeStake.length === 0 ? this.renderMinimumRequirements(this.state.stats.LeStakeMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtLeStake() : <Skeleton />}
               { !this.state.kitchenConfig.gourmetKitchenClosed ? this.renderStakeOMeter(2) : null}
@@ -4063,8 +4284,19 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row>
             <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
 
-            <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
-              { this.renderRestaurantCallToActions('TheStakeHouse') }
+            <div className={`card ${this.state.kitchenFlipState['TheStakeHouse']}`}>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                { this.renderRestaurantCallToActions('TheStakeHouse') }
+              </div>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                { this.renderRestaurantInfo('TheStakeHouse') }
+              </div>
             </div>
 
             <div className="restaurantSign">
@@ -4072,7 +4304,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </div>
 
             </Col>
-            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 20}}>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? this.state.kitchenConfig.casualKitchenClosed ? { marginLeft: 20 } : null : { marginTop: 20}}>
               { !this.state.kitchenConfig.casualKitchenClosed && this.state.myNfts.TheStakeHouse && this.state.myNfts.TheStakeHouse.length === 0  ? this.renderMinimumRequirements(this.state.stats.TheStakeHouseMinEfficiency) : null }
               { !this.state.loading ? this.renderStakedAtTheStakeHouse() : <Skeleton />}
               { !this.state.kitchenConfig.casualKitchenClosed ? this.renderStakeOMeter(1) : null}
@@ -4083,9 +4315,22 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Card className="house kitchenMargin" size="small">
           <Row>
             <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
-            <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
-              { this.renderRestaurantCallToActions('McStake') }
+
+            <div className={`card ${this.state.kitchenFlipState['McStake']}`}>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                { this.renderRestaurantCallToActions('McStake') }
+              </div>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                { this.renderRestaurantInfo('McStake') }
+              </div>
             </div>
+
             <div className="restaurantSign">
               <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
             </div>
@@ -4110,15 +4355,36 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 <div className="logoLine"/>
                 { this.renderRestaurantCallToActions('Gym') }
                 <div className="gymDescription">
-                <div className="hintGym" style={{paddingTop: 20}}>
+                <div className="hintGym" style={this.state.myNfts.Gym.length === 0 ? {paddingTop: 20} : {paddingTop: 60}}>
                   <div className="hintHeader hintContentWide">Hint</div>
                   <div className="hintContent hintContentWide">
-                  Time in the gym is good for your NFTs health. No tokens are earned.
+                  Time in the gym is good for your NFTs health.<br/>Per day:
 
                   { this.state.myNfts.Gym.length !== 5 ? <div>
-                    Chefs reduce their freak level by -12% per day.
-                    <br/>
-                    Rats reduce their body mass by -8% per day.
+                    <Row>
+                      <Col span={6}>
+                        Chefs
+                      </Col>
+                      <Col span={5}>
+                        -12%
+                      </Col>
+                      <Col span={12}>
+                        <img src="/img/insanity.png"/>
+                        Freak
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col span={6}>
+                        Rats
+                      </Col>
+                      <Col span={5}>
+                        -8%
+                      </Col>
+                      <Col span={12}>
+                        <img src="/img/fatness.png"/>
+                        Bodymass
+                      </Col>
+                    </Row>
                   </div> : null }
                   </div>
                 </div>

@@ -207,7 +207,7 @@ function App(props) {
         </div>
       );
     } else {
-      const maticTargetNetwork = 'https://matic-mumbai.chainstacklabs.com/';
+      const maticTargetNetwork = 'https://rpc-mumbai.maticvigil.com/';
       let rpcUrl = targetNetwork ? targetNetwork.rpcUrl : '';
       if (targetNetwork && targetNetwork.name === 'mumbai') {
         rpcUrl = maticTargetNetwork;
