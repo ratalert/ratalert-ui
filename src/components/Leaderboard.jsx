@@ -94,7 +94,7 @@ class Leaderboard extends React.Component {
             });
           }
           if (found === 0 && r.earned > 0) {
-            if (r.insanity > 0) {
+            if (r.freak > 0) {
               //console.log(r);
             }
             chefRats.push({
@@ -102,10 +102,10 @@ class Leaderboard extends React.Component {
               name: json.name,
               type: r.attributes[0]['value'],
               attributes: r.attributes,
-              insanity: r.insanity,
+              freak: r.freak,
               skill: r.skill,
               intelligence: r.intelligence,
-              fatness: r.fatness,
+              bodymass: r.bodymass,
               img: json.image,
               profit: parseInt(r.earned),
             });
@@ -141,7 +141,7 @@ class Leaderboard extends React.Component {
     }, 2800);
 
     // await this.fetchGraph('skill');
-    await this.fetchGraph('insanity');
+    await this.fetchGraph('earned');
     // await this.fetchGraph('intelligence');
     // await this.fetchGraph('fatness');
   }
@@ -186,17 +186,17 @@ class Leaderboard extends React.Component {
           <Col span={12}>{attributes[0].value === "Chef" ? hash['Skill'] : hash["Intelligence"]}</Col>
         </Row>
         <Row>
-          <Col span={12}>{attributes[0].value === "Chef" ? "Insanity level" : "Bodymass level"}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? "Freak level" : "Bodymass level"}</Col>
           <Col span={12}>
             <Progress
               strokeColor={attributes[0].value === "Chef" ? "blue" : "brown"}
-              percent={ attributes[0].value === "Chef" ? hash['Insanity percentage'] : hash['Fatness percentage'] }
+              percent={ attributes[0].value === "Chef" ? hash['Freak percentage'] : hash['Body mass percentage'] }
               status="active" />
           </Col>
         </Row>
         <Row>
           <Col span={12}>{attributes[0].value === "Chef" ? "Insanity status" : "Body mass status"}</Col>
-          <Col span={12}>{attributes[0].value === "Chef" ? hash['Insanity'] : hash['Fatness']}</Col>
+          <Col span={12}>{attributes[0].value === "Chef" ? hash['Freak'] : hash['Body mass']}</Col>
         </Row>
 
         <Row>
@@ -252,7 +252,7 @@ class Leaderboard extends React.Component {
             size="small"
             format={percent => <span style={{color: '#000000'}}>{percent}%</span>}
             strokeColor={ type === 'Chef' ? '#fc24ff' : '#ffae00' }
-            percent={ type === 'Chef' ? hash['Insanity percentage'] : hash['Fatness percentage'] } />
+            percent={ type === 'Chef' ? hash['Freak percentage'] : hash['Body mass percentage'] } />
           </Col>
         </Row>
 
@@ -311,7 +311,7 @@ class Leaderboard extends React.Component {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
-        width: '4%',
+        width: '7%',
         render: text => <span>{text}</span>,
       },
       {

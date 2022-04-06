@@ -3980,7 +3980,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         { minimum > 0 ? <div className="kitchenInfoContent">
         <Row>
         <Col span={24}>
-          <span style={{textDecoration: 'underline'}}>Minimum requirements:</span>
+          <span style={{textDecoration: 'underline'}}>Requirements to enter:</span>
         </Col>
         </Row>
         <Row>
@@ -4028,7 +4028,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </Row>
         <Row>
           <Col span={5}>
-            {chefEarnings}%
+            +{chefEarnings}%
           </Col>
           <Col span={19}>
             <img src="/img/skill.png"/>
@@ -4037,7 +4037,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </Row>
         <Row>
           <Col span={5}>
-            {chefFreak}%
+            +{chefFreak}%
           </Col>
           <Col span={19}>
             <img src="/img/insanity.png"/>
@@ -4051,7 +4051,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </Row>
         <Row>
           <Col span={5}>
-            {ratEarnings}%
+            +{ratEarnings}%
           </Col>
           <Col span={19}>
             <img src="/img/intelligence.png"/>
@@ -4060,7 +4060,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         </Row>
         <Row>
           <Col span={5}>
-            {ratBodymass}%
+            +{ratBodymass}%
           </Col>
           <Col span={19}>
             <img src="/img/fatness.png"/>
