@@ -4016,7 +4016,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
 
         <div className="kitchenInfoContent">
-        <Row style={{paddingTop: 8}}>
+        <Row style={{paddingTop: minimum > 0 ? 8 : 30}}>
         <Col span={24}>
           <span style={{textDecoration: 'underline'}}>Experience points per day:</span>
         </Col>
@@ -4254,13 +4254,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
             <div className={`card ${this.state.kitchenFlipState['LeStake']}`}>
               <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax casualScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
-                <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
                 { this.renderRestaurantCallToActions('LeStake') }
               </div>
               <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
-                <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
                 { this.renderRestaurantInfo('LeStake') }
@@ -4286,13 +4286,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
             <div className={`card ${this.state.kitchenFlipState['TheStakeHouse']}`}>
               <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
-                <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
                 { this.renderRestaurantCallToActions('TheStakeHouse') }
               </div>
               <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
-                <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
                 { this.renderRestaurantInfo('TheStakeHouse') }
@@ -4318,13 +4318,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
             <div className={`card ${this.state.kitchenFlipState['McStake']}`}>
               <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
-                <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
                 { this.renderRestaurantCallToActions('McStake') }
               </div>
               <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
-                <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: 160, top: -15}}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
                 { this.renderRestaurantInfo('McStake') }
