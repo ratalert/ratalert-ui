@@ -12,6 +12,7 @@ export { default as TokenBalance } from "./TokenBalance";
 export { default as L2Bridge } from "./L2Bridge";
 export { default as Main } from "./Main";
 export { default as Leaderboard } from "./Leaderboard";
+export { default as Claims } from "./Claims";
 export { default as Whitepaper } from "./Whitepaper";
 export { default as RatMenu } from "./RatMenu";
 export { default as AdminDashboard } from "./AdminDashboard";

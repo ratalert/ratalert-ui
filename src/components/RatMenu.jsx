@@ -229,7 +229,8 @@ class RatMenu extends React.Component {
           <Menu mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
             <Menu.Item style={{marginRight: '0px'}} key={1}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item>
             <Menu.Item key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
-            <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/claims">History</Link></Menu.Item>
+            <Menu.Item key={4}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
           </Menu>
           { this.renderIcons() }
           </div>
@@ -263,8 +264,9 @@ class RatMenu extends React.Component {
         <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
           <Menu.Item key={1}><Link to="/">Game</Link></Menu.Item>
           <Menu.Item key={2}><Link disabled={this.state.buttonsDisabled} to="/leaderboard">Leaderboard</Link></Menu.Item>
-          <Menu.Item key={3}><Link disabled={this.state.buttonsDisabled} to="/whitepaper">Whitepaper</Link></Menu.Item>
-          { admin && admin.includes(this.props.address) ? <Menu.Item key={4}><Link disabled={this.state.buttonsDisabled} to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+          <Menu.Item key={3}><Link disabled={this.state.buttonsDisabled} to="/claims">History</Link></Menu.Item>
+          <Menu.Item key={4}><Link disabled={this.state.buttonsDisabled} to="/whitepaper">Whitepaper</Link></Menu.Item>
+          { admin && admin.includes(this.props.address) ? <Menu.Item key={5}><Link disabled={this.state.buttonsDisabled} to="/admin">Admin Dashboard</Link></Menu.Item> : null }
         </Menu>
       </div>
     );

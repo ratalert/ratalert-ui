@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard} from "./components";
+import { Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import {
@@ -385,6 +385,31 @@ function App(props) {
               networkName={networkName}
               dayTimeSwitch={dayTimeSwitch}
               content={<Leaderboard
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                networkName={networkName}
+                />}
+              />
+          </Route>
+          <Route path="/claims">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={3}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              networkName={networkName}
+              dayTimeSwitch={dayTimeSwitch}
+              content={<Claims
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}

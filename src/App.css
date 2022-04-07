@@ -2327,6 +2327,13 @@
     background-size: cover;
   }
 
+  .mcStake {
+    background-image: url("img/mcstake.png");
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+  }
+
 
   .kitchenCaret {
     color: #FFF;
@@ -2470,4 +2477,37 @@
   font-family: Pixellari;
   font-size: 13px;
   color: #FFFFFF;
+}
+
+.claimText {
+  font-family: Pixellari;
+  font-size: 13px;
+}
+
+.white {
+  color: white;
+}
+
+.black {
+  color: black;
+}
+
+.ant-table-thead th {
+  background: #d1b2a5 !important;
+  color: white !important;
+}
+
+.ant-table-cell {
+  background: #000000 !important;
+  color: #FFFFFF !important;
+  border: 1px solid white;
+  font-family: Pixellari;
+  font-size: 12px;
+}
+
+.claimsTable {
+  border: solid 2px #fff;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px 22px 40px;
+  min-height: 400px;
 }
