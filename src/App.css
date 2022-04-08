@@ -2498,9 +2498,9 @@
 }
 
 .ant-table-cell {
-  background: #000000 !important;
+  background: #2b343d !important;
   color: #FFFFFF !important;
-  border: 1px solid white;
+  border: 0px solid white;
   font-family: Pixellari;
   font-size: 12px;
 }

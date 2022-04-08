@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom'
-
+import { withRouter } from 'react-router-dom';
 import {
   Alert,
   PageHeader,
@@ -350,6 +350,10 @@ class Main extends React.Component {
         this.getFoodTokensPerRat()
       }, 2000);
 
+    }
+
+    if (this.props.location !== prevProps.location) {
+     console.log('ROUTE CHANGED!');
     }
   }
 
@@ -1491,13 +1495,16 @@ class Main extends React.Component {
     };
     this.setState({ stats });
 
+    if (this.state.paywall.paywallEnabled === null) {
+      this.fetchPaywallData();
+    }
   }
 
   async fetchPaywallData(force = false) {
     const { networkName, chainId } = this.getNetworkName();
     const PaywallContract = new ethers.Contract(config[networkName].Paywall,
             contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
-
+    console.log('LOADING PAYWALL',this.state.paywall.paywallEnabled, this.state.loadingPercent)
     let paywallEnabled = null;
     if (force || this.state.paywall.paywallEnabled === null) {
       this.setState({ loadingPercent: 100 });
@@ -1676,6 +1683,7 @@ class Main extends React.Component {
           <Row className="officeContent">
             <Col  span={24}>
               Loading data from blockchain... <Spin/>
+              { JSON.stringify(this.state.paywall.paywallEnabled) }
             </Col>
           </Row>
           <Row className="officeContent">
@@ -5486,4 +5494,4 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   }
 }
 
-export default Main;
+export default withRouter(Main);
