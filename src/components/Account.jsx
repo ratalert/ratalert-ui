@@ -49,6 +49,8 @@ export default function Account({
   injectedProvider,
   dayTime,
   themeClass,
+  hideLoggedIn = false,
+  appMode = 'lite'
 }) {
 
 
@@ -131,15 +133,22 @@ export default function Account({
 
   const modalButtons = [];
   if (web3Modal) {
-    if (web3Modal.cachedProvider) {
+    if (web3Modal.cachedProvider && !hideLoggedIn) {
       modalButtons.push(
         <a onClick={logoutOfWeb3Modal} className={`${themeClass} menuWeb3Button`} href="#">Logout</a>,
       );
     } else {
-
-      modalButtons.push(
-        <a onClick={loadWeb3Modal} className={`${themeClass} menuWeb3Button`} href="#">Connect wallet</a>,
-      );
+      if (!address && appMode === 'full') {
+        modalButtons.push(
+          <Button style={{height: 30, width: 140}}
+          className="web3Button"
+          type={"default"}
+          onClick={loadWeb3Modal}
+          >
+          Connect wallet
+          </Button>,
+        );
+      }
       const urlParams = new URLSearchParams(window.location.search);
       const addr = urlParams.get('addr');
       if (addr) {
@@ -153,7 +162,7 @@ export default function Account({
     ""
   ) : (
     <span>
-      {address ? (
+      {address && !hideLoggedIn ? (
         <div style={{paddingTop: 10}}>
         <Address fontSize={18} address={address} ensProvider={mainnetProvider} blockExplorer={blockExplorer} />
         </div>

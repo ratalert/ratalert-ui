@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
+import { Roadmap, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import {
@@ -54,6 +54,8 @@ else {
   targetNetwork = NETWORKS.localhost;
   chainId = 1337;
 }
+
+let appMode = process.env.REACT_APP_MODE || 'full';
 
 //targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
@@ -352,6 +354,48 @@ function App(props) {
             debug={DEBUG}
             chainId={chainId}
             networkName={networkName}
+            appMode={appMode}
+            content={<Landing
+              tx={tx}
+              appMode={appMode}
+              contractConfig={contractConfig}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              userSigner={userSigner}
+              address={address}
+              provider={localProvider}
+              targetNetwork={targetNetwork}
+              setInjectedProvider={setInjectedProvider}
+              chainId={chainId}
+              lastBlockTime={lastBlockTime}
+              dayTime={dayTime}
+              debug={DEBUG}
+              localBalance={localBalance}
+              networkName={networkName}
+            />}
+            />
+          </Route>
+          <Route exact path="/game">
+            <RatMenu
+            tx={tx}
+            readContracts={readContracts}
+            writeContracts={writeContracts}
+            address={address}
+            provider={localProvider}
+            userSigner={userSigner}
+            mainnetProvider={mainnetProvider}
+            blockExplorer={blockExplorer}
+            setAddress={setAddress}
+            appMode={appMode}
+            setInjectedProvider={setInjectedProvider}
+            injectedProvider={injectedProvider}
+            active={2}
+            dayTime={dayTime}
+            dayTimeSwitch={dayTimeSwitch}
+            debug={DEBUG}
+            chainId={chainId}
+            networkName={networkName}
+            appMode={appMode}
             content={<Main
               tx={tx}
               contractConfig={contractConfig}
@@ -367,6 +411,7 @@ function App(props) {
               debug={DEBUG}
               localBalance={localBalance}
               networkName={networkName}
+              appMode={appMode}
             />}
             />
           </Route>
@@ -377,10 +422,11 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={2}
+              active={3}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
+              appMode={appMode}
               chainId={chainId}
               networkName={networkName}
               dayTimeSwitch={dayTimeSwitch}
@@ -402,7 +448,8 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={3}
+              active={4}
+              appMode={appMode}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -427,11 +474,12 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={3}
+              active={5}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
               chainId={chainId}
+              appMode={appMode}
               dayTimeSwitch={dayTimeSwitch}
               networkName={networkName}
               content={<Whitepaper
@@ -441,6 +489,35 @@ function App(props) {
                 address={address}
                 provider={localProvider}
                 dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
+          <Route path="/roadmap">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={6}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Roadmap
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
                 setInjectedProvider={setInjectedProvider}
                 networkName={networkName}
                 />}
@@ -452,8 +529,9 @@ function App(props) {
               readContracts={readContracts}
               writeContracts={writeContracts}
               address={address}
+              appMode={appMode}
               provider={localProvider}
-              active={4}
+              active={7}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -465,6 +543,7 @@ function App(props) {
                 chainId={chainId}
                 readContracts={readContracts}
                 writeContracts={writeContracts}
+                appMode={appMode}
                 address={address}
                 provider={localProvider}
                 dayTime={dayTime}

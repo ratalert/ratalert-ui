@@ -226,10 +226,12 @@ class RatMenu extends React.Component {
          <div className={style}>
 
           <Menu mode="inline" defaultSelectedKeys={[this.props.active.toString()]}>
-            <Menu.Item style={{marginRight: '0px'}} key={1}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item>
-            <Menu.Item key={2}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item>
-            <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/claims">History</Link></Menu.Item>
-            <Menu.Item key={4}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item key={1}><Link to="/">Start</Link></Menu.Item>
+            { this.props.appMode === 'full' ? <Menu.Item style={{marginRight: '0px'}} key={2}><Link onClick={this.toggle.bind(this)} to="/">Game</Link></Menu.Item> : null }
+            { this.props.appMode === 'full' ? <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
+            { this.props.appMode === 'full' ? <Menu.Item key={4}><Link onClick={this.toggle.bind(this)} to="/claims">History</Link></Menu.Item> : null }
+            <Menu.Item key={5}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item key={6}><Link onClick={this.toggle.bind(this)} disabled={this.state.buttonsDisabled} to="/roadmap">Roadmap</Link></Menu.Item>
           </Menu>
           { this.renderIcons() }
           </div>
@@ -262,11 +264,12 @@ class RatMenu extends React.Component {
       <div className={this.getNavStyle()}>
         <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
           <Menu.Item key={1}><Link to="/">Start</Link></Menu.Item>
-          <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item>
-          <Menu.Item key={3}><Link disabled={this.state.buttonsDisabled} to="/leaderboard">Leaderboard</Link></Menu.Item>
-          <Menu.Item key={4}><Link disabled={this.state.buttonsDisabled} to="/claims">History</Link></Menu.Item>
+          { this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null}
+          { this.props.appMode === 'full' ? <Menu.Item key={3}><Link disabled={this.state.buttonsDisabled} to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
+          { this.props.appMode === 'full' ? <Menu.Item key={4}><Link disabled={this.state.buttonsDisabled} to="/claims">History</Link></Menu.Item> : null }
           <Menu.Item key={5}><Link disabled={this.state.buttonsDisabled} to="/whitepaper">Whitepaper</Link></Menu.Item>
-          { admin && admin.includes(this.props.address) ? <Menu.Item key={5}><Link disabled={this.state.buttonsDisabled} to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+          <Menu.Item key={6}><Link disabled={this.state.buttonsDisabled} to="/roadmap">Roadmap</Link></Menu.Item>
+          { admin && admin.includes(this.props.address) ? <Menu.Item key={7}><Link disabled={this.state.buttonsDisabled} to="/admin">Admin Dashboard</Link></Menu.Item> : null }
         </Menu>
       </div>
     );
@@ -328,10 +331,12 @@ class RatMenu extends React.Component {
       <div className="account"><Row><Col>
         </Col>
         <Col>
+        { this.props.active !== 1 ? <div>
         <div className="hintText">Hints</div>
         <div className="hintRectangle" onClick={this.toggleHints.bind(this)}>
           { this.state.hintsEnabled ? <span class="hintOn">On</span> : <span class="hintOff">Off</span> }
         </div>
+        </div> : null}
         <Suspense fallback={<div>Loading...</div>}>
         <Account
           address={this.props.address}
@@ -345,6 +350,7 @@ class RatMenu extends React.Component {
           injectedProvider={this.props.injectedProvider}
           dayTime={this.state.dayTime}
           themeClass={this.getNavStyle()}
+          appMode={this.props.appMode}
         />
         </Suspense>
 
@@ -397,6 +403,9 @@ class RatMenu extends React.Component {
 
 
   getSkyClass() {
+    if (this.props.active === 1) {
+      return 'sky skyNight';
+    }
     if (this.state.dayTime === 'night') {
       return 'sky skyNight';
     }

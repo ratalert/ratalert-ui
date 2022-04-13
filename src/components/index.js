@@ -16,3 +16,5 @@ export { default as Claims } from "./Claims";
 export { default as Whitepaper } from "./Whitepaper";
 export { default as RatMenu } from "./RatMenu";
 export { default as AdminDashboard } from "./AdminDashboard";
+export { default as Landing } from "./Landing";
+export { default as Roadmap } from "./Roadmap";

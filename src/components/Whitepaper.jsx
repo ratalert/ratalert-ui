@@ -148,7 +148,7 @@ class Whitepaper extends React.Component {
                       </ul>
 
                       <h2 id="story">The Story</h2>
-                      <img style={{width: 600}} src="../assets/images/image23.png" width="100%" alt="alt_text" title="image_tooltip" />
+                      <img style={{width: 500}} src="../assets/images/image23.png" width="100%" alt="alt_text" title="image_tooltip" />
 
                       <p>
                           Paris - it’s the city where aspiring entrepreneurial <a href="#chefs">chefs</a> make their way to the top. Only the crème de la crème will get to <del>open</del> mint their own GourmetFood kitchen such as
@@ -182,7 +182,7 @@ class Whitepaper extends React.Component {
 
                       <h3 id="mcstake">FastFood Kitchen McStake©</h3>
 
-                      <p><img style={{width: 600}} src="../assets/images/image16.png" width="100%" alt="alt_text" title="image_tooltip" /></p>
+                      <p><img style={{width: 500}} src="../assets/images/image16.png" width="100%" alt="alt_text" title="image_tooltip" /></p>
                       <p>
                           <em>Michael McSaylor’s</em> <em>McStake©</em> is “virtually” all over town. Here, <a href="#chefs">chefs</a> start their career as an employee producing <a href="#ffood">$FFOOD</a> which <a href="#rats">rats</a> love
                           for its “simplicity”.
@@ -240,7 +240,7 @@ class Whitepaper extends React.Component {
                       <h3 id="thestakehouse">CasualFood Kitchen TheStakeHouse©</h3>
 
                       <p>
-                          <img style={{width: 600}} src="../assets/images/image19.png" width="100%" alt="alt_text" title="image_tooltip" />
+                          <img style={{width: 500}} src="../assets/images/image19.png" width="100%" alt="alt_text" title="image_tooltip" />
                       </p>
                       <p>
                           A wise man once said: “There is no second best”. He was of course talking about the steaks at <em>TheStakeHouse©</em>. These CasualFood kitchens allow your <a href="#chefs">chefs</a> to produce
@@ -323,7 +323,7 @@ class Whitepaper extends React.Component {
                       <h3 id="lestake">GourmetFood Kitchen LeStake©</h3>
 
                       <p>
-                          <img style={{width: 600}} src="../assets/images/image33.png" width="100%" alt="alt_text" title="image_tooltip" />
+                          <img style={{width: 500}} src="../assets/images/image33.png" width="100%" alt="alt_text" title="image_tooltip" />
                       </p>
                       <p>
                           <em>LeStake©</em>. No other restaurant in the metaverse can hold the candle to this famous 3-star kitchen, and it can only be purchased with <a href="#cfood">$CFOOD</a>. These GourmetFood kitchens are where the fine
@@ -414,7 +414,7 @@ class Whitepaper extends React.Component {
                       <h3 id="gym">Gym</h3>
 
                       <p>
-                          <img style={{width: 600}} src="../assets/images/venue_gym.png" width="100%" alt="Gym" title="Gym" />
+                          <img style={{width: 500}} src="../assets/images/venue_gym.png" width="100%" alt="Gym" title="Gym" />
                       </p>
                       <p>
                           There are only a few jobs more stressful than that of a <a href="#chefs">chef</a>. Time is key, language is rough, stakes are high and so is the risk of burnout. <a href="#rats">Rats</a> on the other hand face the
@@ -1308,7 +1308,7 @@ class Whitepaper extends React.Component {
       height = rect.top + rect.height;
     }
     return (
-      <div ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
+      <div className="main" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
       { this.getWhitePaper() }
