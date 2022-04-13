@@ -1683,7 +1683,6 @@ class Main extends React.Component {
           <Row className="officeContent">
             <Col  span={24}>
               Loading data from blockchain... <Spin/>
-              { JSON.stringify(this.state.paywall.paywallEnabled) }
             </Col>
           </Row>
           <Row className="officeContent">
@@ -2345,7 +2344,7 @@ class Main extends React.Component {
       <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill', location) : this.renderAttribute.bind(this, 'intelligence', location)}>
       <Row>
         <Col style={{marginRight: '0px'}} xs={5} span={4}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
-        <Col xs={16} span={18}>
+        <Col xs={16} span={19}>
         <Progress
           format={() => <span>100<div className={this.getPercentageClass(c, 100, 1)}></div></span>}
           format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 1)}></div></span>}

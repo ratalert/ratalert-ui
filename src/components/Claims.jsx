@@ -57,6 +57,7 @@ class Claims extends React.Component {
       results: [],
       filter: null,
       dayTime: this.props.dayTime,
+      height: 0,
     };
     this.nftProfit = 0;
   }
@@ -143,7 +144,7 @@ class Claims extends React.Component {
         this.setState({ loading: false, noAddressLoaded: false });
       }
       await this.fetchGraph();
-    }, 1500);
+    }, 1000);
 
     // await this.fetchGraph('skill');
 
@@ -185,6 +186,8 @@ class Claims extends React.Component {
   renderEvent(data) {
     let eventName;
     let staked;
+    let width;
+    let height;
     if (parseInt(data.unstaked) === 0) {
       staked = 'Claim:';
     } else {
@@ -199,22 +202,36 @@ class Claims extends React.Component {
         case 'foodInspector':
         alt = 'Food Inspector';
         image = 'food_inspector.gif';
+        width = 200;
+        height = 200;
         break;
         case 'ratTrap':
         alt = 'Rat Trap';
         image = 'rat_trap.gif';
+        width = 338;
+        height = 200;
         break;
         case 'cat':
         alt = 'Cat';
         image = 'cat.gif';
+        width = 313;
+        height = 200;
         break;
         case 'burnout':
         alt = 'Burnout';
         image = 'burnout.gif';
+        width = 269;
+        height = 200;
         break;
 
       }
-      eventName = <span>{staked}<br/><Popover mouseEnterDelay={0.25} content={alt}><img style={{ width: '100%', height: '100%' }} src={`/img/${image}`}/></Popover></span>;
+      let factor;
+      if (window.innerWidth < 900) {
+        factor = 0.3;
+      } else {
+        factor = 0.5;
+      }
+      eventName = <span>{staked}<br/><Popover mouseEnterDelay={0.25} content={alt}><img style={{ width: width*factor, height: height*factor }} src={`/img/${image}`}/></Popover></span>;
     }
     return eventName;
   }
@@ -224,28 +241,28 @@ class Claims extends React.Component {
       return (
         <div>
         <Row>
-          <Col md={24} lg={6}>
+          <Col xs={24}  md={24} lg={6}>
             Skill:
           </Col>
-          <Col md={24} lg={12}>
+          <Col xs={24}  md={24} lg={12}>
             <img src="/img/skill.png"/>&nbsp;
             {data.efficiency}%
           </Col>
         </Row>
         <Row>
-          <Col md={24} lg={6}>
+          <Col xs={24} md={24} lg={6}>
             Freak:
           </Col>
-          <Col md={24} lg={12}>
+          <Col xs={24}  md={24} lg={12}>
             <img src="/img/insanity.png"/>&nbsp;
             {data.tolerance}%
           </Col>
         </Row>
         <Row>
-          <Col md={24} lg={6}>
+          <Col xs={24}  md={24} lg={6}>
             Earned:
           </Col>
-          <Col md={24} lg={12}>
+          <Col xs={24}  md={24} lg={12}>
             <img src="/img/ffood.png"/>&nbsp;
             {data.earned}
           </Col>
@@ -258,28 +275,28 @@ class Claims extends React.Component {
       return (
         <div>
         <Row>
-          <Col md={24} lg={6}>
+          <Col xs={24}  md={24} lg={6}>
             Intelligence:
           </Col>
-          <Col md={24} lg={12}>
+          <Col xs={24}  md={24} lg={12}>
             <img src="/img/intelligence.png"/>&nbsp;
             {data.efficiency}%
           </Col>
         </Row>
         <Row>
-          <Col md={24} lg={6}>
+          <Col xs={24}  md={24} lg={6}>
             Bodymass:
           </Col>
-          <Col md={24} lg={12}>
+          <Col xs={24}  md={24} lg={12}>
             <img src="/img/fatness.png"/>&nbsp;
             {data.tolerance}%
           </Col>
         </Row>
         <Row>
-          <Col md={24} lg={6}>
+          <Col xs={24}  md={24} lg={6}>
             Earned:
           </Col>
-          <Col md={24} lg={12}>
+          <Col xs={24}  md={24} lg={12}>
             <img src="/img/ffood.png"/>&nbsp;
             {data.earned}
           </Col>
@@ -440,13 +457,22 @@ class Claims extends React.Component {
     //claims = claims.sort((a, b) => parseInt(a.id) > parseInt(b.id));
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     const node = this.tableRef.current;
-    let height = claims.length * 150;
-    if (node) {
-      const rect = node.getBoundingClientRect();
-      if (rect.height) {
-        height = rect.height;
-      }
+    let height = this.state.height;
+    if (height < 1000) {
+      height = 1000;
     }
+    setTimeout(() => {
+      const node = document.getElementsByClassName('claimsTable')[0];
+      if (node) {
+        const rect = node.getBoundingClientRect();
+        if (rect.height) {
+          height = rect.height;
+        }
+        this.setState({ height });
+      }
+    }, 500);
+
+
     const sky = document.getElementsByClassName('sky')[0];
     const rect = sky.getBoundingClientRect();
     if (height < 1000) {
@@ -458,22 +484,25 @@ class Claims extends React.Component {
     }
     return (
       <div>
-      <div className={this.getGradientClass()} style={{top: rect.height, height: height - skyAttr.height}}>
+      <div className={this.getGradientClass()} style={{top: rect.height, height: height - skyAttr.height + 500}}>
       </div>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24}>
+        <div className="leaderboardHeader">
+          CLAIMS HISTORY
+        </div>
+        </Col>
+      </Row>
+      <Row style={{ height: "100%", 'text-align': 'center' }}>
+        <Col span={24}>
         <div ref={this.tableRef}>
-          <h2 className={this.getTextClass()}>Search</h2>
           <span className={`claimText ${this.getTextClass()}`}>Enter the NFT ID you want to filter the events for: &nbsp;
           <InputNumber min={1} max={50000} controls={false} onChange={this.onChange.bind(this)} />
           </span>
           <p className={`claimText ${this.getTextClass()}`}>
             <Checkbox className={`claimText ${this.getTextClass()}`} onChange={this.toggleOnlyEvents.bind(this)}>Only include history with events</Checkbox>
           </p>
-
-          <h2 className={this.getTextClass()}>Claims and unstakes</h2>
-
-          <Table rowKey={this.getRowKey} pagination={false} style={{width}} columns={columns} dataSource={claims} />
+          <Table className="claimsTable" rowKey={this.getRowKey} pagination={false} style={{width}} columns={columns} dataSource={claims} />
         </div>
         </Col>
       </Row>
