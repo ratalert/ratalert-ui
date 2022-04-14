@@ -495,7 +495,7 @@ class Claims extends React.Component {
       </Row>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24}>
-        <div ref={this.tableRef}>
+        <div className="main" ref={this.tableRef}>
           <span className={`claimText ${this.getTextClass()}`}>Enter the NFT ID you want to filter the events for: &nbsp;
           <InputNumber min={1} max={50000} controls={false} onChange={this.onChange.bind(this)} />
           </span>

@@ -73,6 +73,13 @@ class Landing extends React.Component {
       this.updateState();
       this.updateHeight();
     });
+
+    const loadingCompleteEvent = new CustomEvent('loadingComplete', {
+      bubbles: true,
+      detail: { }
+    });
+    window.dispatchEvent(loadingCompleteEvent);
+
   }
 
   async componentWillMount() {
@@ -147,20 +154,19 @@ class Landing extends React.Component {
     if (window.innerWidth < 1200) {
       return (
         <div>
-        <Row align="middle" style={{marginTop: 150}}>
-          <Col span={3}/>
+        <Row align="middle" style={{marginTop: 100}}>
           <Col span={10}>
+            <div className="chefLanding"/>
+          </Col>
+          <Col span={12}>
             <span className={`${this.getColorStyle(true)} landingText`}>
             Cook FOOD Tokens and become a three star chef while managing your stress level and keeping vicious rats out of your kitchen.
             </span>
           </Col>
-          <Col span={4}>
-            <div className="chefLanding"/>
-          </Col>
         </Row>
         <Row align="middle">
-          <Col span={3}/>
-          <Col span={11}>
+          <Col span={2}/>
+          <Col span={12}>
             <span className={`${this.getColorStyle(true)} landingText`}>
             Steal your fair share of FOOD tokens as a villainous rat, but watch your body weight and avoid rat traps set by chefs.
             </span>
@@ -174,7 +180,7 @@ class Landing extends React.Component {
     }
 
     return (
-      <Row style={{marginTop: 150}}>
+      <Row style={{marginTop: 250}}>
         <Col span={2}>No</Col>
         <Col span={6}>
           <span className={`${this.getColorStyle(true)} landingText`}>
@@ -260,7 +266,7 @@ class Landing extends React.Component {
 
 
 
-    if (this.state.separatorTop === 0 && this.state.seperatorLeft === 0) {
+    if (this.state.seperatorLeft === 0) {
       setTimeout(() => {
         this.updateState();
       }, 50);
@@ -280,7 +286,6 @@ class Landing extends React.Component {
       </div>
       <div className="content">
       <Row>
-
           <div className={`${this.getColorStyle()} landingTitle`} style={{left: this.state.header1Left}}>
             Play2Earn
           </div>
@@ -321,7 +326,7 @@ class Landing extends React.Component {
       </Row>
       <Row style={{marginTop: 100}}>
         { window.innerWidth > 900 ? <div className="cityAsleep"/> : null }
-        { window.innerWidth > 900 ? <div className="darkBackground" style={{height: 150, marginTop: 518}}>
+        { window.innerWidth > 900 ? <div className="darkBackground" style={{height: 300, marginTop: 518}}>
         </div> : null}
       </Row>
       </div>

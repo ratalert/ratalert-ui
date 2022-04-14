@@ -113,7 +113,41 @@ class Roadmap extends React.Component {
       <div id="container">
           <div id="bottom">
               <div id="content">
-                Roadmap
+                  <h1 style={{marginTop: 10}}>Roadmap</h1>
+                  <img src="../assets/roadmap.png" width="100%" alt="alt_text" title="image_tooltip" />
+
+                  <h2 style={{marginTop: 10}}>Setup DAO</h2>
+                  <p>
+                    As mentioned in the Whitepaper, RatAlert is going to be a <strong>DAO</strong>. In <strong>Q2/2022</strong>, we plan to provide the necessary infrastructure and tools to establish the <strong>RatAlert DAO</strong>. All development decisions and game parameters will be decided by the DAO in the future.
+                  </p>
+                  <h2 style={{marginTop: 10}}>Playable Cat</h2>
+                  <p>
+                    While the cat was mentioned in the V1 whitepaper, it is still just a random event that can occur. We plan to have <strong>mintable cat NFTs</strong>, by the time chefs and rats are eligible to mint them in Q2/2022. Cats are able to kidnap up to 5 random obese rats and steal their loot every day.
+                  </p>
+                  <h2 style={{marginTop: 10}}>Kitchen rental market</h2>
+                  <p>
+                    A big milestone is the kitchen rental market for the <strong>“TheStakehouse“</strong> kitchen. The kitchen of the casual restaurant allows you to stake up to 10 chefs into your kitchen. The rental market allows you to rent out <strong>unused kitchen space</strong> to other people for a custom <strong>$CFOOD</strong> daily price. Earn extra <strong>$CFOOD</strong> with your unused kitchen spaces!
+                  </p>
+                  <h2 style={{marginTop: 10}}>Kitchen items</h2>
+                  <p>
+                    We plan to offer custom kitchen upgrades for <strong>“TheStakehouse”</strong> and <strong>“LeStake”</strong> kitchen like better kitchen stoves or additional kitchen equipment, enabling you to earn more <strong>$CFOOD</strong> or <strong>$GFOOD</strong> on a daily basis. Kitchen upgrades (see rental market above) increase the daily rent you can ask from your tenants.
+                  </p>
+                  <h2 style={{marginTop: 10}}>Additional kitchen events</h2>
+                  <p>
+                    We’re also planning to have extra kitchen events that will make the game more realistic and fun. Everybody is afraid of fires in their homes, so are your chefs. A really smart chef might buy a <strong>fire extinguisher</strong> to be prepared for a kitchen fire. God knows what would happen otherwise, right?
+                  </p>
+                  <h2 style={{marginTop: 10}}>Dice Games</h2>
+                  <p>
+                    We want to make unstaking and claiming more fun. You’ll be able to opt in to extra <strong>mini dice games</strong> when interacting with your NFTs. No risk, no fun! Who knows, maybe you’ll be able to <strong>double</strong> your rewards?
+                  </p>
+                  <h2 style={{marginTop: 10}}>Breeding recipes</h2>
+                  <p>
+                    What is a chef without his <strong>secret sauce</strong>? The recipe upgrade will allow the most skillful chefs to create their own recipes by burning the right combination of food tokens. Recipes will boost your chef’s earnings significantly if you decide to keep them for yourself…
+                  </p>
+                  <h2 style={{marginTop: 10}}>New Game Sequel</h2>
+                  <p>
+                    In our minds, RatAlert is just the beginning of a <strong>whole universe of games</strong>. We are already thinking about a sequel that will re-use the RatAlert characters and tokens in a new game with <strong>all-new game mechanics</strong> and features in 2023. The RatAlert DAO would essentially become a P2E DAO with multiple games at that point.
+                  </p>
               </div>
           </div>
       </div>

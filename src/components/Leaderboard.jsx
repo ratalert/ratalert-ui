@@ -671,7 +671,7 @@ class Leaderboard extends React.Component {
       </Row>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24} ref={this.tableRef}>
-          <div className="leaderboardTable" style={{width}}>
+          <div className="main leaderboardTable" style={{width}}>
               { leaderboard.length > 0 ? this.renderItems(leaderboard) : <div style={{marginTop: 70}} className="whiteContent">No Chefs or Rats have earned any funds for {this.state.selectedKitchen} yet.</div> }
           </div>
         </Col>

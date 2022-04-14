@@ -39,11 +39,15 @@ div#content {
     margin: 0 10px;
     padding-bottom: 40px;
 }
-main {
-    margin: 50px auto 0 auto;
+.main {
+    max-width: 800px;
+    align: center;
     background: transparent;
     padding: 40px;
+    margin: 0 auto !important;
 }
+
+
 img#logo {
     margin: 80px 0 8px 0;
 }

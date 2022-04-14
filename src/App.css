@@ -461,10 +461,12 @@
 
   .landingTitle {
     font-size: 71px;
+    top: 200px;
   }
 
   .landingSubTitle {
     font-size: 71px;
+    top: 200px;
   }
 
 
@@ -1092,10 +1094,12 @@
 
   .landingTitle {
     font-size: 35px;
+    top: 130px;
   }
 
   .landingSubTitle {
     font-size: 35px;
+    top: 130px;
   }
 
   .hintContentWide {
@@ -1120,6 +1124,24 @@
   }
 }
 
+@media only screen and (min-width: 769px) and (max-width: 899px) {
+  .hint {
+    position: absolute;
+    left: 200px;
+    top: 0px;
+  }
+
+  .hintGym {
+    position: absolute;
+    left: 200px;
+    top: 0px !important;
+  }
+  .hintContentWide {
+    width: 282px !important;
+  }
+}
+
+
 @media only screen and (min-width: 801px) and (max-width: 999px) {
   .generation {
     font-family: 'Pixellari';
@@ -1128,22 +1150,6 @@
     position: absolute;
     top: 275px;
     left: 20px;
-  }
-
-  .hint {
-    position: absolute;
-    left: 200px;
-    top: 20px;
-  }
-
-  .hintGym {
-    position: absolute;
-    left: 200px;
-    top: 0px !important;
-  }
-
-  .hintContentWide {
-    width: 382px !important;
   }
 }
 
@@ -1705,6 +1711,7 @@
   font-weight: bold;
   width: 180px;
   font-family: Pixellari;
+  z-index: 5;
 }
 
 .web3ButtonBlack {
