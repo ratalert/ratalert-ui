@@ -60,8 +60,8 @@ let appMode = process.env.REACT_APP_MODE || 'full';
 //targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
 
-const DEBUG = true;
-const NETWORKCHECK = true;
+const DEBUG = false;
+const NETWORKCHECK = appMode === 'lite' ? false : true;
 
 let dayTime;
 
@@ -124,13 +124,19 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
 
-  const gasPrice = useGasPrice(targetNetwork, "fast");
-  // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
-  const userSigner = userProviderAndSigner.signer;
+  let gasPrice;
+  let userProviderAndSigner;
+  let userSigner;
+  let localBalance;
 
-  let localBalance = useBalance(localProvider, address);
-  localBalance = ethers.utils.formatEther(localBalance);
+  if (appMode === 'full') {
+    gasPrice = useGasPrice(targetNetwork, "fast");
+    userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
+    userSigner = userProviderAndSigner.signer;
+
+    localBalance = useBalance(localProvider, address);
+    localBalance = ethers.utils.formatEther(localBalance);
+  }
 
   function loadDataFromChain() {
     if (lastCall === 0) {
@@ -138,13 +144,10 @@ function App(props) {
     }
 
     const timeSinceStart = Math.round(new Date().getTime() / 1000) - startTime;
-    console.log('Time since start', timeSinceStart);
     if (timeSinceStart >= 30) {
       if (lastCall !== 0) {
         const diff = Math.round(new Date().getTime() / 1000) - lastCall;
-        console.log('Diff since last call:', diff);
         if (diff <= 5) {
-            console.log('Blocking new call');
             return;
         }
       }
@@ -156,36 +159,42 @@ function App(props) {
     return stats;
   }
 
+  if (appMode !== 'lite') {
+    useEffect(async() => {
+      if (lastBlockTime === 0) {
+        lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
+      }
 
-  useEffect(async() => {
-    if (lastBlockTime === 0) {
-      lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
-    }
-
-    async function getAddress() {
-      if (userSigner) {
-        const newAddress = await userSigner.getAddress();
-         if (!userSigner.address) {
-          setAddress(newAddress);
+      async function getAddress() {
+        if (userSigner) {
+          const newAddress = await userSigner.getAddress();
+           if (!userSigner.address) {
+            setAddress(newAddress);
+          }
         }
       }
-    }
-    getAddress();
-  }, [userSigner]);
+      getAddress();
+    }, [userSigner]);
+  }
 
 
   const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
   const selectedChainId =
     userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
 
-  const tx = Transactor(userSigner, gasPrice);
-  const faucetTx = Transactor(localProvider, gasPrice);
-  const contractConfig = useContractConfig();
-  const readContracts = useContractLoader(localProvider, contractConfig);
-  const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
+  let tx;
+  let faucetTx;
+  let contractConfig;
+  let readContracts;
+  let writeContracts;
+  readContracts = useContractLoader(localProvider, contractConfig);
+  writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
 
-  // loadDataFromChain();
-  // console.log('Loaded:', stats);
+  if (appMode === 'full') {
+    tx = Transactor(userSigner, gasPrice);
+    faucetTx = Transactor(localProvider, gasPrice);
+    contractConfig = useContractConfig();
+  }
 
   let networkDisplay = "";
   if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
@@ -270,14 +279,17 @@ function App(props) {
     }
   }
 
-  useOnBlock(localProvider, async() => {
-    lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
-    const blockTimeEvent = new CustomEvent('blockTime', {
-      bubbles: true,
-      detail: { lastBlockTime }
+  if (appMode === 'full') {
+    useOnBlock(localProvider, async() => {
+      lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
+      const blockTimeEvent = new CustomEvent('blockTime', {
+        bubbles: true,
+        detail: { lastBlockTime }
+      });
+      window.dispatchEvent(blockTimeEvent);
     });
-    window.dispatchEvent(blockTimeEvent);
-  });
+  }
+
 
   const [route, setRoute] = useState();
   useEffect(() => {

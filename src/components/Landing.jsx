@@ -82,7 +82,7 @@ class Landing extends React.Component {
 
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     window.addEventListener("resize", this.handleResize);
   }
 
@@ -442,7 +442,6 @@ class Landing extends React.Component {
 
       { this.renderMainContent() }
       <Row align="middle" justify="center" style={{paddingTop: 50}}>
-          Hey
           { this.props.appMode === 'full' ? <div className="landingButton">
             <Account
               address={this.props.address}
@@ -463,24 +462,24 @@ class Landing extends React.Component {
             />
           </div> :
           <span className={`${this.getColorStyle(true)} landingText`}>
-          Read our Whitepaper. Mint Date in April
+          <Button style={{width: 350}} className="landingWeb3Button">Read our Whitepaper. Mint Date TBA</Button>
           </span> }
       </Row>
       <Row align="middle" justify="center" style={{marginTop: 100}}>
         <div style={{width: window.innerWidth}} className="cityAsleep"/>
         <div className="darkBackground" style={{height: sectionHeight, marginTop: sectionTop}}/>
-        <span class="scrollDown">
+        <span className="scrollDown">
           scroll down to learn more
         </span>
         <div className="arrowDown"/>
       </Row>
       <Row align="middle" justify="center" style={{marginTop: 150}}>
-          <span class="landingHeadline">Train your NFTs</span>
+          <span className="landingHeadline">Train your NFTs</span>
           { this.renderTrainContent() }
       </Row>
 
       <Row align="middle" justify="center" style={{marginTop: 150}}>
-          <span class="landingHeadline">State of the Art Security</span>
+          <span className="landingHeadline">State of the Art Security</span>
           <Col span={24}>
             { this.renderSecurityContent() }
           </Col>
@@ -488,7 +487,7 @@ class Landing extends React.Component {
 
       <Row  align="middle" justify="center" style={{marginTop: 150}}>
         <div className="darkBackground" style={{height: 720, marginTop: 0}}></div>
-        <div class="landingHeadline">RatAlert DAO</div>
+        <div className="landingHeadline">RatAlert DAO</div>
         <Col span={24}>
             { this.renderDAOContent() }
         </Col>

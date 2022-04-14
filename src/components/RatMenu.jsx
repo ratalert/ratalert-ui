@@ -306,35 +306,14 @@ class RatMenu extends React.Component {
   }
 
   getAccountData() {
-    let Account;
-    const Loading = props => {
-      if (props.error) {
-        return <div>Error!</div>;
-      } else {
-        return <div>Loading...</div>;
-      }
-    };
-    if (!this.state.web3Loaded) {
-      this.Account = Loadable({
-        loader: () => import("./Account" /* webpackChunkName: "web3" */),
-        loading: Loading
-      });
-
-      this.setState({web3Loaded: true});
-    }
-
-    if (this.Account) {
-      Account = this.Account;
-    }
-
     return (
       <div className="account"><Row><Col>
         </Col>
         <Col>
-        { this.props.active !== 1 ? <div>
+        { this.props.active !== 1 && this.props.active !== 5 && this.props.active !== 6 ? <div>
         <div className="hintText">Hints</div>
         <div className="hintRectangle" onClick={this.toggleHints.bind(this)}>
-          { this.state.hintsEnabled ? <span class="hintOn">On</span> : <span class="hintOff">Off</span> }
+          { this.state.hintsEnabled ? <span className="hintOn">On</span> : <span className="hintOff">Off</span> }
         </div>
         </div> : null}
         <Suspense fallback={<div>Loading...</div>}>
