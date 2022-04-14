@@ -154,16 +154,28 @@ class Roadmap extends React.Component {
     )
   }
 
+  updateHeight() {
+    let height = this.state.height;
+    const node = document.getElementsByClassName('roadmap')[0];
+    if (node) {
+      const rect = node.getBoundingClientRect();
+      if (rect && rect.height) {
+        height = rect.height + 100;
+      }
+      this.setState({ height });
+    }
+  }
+
   renderRoadmap() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     const node = this.whitepaperRef.current;
-    let height = 0;
-    if (node) {
-      const rect = node.getBoundingClientRect();
-      height = rect.top + rect.height;
-    }
+    let height = this.state.height;
+    setTimeout(() => {
+      this.updateHeight();
+    }, 100);
+
     return (
-      <div className="main" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
+      <div className="main roadmap" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
       { this.getRoadmap() }

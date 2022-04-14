@@ -50,7 +50,9 @@ export default function Account({
   dayTime,
   themeClass,
   hideLoggedIn = false,
-  appMode = 'lite'
+  appMode = 'lite',
+  cssClass = false,
+  buttonText = false
 }) {
 
 
@@ -140,12 +142,12 @@ export default function Account({
     } else {
       if (!address && appMode === 'full') {
         modalButtons.push(
-          <Button style={{height: 30, width: 140}}
-          className="web3Button"
+          <Button style={!cssClass ? {height: 30, width: 140}: {marginLeft: -120}}
+          className={cssClass ? cssClass : "web3Button"}
           type={"default"}
           onClick={loadWeb3Modal}
           >
-          Connect wallet
+          {buttonText ? buttonText : 'Connect wallet'}
           </Button>,
         );
       }

@@ -150,6 +150,134 @@ class Landing extends React.Component {
     }
   }
 
+  renderDAOContent() {
+      return (
+        <div>
+        <Row align="middle" justify="center" style={{marginTop: 100}}>
+          <div className="daoLanding"/>
+        </Row>
+        <Row align="middle" justify="center" style={{marginTop: 100}}>
+            <p style={{textAlign: 'center'}} className={`${this.getColorStyle(true)} landingText`}>
+              RatAlert is a community project.<br/>
+              Join RatAlert’s governance process with $FFOOD tokens.<br/>
+              Steer game decisions and future development by voting for proposals in the DAO.<br/>
+            </p>
+        </Row>
+        </div>
+      )
+  }
+
+  renderSecurityContent() {
+    if (window.innerWidth < 1200) {
+      return (
+        <div>
+        <Row align="middle" justify="center" style={{marginTop: 100}}>
+            <div style={{marginRight: 30}} className="assureDefiLanding"/>
+            <div className="certikLanding"/>
+        </Row>
+        <Row align="middle" justify="center" style={{marginTop: 50}}>
+          <Col span={2}/>
+          <Col span={18}>
+            <p className={`${this.getColorStyle(true)} landingText`}>
+              RatAlert’s team is fully KYC’d with AssureDefi.<br/>
+              Smart contracts open source & audited by CertiK.<br/>
+              All proceeds are secured by the 4of6 community multi signature wallet.<br/>
+              All contracts are owned by the DAO multi signature wallet.
+            </p>
+          </Col>
+          <Col span={2}/>
+        </Row>
+        </div>
+      )
+    }
+
+    return (
+      <div>
+      <Row align="middle" justify="center" style={{marginTop: 100}}>
+        <Col span={1}></Col>
+        <Col span={6}>
+          <div className="assureDefiLanding"/>
+        </Col>
+        <Col span={6}>
+          <div className="certikLanding"/>
+        </Col>
+        <Col span={8}>
+
+          <p className={`${this.getColorStyle(true)} landingText`}>
+            RatAlert’s team is fully KYC’d with <a target="_new" className="landingLink" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.<br/>
+            Smart contracts open source & audited by <a target="_new" className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK</a>.<br/>
+            All proceeds are secured by a 4of6 community multi signature wallet.<br/>
+            All contracts are owned by the DAO multi signature wallet.
+          </p>
+        </Col>
+        <Col span={2}/>
+      </Row>
+      </div>
+    )
+  }
+
+  renderTrainContent() {
+    if (window.innerWidth < 1200) {
+      return (
+        <div>
+        <Row align="middle" style={{marginTop: 100}}>
+          <Col span={2}/>
+          <Col span={8}>
+            <div className="rewardsLanding"/>
+          </Col>
+          <Col span={12}>
+            <span className={`${this.getColorStyle(true)} landingText`}>
+            Introducing Train2Win: Level up your character to maximize your rewards.
+            </span>
+          </Col>
+        </Row>
+        <Row align="middle">
+          <Col span={2}/>
+          <Col span={12}>
+            <span className={`${this.getColorStyle(true)} landingText`}>
+            Avoid mishaps & catastrophes for your NFTs by keeping them healthy in the Gym.
+            </span>
+          </Col>
+          <Col span={4}>
+            <div className="gymLanding"/>
+          </Col>
+        </Row>
+        <Row align="middle" justify="center" style={{marginTop: 20}}>
+            <div style={{width: window.innerWidth}} className="ratSewerLanding"/>
+        </Row>
+        </div>
+      )
+    }
+
+    return (
+      <div>
+      <Row align="middle" justify="center" style={{marginTop: 100}}>
+        <Col span={2}></Col>
+        <Col span={6}>
+          <span className={`${this.getColorStyle(true)} landingText`}>
+          Introducing Train2Win: Level up your character to maximize your rewards.
+          </span>
+        </Col>
+        <Col span={4}>
+          <div className="rewardsLanding"/>
+        </Col>
+        <Col span={4}>
+          <div className="gymLanding"/>
+        </Col>
+        <Col span={6}>
+          <span className={`${this.getColorStyle(true)} landingText`}>
+          Avoid mishaps & catastrophes for your NFTs by keeping them healthy in the Gym.
+          </span>
+        </Col>
+        <Col span={2}/>
+      </Row>
+      <Row align="middle" justify="center" style={{marginTop: 20}}>
+          <div className="ratSewerLanding"/>
+      </Row>
+      </div>
+    )
+  }
+
   renderMainContent() {
     if (window.innerWidth < 1200) {
       return (
@@ -279,10 +407,23 @@ class Landing extends React.Component {
       }, 50);
     }
 
+    let sectionTop = 1400;
+    let sectionHeight = 900;
+    if (window.innerWidth < 1200) {
+      sectionHeight = 1000;
+      sectionTop = 1500;
+    }
+
+    let offset = 0;
+
+    if (window.innerWidth < 900) {
+      offset = 400;
+    }
+
     return (
       <div>
 
-      <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
+      <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height - offset}}>
       </div>
       <div className="content">
       <Row>
@@ -300,9 +441,9 @@ class Landing extends React.Component {
       </Row>
 
       { this.renderMainContent() }
-      <Row style={{paddingTop: 20}}>
-        <Col span={24} align="middle" justify="center">
-          { this.props.appMode === 'full' ? <div className="landingButton" style={{left: window.innerWidth > 900 ? '40%' : '20%'}}>
+      <Row align="middle" justify="center" style={{paddingTop: 50}}>
+          Hey
+          { this.props.appMode === 'full' ? <div className="landingButton">
             <Account
               address={this.props.address}
               localProvider={this.props.provider}
@@ -317,18 +458,48 @@ class Landing extends React.Component {
               themeClass={this.getColorStyle()}
               hideLoggedIn={true}
               appMode={this.props.appMode}
+              cssClass={'landingWeb3Button'}
+              buttonText = 'Connect wallet & play now'
             />
           </div> :
           <span className={`${this.getColorStyle(true)} landingText`}>
           Read our Whitepaper. Mint Date in April
           </span> }
+      </Row>
+      <Row align="middle" justify="center" style={{marginTop: 100}}>
+        <div style={{width: window.innerWidth}} className="cityAsleep"/>
+        <div className="darkBackground" style={{height: sectionHeight, marginTop: sectionTop}}/>
+        <span class="scrollDown">
+          scroll down to learn more
+        </span>
+        <div className="arrowDown"/>
+      </Row>
+      <Row align="middle" justify="center" style={{marginTop: 150}}>
+          <span class="landingHeadline">Train your NFTs</span>
+          { this.renderTrainContent() }
+      </Row>
+
+      <Row align="middle" justify="center" style={{marginTop: 150}}>
+          <span class="landingHeadline">State of the Art Security</span>
+          <Col span={24}>
+            { this.renderSecurityContent() }
+          </Col>
+      </Row>
+
+      <Row  align="middle" justify="center" style={{marginTop: 150}}>
+        <div className="darkBackground" style={{height: 720, marginTop: 0}}></div>
+        <div class="landingHeadline">RatAlert DAO</div>
+        <Col span={24}>
+            { this.renderDAOContent() }
         </Col>
       </Row>
-      <Row style={{marginTop: 100}}>
-        { window.innerWidth > 900 ? <div className="cityAsleep"/> : null }
-        { window.innerWidth > 900 ? <div className="darkBackground" style={{height: 300, marginTop: 518}}>
-        </div> : null}
-      </Row>
+
+      { window.innerWidth > 900 ?
+      <Row  align="middle" justify="center" style={{marginTop: 150}}>
+        <div style={{height: 200}}/>
+      </Row> : null }
+
+
       </div>
 
       </div>

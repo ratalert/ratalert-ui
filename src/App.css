@@ -459,6 +459,10 @@
     left: 0px;
   }
 
+  .scrollDown {
+    margin-top: -450px;
+  }
+
   .landingTitle {
     font-size: 71px;
     top: 200px;
@@ -1714,6 +1718,20 @@
   z-index: 5;
 }
 
+.landingWeb3Button {
+  height: 40px;
+  padding-top: 8px;
+  margin-bottom: 10px;
+  textAlign: center;
+  background: transparent;
+  color: #FFFFFF;
+  font-weight: bold;
+  width: 230px;
+  font-family: Pixellari;
+  font-size: 16px;
+  z-index: 1;
+}
+
 .web3ButtonBlack {
   height: 30px;
   padding-top: 6px;
@@ -2632,10 +2650,20 @@
     left: 25px;
 }
 
+.landingHeadline {
+ font-family: Pixellari;
+ font-size: 71px;
+ color: #4f97f9;
+ line-height: 0.9;
+ text-align: center;
+}
+
+
 .landingText {
  font-family: Pixellari;
  font-size: 22px;
  color: #4f97f9;
+ line-height: 1.75;
 }
 
 .chefLanding {
@@ -2650,6 +2678,44 @@
   height: 189px;
 }
 
+.rewardsLanding {
+  background-image: url("img/rewards-landing.png");
+  width: 173px;
+  height: 173px;
+}
+
+.ratSewerLanding {
+  background-image: url("img/rat-sewer-landing.png");
+  width: 888px;
+  height: 264px;
+}
+
+.certikLanding {
+  background-image: url("img/certik.png");
+  width: 259px;
+  height: 386px;
+}
+
+.assureDefiLanding {
+  background-image: url("img/assure-defi.gif");
+  width: 259px;
+  height: 386px;
+}
+
+.daoLanding {
+  background-image: url("img/dao.png");
+  width: 220px;
+  height: 220px;
+}
+
+
+
+.gymLanding {
+  background-image: url("img/gym-landing.png");
+  width: 173px;
+  height: 173px;
+}
+
 .landingButton {
   position: absolute;
 }
@@ -2659,5 +2725,36 @@
   background-repeat: auto;
   width: 100%;
   height: 535px;
-  z-index: 5;
+  z-index: 0;
+}
+
+.arrowDown {
+  background-image: url("img/arrow.png");
+  width: 27px;
+  height: 53px;
+  position: absolute;
+  margin-top: -250px;
+  z-index: 1;
+}
+
+.scrollDown {
+  font-family: Pixellari;
+  font-size: 22px;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: center;
+  color: #4f97f9;
+  width: 116px;
+  position: absolute;
+  z-index: 1;
+  line-height: 1.75;
+
+}
+
+a.landingLink {
+  color: #FFFFFF !important;
+  text-decoration: underline !important;
 }

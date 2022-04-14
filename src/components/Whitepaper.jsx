@@ -165,7 +165,7 @@ class Whitepaper extends React.Component {
                       <p>
                           It does not. It might as well buy you starving sewer <a href="#rats">rats</a> that love nothing more than <a href="#ffood">$FFOOD</a> and they will do anything to steal it <em>for you</em> from all over the city.
                           They are quick learners, and you’ll get to make them steal <a href="#cfood">$CFOOD</a> and eventually the fine <a href="#gfood">$GFOOD</a> once their intelligence quotient allows. But beware: Rat traps and cunning
-                          <a href="#cats">cats</a> are all over the place. Don’t let your rats get caught, or suffer the consequences!
+                          &nbsp;<a href="#cats">cats</a> are all over the place. Don’t let your rats get caught, or suffer the consequences!
                       </p>
 
                       <h2 id="mechanics">The Mechanics</h2>
@@ -208,6 +208,8 @@ class Whitepaper extends React.Component {
                                   <ul className="whitepaper-ul">
                                       <li>2% skill per day</li>
                                       <li>4% insanity per day</li>
+                                      <p>(all prorated to the second)</p>
+
                                   </ul>
                               </td>
                               <td>
@@ -215,6 +217,8 @@ class Whitepaper extends React.Component {
                                   <ul className="whitepaper-ul">
                                       <li>2% intelligence per day</li>
                                       <li>8% body mass per day</li>
+                                      <p>(all prorated to the second)</p>
+
                                   </ul>
                               </td>
                           </tr>
@@ -291,6 +295,8 @@ class Whitepaper extends React.Component {
                                   <ul className="whitepaper-ul">
                                       <li>4% skill per day</li>
                                       <li>6% insanity per day</li>
+                                      <p>(all prorated to the second)</p>
+
                                   </ul>
                               </td>
                               <td>
@@ -298,6 +304,8 @@ class Whitepaper extends React.Component {
                                   <ul className="whitepaper-ul">
                                       <li>4% intelligence per day</li>
                                       <li>6% body mass per day</li>
+                                      <p>(all prorated to the second)</p>
+
                                   </ul>
                               </td>
                           </tr>
@@ -579,8 +587,8 @@ class Whitepaper extends React.Component {
                           Every minted character is unique and has the ability to be trained by the player. Each NFT has 2 attributes that change upon unstaking or claiming. Attributes affect the appearance (image) of the NFT, visible both in
                           the game and on OpenSea. The pixel size is 100x100, 3 times the size of other Play2Earn games, like Wolf Game.
                       </p>
-                      <p>The mining cost for one Generation 0 NFT is <strong>0.07 WETH</strong>.</p>
-                      <p>Users that are eligible for the whitelist are able to mint their NFTs up to <strong>24 hours</strong> before the official launch, and receive a discount of 15%, resulting in a price of <strong>0.06 WETH</strong>.</p>
+                      <p>The mining cost for one Generation 0 NFT is <strong>74 MATIC</strong>.</p>
+                      <p>Users that are eligible for the whitelist are able to mint their NFTs up to <strong>24 hours</strong> before the official launch, and receive a discount of 10%, resulting in a price of <strong>66 MATIC</strong>.</p>
                       <p>
                           After 10,000 Generation 0 NFTs have sold out, Generation 1 NFTs can be purchased with the first of our game tokens, $FFOOD (FastFood):
                       </p>
@@ -622,7 +630,7 @@ class Whitepaper extends React.Component {
                       <p>Chefs come with two attributes: <strong>skill</strong> and <strong>insanity</strong>.</p>
                       <p>
                           <strong>Skill</strong> is an exclusively positive attribute and describes your chef’s ability to learn new things and gain experience. The <strong>skill</strong> level also affects the amount of
-                          <a href="#tokens">$xFOOD</a> your chef can produce per day. The smarter your chef gets, the more he will cook.
+                          &nbsp;<a href="#tokens">$xFOOD</a> your chef can produce per day. The smarter your chef gets, the more he will cook.
                       </p>
                       <p>
                           <strong>Insanity </strong>is a two-edged sword: In the beginning, your chef’s insanity attribute is harmless as he just started cooking at the famous <a href="#mcstake"><em>McStake©</em></a> FastFood chain. He’s
@@ -745,7 +753,7 @@ class Whitepaper extends React.Component {
 
                       <p>
                           Since your chefs are “collaborating” with the <a href="#rats">rats</a>, they might be visited by the food inspector. He’ll prohibit your chef from cooking for 24 hours, this results in reduced
-                          <strong>skill</strong> and <strong>insanity</strong>.
+                          <strong>&nbsp;skill</strong> and <strong>insanity</strong>.
                       </p>
                       <p>The more skilled your chef gets, the less likely he is to deal with the food inspector.</p>
                       <p>Events occur when you claim or unstake your chefs.</p>
@@ -765,11 +773,11 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>Outcome 1</td>
-                              <td>skill reduced by 10%</td>
+                              <td>skill: 10% subtracted</td>
                           </tr>
                           <tr>
                               <td>Outcome 2</td>
-                              <td>insanity reduced by 25%</td>
+                              <td>insanity: 25% subtracted</td>
                           </tr>
                       </table>
 
@@ -782,7 +790,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>0%</td>
-                              <td>12%</td>
+                              <td><del>12%</del> 0% (ignored below 15%)</td>
                           </tr>
                           <tr>
                               <td>10%</td>
@@ -1071,11 +1079,11 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>Outcome 1</td>
-                              <td>body mass reduced by 50%</td>
+                              <td>body mass: 50% subtracted</td>
                           </tr>
                           <tr>
                               <td>Outcome 2</td>
-                              <td>intelligence reduced by 10%</td>
+                              <td>intelligence: 10% subtracted</td>
                           </tr>
                       </table>
 
@@ -1088,7 +1096,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>0%</td>
-                              <td>12%</td>
+                              <td><del>12%</del> 0% (ignored below 15%)</td>
                           </tr>
                           <tr>
                               <td>10%</td>
@@ -1220,10 +1228,12 @@ class Whitepaper extends React.Component {
                       </table>
 
                       <h3 id="cats">Cats</h3>
-
+                      <p>Cats will be added as playable characters in V2.</p>
+                      {
+                        /*
                       <p>
                           The third playable character is the cat. There are only 100 cats in the game and they can be minted for free only by insane <a href="#chefs">chefs</a>. A cat allows you to steal the loot from 5 random obese
-                          <a href="#rats">rats</a> per day. After 10 days, the cat will seek a new home either at another random insane chef owner or to an obese rat owner with at least one chef (the insanity level of the ‘add-on chef’ does
+                          &nbsp;<a href="#rats">rats</a> per day. After 10 days, the cat will seek a new home either at another random insane chef owner or to an obese rat owner with at least one chef (the insanity level of the ‘add-on chef’ does
                           not matter in this case).
                       </p>
                       <p>The cat is designed to be the risk reward when playing bold by staking:</p>
@@ -1232,6 +1242,8 @@ class Whitepaper extends React.Component {
                           <li><strong>obese <a href="#rats">rats</a></strong> that can be randomly killed by a cat</li>
                       </ul>
                       <p>There are no events, attributes or traits for cats.</p>
+                      */
+                      }
                       <h2 id="contracts">Contract Addresses</h2>
 
                       <table>
@@ -1299,16 +1311,27 @@ class Whitepaper extends React.Component {
     )
   }
 
-  renderWhitepaper() {
-    const skyAttr = this.getWidth('sky', true, 1440, 1000);
-    const node = this.whitepaperRef.current;
-    let height = 0;
+  updateHeight() {
+    let height = this.state.height;
+    const node = document.getElementsByClassName('whitepaper')[0];
     if (node) {
       const rect = node.getBoundingClientRect();
-      height = rect.top + rect.height;
+      if (rect && rect.height) {
+        height = rect.height + 100;
+      }
+      this.setState({ height });
     }
+  }
+
+  renderWhitepaper() {
+    const skyAttr = this.getWidth('sky', true, 1440, 1000);
+    let height = this.state.height;
+    setTimeout(() => {
+      this.updateHeight();
+    }, 100);
+
     return (
-      <div className="main" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
+      <div className="main whitepaper" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
       { this.getWhitePaper() }
