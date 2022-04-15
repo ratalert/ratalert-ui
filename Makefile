@@ -21,12 +21,14 @@ deploy-app:
 
 deploy-landing:
 	@$(eval TAG := latest)
-	aws s3 sync ./landing/ s3://ratalert.com/ --delete
-	aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
-	aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper
-	aws s3 mv s3://ratalert.com/roadmap/en.html s3://ratalert.com/roadmap
-	aws s3 mv s3://ratalert.com/roadmap/fr.html s3://ratalert.com/fr/roadmap
-	aws s3 mv s3://ratalert.com/assets/images/infographic.png s3://ratalert.com/infographic
+	yarn install --prod
+	REACT_APP_MODE=lite REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
+	aws s3 sync ./build/ s3://ratalert.com/ --delete
+	#aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
+	#aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper
+	#aws s3 mv s3://ratalert.com/roadmap/en.html s3://ratalert.com/roadmap
+	#aws s3 mv s3://ratalert.com/roadmap/fr.html s3://ratalert.com/fr/roadmap
+	#aws s3 mv s3://ratalert.com/assets/images/infographic.png s3://ratalert.com/infographic
 	make clear-cache ENV=prod
 
 clear-cache:
