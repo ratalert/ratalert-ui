@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import Lite from "./Lite";
 import "./index.css";
-
 const themes = {
   dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
   light: `${process.env.PUBLIC_URL}/light-theme.css`,
@@ -11,6 +10,6 @@ const themes = {
 const prevTheme = window.localStorage.getItem("theme");
 
 ReactDOM.render(
-  <App/>,
+  <Lite/>,
   document.getElementById("root"),
 );

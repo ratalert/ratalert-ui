@@ -1246,7 +1246,7 @@ class Whitepaper extends React.Component {
                       }
                       <h2 id="contracts">Contract Addresses</h2>
 
-                      <table>
+                      { this.readContracts && this.readContracts.Character ? <table>
                           <tr>
                               <td><a href="#chefs">Chefs</a> / <a href="#rats">Rats</a> (Characters)</td>
                               <td>
@@ -1303,7 +1303,7 @@ class Whitepaper extends React.Component {
 
                               </td>
                           </tr>
-                      </table>
+                      </table> : <p>TBD</p>}
                   </main>
               </div>
           </div>

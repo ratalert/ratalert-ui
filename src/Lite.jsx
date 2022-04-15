@@ -55,13 +55,13 @@ else {
   chainId = 1337;
 }
 
-let appMode = process.env.REACT_APP_MODE || 'full';
+let appMode = process.env.REACT_APP_MODE || 'lite';
 
 //targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
 
-const DEBUG = true;
-const NETWORKCHECK = true;
+const DEBUG = false;
+const NETWORKCHECK = false;
 
 let dayTime;
 
@@ -105,15 +105,13 @@ const localProviderUrl = targetNetwork.rpcUrl;
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
 if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
-const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
-
-// 🔭 block explorer URL
-const blockExplorer = targetNetwork.blockExplorer;
+let localProvider;
+let blockExplorer;
 let lastCall = 0;
 let startTime = Math.round(new Date().getTime() / 1000);
 
 let fFoodBalance = 0;
-function App(props) {
+function Lite(props) {
   const mainnetProvider =
     poktMainnetProvider && poktMainnetProvider._isProvider
       ? poktMainnetProvider
@@ -124,13 +122,10 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
 
-  const gasPrice = useGasPrice(targetNetwork, "fast");
-  // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
-  const userSigner = userProviderAndSigner.signer;
-
-  let localBalance = useBalance(localProvider, address);
-  localBalance = ethers.utils.formatEther(localBalance);
+  let gasPrice;
+  let userProviderAndSigner;
+  let userSigner;
+  let localBalance;
 
   function loadDataFromChain() {
     if (lastCall === 0) {
@@ -156,36 +151,14 @@ function App(props) {
     return stats;
   }
 
+  const localChainId = 1;
+  const selectedChainId = 1;
 
-  useEffect(async() => {
-    if (lastBlockTime === 0) {
-      lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
-    }
-
-    async function getAddress() {
-      if (userSigner) {
-        const newAddress = await userSigner.getAddress();
-         if (!userSigner.address) {
-          setAddress(newAddress);
-        }
-      }
-    }
-    getAddress();
-  }, [userSigner]);
-
-
-  const localChainId = localProvider && localProvider._network && localProvider._network.chainId;
-  const selectedChainId =
-    userSigner && userSigner.provider && userSigner.provider._network && userSigner.provider._network.chainId;
-
-  const tx = Transactor(userSigner, gasPrice);
-  const faucetTx = Transactor(localProvider, gasPrice);
-  const contractConfig = useContractConfig();
-  const readContracts = useContractLoader(localProvider, contractConfig);
-  const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
-
-  // loadDataFromChain();
-  // console.log('Loaded:', stats);
+  let tx;
+  let faucetTx;
+  let contractConfig;
+  let readContracts;
+  let writeContracts;
 
   let networkDisplay = "";
   if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
@@ -558,4 +531,4 @@ function App(props) {
   );
 }
 
-export default App;
+export default Lite;
