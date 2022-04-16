@@ -2858,6 +2858,7 @@ class Main extends React.Component {
   }
 
   async claimFunds(selectedToUnStakeNfts, type) {
+    console.log('Claiming', type, selectedToUnStakeNfts);
     const error = this.prepareUnstakeErrors(selectedToUnStakeNfts, 'claim profits');
     if (error) {
       return false;
@@ -3273,18 +3274,18 @@ class Main extends React.Component {
 
   }
 
-  getStakedNFTs(location) {
+  getStakedNFTs(location, debug = false) {
     let nft;
     if (location === 'Gym') {
       nft = Object.assign([], this.state.myNfts.Gym.map((i) => i.name));
     }
-    if (location === 'McStake') {
+    else if (location === 'McStake') {
       nft = Object.assign([], this.state.myNfts.McStake.map((i) => i.name));
     }
-    if (location === 'TheStakeHouse') {
+    else if (location === 'TheStakeHouse') {
       nft = Object.assign([], this.state.myNfts.TheStakeHouse.map((i) => i.name));
     }
-    if (location === 'LeStake') {
+    else if (location === 'LeStake') {
       nft = Object.assign([], this.state.myNfts.LeStake.map((i) => i.name));
     }
     return nft;
@@ -3395,6 +3396,7 @@ class Main extends React.Component {
     }
 
     const nft = this.getStakedNFTs(type);
+    //console.log(type, nft);
     if ((selectedToUnStakeNfts.length === 0) && (selectedToStakeNfts.length === 0)) {
       if (nft.length > 0) {
         if (nft.length > this.maxSelectedNFTs) {
@@ -3404,13 +3406,14 @@ class Main extends React.Component {
             </Button>
           )
         } else {
+          const allNfts = this.getStakedNFTs(type);
           return (
             <Button
               className="web3ButtonTransparent"
               style={{height}}
               type={'default'}
               disabled={!enabled}
-              onClick={this.claimFunds.bind(this, nfts, type)}
+              onClick={this.claimFunds.bind(this, allNfts, type)}
             >
               {activeText}
             </Button>
@@ -4266,7 +4269,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 </div>
                 { this.renderRestaurantCallToActions('LeStake') }
               </div>
-              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
+              <div style={{ marginTop: 0, width: '100%' }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.gourmetKitchenClosed ? `gourmetSceneClosed${this.getDayTime()}`: `gourmetScene${this.getDayTime()}` }`}>
                 <div className="info" onClick={ this.flipKitchen.bind(this, 'LeStake') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
@@ -4298,7 +4301,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 </div>
                 { this.renderRestaurantCallToActions('TheStakeHouse') }
               </div>
-              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
+              <div style={{ marginTop: 0, width: '100%' }}  className={`card__face card__face--back parallax casualScene ${this.state.kitchenConfig.casualKitchenClosed ? `casualSceneClosed${this.getDayTime()}`: `casualScene${this.getDayTime()}` }`}>
                 <div className="info" onClick={ this.flipKitchen.bind(this, 'TheStakeHouse') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>
@@ -4330,7 +4333,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 </div>
                 { this.renderRestaurantCallToActions('McStake') }
               </div>
-              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--back parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
+              <div style={{ marginTop: 0, width: '100%' }}  className={`card__face card__face--back parallax fastfoodScene ${this.state.kitchenConfig.fastFoodKitchenClosed ? `fastFoodSceneClosed${this.getDayTime()}`: `fastFoodScene${this.getDayTime()}` }`}>
                 <div className="info" onClick={ this.flipKitchen.bind(this, 'McStake') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
                   <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
                 </div>

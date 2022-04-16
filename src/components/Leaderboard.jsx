@@ -417,8 +417,8 @@ class Leaderboard extends React.Component {
       className={`nftNotSelectedStats ${classNameStats}`}>
       <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'skill', location) : this.renderAttribute.bind(this, 'intelligence', location)}>
       <Row>
-        <Col style={{marginRight: '0px'}} xs={5} span={4}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
-        <Col xs={16} span={18}>
+        <Col style={{marginRight: '0px'}} xs={3} span={3}><img alt={c.type === 'Chef' ? 'Skill' : 'Intelligence'} src={c.type === 'Chef' ? "/img/skill.png" : "/img/intelligence.png"}/></Col>
+        <Col span={16}>
         <Progress
           format={() => <span>100<div className={this.getPercentageClass(c, 100, 1)}></div></span>}
           format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 1)}></div></span>}
@@ -432,9 +432,9 @@ class Leaderboard extends React.Component {
       </Popover>
       <Popover mouseEnterDelay={1} content={c.type === 'Chef' ? this.renderAttribute.bind(this, 'freak', location) : this.renderAttribute.bind(this, 'bodymass', location)}>
       <Row>
-      <Col style={{marginRight: '0px'}} xs={5} span={4}>
+      <Col style={{marginRight: '0px'}} xs={3} span={3}>
         <img src={c.type === 'Chef' ? "/img/insanity.png" : "/img/fatness.png"}/></Col>
-        <Col xs={16} span={18}>
+        <Col span={16}>
         <Progress
         format={() => <span>100<div className={this.getPercentageClass(c, 100, 2)}></div></span>}
         format={percent => <span>{percent}<div className={this.getPercentageClass(c, percent, 2)}></div></span>}
@@ -450,7 +450,7 @@ class Leaderboard extends React.Component {
         <div>
 
         <Row>
-          <Col style={{marginRight: '5px', marginLeft: 5}} xs={3} span={2}>
+          <Col style={{marginRight: '5px', marginLeft: 0}} xs={3} span={3}>
             { c.stakingLocation !== 'Gym' ? <Popover content={`Your NFT earns ${token} tokens when staked into a kitchen.`}>
             <img src="/img/ffood.png"/>
             </Popover> : null }
@@ -511,7 +511,7 @@ class Leaderboard extends React.Component {
       }
     }
 
-    return `percentage${zero} percentage${trait}`;
+    return `percentageLeader${zero} percentage${trait}`;
   }
 
   getGradientClass() {

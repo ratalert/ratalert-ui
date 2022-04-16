@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, Suspense } from "react";
+import {withRouter} from 'react-router-dom';
 import {
   PageHeader,
   Button,
@@ -14,6 +15,7 @@ import {
   Spin,
   Menu,
   Slider,
+  Dropdown,
 } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 import { useEventListener } from "eth-hooks/events/useEventListener";
@@ -52,6 +54,7 @@ import {
   MenuFoldOutlined,
   CaretLeftOutlined,
   CaretRightOutlined,
+  DownOutlined,
 } from '@ant-design/icons';
 
 class RatMenu extends React.Component {
@@ -189,16 +192,16 @@ class RatMenu extends React.Component {
   renderIcons() {
     return (
       <div className={`${this.getNavStyle()} icons`}>
-      <a>
+      { window.innerWidth > 1150 ? <a>
         <img  width={30} src="/img/opensea.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </a>
-      <a href="https://app.uniswap.org/" target="_new">
+      </a> : null }
+      { window.innerWidth > 1200 ? <a href="https://app.uniswap.org/" target="_new">
         <img width={30} src="/img/uniswap.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </a>
+      </a> : null}
       <a href="https://discord.gg/DP36aCq8P4" target="_new">
         <img width={30} src="/img/discord.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
@@ -229,9 +232,10 @@ class RatMenu extends React.Component {
             <Menu.Item key={1}><Link onClick={this.toggle.bind(this)} to="/">Start</Link></Menu.Item>
             { this.props.appMode === 'full' ? <Menu.Item style={{marginRight: '0px'}} key={2}><Link onClick={this.toggle.bind(this)} to="/game">Game</Link></Menu.Item> : null }
             { this.props.appMode === 'full' ? <Menu.Item key={3}><Link onClick={this.toggle.bind(this)} to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
-            { this.props.appMode === 'full' ? <Menu.Item key={4}><Link onClick={this.toggle.bind(this)} to="/claims">History</Link></Menu.Item> : null }
+            { this.props.appMode === 'full' ? <Menu.Item key={4}><Link onClick={this.toggle.bind(this)} to="/claims">Claims</Link></Menu.Item> : null }
             <Menu.Item key={5}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
             <Menu.Item key={6}><Link onClick={this.toggle.bind(this)}  to="/roadmap">Roadmap</Link></Menu.Item>
+            <Menu.Item key={7}><Link onClick={this.toggle.bind(this)}  to="/faq">FAQ</Link></Menu.Item>
           </Menu>
           { this.renderIcons() }
           </div>
@@ -239,6 +243,35 @@ class RatMenu extends React.Component {
       )
     }
   }
+
+  getLink() {
+    if (this.props.location.pathname === '/whitepaper') {
+      return '/whitepaper';
+    }
+    else if (this.props.location.pathname === '/roadmap') {
+      return '/roadmap';
+    }
+    else if (this.props.location.pathname === '/faq') {
+      return '/faq';
+    } else {
+      return '/whitepaper';
+    }
+  }
+
+  getLinkName() {
+    if (this.props.location.pathname === '/whitepaper') {
+      return 'Whitepaper & more';
+    }
+    else if (this.props.location.pathname === '/roadmap') {
+      return 'Roadmap & more';
+    }
+    else if (this.props.location.pathname === '/faq') {
+      return 'FAQ & more';
+    } else {
+      return 'Whitepaper & more';
+    }
+  }
+
 
   renderMenu() {
     if (window.innerWidth <= 930) {
@@ -259,20 +292,53 @@ class RatMenu extends React.Component {
     } else {
       console.log(`No network name, ${networkName}, chainId ${chainId}`);
     }
-    return (
+    if (window.innerWidth > 1300 && this.props.appMode === 'full') {
+      return (
 
-      <div className={this.getNavStyle()}>
-        <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
-          <Menu.Item key={1}><Link to="/">Start</Link></Menu.Item>
-          { this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null}
-          { this.props.appMode === 'full' ? <Menu.Item key={3}><Link to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
-          { this.props.appMode === 'full' ? <Menu.Item key={4}><Link to="/claims">History</Link></Menu.Item> : null }
-          <Menu.Item key={5}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
-          <Menu.Item key={6}><Link to="/roadmap">Roadmap</Link></Menu.Item>
-          { admin && admin.includes(this.props.address) ? <Menu.Item key={7}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
-        </Menu>
-      </div>
-    );
+        <div className={this.getNavStyle()}>
+          <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
+            <Menu.Item key={1}><Link to="/">Start</Link></Menu.Item>
+            { this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null}
+            { this.props.appMode === 'full' ? <Menu.Item key={3}><Link to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
+            { this.props.appMode === 'full' ? <Menu.Item key={4}><Link to="/claims">Claims</Link></Menu.Item> : null }
+            <Menu.Item key={5}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item key={6}><Link to="/roadmap">Roadmap</Link></Menu.Item>
+            <Menu.Item key={7}><Link to="/faq">FAQ</Link></Menu.Item>
+            { admin && admin.includes(this.props.address) ? <Menu.Item key={8}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+          </Menu>
+        </div>
+      );
+    } else {
+      const menu = (
+          <Menu mode="horizontal">
+            <Menu.Item>
+              <Link to="/whitepaper">Whitepaper</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/roadmap">Roadmap</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/faq">FAQ</Link>
+            </Menu.Item>
+          </Menu>
+      );
+
+      return (
+        <div className={this.getNavStyle()}>
+          <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
+            <Menu.Item key={1}><Link to="/">Start</Link></Menu.Item>
+            { this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null}
+            { this.props.appMode === 'full' ? <Menu.Item key={3}><Link to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
+            { this.props.appMode === 'full' ? <Menu.Item key={4}><Link to="/claims">Claims</Link></Menu.Item> : null }
+            <Dropdown overlay={menu}>
+              <Menu.Item key={5}><Link to={this.getLink()}>{this.getLinkName()}&nbsp;<DownOutlined /></Link></Menu.Item>
+            </Dropdown>
+            { admin && admin.includes(this.props.address) ? <Menu.Item key={8}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+          </Menu>
+        </div>
+      );
+    }
+
   }
 
   async getHintStatus() {
@@ -310,7 +376,7 @@ class RatMenu extends React.Component {
       <div className="account"><Row><Col>
         </Col>
         <Col>
-        { this.props.active !== 1 && this.props.active !== 5 && this.props.active !== 6 ? <div>
+        { this.props.active === 2 ? <div>
         <div className="hintText">Hints</div>
         <div className="hintRectangle" onClick={this.toggleHints.bind(this)}>
           { this.state.hintsEnabled ? <span className="hintOn">On</span> : <span className="hintOff">Off</span> }
@@ -342,7 +408,7 @@ class RatMenu extends React.Component {
   renderExtra() {
     return (
       <div>
-        { window.innerWidth > 900 ? this.renderIcons() : null }
+        { window.innerWidth > 1092 ? this.renderIcons() : null }
         { this.state.collapsed ?
           this.getAccountData()
           : null}
@@ -477,4 +543,4 @@ class RatMenu extends React.Component {
   }
 }
 
-export default RatMenu;
+export default withRouter(RatMenu);

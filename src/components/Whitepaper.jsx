@@ -207,7 +207,7 @@ class Whitepaper extends React.Component {
                                   Achievements:
                                   <ul className="whitepaper-ul">
                                       <li>2% skill per day</li>
-                                      <li>4% insanity per day</li>
+                                      <li>4% freak per day</li>
                                       <p>(all prorated to the second)</p>
 
                                   </ul>
@@ -294,7 +294,7 @@ class Whitepaper extends React.Component {
                                   Achievements:
                                   <ul className="whitepaper-ul">
                                       <li>4% skill per day</li>
-                                      <li>6% insanity per day</li>
+                                      <li>6% freak per day</li>
                                       <p>(all prorated to the second)</p>
 
                                   </ul>
@@ -384,7 +384,7 @@ class Whitepaper extends React.Component {
                                   <ul className="whitepaper-ul">
                                       <li>6% skill per day</li>
                                       <li>
-                                          8% insanity per day
+                                          8% freak per day
                                           <p>(all prorated to the second)</p>
                                       </li>
                                   </ul>
@@ -447,7 +447,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>
-                                  Achievement: -12% insanity per day<br />
+                                  Achievement: -12% freak per day<br />
                                   (prorated to the second)
                               </td>
                               <td>
@@ -627,27 +627,35 @@ class Whitepaper extends React.Component {
                           <li>Hand: includes different accessories, like pastry rollers or knives</li>
                       </ul>
                       <p><strong>90%</strong> of all mints are chefs.</p>
-                      <p>Chefs come with two attributes: <strong>skill</strong> and <strong>insanity</strong>.</p>
+                      <p>Chefs come with two attributes: <strong>skill</strong> and <strong>freak</strong>.</p>
                       <p>
                           <strong>Skill</strong> is an exclusively positive attribute and describes your chef’s ability to learn new things and gain experience. The <strong>skill</strong> level also affects the amount of
                           &nbsp;<a href="#tokens">$xFOOD</a> your chef can produce per day. The smarter your chef gets, the more he will cook.
                       </p>
                       <p>
-                          <strong>Insanity </strong>is a two-edged sword: In the beginning, your chef’s insanity attribute is harmless as he just started cooking at the famous <a href="#mcstake"><em>McStake©</em></a> FastFood chain. He’s
+                          <strong>Freak </strong>is a two-edged sword: In the beginning, your chef’s freak attribute is harmless as he just started cooking at the famous <a href="#mcstake"><em>McStake©</em></a> FastFood chain. He’s
                           bored and eager to learn more. Later in his career, your chef starts cooking in his own <a href="#thestakehouse">kitchens</a> and is growing very fond of himself, up to a point where he can simply become
                           <strong>insane.</strong> Being <strong>insane</strong> comes with a high risk of burnout, effectively ending your chef’s career and returning to square one.
                       </p>
+                      {
+                        /*
                       <p>
                           However, fortune favors the bold. If you’re keen enough on taking the risk of having your staked chef go insane, you get the chance of minting one of 100 <a href="#cats">cats</a> for free which will deal with rats in
                           its own special way.
                       </p>
+                      */
+                      }
+                      {
+                        /*
                       <p>Even if you’re not able to mint one of the 100 <a href="#cats">cats</a>, you might still get one by just keeping your chef <strong>insane</strong> (or the rat <strong>obese</strong>)</p>
+                      */
+                      }
                       <p>
-                          The chef’s <strong>skill</strong> level is represented by the <strong>body</strong> while the chef’s <strong>insanity</strong> level is represented by his <strong>head</strong>. Both attributes are displayed on a
+                          The chef’s <strong>skill</strong> level is represented by the <strong>body</strong> while the chef’s <strong>freak</strong> level is represented by his <strong>head</strong>. Both attributes are displayed on a
                           scale from 0% to 100%.
                       </p>
 
-                      <h4>List of Insanity levels</h4>
+                      <h4>List of Freak levels</h4>
 
                       <table>
                           <tr>
@@ -753,7 +761,7 @@ class Whitepaper extends React.Component {
 
                       <p>
                           Since your chefs are “collaborating” with the <a href="#rats">rats</a>, they might be visited by the food inspector. He’ll prohibit your chef from cooking for 24 hours, this results in reduced
-                          <strong>&nbsp;skill</strong> and <strong>insanity</strong>.
+                          <strong>&nbsp;skill</strong> and <strong>freak</strong>.
                       </p>
                       <p>The more skilled your chef gets, the less likely he is to deal with the food inspector.</p>
                       <p>Events occur when you claim or unstake your chefs.</p>
@@ -777,7 +785,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>Outcome 2</td>
-                              <td>insanity: 25% subtracted</td>
+                              <td>freak: 25% subtracted</td>
                           </tr>
                       </table>
 
@@ -840,7 +848,7 @@ class Whitepaper extends React.Component {
                           Overworking usually leads to exhaustion, fatigue and health problems. Chefs that are <strong>insane </strong>have a very high risk of suffering from burnout. Chefs with a higher <strong>skill</strong> level are
                           significantly more likely to avoid burnout.
                       </p>
-                      <p>Letting your chef work too long while he’s <strong>insane</strong> bears the risk of him quitting his workplace and re-starting with<strong> 0 skill points</strong> as well as <strong>0 insanity</strong> points.</p>
+                      <p>Letting your chef work too long while he’s <strong>insane</strong> bears the risk of him quitting his workplace and re-starting with<strong> 0 skill points</strong> as well as <strong>0 freak</strong> points.</p>
                       <p>Do not let that happen, be sure to send your Chefs to the <a href="#gym">Gym</a> to blow off steam and relax.</p>
                       <p>Events occur when you claim or unstake your chefs.</p>
 
@@ -863,7 +871,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>Outcome 2</td>
-                              <td>insanity reduced to 0%</td>
+                              <td>freak reduced to 0%</td>
                           </tr>
                       </table>
 
@@ -937,7 +945,7 @@ class Whitepaper extends React.Component {
                       <p>Rats come with two attributes, <strong>intelligence</strong> and <strong>body mass</strong>.</p>
                       <p><strong>Intelligence</strong> is an exclusively positive attribute, and describes your rats' ability to avoid rat traps from the <a href="#chefs">chef</a> with more confidence.</p>
                       <p>
-                          Similar to the <a href="#chefs">chef</a>’s insanity, <strong>body mass </strong>can either be a good or bad attribute: Rats start as <strong>anorexic </strong>and need to gain <strong>body mass</strong> in order to
+                          Similar to the <a href="#chefs">chef</a>’s freak, <strong>body mass </strong>can either be a good or bad attribute: Rats start as <strong>anorexic </strong>and need to gain <strong>body mass</strong> in order to
                           eat and steal more <a href="#tokens">$xFOOD</a> for their pack. After some time, they’ll become <strong>athletic, </strong>which is the most perfect state for a rat. Athletic rats can steal the optimum of
                           <a href="#tokens">$xFOOD</a> per day from the <a href="#chefs">Chefs</a>. Rats that are thinner or heavier than <strong>athletic, </strong>are not as efficient when it comes to stealing from the
                           <a href="#chefs">chefs</a>.
@@ -947,10 +955,14 @@ class Whitepaper extends React.Component {
                           have one distinct disadvantage. They are an easy target for the Chef’s <a href="#cats">cat</a>. Cats really love obese rats and won’t hesitate to kidnap them when they spot them.
                           <strong>A kidnapped rat will re-start with 0 intelligence points and 0 body mass points.</strong>
                       </p>
+                      {
+                        /*
                       <p>
                           As long as you have at least one obese rat staked and own at least one <a href="#chefs">chef</a>, you will be able to randomly receive one of the minted <a href="#cats">cats</a>, enabling you to use it to your
                           advantage.
                       </p>
+                      */
+                      }
                       <p>The rat's <strong>intelligence</strong> level is represented by the <strong>head</strong> while the <strong>body mass</strong> level is represented by the <strong>body</strong>.</p>
                       <p>Both attributes are displayed on a scale from 0 to 100%.</p>
 
@@ -1233,7 +1245,7 @@ class Whitepaper extends React.Component {
                         /*
                       <p>
                           The third playable character is the cat. There are only 100 cats in the game and they can be minted for free only by insane <a href="#chefs">chefs</a>. A cat allows you to steal the loot from 5 random obese
-                          &nbsp;<a href="#rats">rats</a> per day. After 10 days, the cat will seek a new home either at another random insane chef owner or to an obese rat owner with at least one chef (the insanity level of the ‘add-on chef’ does
+                          &nbsp;<a href="#rats">rats</a> per day. After 10 days, the cat will seek a new home either at another random insane chef owner or to an obese rat owner with at least one chef (the freak level of the ‘add-on chef’ does
                           not matter in this case).
                       </p>
                       <p>The cat is designed to be the risk reward when playing bold by staking:</p>
@@ -1246,7 +1258,7 @@ class Whitepaper extends React.Component {
                       }
                       <h2 id="contracts">Contract Addresses</h2>
 
-                      { this.readContracts && this.readContracts.Character ? <table>
+                      { this.props.readContracts && this.props.readContracts.Character ? <table>
                           <tr>
                               <td><a href="#chefs">Chefs</a> / <a href="#rats">Rats</a> (Characters)</td>
                               <td>

@@ -211,6 +211,17 @@
   margin-left: 34px;
 }
 
+.percentageLeader {
+  background-image: url("img/percentage.svg");
+  width: 9px;
+  height: 10px;
+  color: red;
+  border: 0px solid #000000;
+  position: relative;
+  margin-top: -15px;
+  margin-left: 31px;
+}
+
 
 .colon {
   filter: invert(81%) sepia(35%) saturate(172%) hue-rotate(335deg) brightness(86%) contrast(92%);
@@ -232,7 +243,7 @@
   color: red;
   border: 0px solid #000000;
   position: relative;
-  margin-top: -11px;
+  margin-top: -15px;
   margin-left: 15px;
 }
 
@@ -439,7 +450,7 @@
 
 
 
-@media only screen and (min-width: 1000px) {
+@media only screen and (min-width: 900px) {
   .casualScene {
     width: 180px !important;
   }
@@ -1635,12 +1646,29 @@
 
 .icons {
   float: left;
-  width: 180px;
 }
 
 .account {
   float: left;
   width: 260px;
+}
+
+@media only screen and (min-width: 1092px) {
+  .icons {
+    width: 70px;
+  }
+}
+
+@media only screen and (min-width: 1150px) {
+  .icons {
+    width: 115px;
+  }
+}
+
+@media only screen and (min-width: 1200px) {
+  .icons {
+    width: 160px;
+  }
 }
 
 @media only screen and (max-width: 768px) {
@@ -2757,4 +2785,25 @@
 a.landingLink {
   color: #FFFFFF !important;
   text-decoration: underline !important;
+}
+
+.ant-dropdown-menu {
+  background: #514a4a !important;
+}
+.ant-dropdown-menu-item {
+  background: #514a4a !important;
+  color: #FFF !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: #FFFFFF !important;
+  color: #FFF !important;
+}
+
+.ant-menu-item {
+  border-bottom: 0px solid #1890ff !important;
+}
+
+.leaderboardTable {
+  background: #514a4a !important;
 }
