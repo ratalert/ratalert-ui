@@ -292,7 +292,7 @@ class RatMenu extends React.Component {
     } else {
       console.log(`No network name, ${networkName}, chainId ${chainId}`);
     }
-    if (window.innerWidth > 1300 && this.props.appMode === 'full') {
+    if (window.innerWidth > 1300 || this.props.appMode === 'lite') {
       return (
 
         <div className={this.getNavStyle()}>
