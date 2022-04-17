@@ -71,7 +71,7 @@ deploy-cloudfront:
 	CLOUDFRONT_POLICY=$$(echo $$POLICY | base64 | tr '+=/' '-_~'); \
 	CLOUDFRONT_SIGNATURE=$$(echo $$POLICY | openssl sha1 -sign ops/stacks/cloudfront/pk-${CLOUDFRONT_KEYPAIR}.pem | base64 | tr '+=/' '-_~'); \
 	PROTECTED="true" && [[ "${ENV}" == "prod" || "${ENV}" == "beta" ]] && PROTECTED=false; \
-	ERROR_DOCUMENT="index.html" && [[ "${ENV}" == "prod" ]] && ERROR_DOCUMENT="error.html"; \
+	ERROR_DOCUMENT="index.html"; \
 	WEBSITE_HOSTING="false" && [[ "${ENV}" == "prod" || "${ENV}" == "beta" ]] && WEBSITE_HOSTING=true; \
 	URL=https://${FULL_DOMAIN_NAME}/index.html; \
 	aws cloudformation deploy \
