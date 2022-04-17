@@ -462,7 +462,7 @@ class Landing extends React.Component {
             />
           </div> :
           <span className={`${this.getColorStyle(true)} landingText`}>
-          <Button style={{width: 350}} className="landingWeb3Button">Read our Whitepaper. Mint Date TBA</Button>
+          <Button style={{width: 350}} className="landingWeb3Button"><a href="/whitepaper">Read our Whitepaper. Mint Date TBA</a></Button>
           </span> }
       </Row>
       <Row align="middle" justify="center" style={{marginTop: 100}}>
