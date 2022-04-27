@@ -85,7 +85,7 @@ class Main extends React.Component {
     this.ratHeight = 0;
     this.nfts = {};
     this.oldNfts = {};
-    this.enableApprovals = false;
+    this.enableApprovals = true;
     this.kitchenSignFactor = 0.80;
     if (this.innerWidth < 769) {
       this.kitchenSignFactor = 0.7;
@@ -104,6 +104,8 @@ class Main extends React.Component {
     this.maxSelectedNFTs = 6;
     this.firstGraphLoad = true;
     this.state = {
+      stakedCasualKitchens: 0,
+      stakedGourmetKitchens: 0,
       toggleHint: false,
       lastBlockTime: 0,
       loadingPercent: 0,
@@ -185,6 +187,7 @@ class Main extends React.Component {
         "Gym": this.enableApprovals ? false : true,
         "LeStake": this.enableApprovals ? false : true,
         "TheStakeHouse": this.enableApprovals ? false : true,
+        "KitchenShop": this.enableApprovals ? false : true,
       },
       noAddressLoaded: true,
       dataLoaded: false,
@@ -291,6 +294,14 @@ class Main extends React.Component {
       if (this.props.debug) console.log('DEBUG fetch kitchen done');
       kitchenConfig = config[networkName].loggedIn;
 
+      const stakedTokens = await this.getStakedKitchenTokens();
+      if (stakedTokens.stakedCasualKitchens > 0) {
+        casualKitchenAmount += parseInt(stakedTokens.stakedCasualKitchens);
+      }
+      if (stakedTokens.gourmetKitchenAmount > 0) {
+        casualKitchenAmount += parseInt(stakedTokens.stakedGourmetKitchens);
+      }
+
       if (casualKitchenAmount === 0) {
         //kitchenConfig.casualKitchenClosed = true;
         //kitchenConfig.casualForSaleSign = true;
@@ -311,7 +322,11 @@ class Main extends React.Component {
         kitchenConfig.gourmetForSaleSign = false;
         kitchenConfig.gourmetBuyButton = false;
       }
+
+
+
       console.log('Kitchen Status', casualKitchenAmount, gourmetKitchenAmount);
+
       this.setState({ casualKitchensMinted, gourmetKitchensMinted, casualKitchenAmount,
          gourmetKitchenAmount, kitchenConfig, gourmetKitchensPrice, casualKitchensPrice })
     }
@@ -711,6 +726,28 @@ class Main extends React.Component {
     );
   }
 
+  async getStakedKitchenTokens() {
+
+      const query = `{
+        kitchens(where: {owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"})
+        {
+          id, stakedGourmetKitchens, stakedCasualKitchens,
+        }
+      }`;
+      let result;
+      try {
+        result = await graphQLClient.request(query);
+        if (result.kitchens && result.kitchens[0]) {
+          return { stakedCasualKitchens: result.kitchens[0].stakedCasualKitchens, stakedGourmetKitchens: result.kitchens[0].stakedGourmetKitchens };
+        }
+      } catch (e) {
+        console.log('ERROR', e);
+        //this.fetchGraph();
+        return { stakedCasualKitchens: 0, stakedGourmetKitchens: 0 }
+        this.setState({ graphError: true });
+      }
+  }
+
   async getFoodToken(location) {
     const query = `{
         characters(
@@ -1103,6 +1140,7 @@ class Main extends React.Component {
     setTimeout(() => {
       // this.getBalances();
       // this.getChainStats();
+      this.checkContractApproved();
     }, 500);
 
     this.fetchGraph();
@@ -1242,12 +1280,19 @@ class Main extends React.Component {
     let theStakeHouseApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.TheStakeHouse.address);
     let leStakeApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.LeStake.address);
 
+
+    const KitchenShopContract = new ethers.Contract(config[networkName].KitchenShop,
+      contracts[chainId][networkName].contracts.KitchenShop.abi, this.props.provider);
+
+    let kitchenShopApproved = await KitchenShopContract.isApprovedForAll(this.props.address, this.props.readContracts.KitchenUsage.address);
     const isApprovedForAll = {
       'McStake': mcStakeApproved,
       'Gym': gymApproved,
       'TheStakeHouse': theStakeHouseApproved,
       'LeStake': leStakeApproved,
+      'KitchenShop': kitchenShopApproved,
     }
+    console.log('KITCHEN', isApprovedForAll);
     this.setState({isApprovedForAll});
   }
 
@@ -1433,15 +1478,28 @@ class Main extends React.Component {
     const rats = await CharacterContract.numRats();
     const chefs = await CharacterContract.numChefs();
 
+/*
     let dailyFFoodRate = await this.cacheLocalStorage('McStakeContract.dailyChefEarnings()', McStakeContract.dailyChefEarnings(), true);
+    */
+    let dailyFFoodRate = 250;
+
     //this.setState({ loadingPercent: 50 });
-    let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
-    let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier2()', McStakeContract.chefEfficiencyMultiplier());
-    let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod2()', McStakeContract.vestingPeriod());
-    let ratTax = await this.cacheLocalStorage('McStakeContract.ratTheftPercentage()', McStakeContract.ratTheftPercentage());
-    let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
-    let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
-    let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
+    //let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
+    let accrualPeriod = 60;
+
+    // let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier2()', McStakeContract.chefEfficiencyMultiplier());
+    let chefEfficiencyMultiplier = 175;
+
+    // let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod2()', McStakeContract.vestingPeriod());
+    let minimumToExit = 60;
+    // let ratTax = await this.cacheLocalStorage('McStakeContract.ratTheftPercentage()', McStakeContract.ratTheftPercentage());
+    let ratTax = 20;
+    // let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
+    let maxSupply = 50000000;
+    // let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
+    let ratEfficiencyMultiplier = 90;
+    let ratEfficiencyOffset = 55;
+    // let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
     //this.setState({ loadingPercent: 60 });
 
 
@@ -1492,6 +1550,7 @@ class Main extends React.Component {
       theStakeHousePaused,
       leStakePaused,
       gymPaused,
+      claimFee: '0.002',
     };
     this.setState({ stats });
 
@@ -2691,6 +2750,9 @@ class Main extends React.Component {
       case 'LeStake':
       case 'gourmetfood':
           contract = 'LeStake';
+      break;
+      case 'KitchenShop':
+          contract = 'KitchenShop';
     }
     console.log('Selected contract:', contract);
     return contract;
@@ -2699,12 +2761,24 @@ class Main extends React.Component {
   async setApprovalForAll(type) {
     const contract = this.getRestaurantContract(type);
     try {
-      const result = await this.props.tx(
-        this.props.writeContracts.Character.setApprovalForAll(this.props.readContracts[contract].address, true, {
-          from: this.props.address,
-          gasLimit: 250000,
-        }),
-      );
+      let result;
+      if (type !== 'KitchenShop') {
+        console.log('Authorizing', contract);
+        result = await this.props.tx(
+          this.props.writeContracts.Character.setApprovalForAll(this.props.readContracts[contract].address, true, {
+            from: this.props.address,
+            gasLimit: 250000,
+          }),
+        );
+      } else {
+        result = await this.props.tx(
+          this.props.writeContracts.KitchenShop.setApprovalForAll(this.props.readContracts['KitchenUsage'].address, true, {
+            from: this.props.address,
+            gasLimit: 250000,
+          }),
+        );
+        console.log('Kitchenshop approval', this.props.readContracts['KitchenUsage'].address);
+      }
       renderNotification("info", `Approval successful`, "");
       setTimeout(() => {
         this.checkContractApproved();
@@ -2770,12 +2844,10 @@ class Main extends React.Component {
       nfts = this.state.unstakedChefs;
     }
 
-/*
     if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stakeAll', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
     }
-*/
     const error = this.prepareStakeErrors(nfts, data.key);
     if (error) {
       return false;
@@ -2788,7 +2860,7 @@ class Main extends React.Component {
           gasLimit: parseInt(nfts.length * 280000),
         }),
       );
-      this.setState({ selectedNfts: {} });
+      this.setState({ selectedNfts: {}, isApprovalModalVisible: false });
       renderNotification("info", `All your NFTs have been staked.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -2836,10 +2908,11 @@ class Main extends React.Component {
         this.props.writeContracts[contract].claimMany(nft, true, {
           from: this.props.address,
           gasLimit: parseInt(nft.length) * 400000,
+          value: ethers.utils.parseEther(this.state.stats.claimFee),
         }),
       );
 
-      this.setState({ selectedNfts: {}, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      this.setState({ selectedNfts: {}, isApprovalModalVisible: false, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
       renderNotification("info", `Your unstaking request was received.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -2875,6 +2948,7 @@ class Main extends React.Component {
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
           gasLimit: parseInt(selectedToUnStakeNfts.length * 480000),
+          value: ethers.utils.parseEther(this.state.stats.claimFee),
         }),
       );
       this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
@@ -2985,12 +3059,10 @@ class Main extends React.Component {
       return false;
     }
 
-/*
     if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stake', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
     }
-*/
 
     try {
       const result = await this.props.tx(
@@ -2999,7 +3071,7 @@ class Main extends React.Component {
           gasLimit: parseInt(selectedToStakeNfts.length * 450000),
         }),
       );
-      this.setState({ selectedNfts: {} });
+      this.setState({ selectedNfts: {}, isApprovalModalVisible: false });
       renderNotification("info", `All your NFTs have been staked.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -3060,6 +3132,7 @@ class Main extends React.Component {
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, true, {
           from: this.props.address,
           gasLimit: selectedToUnStakeNfts.length * 400000,
+          value: ethers.utils.parseEther(this.state.stats.claimFee),
         }),
       );
       this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
@@ -3871,7 +3944,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     if (this.state.kitchenType === 2) {
       price = this.state.gourmetKitchensPrice;
     }
-
     let hasSufficientFundsForKitchen = false;
     if ((kitchenType === 1) && (parseInt(this.state.fFoodBalance) >= parseInt(price))) {
         hasSufficientFundsForKitchen = true;
@@ -5124,6 +5196,27 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     this.getChainStats();
   }
 
+
+
+  renderKitchenButton() {
+    if (!this.state.isApprovedForAll['KitchenShop']) {
+      return (
+        <Button style={{width: 200}} disabled={!this.state.hasSufficientFundsForKitchen} className="web3Button" key="submit" type="default"
+        onClick={this.setApprovalForAll.bind(this, 'KitchenShop')}
+        >
+          Approve Kitchen Contracts
+        </Button>
+      );
+
+    }
+    return (
+      <Button disabled={!this.state.hasSufficientFundsForKitchen} className="web3Button" key="submit" type="default"
+      onClick={this.mintKitchen.bind(this)}>
+        Mint kitchen
+      </Button>
+    );
+  }
+
   renderGame() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     let offset = 0;
@@ -5169,10 +5262,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               onClick={() => this.setState({isKitchenModalVisible: false})}>
               Cancel
               </Button>,
-              <Button disabled={!this.state.hasSufficientFundsForKitchen} className="web3Button" key="submit" type="default"
-              onClick={this.mintKitchen.bind(this)}>
-                Mint kitchen
-              </Button>
+              this.renderKitchenButton(),
             ]}
             visible={this.state.isKitchenModalVisible}>
               { this.renderKitchenModal() }
@@ -5387,7 +5477,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </Col>
 
             </Row>
-            <Row className="kitchenCaret" style={{marginTop: 50}}>
+            <Row className="kitchenCaret" style={{marginTop: 15}}>
               <Col span="24">
                 <Row>
                   <span className="whiteContent">Kitchens to mint:</span>
@@ -5419,8 +5509,15 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </Row>
             { !this.state.hasSufficientFundsForKitchen ?
             <Row>
-              <Col span={24} className="kitchenCurrencyRed">
+              <Col span={24} className="kitchenError">
                 Insufficient Balance
+              </Col>
+            </Row> : null
+            }
+            { !this.state.isApprovedForAll['KitchenShop'] ?
+            <Row>
+              <Col span={24} className="kitchenError">
+                You have to approve the Kitchen Contracts first before you can mint a kitchen.
               </Col>
             </Row> : null
             }

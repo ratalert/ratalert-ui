@@ -2411,6 +2411,13 @@
     margin-top: 8px;
   }
 
+  .kitchenError {
+    font-family: Pixellari;
+    font-size: 12px;
+    color: #ec6e6e;
+    margin-top: 0px;
+  }
+
 
   .theStakeHouse {
     background-image: url("img/thestakehouse.png");
@@ -2806,4 +2813,10 @@ a.landingLink {
 
 .leaderboardTable {
   background: #514a4a !important;
+}
+
+.faqTitle {
+  font-family: Arial;
+  font-size: 24px;
+  padding-left: 0px;
 }

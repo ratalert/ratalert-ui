@@ -102,7 +102,7 @@ class Claims extends React.Component {
               }
             });
           }
-          if (found === 0 && r.earned > 0) {
+          if (found === 0 && r.earned >= 0) {
             claims.push({
               owner: r.owner,
               type: r.type,
@@ -241,28 +241,28 @@ class Claims extends React.Component {
       return (
         <div>
         <Row>
-          <Col xs={24}  md={24} lg={6}>
+          <Col span={24}>
             Skill:
           </Col>
-          <Col xs={24}  md={24} lg={12}>
+          <Col span={24}>
             <img src="/img/skill.png"/>&nbsp;
             {data.efficiency}%
           </Col>
         </Row>
         <Row>
-          <Col xs={24} md={24} lg={6}>
+          <Col span={24}>
             Freak:
           </Col>
-          <Col xs={24}  md={24} lg={12}>
+          <Col span={24}>
             <img src="/img/insanity.png"/>&nbsp;
             {data.tolerance}%
           </Col>
         </Row>
         <Row>
-          <Col xs={24}  md={24} lg={6}>
+          <Col span={24}>
             Earned:
           </Col>
-          <Col xs={24}  md={24} lg={12}>
+          <Col span={24}>
             <img src="/img/ffood.png"/>&nbsp;
             {data.earned}
           </Col>
@@ -275,28 +275,28 @@ class Claims extends React.Component {
       return (
         <div>
         <Row>
-          <Col xs={24}  md={24} lg={6}>
+          <Col span={24}>
             Intelligence:
           </Col>
-          <Col xs={24}  md={24} lg={12}>
+          <Col span={24}>
             <img src="/img/intelligence.png"/>&nbsp;
             {data.efficiency}%
           </Col>
         </Row>
         <Row>
-          <Col xs={24}  md={24} lg={6}>
+          <Col span={24}>
             Bodymass:
           </Col>
-          <Col xs={24}  md={24} lg={12}>
+          <Col span={24}>
             <img src="/img/fatness.png"/>&nbsp;
             {data.tolerance}%
           </Col>
         </Row>
         <Row>
-          <Col xs={24}  md={24} lg={6}>
+          <Col span={24}>
             Earned:
           </Col>
-          <Col xs={24}  md={24} lg={12}>
+          <Col span={24}>
             <img src="/img/ffood.png"/>&nbsp;
             {data.earned}
           </Col>
@@ -390,7 +390,7 @@ class Claims extends React.Component {
         title: 'Event',
         dataIndex: 'event',
         key: 'event',
-        width: '5%',
+        width: '50px',
         render: (text, data) => (
             this.renderEvent(data)
         )
@@ -399,7 +399,7 @@ class Claims extends React.Component {
         title: 'Result',
         dataIndex: 'result',
         key: 'result',
-        width: '40%',
+        width: '30%',
         render: (text, data) => (
             this.renderResult(data)
         )

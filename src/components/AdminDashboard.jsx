@@ -8,6 +8,7 @@ import {
   Spin,
   Progress,
   Popover,
+  InputNumber,
 } from "antd";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
@@ -22,6 +23,8 @@ import {
   useOnBlock,
   useUserProviderAndSigner,
 } from "eth-hooks";
+import { contracts } from '../contracts/contracts.js';
+
 
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
 const graphQLClient = new GraphQLClient(APIURL, {
@@ -53,6 +56,7 @@ class AdminDashboard extends React.Component {
       whitelists: [],
       vrfClaims: [],
       vrfMints: [],
+      id: 0,
     };
     this.whitepaperRef = React.createRef();
   }
@@ -221,6 +225,36 @@ class AdminDashboard extends React.Component {
       return d.toISOString().substr(0, 16).replace('T', ' ');
     }
   }
+
+  renderAttributes() {
+    return (
+      <div style={{background: '#CCCCCC'}}>
+        <img width={100} height={100} src={this.state.img}/>
+        <br/>
+        { JSON.stringify(this.state.json)}
+      </div>
+    );
+  }
+
+  async onChange(val) {
+    const { networkName, chainId } = this.getNetworkName();
+    this.setState({ id: val })
+
+    const CharacterContract = new ethers.Contract(config[networkName].Character,
+      contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
+
+
+      const URI = await CharacterContract.tokenURI(parseInt(val));
+      if (URI.indexOf("data:application/json;base64,") === 0) {
+        const base64 = URI.split(",");
+        const decoded = atob(base64[1]);
+        const json = JSON.parse(decoded);
+        const img = json.image;
+        delete json.image;
+        this.setState({ json, img });
+      }
+  }
+
   renderDashboard() {
     const { networkName, chainId } = this.getNetworkName();
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
@@ -308,6 +342,22 @@ class AdminDashboard extends React.Component {
       <div ref={this.whitepaperRef} style={{width: window.innerWidth * 0.9, borderRadius: 30, marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
+
+      <Row style={{ height: "100%", 'text-align': 'center' }}>
+        <Col span={24}>
+        <div className="main" ref={this.tableRef}>
+          <span className={`claimText`}>Enter the NFT ID to display raw data: &nbsp;
+          <InputNumber min={1} max={50000} controls={false} onChange={this.onChange.bind(this)} />
+          </span>
+        </div>
+
+        { this.state.id > 0 ?
+          this.renderAttributes() : null
+
+        }
+        </Col>
+      </Row>
+
       <h1>Whitelist</h1>
       <Table pagination={false} style={{width: window.innerWidth * 0.85}} columns={columns} dataSource={this.state.whitelists} />
       <h1>Free Mints</h1>
