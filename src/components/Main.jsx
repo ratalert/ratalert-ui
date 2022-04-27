@@ -739,6 +739,8 @@ class Main extends React.Component {
         result = await graphQLClient.request(query);
         if (result.kitchens && result.kitchens[0]) {
           return { stakedCasualKitchens: result.kitchens[0].stakedCasualKitchens, stakedGourmetKitchens: result.kitchens[0].stakedGourmetKitchens };
+        } else {
+          return { stakedCasualKitchens: 0, stakedGourmetKitchens: 0 }
         }
       } catch (e) {
         console.log('ERROR', e);
@@ -972,7 +974,6 @@ class Main extends React.Component {
       totalChefsStaked,
       allStakedChefs,
     });
-
 
     this.firstGraphLoad = false;
     setTimeout(() => {
@@ -1428,7 +1429,6 @@ class Main extends React.Component {
 
     if (this.props.debug) console.log('DEBUG Get chain stats');
     const { networkName, chainId } = this.getNetworkName();
-    console.log(networkName, chainId);
     const CharacterContract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
     const McStakeContract = new ethers.Contract(config[networkName].McStake,
@@ -1441,6 +1441,10 @@ class Main extends React.Component {
                     contracts[chainId][networkName].contracts.Gym.abi, this.props.provider);
     const PaywallContract = new ethers.Contract(config[networkName].Paywall,
                     contracts[chainId][networkName].contracts.Paywall.abi, this.props.provider);
+
+
+    const ConfigContract = new ethers.Contract(config[networkName].Config,
+          contracts[chainId][networkName].contracts.Config.abi, this.props.provider);
 
 
 
@@ -1475,30 +1479,41 @@ class Main extends React.Component {
     if (!mintPrice) {
       mintPrice = 0;
     }
+
+    const configContract = await ConfigContract.get();
+    let json;
+    if (configContract) {
+      const base64 = configContract.split(",");
+      const decoded = atob(base64[1]);
+      json = JSON.parse(decoded);
+    }
+    console.log('CONFIG', json);
     const rats = await CharacterContract.numRats();
     const chefs = await CharacterContract.numChefs();
 
 /*
     let dailyFFoodRate = await this.cacheLocalStorage('McStakeContract.dailyChefEarnings()', McStakeContract.dailyChefEarnings(), true);
     */
-    let dailyFFoodRate = 250;
-
+    let dailyFFoodRate = parseInt(json.McStake.Kitchen.dailyChefEarnings);
+    let accrualPeriod = parseInt(json.McStake.Venue.accrualPeriod);
     //this.setState({ loadingPercent: 50 });
     //let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
-    let accrualPeriod = 60;
 
-    // let chefEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.chefEfficiencyMultiplier2()', McStakeContract.chefEfficiencyMultiplier());
-    let chefEfficiencyMultiplier = 175;
-
+    let chefEfficiencyMultiplier = parseInt(json.McStake.Kitchen.chefEfficiencyMultiplier);
+    let minimumToExit = parseInt(json.McStake.Venue.vestingPeriod);
     // let minimumToExit = await this.cacheLocalStorage('McStakeContract.vestingPeriod2()', McStakeContract.vestingPeriod());
-    let minimumToExit = 60;
+
+
     // let ratTax = await this.cacheLocalStorage('McStakeContract.ratTheftPercentage()', McStakeContract.ratTheftPercentage());
-    let ratTax = 20;
+    let ratTax = parseInt(json.McStake.Kitchen.ratTheftPercentage);
     // let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
-    let maxSupply = 50000000;
+    let maxSupply = parseInt(json.McStake.Kitchen.foodTokenMaxSupply);
     // let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
-    let ratEfficiencyMultiplier = 90;
-    let ratEfficiencyOffset = 55;
+    let ratEfficiencyMultiplier = parseInt(json.McStake.Kitchen.ratEfficiencyMultiplier);
+    let ratEfficiencyOffset = parseInt(json.McStake.Kitchen.ratEfficiencyOffset);
+    let claimFee = parseFloat(ethers.utils.formatEther(json.McStake.Venue.claimFee)).toFixed(8);
+    const TheStakeHouseMinEfficiency = parseInt(json.TheStakehouseStake.EntrepreneurialKitchen.minEfficiency || json.TheStakehouse.EntrepreneurialKitchen.minEfficiency);
+    const LeStakeMinEfficiency = parseInt(json.LeStake.EntrepreneurialKitchen.minEfficiency);
     // let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
     //this.setState({ loadingPercent: 60 });
 
@@ -1522,8 +1537,6 @@ class Main extends React.Component {
     }
     this.setState({ loadingPercent: 90 });
 
-
-
     if (this.props.debug) console.log('DEBUG All mcStake stats');
     const stats = {
       minted,
@@ -1543,15 +1556,16 @@ class Main extends React.Component {
       chefEfficiencyMultiplier: parseInt(chefEfficiencyMultiplier),
       ratEfficiencyMultiplier: parseInt(ratEfficiencyMultiplier),
       ratEfficiencyOffset: parseInt(ratEfficiencyOffset),
-      TheStakeHouseMinEfficiency: 28,
-      LeStakeMinEfficiency: 72,
+      TheStakeHouseMinEfficiency,
+      LeStakeMinEfficiency,
       characterPaused,
       mcStakePaused,
       theStakeHousePaused,
       leStakePaused,
       gymPaused,
-      claimFee: '0.002',
+      claimFee,
     };
+    console.log(stats);
     this.setState({ stats });
 
     if (this.state.paywall.paywallEnabled === null) {

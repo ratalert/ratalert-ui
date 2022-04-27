@@ -1,8 +1,8 @@
 const fs = require('fs');
-const network = 'localhost';
+const network = 'beta';
 (async () => {
   const contracts = ['Character', 'McStake', 'TheStakeHouse', 'LeStake',
-  'Gym', 'Mint', 'Claim', 'FastFood', 'CasualFood', 'GourmetFood', 'KitchenShop', 'PayWall', 'KitchenUsage'];
+  'Gym', 'Mint', 'Claim', 'FastFood', 'CasualFood', 'GourmetFood', 'KitchenShop', 'PayWall', 'KitchenUsage', 'Config'];
 
   const copyAbi = (contract) => {
     const path = `../ratalert-contracts/build/contracts/${contract}.json`;

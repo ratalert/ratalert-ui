@@ -13,6 +13,7 @@ const MintLocalhost = require('./abis/localhost/Mint.json');
 const TheStakeHouseLocalhost = require('./abis/localhost/TheStakeHouse.json');
 const PaywallLocalhost = require('./abis/localhost/Paywall.json');
 const KitchenUsageLocalhost = require('./abis/localhost/KitchenUsage.json');
+const ConfigLocalhost = require('./abis/localhost/Config.json');
 
 const CasualFoodMumbai = require('./abis/mumbai/CasualFood.json');
 const CharacterMumbai = require('./abis/mumbai/Character.json');
@@ -27,6 +28,7 @@ const MintMumbai = require('./abis/mumbai/Mint.json');
 const TheStakeHouseMumbai = require('./abis/mumbai/TheStakeHouse.json');
 const PaywallMumbai = require('./abis/mumbai/Paywall.json');
 const KitchenUsageMumbai = require('./abis/mumbai/KitchenUsage.json');
+const ConfigMumbai = require('./abis/mumbai/Config.json');
 
 const CasualFoodBeta = require('./abis/beta/CasualFood.json');
 const CharacterBeta = require('./abis/beta/Character.json');
@@ -41,6 +43,7 @@ const MintBeta = require('./abis/beta/Mint.json');
 const TheStakeHouseBeta = require('./abis/beta/TheStakeHouse.json');
 const PaywallBeta = require('./abis/beta/Paywall.json');
 const KitchenUsageBeta = require('./abis/beta/KitchenUsage.json');
+const ConfigBeta = require('./abis/beta/Config.json');
 
 
 export const contracts = {
@@ -100,6 +103,10 @@ export const contracts = {
         "KitchenUsage": {
           "address": config.localhost.KitchenUsage,
           "abi": KitchenUsageLocalhost,
+        },
+        "Config": {
+          "address": config.localhost.Config,
+          "abi": ConfigLocalhost,
         }
       }
     }
@@ -160,6 +167,10 @@ export const contracts = {
         "KitchenUsage": {
           "address": config.mumbai.KitchenUsage,
           "abi": KitchenUsageMumbai,
+        },
+        "Config": {
+          "address": config.localhost.Config,
+          "abi": ConfigMumbai,
         }
       }
     },
@@ -218,6 +229,10 @@ export const contracts = {
         "KitchenUsage": {
           "address": config.beta.KitchenUsage,
           "abi": KitchenUsageBeta,
+        },
+        "Config": {
+          "address": config.localhost.Config,
+          "abi": ConfigBeta,
         }
       }
     }
