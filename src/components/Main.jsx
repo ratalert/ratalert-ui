@@ -104,8 +104,6 @@ class Main extends React.Component {
     this.maxSelectedNFTs = 6;
     this.firstGraphLoad = true;
     this.state = {
-      stakedCasualKitchens: 0,
-      stakedGourmetKitchens: 0,
       toggleHint: false,
       lastBlockTime: 0,
       loadingPercent: 0,
@@ -298,8 +296,8 @@ class Main extends React.Component {
       if (stakedTokens.stakedCasualKitchens > 0) {
         casualKitchenAmount += parseInt(stakedTokens.stakedCasualKitchens);
       }
-      if (stakedTokens.gourmetKitchenAmount > 0) {
-        casualKitchenAmount += parseInt(stakedTokens.stakedGourmetKitchens);
+      if (stakedTokens.stakedGourmetKitchens > 0) {
+        gourmetKitchenAmount += parseInt(stakedTokens.stakedGourmetKitchens);
       }
 
       if (casualKitchenAmount === 0) {
@@ -1512,7 +1510,7 @@ class Main extends React.Component {
     let ratEfficiencyMultiplier = parseInt(json.McStake.Kitchen.ratEfficiencyMultiplier);
     let ratEfficiencyOffset = parseInt(json.McStake.Kitchen.ratEfficiencyOffset);
     let claimFee = parseFloat(ethers.utils.formatEther(json.McStake.Venue.claimFee)).toFixed(8);
-    const TheStakeHouseMinEfficiency = parseInt(json.TheStakehouseStake.EntrepreneurialKitchen.minEfficiency || json.TheStakehouse.EntrepreneurialKitchen.minEfficiency);
+    const TheStakeHouseMinEfficiency = parseInt(json.TheStakehouse.EntrepreneurialKitchen.minEfficiency );
     const LeStakeMinEfficiency = parseInt(json.LeStake.EntrepreneurialKitchen.minEfficiency);
     // let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
     //this.setState({ loadingPercent: 60 });
@@ -3017,13 +3015,13 @@ class Main extends React.Component {
 
       if (location === 'TheStakeHouse') {
         limit = this.state.casualKitchenAmount * 10;
-        if (this.state.myNfts.TheStakeHouse.length > limit) {
+        if (this.state.myNfts.TheStakeHouse.length+selectedToStakeNfts.length > limit) {
           limitReached = true;
         }
       }
       if (location === 'LeStake') {
         limit = this.state.gourmetKitchenAmount * 10;
-        if (this.state.myNfts.LeStake.length > limit) {
+        if (this.state.myNfts.LeStake.length+selectedToStakeNfts.length > limit) {
           limitReached = true;
         }
       }
