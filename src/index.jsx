@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
 import Loadable from "react-loadable";
 //const App = process.env.REACT_APP_MODE === 'full' && import('./App.jsx')
 
@@ -9,13 +8,13 @@ let Lite = React.lazy(() => import('./Lite'));
 let App = React.lazy(() => import('./App'));
 
 const Loading = props => {
+
       if (props.error) {
-        return <div>Error!</div>;
+        return <div>Error</div>;
       } else {
         return <div></div>;
       }
 };
-
 if (process.env.REACT_APP_MODE === 'lite') {
   const lazyLite = Loadable({
           loader: () => import("./Lite" /* webpackChunkName: "web3" */),

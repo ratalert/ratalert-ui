@@ -55,6 +55,7 @@ else {
   chainId = 1337;
 }
 
+
 let appMode = process.env.REACT_APP_MODE || 'full';
 
 //targetNetwork = NETWORKS.rinkeby;
@@ -101,14 +102,22 @@ const mainnetInfura = navigator.onLine
 // ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_ID
 
 // 🏠 Your local provider is usually pointed at your local blockchain
-const localProviderUrl = targetNetwork.rpcUrl;
+
+let localProviderUrl;
+if (targetNetwork && targetNetwork.rpcUrl) {
+  localProviderUrl = targetNetwork.rpcUrl;
+}
 // as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
 const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
 if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
 const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
 
 // 🔭 block explorer URL
-const blockExplorer = targetNetwork.blockExplorer;
+let blockExplorer;
+if (targetNetwork && targetNetwork.blockExplorer) {
+  blockExplorer = targetNetwork.blockExplorer;
+}
+
 let lastCall = 0;
 let startTime = Math.round(new Date().getTime() / 1000);
 
@@ -183,6 +192,12 @@ function App(props) {
   const contractConfig = useContractConfig();
   const readContracts = useContractLoader(localProvider, contractConfig);
   const writeContracts = useContractLoader(userSigner, contractConfig, localChainId);
+  /*
+  console.log('ENV', process.env.REACT_APP_ETH_ENV);
+  console.log('LOCAL PROVIDER', localProvider);
+  console.log('READ CONTRACTS', readContracts, contractConfig);
+  console.log('WRITE CONTRACTS', writeContracts, contractConfig);
+  */
 
   // loadDataFromChain();
   // console.log('Loaded:', stats);

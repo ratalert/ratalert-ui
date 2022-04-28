@@ -174,7 +174,8 @@ export const contracts = {
         }
       }
     },
-    "beta": {
+    /*
+    "betaOld": {
       "name": "Beta",
       "chainId": "80001",
       "contracts": {
@@ -235,6 +236,7 @@ export const contracts = {
           "abi": ConfigBeta,
         }
       }
-    }
+    },
+    */
   }
 }

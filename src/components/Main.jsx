@@ -101,7 +101,7 @@ class Main extends React.Component {
     }
     console.log(`Network name: ${networkName}, kitchenConfig: ${kitchenConfig}, chainId ${chainId}`);
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
-    this.maxSelectedNFTs = 6;
+    this.maxSelectedNFTs = 8;
     this.firstGraphLoad = true;
     this.state = {
       toggleHint: false,
@@ -361,6 +361,7 @@ class Main extends React.Component {
       setTimeout(() => {
         this.fetchPaywallData()
         this.getFoodTokensPerRat()
+        this.checkContractApproved();
       }, 2000);
 
     }
@@ -1139,7 +1140,7 @@ class Main extends React.Component {
     setTimeout(() => {
       // this.getBalances();
       // this.getChainStats();
-      this.checkContractApproved();
+
     }, 500);
 
     this.fetchGraph();
@@ -1231,14 +1232,19 @@ class Main extends React.Component {
 
       let value = ethers.utils.parseEther(sum.toString());
       if ((this.state.paywall.freeMints > 0) && (this.state.paywall.whitelistCount > 0)) {
+        console.log('Got a freemint, and also WL');
         value = 0;
       } else if ((this.state.paywall.freeMints > 0) && (this.state.paywall.whitelistCount === 0)) {
+        console.log('Got a freemint, but no WL');
         value = 0;
       } else if ((this.state.paywall.freeMints > 0) && (this.state.paywall.whitelistCount > 0)) {
         value = 0;
       } else if ((this.state.paywall.freeMints === 0) && (this.state.paywall.whitelistCount > 0)) {
+        console.log('I am whitelisted, mint price is ', sum);
         sum = Decimal(sum).times(0.9).toString()
+        console.log('Rebate is ', sum);
         value = ethers.utils.parseEther(sum);
+        console.log('Value is ', value);
       }
       console.log('Mint value:', value);
       this.setState({ mintDisabled: true, oldRatCount: this.state.totalRats, oldChefCount: this.state.totalChefs });
@@ -1270,15 +1276,17 @@ class Main extends React.Component {
   }
 
   async checkContractApproved() {
+    if (!this.props.readContracts.McStake) {
+      console.error('ReadContracts is empty!!');
+      return;
+    }
     const { networkName, chainId } = this.getNetworkName();
     const contract = new ethers.Contract(config[networkName].Character,
       contracts[chainId][networkName].contracts.Character.abi, this.props.provider);
-
     let mcStakeApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.McStake.address);
     let gymApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.Gym.address);
     let theStakeHouseApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.TheStakeHouse.address);
     let leStakeApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.LeStake.address);
-
 
     const KitchenShopContract = new ethers.Contract(config[networkName].KitchenShop,
       contracts[chainId][networkName].contracts.KitchenShop.abi, this.props.provider);
@@ -1481,9 +1489,7 @@ class Main extends React.Component {
     const configContract = await ConfigContract.get();
     let json;
     if (configContract) {
-      const base64 = configContract.split(",");
-      const decoded = atob(base64[1]);
-      json = JSON.parse(decoded);
+      json = JSON.parse(configContract);
     }
     console.log('CONFIG', json);
     const rats = await CharacterContract.numRats();
@@ -1590,8 +1596,8 @@ class Main extends React.Component {
         if (freeMints > 10) {
           //freeMints = 10;
         }
-        if (max > 3) {
-          max = 3;
+        if (max > 5) {
+          max = 5;
         }
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       } else if ((freeMints > 0) && (whitelistCount === 0)) {
@@ -1599,15 +1605,15 @@ class Main extends React.Component {
         if (freeMints > 10) {
           freeMints = 10;
         }
-        if (max > 3) {
-          max = 3;
+        if (max > 5) {
+          max = 5;
         }
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       }
       else if ((whitelistCount > 0) && (freeMints === 0)) {
         this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
       } else {
-        this.setState({ mintAmountLocked: false, maxMintAmount: 10});
+        this.setState({ mintAmountLocked: false, maxMintAmount: 5});
       }
 
 
@@ -1781,7 +1787,7 @@ class Main extends React.Component {
         <div className="officeHeadline">
           <Row>
             <Col span={16}>
-              Minting has been disabled
+              Minting has been paused. Please check back later.
             </Col>
           </Row>
         </div>

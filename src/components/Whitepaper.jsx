@@ -854,7 +854,7 @@ class Whitepaper extends React.Component {
 
                       <table>
                           <tr>
-                              <td>Minimum skill level required</td>
+                              <td>Minimum freak level required</td>
                               <td>>86% (insane)</td>
                           </tr>
                           <tr>
