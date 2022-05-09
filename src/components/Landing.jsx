@@ -163,6 +163,12 @@ class Landing extends React.Component {
               Steer game decisions and future development by voting for proposals in the DAO.<br/>
             </p>
         </Row>
+        <Row align="middle" justify="center" style={{marginTop: 0, height: 50}}>
+        <a href="https://nftdroops.com/" target="_new"><img width="120" src="/assets/NFTdroops.webp"/></a>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="https://raritysniper.com/nft-drops-calendar" target="_new"><img width="120" src="/assets/rarity-sniper.png"/></a>
+
+        </Row>
         </div>
       )
   }
@@ -462,7 +468,7 @@ class Landing extends React.Component {
             />
           </div> :
           <span className={`${this.getColorStyle(true)} landingText`}>
-          <Button style={{width: 350}} className="landingWeb3Button"><a href="/whitepaper">Read our Whitepaper. Mint Date TBA</a></Button>
+          <Button style={{width: 350}} className="landingWeb3Button"><a href="/whitepaper">Read our Whitepaper. Mint Date is May 12!</a></Button>
           </span> }
       </Row>
       <Row align="middle" justify="center" style={{marginTop: 100}}>

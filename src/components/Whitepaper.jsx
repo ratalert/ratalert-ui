@@ -587,8 +587,8 @@ class Whitepaper extends React.Component {
                           Every minted character is unique and has the ability to be trained by the player. Each NFT has 2 attributes that change upon unstaking or claiming. Attributes affect the appearance (image) of the NFT, visible both in
                           the game and on OpenSea. The pixel size is 100x100, 3 times the size of other Play2Earn games, like Wolf Game.
                       </p>
-                      <p>The mining cost for one Generation 0 NFT is <strong>74 MATIC</strong>.</p>
-                      <p>Users that are eligible for the whitelist are able to mint their NFTs up to <strong>24 hours</strong> before the official launch, and receive a discount of 10%, resulting in a price of <strong>66 MATIC</strong>.</p>
+                      <p>The mining cost for one Generation 0 NFT is <strong>90 MATIC</strong>.</p>
+                      <p>Users that are eligible for the whitelist are able to mint their NFTs up to <strong>24 hours</strong> before the official launch, and receive a discount of 10%, resulting in a price of <strong>81 MATIC</strong>.</p>
                       <p>
                           After 10,000 Generation 0 NFTs have sold out, Generation 1 NFTs can be purchased with the first of our game tokens, $FFOOD (FastFood):
                       </p>
@@ -601,14 +601,6 @@ class Whitepaper extends React.Component {
                           <tr>
                               <td class="right">20,001 - 30,000</td>
                               <td>1,500 $FFOOD</td>
-                          </tr>
-                          <tr>
-                              <td class="right">30,001 - 40,000</td>
-                              <td>2,000 $FFOOD</td>
-                          </tr>
-                          <tr>
-                              <td class="right">40,001 - 60,000</td>
-                              <td>3,000 $FFOOD</td>
                           </tr>
                       </table>
 

@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Roadmap, Faq, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
+import { Giveaway, Roadmap, Faq, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import {
@@ -554,6 +554,34 @@ function App(props) {
               dayTimeSwitch={dayTimeSwitch}
               networkName={networkName}
               content={<Faq
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
+          <Route path="/giveaway">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={9}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Giveaway
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}

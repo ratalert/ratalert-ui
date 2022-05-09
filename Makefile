@@ -15,7 +15,7 @@ export AWS_PROFILE=${SERVICE_NAME}
 
 deploy-mumbai:
 	@$(eval TAG := latest)
-	yarn install --prod
+#	yarn install --prod
 	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn buildMumbai
 	aws s3 sync ./build/ s3://${FULL_DOMAIN_NAME}/ --delete
 
@@ -27,8 +27,8 @@ deploy-app:
 
 deploy-landing:
 	@$(eval TAG := latest)
-	yarn install --prod
-	REACT_APP_MODE=lite REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
+	#yarn install --prod
+	REACT_APP_MODE=lite REACT_APP_API_URL=https://api.ratalert.com REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
 	aws s3 sync ./build/ s3://ratalert.com/ --delete
 	#aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
 	#aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper

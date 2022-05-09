@@ -19,3 +19,4 @@ export { default as AdminDashboard } from "./AdminDashboard";
 export { default as Landing } from "./Landing";
 export { default as Roadmap } from "./Roadmap";
 export { default as Faq } from "./Faq";
+export { default as Giveaway } from "./Giveaway";
