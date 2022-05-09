@@ -46,6 +46,22 @@ const KitchenUsageBeta = require('./abis/beta/KitchenUsage.json');
 const ConfigBeta = require('./abis/beta/Config.json');
 
 
+const CasualFoodMatic = require('./abis/matic/CasualFood.json');
+const CharacterMatic = require('./abis/matic/Character.json');
+const ClaimMatic = require('./abis/matic/Claim.json');
+const FastFoodMatic = require('./abis/matic/FastFood.json');
+const GourmetFoodMatic = require('./abis/matic/GourmetFood.json');
+const GymMatic = require('./abis/matic/Gym.json');
+const KitchenShopMatic = require('./abis/matic/KitchenShop.json');
+const LeStakeMatic = require('./abis/matic/LeStake.json');
+const McStakeMatic = require('./abis/matic/McStake.json');
+const MintMatic = require('./abis/matic/Mint.json');
+const TheStakeHouseMatic = require('./abis/matic/TheStakeHouse.json');
+const PaywallMatic = require('./abis/matic/Paywall.json');
+const KitchenUsageMatic = require('./abis/matic/KitchenUsage.json');
+const ConfigMatic = require('./abis/matic/Config.json');
+
+
 export const contracts = {
   1337: {
     "localhost": {
@@ -238,5 +254,69 @@ export const contracts = {
       }
     },
     */
+  },
+  137: {
+    "matic": {
+      "name": "matci",
+      "chainId": "138",
+      "contracts": {
+        "Character": {
+          "address": config.matic.Character,
+          "abi": CharacterMatic,
+        },
+        "McStake": {
+          "address": config.matic.McStake,
+          "abi": McStakeMatic,
+        },
+        "Gym": {
+          "address": config.matic.Gym,
+          "abi": GymMatic,
+        },
+        "FastFood": {
+          "address": config.matic.FastFood,
+          "abi": FastFoodMatic,
+        },
+        "Mint": {
+          "address": config.matic.Mint,
+          "abi": MintMatic,
+        },
+        "Claim": {
+          "address": config.matic.Claim,
+          "abi": ClaimMatic,
+        },
+        "Paywall": {
+          "address": config.matic.Paywall,
+          "abi": PaywallMatic,
+        },
+        "CasualFood": {
+          "address": config.matic.CasualFood,
+          "abi": CasualFoodMatic,
+        },
+        "GourmetFood": {
+          "address": config.matic.GourmetFood,
+          "abi": GourmetFoodMatic,
+        },
+        "KitchenShop": {
+          "address": config.matic.KitchenShop,
+          "abi": KitchenShopMatic,
+        },
+        "TheStakeHouse": {
+          "address": config.matic.TheStakeHouse,
+          "abi": TheStakeHouseMatic,
+        },
+        "LeStake": {
+          "address": config.matic.LeStake,
+          "abi": LeStakeMatic,
+        },
+        "KitchenUsage": {
+          "address": config.matic.KitchenUsage,
+          "abi": KitchenUsageMatic,
+        },
+        "Config": {
+          "address": config.matic.Config,
+          "abi": ConfigMatic,
+        }
+      }
+    },
   }
 }

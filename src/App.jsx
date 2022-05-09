@@ -49,6 +49,11 @@ if (process.env.REACT_APP_ETH_ENV === 'local') {
  networkName = 'mumbai';
  chainId = 80001;
 }
+else if (process.env.REACT_APP_ETH_ENV === 'matic') {
+  targetNetwork = NETWORKS.matic;
+  networkName = 'matic';
+  chainId = 137;
+}
 else {
   networkName='localhost'
   targetNetwork = NETWORKS.localhost;

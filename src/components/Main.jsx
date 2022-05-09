@@ -1874,6 +1874,7 @@ class Main extends React.Component {
           if (type !== null && json.name && json.attributes[0].value === type && parseInt(r.staked) == parseInt(staked)) {
             const nftObj = {
               name: parseInt(r.id, 16),
+              whitelisted: hash['Boost'] === 1 ? true : false,
               description: json.name,
               mcstakeTimestamp: parseInt(r.mcstakeStakedTimestamp),
               mcstakeLastClaimTimestamp: parseInt(r.mcstakeLastClaimTimestamp),
@@ -2532,7 +2533,9 @@ class Main extends React.Component {
     return (
       <div className="nftCardFlipInner">
       <span >
+        { c.whitelisted ? <Popover content={'This NFT is whitedlisted, it enjoys a permanent 1% boost experience upgrade. You will earn an extra 1% skill on every claim or unstake.'}><div className="whitelist"><img src="/img/boost.png"/></div></Popover> : null}
         { type === 'app' ? <div className="nftId"><span style={{color: '#000000'}}>#</span>
+
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
         </div> : null }
         <div

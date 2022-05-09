@@ -2820,3 +2820,18 @@ a.landingLink {
   font-size: 24px;
   padding-left: 0px;
 }
+
+.whitelist {
+  text-align: center !important;
+  width: 30px;
+  border-top: 3px solid #443a31;
+  border-left: 3px solid #443a31;
+  border-right: 3px solid #443a31;
+  font-weight: bold;
+  background-image: linear-gradient(to bottom, #d1b2a5, #706258);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 2px;
+  position: absolute;
+
+}
