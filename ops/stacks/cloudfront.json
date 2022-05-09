@@ -11,7 +11,7 @@
     "Environment": {
       "Description": "The service's environment",
       "Type": "String",
-      "AllowedValues": [ "test", "beta", "prod" ],
+      "AllowedValues": [ "test", "beta", "main", "prod" ],
       "Default": "prod"
     },
     "ServiceDomain": {
@@ -99,6 +99,15 @@
       },
       "beta": {
         "BucketSubDomain": "beta.",
+        "DefaultTTL": 3600,
+        "MinTTL": 300,
+        "MaxTTL": 86400,
+        "DefaultTTLIndex": 180,
+        "MinTTLIndex": 30,
+        "MaxTTLIndex": 600
+      },
+      "main": {
+        "BucketSubDomain": "main.",
         "DefaultTTL": 3600,
         "MinTTL": 300,
         "MaxTTL": 86400,
