@@ -223,7 +223,7 @@ class Whitepaper extends React.Component {
                               </td>
                           </tr>
                           <tr>
-                              <td>Reward: minimum 250 $FFOOD per day (prorated to the second), receive 80% on claim</td>
+                              <td>Reward: minimum 50 $FFOOD per day (prorated to the second), receive 80% on claim</td>
                               <td>Reward: Steal a guaranteed 20% cut of produced $FFOOD</td>
                           </tr>
                           <tr>
@@ -248,30 +248,30 @@ class Whitepaper extends React.Component {
                       </p>
                       <p>
                           A wise man once said: “There is no second best”. He was of course talking about the steaks at <em>TheStakeHouse©</em>. These CasualFood kitchens allow your <a href="#chefs">chefs</a> to produce
-                          <a href="#cfood">$CFOOD</a> and they are the venue where the wheat gets separated from the chaff. With a total supply of only 5,000 kitchens, you need to be quick to get in the game.
+                          <a href="#cfood">$CFOOD</a> and they are the venue where the wheat gets separated from the chaff. With a total supply of only 1,000 kitchens, you need to be quick to get in the game.
                       </p>
                       <h4>Minting cost</h4>
 
                       <table>
                           <tr>
-                              <td class="right">1 - 1,000</td>
+                              <td class="right">1 - 200</td>
+                              <td>1,000 $FFOOD</td>
+                          </tr>
+                          <tr>
+                              <td class="right">201 - 400</td>
                               <td>2,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">1,001 - 2,000</td>
-                              <td>3,000 $FFOOD</td>
-                          </tr>
-                          <tr>
-                              <td class="right">2,001 - 3,000</td>
+                              <td class="right">401 - 600</td>
                               <td>4,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">3,001 - 4,000</td>
-                              <td>5,000 $FFOOD</td>
+                              <td class="right">601 - 800</td>
+                              <td>7,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">4,001 - 5,000</td>
-                              <td>6,000 $FFOOD</td>
+                              <td class="right">801 - 1,000</td>
+                              <td>11,000 $FFOOD</td>
                           </tr>
                       </table>
 
@@ -310,7 +310,7 @@ class Whitepaper extends React.Component {
                               </td>
                           </tr>
                           <tr>
-                              <td>Reward: minimum 250 $CFOOD per day (prorated to the second), receive 80% on claim</td>
+                              <td>Reward: minimum 25 $CFOOD per day (prorated to the second), receive 80% on claim</td>
                               <td>Reward: Steal a guaranteed 20% cut of produced $CFOOD</td>
                           </tr>
                           <tr>
@@ -335,7 +335,7 @@ class Whitepaper extends React.Component {
                       </p>
                       <p>
                           <em>LeStake©</em>. No other restaurant in the metaverse can hold the candle to this famous 3-star kitchen, and it can only be purchased with <a href="#cfood">$CFOOD</a>. These GourmetFood kitchens are where the fine
-                          dining <a href="#gfood">$GFOOD</a> is made and where heroes become legends. With a total supply of 500 kitchens, only the crème de la crème will get to call themselves proud owners. But it doesn’t stop there. Since
+                          dining <a href="#gfood">$GFOOD</a> is made and where heroes become legends. With a total supply of 100 kitchens, only the crème de la crème will get to call themselves proud owners. But it doesn’t stop there. Since
                           $GFOOD is RatAlert’s DAO token, all <a href="#chefs">chefs</a> & <a href="#rats">rats</a> operating in this kitchen will have the first seats in all game decision processes.
                       </p>
 
@@ -343,24 +343,24 @@ class Whitepaper extends React.Component {
 
                       <table>
                           <tr>
-                              <td class="right">1 - 100</td>
+                              <td class="right">1 - 20</td>
+                              <td>1,000 $CFOOD</td>
+                          </tr>
+                          <tr>
+                              <td class="right">21 - 40</td>
                               <td>2,000 $CFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">101 - 200</td>
-                              <td>3,000 $CFOOD</td>
-                          </tr>
-                          <tr>
-                              <td class="right">201 - 300</td>
+                              <td class="right">41 - 60</td>
                               <td>4,000 $CFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">301 - 400</td>
-                              <td>5,000 $CFOOD</td>
+                              <td class="right">61 - 80</td>
+                              <td>7,000 $CFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">401 - 500</td>
-                              <td>6,000 $CFOOD</td>
+                              <td class="right">81 - 100</td>
+                              <td>11,000 $CFOOD</td>
                           </tr>
                       </table>
 
@@ -401,7 +401,7 @@ class Whitepaper extends React.Component {
                               </td>
                           </tr>
                           <tr>
-                              <td>Reward: minimum 250 $GFOOD per day (prorated to the second), receive 80% on claim</td>
+                              <td>Reward: minimum 12.5 $GFOOD per day (prorated to the second), receive 80% on claim</td>
                               <td>Reward: Steal a guaranteed 20% cut of produced $GFOOD</td>
                           </tr>
                           <tr>
@@ -590,25 +590,25 @@ class Whitepaper extends React.Component {
                       <p>The mining cost for one Generation 0 NFT is <strong>90 MATIC</strong>.</p>
                       <p>Users that are eligible for the whitelist are able to mint their NFTs up to <strong>24 hours</strong> before the official launch, and receive a discount of 10%, resulting in a price of <strong>81 MATIC</strong>.</p>
                       <p>
-                          After 10,000 Generation 0 NFTs have sold out, Generation 1 NFTs can be purchased with the first of our game tokens, $FFOOD (FastFood):
+                          After 10,000 Generation 0 NFTs have sold out, another 10,000 Generation 1 NFTs can be purchased with the first of RatAlert's game tokens, $FFOOD (FastFood):
                       </p>
 
                       <table>
                           <tr>
-                              <td class="right">10,001 - 15,000</td>
-                              <td>1,000 $FFOOD</td>
-                          </tr>
-                          <tr>
-                              <td class="right">15,001 - 20,000</td>
-                              <td>1,500 $FFOOD</td>
-                          </tr>
-                          <tr>
-                              <td class="right">20,001 - 25,000</td>
+                              <td class="right">10,001 - 12,500</td>
                               <td>2,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">25,001 - 30,000</td>
+                              <td class="right">12,501 - 15,000</td>
                               <td>3,000 $FFOOD</td>
+                          </tr>
+                          <tr>
+                              <td class="right">15,001 - 17,500</td>
+                              <td>5,000 $FFOOD</td>
+                          </tr>
+                          <tr>
+                              <td class="right">17,501 - 20,000</td>
+                              <td>8,000 $FFOOD</td>
                           </tr>
                       </table>
 
@@ -886,47 +886,47 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>0%</td>
-                              <td>27.00%</td>
+                              <td>42%</td>
                           </tr>
                           <tr>
                               <td>10%</td>
-                              <td>24.50%</td>
+                              <td>38%</td>
                           </tr>
                           <tr>
                               <td>20%</td>
-                              <td>22.00%</td>
+                              <td>34%</td>
                           </tr>
                           <tr>
                               <td>30%</td>
-                              <td>19.50%</td>
+                              <td>30%</td>
                           </tr>
                           <tr>
                               <td>40%</td>
-                              <td>17.00%</td>
+                              <td>26%</td>
                           </tr>
                           <tr>
                               <td>50%</td>
-                              <td>14.50%</td>
+                              <td>22%</td>
                           </tr>
                           <tr>
                               <td>60%</td>
-                              <td>12.00%</td>
+                              <td>18%</td>
                           </tr>
                           <tr>
                               <td>70%</td>
-                              <td>9.50%</td>
+                              <td>14%</td>
                           </tr>
                           <tr>
                               <td>80%</td>
-                              <td>7.00%</td>
+                              <td>10%</td>
                           </tr>
                           <tr>
                               <td>90%</td>
-                              <td>4.50%</td>
+                              <td>6%</td>
                           </tr>
                           <tr>
                               <td>100%</td>
-                              <td>2.00%</td>
+                              <td>2%</td>
                           </tr>
                       </table>
 
@@ -1195,47 +1195,47 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>0%</td>
-                              <td>27.00%</td>
+                              <td>42%</td>
                           </tr>
                           <tr>
                               <td>10%</td>
-                              <td>24.50%</td>
+                              <td>38%</td>
                           </tr>
                           <tr>
                               <td>20%</td>
-                              <td>22.00%</td>
+                              <td>34%</td>
                           </tr>
                           <tr>
                               <td>30%</td>
-                              <td>19.50%</td>
+                              <td>30%</td>
                           </tr>
                           <tr>
                               <td>40%</td>
-                              <td>17.00%</td>
+                              <td>26%</td>
                           </tr>
                           <tr>
                               <td>50%</td>
-                              <td>14.50%</td>
+                              <td>22%</td>
                           </tr>
                           <tr>
                               <td>60%</td>
-                              <td>12.00%</td>
+                              <td>18%</td>
                           </tr>
                           <tr>
                               <td>70%</td>
-                              <td>9.50%</td>
+                              <td>14%</td>
                           </tr>
                           <tr>
                               <td>80%</td>
-                              <td>7.00%</td>
+                              <td>10%</td>
                           </tr>
                           <tr>
                               <td>90%</td>
-                              <td>4.50%</td>
+                              <td>6%</td>
                           </tr>
                           <tr>
                               <td>100%</td>
-                              <td>2.00%</td>
+                              <td>2%</td>
                           </tr>
                       </table>
 
