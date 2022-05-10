@@ -595,12 +595,20 @@ class Whitepaper extends React.Component {
 
                       <table>
                           <tr>
-                              <td class="right">10,001 - 20,000</td>
+                              <td class="right">10,001 - 15,000</td>
                               <td>1,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">20,001 - 30,000</td>
+                              <td class="right">15,001 - 20,000</td>
                               <td>1,500 $FFOOD</td>
+                          </tr>
+                          <tr>
+                              <td class="right">20,001 - 25,000</td>
+                              <td>2,000 $FFOOD</td>
+                          </tr>
+                          <tr>
+                              <td class="right">25,001 - 30,000</td>
+                              <td>3,000 $FFOOD</td>
                           </tr>
                       </table>
 
@@ -1024,37 +1032,37 @@ class Whitepaper extends React.Component {
                               <td><img src="../assets/images/image25.png" width="100" alt="alt_text" title="image_tooltip" /></td>
                               <td>skinny</td>
                               <td>15%</td>
-                              <td>70%</td>
+                              <td>98.5%</td>
                           </tr>
                           <tr>
                               <td><img src="../assets/images/image11.png" width="100" alt="alt_text" title="image_tooltip" /></td>
                               <td>lean</td>
                               <td>28%</td>
-                              <td>85%</td>
+                              <td>136.2%</td>
                           </tr>
                           <tr>
                               <td><img src="../assets/images/image32.png" width="100" alt="alt_text" title="image_tooltip" /></td>
                               <td>athletic</td>
-                              <td>42%</td>
-                              <td>100%</td>
+                              <td>50%</td>
+                              <td>200%</td>
                           </tr>
                           <tr>
                               <td><img src="../assets/images/image24.png" width="100" alt="alt_text" title="image_tooltip" /></td>
                               <td>chubby</td>
                               <td>58%</td>
-                              <td>90%</td>
+                              <td>176.8%</td>
                           </tr>
                           <tr>
                               <td><img src="../assets/images/image29.png" width="100" alt="alt_text" title="image_tooltip" /></td>
                               <td>fat</td>
                               <td>72%</td>
-                              <td>80%</td>
+                              <td>136.2%</td>
                           </tr>
                           <tr>
                               <td><img src="../assets/images/image2.png" width="100" alt="alt_text" title="image_tooltip" /></td>
                               <td>obese</td>
                               <td>86%</td>
-                              <td>70%</td>
+                              <td>95.6%</td>
                           </tr>
                       </table>
 

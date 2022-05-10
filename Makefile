@@ -13,6 +13,14 @@ CFN_TAGS = --tags environment=${ENV}
 
 export AWS_PROFILE=${SERVICE_NAME}
 
+
+deploy-matic:
+	@$(eval TAG := latest)
+#	yarn install --prod
+	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn buildMatic
+	aws s3 sync ./build/ s3://${FULL_DOMAIN_NAME}/ --delete
+	make clear-cache ENV=main
+
 deploy-mumbai:
 	@$(eval TAG := latest)
 #	yarn install --prod

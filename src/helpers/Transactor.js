@@ -15,7 +15,6 @@ export function Transactor(providerOrSigner, gasPrice, etherscan) {
   if (typeof providerOrSigner !== "undefined") {
     // eslint-disable-next-line consistent-return
     return async (tx, callback) => {
-      console.log('Hier');
       let signer;
       let network;
       let provider;
@@ -31,22 +30,20 @@ export function Transactor(providerOrSigner, gasPrice, etherscan) {
 
       let options = null;
       let notify = null;
-      console.log(navigator.onLine);
       if (navigator.onLine) {
         options = {
           system: "ethereum",
           networkId: network.chainId,
-           dappId: BLOCKNATIVE_DAPPID,
+          dappId: BLOCKNATIVE_DAPPID,
           // darkMode: Boolean, // (default: false)
           transactionHandler: txInformation => {
-            if (DEBUG) console.log("HANDLE TX", txInformation);
+            console.log("HANDLE TX", txInformation);
             const possibleFunction = callbacks[txInformation.transaction.hash];
             if (typeof possibleFunction === "function") {
               possibleFunction(txInformation.transaction);
             }
           },
         };
-        console.log(options);
 
         notify = Notify(options);
       }
@@ -168,7 +165,7 @@ export function renderNotification(type, msg, description) {
   const options = {
     system: "ethereum",
     dappId: BLOCKNATIVE_DAPPID,
-    networkId: 1,
+    networkId: 137,
     // darkMode: Boolean, // (default: false)
     transactionHandler: txInformation => {
       if (DEBUG) console.log("HANDLE TX", txInformation);

@@ -125,17 +125,7 @@ class AdminDashboard extends React.Component {
 
   getNetworkName() {
     const chainId = this.props.chainId;
-    let networkName;
-    if (chainId === 1337) {
-      networkName = 'localhost';
-    } else if (chainId === 4) {
-      networkName = 'rinkeby';
-    } else if (chainId === 80001) {
-      networkName = "mumbai";
-    }
-    else {
-      networkName = 'mainnet';
-    }
+    const networkName = this.props.networkName;
     return { networkName, chainId };
   }
 
@@ -257,6 +247,7 @@ class AdminDashboard extends React.Component {
 
   renderDashboard() {
     const { networkName, chainId } = this.getNetworkName();
+    console.log(networkName, chainId, config);
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     const node = this.whitepaperRef.current;
     let height = 0;

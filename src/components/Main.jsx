@@ -101,9 +101,10 @@ class Main extends React.Component {
     }
     console.log(`Network name: ${networkName}, kitchenConfig: ${kitchenConfig}, chainId ${chainId}`);
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
-    this.maxSelectedNFTs = 8;
+    this.maxSelectedNFTs = 6;
     this.firstGraphLoad = true;
     this.state = {
+      chainStatsFetched: false,
       toggleHint: false,
       lastBlockTime: 0,
       loadingPercent: 0,
@@ -354,8 +355,13 @@ class Main extends React.Component {
 
       setTimeout(() => {
         this.getBalances();
-        console.log('Start get chain stats');
-        this.getChainStats();
+        if (!this.state.chainStatsFetched) {
+          console.log('Start get chain stats');
+          this.getChainStats();
+          this.checkClaimHook();
+          this.listenForMints();
+          this.setState({ chainStatsFetched: true });
+        }
       }, 500);
 
       setTimeout(() => {
@@ -442,19 +448,6 @@ class Main extends React.Component {
   getNetworkName() {
     const chainId = this.props.chainId;
     const networkName = this.props.networkName;
-    /*
-    let networkName;
-    if (chainId === 1337) {
-      networkName = 'localhost';
-    } else if (chainId === 4) {
-      networkName = 'rinkeby';
-    } else if (chainId === 80001) {
-      networkName = "mumbai";
-    }
-    else {
-      networkName = 'mainnet';
-    }
-    */
     return { networkName, chainId };
   }
 
@@ -573,6 +566,7 @@ class Main extends React.Component {
   }
 
   async checkClaimHook() {
+    console.log('Check Claimhook!');
     const { networkName, chainId } = this.getNetworkName();
 
 
@@ -712,10 +706,10 @@ class Main extends React.Component {
     return (
       <div style={{ zIndex: 2, position: "absolute", right: 0, top: 60, padding: 16 }}>
       <Alert
-        message="⚠️ No mumbai testnet MATIC"
+        message="⚠️ No MATIC"
         description={
           <div>
-            You have no funds on your testnet matic wallet. Please go to <a target="_new" href="https://faucet.polygon.technology/">https://faucet.polygon.technology/</a> to obtain testnet MATIC. <br/>You will need it to mint testnet NFTs.
+            You have no funds on your MATIC wallet. You need MATIC to pay for transactions. <br/>Please but MATIC at one of the big exchanges.
           </div>
         }
         type="error"
@@ -933,7 +927,7 @@ class Main extends React.Component {
         }
       });
       this.setState({ oldRatCount: totalRats, oldChefCount: totalChefs,  mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
-      this.getChainStats();
+      //this.getChainStats();
       this.getBalances();
     }
     // console.log('Newest foodTokenperRat: ', newestfoodTokensPerRat);
@@ -1131,12 +1125,12 @@ class Main extends React.Component {
       }
 
     }, 0);
-
+/*
     setTimeout(() => {
       this.checkClaimHook();
       this.listenForMints();
     }, 5000);
-
+*/
     setTimeout(() => {
       // this.getBalances();
       // this.getChainStats();
@@ -1596,8 +1590,8 @@ class Main extends React.Component {
         if (freeMints > 10) {
           //freeMints = 10;
         }
-        if (max > 5) {
-          max = 5;
+        if (max > 3) {
+          max = 3;
         }
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       } else if ((freeMints > 0) && (whitelistCount === 0)) {
@@ -1605,15 +1599,15 @@ class Main extends React.Component {
         if (freeMints > 10) {
           freeMints = 10;
         }
-        if (max > 5) {
-          max = 5;
+        if (max > 3) {
+          max = 3;
         }
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       }
       else if ((whitelistCount > 0) && (freeMints === 0)) {
         this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
       } else {
-        this.setState({ mintAmountLocked: false, maxMintAmount: 5});
+        this.setState({ mintAmountLocked: false, maxMintAmount: 3});
       }
 
 
@@ -1807,6 +1801,12 @@ class Main extends React.Component {
             {this.getGreeting()} Mint your character here:
           </Col>
         </Row>
+        <Row>
+          <Col span={24}>
+            You can mint up to 3 characters a time.
+          </Col>
+        </Row>
+
         <Row className="officeContent">
           <Col  span={24}>
             { this.renderMintCarets() }
@@ -2878,7 +2878,7 @@ class Main extends React.Component {
       const result = await this.props.tx(
         this.props.writeContracts[contract].stakeMany(this.props.address, nfts, {
           from: this.props.address,
-          gasLimit: parseInt(nfts.length * 280000),
+          gasLimit: parseInt(nfts.length * 450000),
         }),
       );
       this.setState({ selectedNfts: {}, isApprovalModalVisible: false });
