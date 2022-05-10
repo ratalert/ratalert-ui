@@ -885,48 +885,52 @@ class Whitepaper extends React.Component {
                               <th>Risk of suffering from burnout</th>
                           </tr>
                           <tr>
+                              <th>Intelligence level</th>
+                              <th>Risk of being caught by a cat</th>
+                          </tr>
+                          <tr>
                               <td>0%</td>
-                              <td>42%</td>
+                              <td>40.0%</td>
                           </tr>
                           <tr>
                               <td>10%</td>
-                              <td>38%</td>
+                              <td>36.5%</td>
                           </tr>
                           <tr>
                               <td>20%</td>
-                              <td>34%</td>
+                              <td>33.0%</td>
                           </tr>
                           <tr>
                               <td>30%</td>
-                              <td>30%</td>
+                              <td>29.5%</td>
                           </tr>
                           <tr>
                               <td>40%</td>
-                              <td>26%</td>
+                              <td>26.0%</td>
                           </tr>
                           <tr>
                               <td>50%</td>
-                              <td>22%</td>
+                              <td>22.5%</td>
                           </tr>
                           <tr>
                               <td>60%</td>
-                              <td>18%</td>
+                              <td>19.0%</td>
                           </tr>
                           <tr>
                               <td>70%</td>
-                              <td>14%</td>
+                              <td>15.5%</td>
                           </tr>
                           <tr>
                               <td>80%</td>
-                              <td>10%</td>
+                              <td>12.0%</td>
                           </tr>
                           <tr>
                               <td>90%</td>
-                              <td>6%</td>
+                              <td>8.5%</td>
                           </tr>
                           <tr>
                               <td>100%</td>
-                              <td>2%</td>
+                              <td>5%</td>
                           </tr>
                       </table>
 
@@ -1195,47 +1199,47 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>0%</td>
-                              <td>42%</td>
+                              <td>40.0%</td>
                           </tr>
                           <tr>
                               <td>10%</td>
-                              <td>38%</td>
+                              <td>36.5%</td>
                           </tr>
                           <tr>
                               <td>20%</td>
-                              <td>34%</td>
+                              <td>33.0%</td>
                           </tr>
                           <tr>
                               <td>30%</td>
-                              <td>30%</td>
+                              <td>29.5%</td>
                           </tr>
                           <tr>
                               <td>40%</td>
-                              <td>26%</td>
+                              <td>26.0%</td>
                           </tr>
                           <tr>
                               <td>50%</td>
-                              <td>22%</td>
+                              <td>22.5%</td>
                           </tr>
                           <tr>
                               <td>60%</td>
-                              <td>18%</td>
+                              <td>19.0%</td>
                           </tr>
                           <tr>
                               <td>70%</td>
-                              <td>14%</td>
+                              <td>15.5%</td>
                           </tr>
                           <tr>
                               <td>80%</td>
-                              <td>10%</td>
+                              <td>12.0%</td>
                           </tr>
                           <tr>
                               <td>90%</td>
-                              <td>6%</td>
+                              <td>8.5%</td>
                           </tr>
                           <tr>
                               <td>100%</td>
-                              <td>2%</td>
+                              <td>5%</td>
                           </tr>
                       </table>
 
