@@ -2804,7 +2804,7 @@ a.landingLink {
 
 .ant-dropdown-menu-item:hover {
   background: #FFFFFF !important;
-  color: #FFF !important;
+  color: #000 !important;
 }
 
 .ant-menu-item {
@@ -2834,4 +2834,8 @@ a.landingLink {
   border-bottom-right-radius: 2px;
   position: absolute;
 
+}
+
+.topMenu {
+  color: #C1C1C1 !important;
 }

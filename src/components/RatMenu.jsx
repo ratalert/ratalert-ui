@@ -174,44 +174,69 @@ class RatMenu extends React.Component {
       }
     });
   }
-/*
-  async componentWillMount() {
-
-    setTimeout(() => {
-      this.listenForMints();
-    }, 10000);
-    return;
-  }
-*/
   handleResize = e => {
     this.setState({ windowHeight: window.innerHeight - 235 });
   };
 
 
 
-  renderIcons() {
+  renderIcons(show = false) {
+    let uniswap;
+    let opensea;
+
+    if (this.props.readContracts && this.props.readContracts.FastFood && this.props.readContracts.FastFood.address) {
+      uniswap = (
+          <Menu className="uniswap-links" theme="light">
+            <Menu.Item key="u1">
+              <a className="topMenu" target="_new" href={`https://app.uniswap.org/#/swap?chain=polygon&outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}&inputCurrency=ETH`}>Uniswap: FFOOD - MATIC</a>
+            </Menu.Item>
+            <Menu.Item key="u2">
+            <a className="topMenu" target="_new" href={`https://app.uniswap.org/#/swap?chain=polygon&outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}&inputCurrency=0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619`}>Uniswap: FFOOD - WETH</a>
+            </Menu.Item>
+            <Menu.Item key="u3">
+            <Link to="/liquidity"><span style={{color: '#C1C1C1'}}>Earn $FFOOD by providing liquidity!</span></Link>
+            </Menu.Item>
+          </Menu>
+      );
+      opensea = (
+          <Menu className="uniswap-links" theme="light">
+            <Menu.Item key="os1">
+              <a className="topMenu" target="_new" href={`https://opensea.io/collection/ratalert-characters`}>OpenSea: Characters</a>
+            </Menu.Item>
+            <Menu.Item key="os">
+            <a className="topMenu" target="_new" href={`https://opensea.io/collection/ratalert-kitchens`}>OpenSea: Kitchens</a>
+            </Menu.Item>
+          </Menu>
+      );
+    } else {
+      uniswap = <div></div>;
+      opensea = <div></div>;
+    }
     return (
       <div className={`${this.getNavStyle()} icons`}>
-      { window.innerWidth > 1150 ? <a>
+      <Dropdown overlay={opensea}>
         <img  width={30} src="/img/opensea.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </a> : null }
-      { window.innerWidth > 1200 ? <a href="https://app.uniswap.org/" target="_new">
-        <img width={30} src="/img/uniswap.svg"
-          style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+      </Dropdown>
+      <Dropdown overlay={uniswap}>
+          <img width={30} src="/img/uniswap.svg" style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </a> : null}
-      <a href="https://discord.gg/DP36aCq8P4" target="_new">
+      </Dropdown>
+
+      { show || window.innerWidth > 1150 ?
+      <a href="https://discord.gg/RatAlert" target="_new">
         <img width={30} src="/img/discord.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </a>
+      </a> : null }
+
+      { show || window.innerWidth > 1150 ?
       <a href="https://twitter.com/RatAlertNFT" target="_new">
         <img width={30} src="/img/twitter.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </a>
+      </a> : null }
       </div>
     );
   };
@@ -237,7 +262,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={6}><Link onClick={this.toggle.bind(this)}  to="/roadmap">Roadmap</Link></Menu.Item>
             <Menu.Item key={7}><Link onClick={this.toggle.bind(this)}  to="/faq">FAQ</Link></Menu.Item>
           </Menu>
-          { this.renderIcons() }
+          { this.renderIcons(true) }
           </div>
         </Sider>
       )

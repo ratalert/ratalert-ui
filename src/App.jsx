@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Giveaway, Roadmap, Faq, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
+import { Infographics, Liquidity, Giveaway, Roadmap, Faq, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import {
@@ -289,7 +289,7 @@ function App(props) {
       );
     }
   }
-
+/*
   useOnBlock(localProvider, async() => {
     lastBlockTime = (await localProvider.getBlock(localProvider._lastBlockNumber)).timestamp;
     const blockTimeEvent = new CustomEvent('blockTime', {
@@ -298,6 +298,7 @@ function App(props) {
     });
     window.dispatchEvent(blockTimeEvent);
   });
+  */
 
   const [route, setRoute] = useState();
   useEffect(() => {
@@ -587,6 +588,62 @@ function App(props) {
               dayTimeSwitch={dayTimeSwitch}
               networkName={networkName}
               content={<Giveaway
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
+          <Route path="/liquidity">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={9}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Liquidity
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
+          <Route path="/infographics">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={9}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Infographics
                 tx={tx}
                 readContracts={readContracts}
                 writeContracts={writeContracts}
