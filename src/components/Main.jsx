@@ -1492,7 +1492,7 @@ class Main extends React.Component {
 /*
     let dailyFFoodRate = await this.cacheLocalStorage('McStakeContract.dailyChefEarnings()', McStakeContract.dailyChefEarnings(), true);
     */
-    let dailyFFoodRate = parseInt(json.McStake.Kitchen.dailyChefEarnings);
+    let dailyFFoodRate = parseInt(ethers.utils.formatEther(json.McStake.Kitchen.dailyChefEarnings));
     let accrualPeriod = parseInt(json.McStake.Venue.accrualPeriod);
     //this.setState({ loadingPercent: 50 });
     //let accrualPeriod = await this.cacheLocalStorage('McStakeContract.accrualPeriod()', McStakeContract.accrualPeriod());
@@ -1505,7 +1505,7 @@ class Main extends React.Component {
     // let ratTax = await this.cacheLocalStorage('McStakeContract.ratTheftPercentage()', McStakeContract.ratTheftPercentage());
     let ratTax = parseInt(json.McStake.Kitchen.ratTheftPercentage);
     // let maxSupply = await this.cacheLocalStorage('McStakeContract.foodTokenMaxSupply()', McStakeContract.foodTokenMaxSupply(), true);
-    let maxSupply = parseInt(json.McStake.Kitchen.foodTokenMaxSupply);
+    let maxSupply = parseInt(ethers.utils.formatEther(json.McStake.Kitchen.foodTokenMaxSupply));
     // let ratEfficiencyMultiplier = await this.cacheLocalStorage('McStakeContract.ratEfficiencyMultiplier()', McStakeContract.ratEfficiencyMultiplier());
     let ratEfficiencyMultiplier = parseInt(json.McStake.Kitchen.ratEfficiencyMultiplier);
     let ratEfficiencyOffset = parseInt(json.McStake.Kitchen.ratEfficiencyOffset);
@@ -1548,7 +1548,7 @@ class Main extends React.Component {
       dailyFFoodRate: dailyFFoodRate,
       minimumToExit: parseInt(minimumToExit),
       ratTax: parseInt(ratTax),
-      maxSupply: parseInt(parseInt(ethers.utils.formatEther(maxSupply))),
+      maxSupply,
       mintPrice: parseFloat(ethers.utils.formatEther(mintPrice || 0)) || 0,
       levelUpThreshold: parseInt(accrualPeriod),
       chefEfficiencyMultiplier: parseInt(chefEfficiencyMultiplier),
@@ -1649,7 +1649,7 @@ class Main extends React.Component {
     return (
       <Row  className="officeContent" style={{paddingTop: 20}}>
       <Col span={24}>
-        <div style={{color: '#ec6e6e'}}>You have minted the maximum NFTs allowed or<br/>you're not signed up for the beta.</div>
+        <div style={{color: '#ec6e6e'}}>You have minted the maximum NFTs allowed or<br/>you are not in the whitelist.</div>
       </Col>
       </Row>
     )
@@ -1798,15 +1798,9 @@ class Main extends React.Component {
       <div className="officeHeadline">
         <Row>
           <Col span={24}>
-            {this.getGreeting()} Mint your character here:
+            {this.getGreeting()} You can mint up to 3 characters a time.
           </Col>
         </Row>
-        <Row>
-          <Col span={24}>
-            You can mint up to 3 characters a time.
-          </Col>
-        </Row>
-
         <Row className="officeContent">
           <Col  span={24}>
             { this.renderMintCarets() }

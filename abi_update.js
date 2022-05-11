@@ -1,5 +1,5 @@
 const fs = require('fs');
-const network = 'mumbai';
+const network = 'matic';
 (async () => {
   const contracts = ['Character', 'McStake', 'TheStakeHouse', 'LeStake',
   'Gym', 'Mint', 'Claim', 'FastFood', 'CasualFood', 'GourmetFood', 'KitchenShop', 'PayWall', 'KitchenUsage', 'Config'];

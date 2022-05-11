@@ -126,12 +126,56 @@ class Whitepaper extends React.Component {
     setTimeout(() => {
       this.updateHeight();
     }, 100);
+    let ffoodContract;
+    let casualFoodContract;
+    let gourmetFoodContract;
+    if (this.props.readContracts && this.props.readContracts.FastFood && this.props.readContracts.FastFood.address) {
+      ffoodContract = this.props.readContracts.FastFood.address;
+      casualFoodContract = this.props.readContracts.CasualFood.address;
+      gourmetFoodContract = this.props.readContracts.GourmetFood.address;
+    }
 
     return (
       <div className="main whitepaper" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
-        <h2>Provide Liquidity to RatAlert and earn $FFOOD tokens</h2>
+        <h2>Provide Liquidity to RatAlert and earn food tokens</h2>
+        <p>The RatAlert DAO is rewarding active Liquidity providers with food tokens on a weekly basis. 10% of the supply of all 3 tokens is reserved for liquidity providers. Providing liquidity allows people to buy and sell food tokens. Your rewards share is proportional to the amount of liquidity you provide.</p>
+        <h3>Staking functionality for rewards will be available by the end of the week!</h3>
+
+        <table>
+            <tr>
+                <th><strong>Food Token</strong></th>
+                <th><strong>Available Supply</strong></th>
+                <th><strong>MATIC rewards/week</strong></th>
+                <th><strong>ETH rewards/week</strong></th>
+            </tr>
+            <tr>
+                <td>$FFOOD</td>
+                <td>₣10,000,000</td>
+                <td><strong>₣60,0000</strong></td>
+                <td><strong>₣60,0000</strong></td>
+            </tr>
+            <tr>
+                <td>$CFOOD</td>
+                <td>₵1,000,000</td>
+                <td><strong>₵6,000</strong></td>
+                <td><strong>₵6,000</strong></td>
+            </tr>
+            <tr>
+                <td>$CFOOD</td>
+                <td>₲100,000</td>
+                <td><strong>₲600</strong></td>
+                <td><strong>₲600</strong></td>
+            </tr>
+        </table>
+        {
+          /*
+        <p>
+        You can provide your Uniswap liquidity <a target="_new" href="https://app.uniswap.org/#/pool?chain=polygon">here</a>. Be sure to have the contracts added!
+        </p>
+        */
+        }
       </div>
     );
   }

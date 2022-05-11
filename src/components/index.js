@@ -22,3 +22,4 @@ export { default as Faq } from "./Faq";
 export { default as Giveaway } from "./Giveaway";
 export { default as Liquidity } from "./Liquidity";
 export { default as Infographics } from "./Infographics";
+export { default as Tos } from "./Tos";

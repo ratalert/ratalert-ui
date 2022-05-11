@@ -609,6 +609,34 @@ function Lite(props) {
                 />}
               />
           </Route>
+          <Route path="/infographics">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={9}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Infographics
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
         </Switch>
       </BrowserRouter>
     </div>

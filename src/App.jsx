@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import React, { useCallback, useEffect, useState, Suspense } from "react";
 import { BrowserRouter, Link, Route, Switch } from "react-router-dom";
 import "./App.css";
-import { Infographics, Liquidity, Giveaway, Roadmap, Faq, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
+import { Tos, Infographics, Liquidity, Giveaway, Roadmap, Faq, Landing, Address, Balance, Contract, GasGauge, Header, Ramp, Main, Leaderboard, RatMenu, Whitepaper, AdminDashboard, Claims} from "./components";
 import { INFURA_ID, NETWORK, NETWORKS } from "./constants";
 import { Transactor, renderNotification } from "./helpers";
 import {
@@ -572,6 +572,34 @@ function App(props) {
                 />}
               />
           </Route>
+          <Route path="/tos">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={8}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Tos
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
           <Route path="/giveaway">
             <RatMenu
               tx={tx}
@@ -656,6 +684,34 @@ function App(props) {
                 />}
               />
           </Route>
+          <Route path="/infographic">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={9}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Infographics
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
           <Route path="/admin">
             <RatMenu
               tx={tx}
@@ -664,7 +720,7 @@ function App(props) {
               address={address}
               appMode={appMode}
               provider={localProvider}
-              active={7}
+              active={9}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}

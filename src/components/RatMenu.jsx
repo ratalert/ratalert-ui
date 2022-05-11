@@ -261,6 +261,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={5}><Link onClick={this.toggle.bind(this)} to="/whitepaper">Whitepaper</Link></Menu.Item>
             <Menu.Item key={6}><Link onClick={this.toggle.bind(this)}  to="/roadmap">Roadmap</Link></Menu.Item>
             <Menu.Item key={7}><Link onClick={this.toggle.bind(this)}  to="/faq">FAQ</Link></Menu.Item>
+            <Menu.Item key={8}><Link onClick={this.toggle.bind(this)}  to="/tos">ToS</Link></Menu.Item>
           </Menu>
           { this.renderIcons(true) }
           </div>
@@ -272,6 +273,9 @@ class RatMenu extends React.Component {
   getLink() {
     if (this.props.location.pathname === '/whitepaper') {
       return '/whitepaper';
+    }
+    if (this.props.location.pathname === '/tos') {
+      return '/tos';
     }
     else if (this.props.location.pathname === '/roadmap') {
       return '/roadmap';
@@ -286,6 +290,9 @@ class RatMenu extends React.Component {
   getLinkName() {
     if (this.props.location.pathname === '/whitepaper') {
       return 'Whitepaper & more';
+    }
+    if (this.props.location.pathname === '/tos') {
+      return 'ToS & more';
     }
     else if (this.props.location.pathname === '/roadmap') {
       return 'Roadmap & more';
@@ -317,7 +324,7 @@ class RatMenu extends React.Component {
     } else {
       console.log(`No network name, ${networkName}, chainId ${chainId}`);
     }
-    if (window.innerWidth > 1300 || this.props.appMode === 'lite') {
+    if (window.innerWidth > 1332 || this.props.appMode === 'lite') {
       return (
 
         <div className={this.getNavStyle()}>
@@ -329,7 +336,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={5}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
             <Menu.Item key={6}><Link to="/roadmap">Roadmap</Link></Menu.Item>
             <Menu.Item key={7}><Link to="/faq">FAQ</Link></Menu.Item>
-            { admin && admin.includes(this.props.address) ? <Menu.Item key={8}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
+            <Menu.Item key={8}><Link to="/tos">ToS</Link></Menu.Item>
           </Menu>
         </div>
       );
@@ -345,6 +352,10 @@ class RatMenu extends React.Component {
             <Menu.Item>
               <Link to="/faq">FAQ</Link>
             </Menu.Item>
+            <Menu.Item>
+              <Link to="/tos">ToS</Link>
+            </Menu.Item>
+
           </Menu>
       );
 
@@ -358,7 +369,6 @@ class RatMenu extends React.Component {
             <Dropdown overlay={menu}>
               <Menu.Item key={5}><Link to={this.getLink()}>{this.getLinkName()}&nbsp;<DownOutlined /></Link></Menu.Item>
             </Dropdown>
-            { admin && admin.includes(this.props.address) ? <Menu.Item key={8}><Link to="/admin">Admin Dashboard</Link></Menu.Item> : null }
           </Menu>
         </div>
       );

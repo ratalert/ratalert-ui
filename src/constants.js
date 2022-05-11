@@ -70,7 +70,7 @@ export const NETWORKS = {
     chainId: 137,
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://rpc-mainnet.maticvigil.com",
+    rpcUrl: "https://wispy-falling-breeze.matic.quiknode.pro/e96002d4b3d990989dd00299914b8064fd668aac/",
     faucet: "https://faucet.matic.network/",
     blockExplorer: "https://explorer-mainnet.maticvigil.com//",
   },
