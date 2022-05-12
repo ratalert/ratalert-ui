@@ -152,7 +152,7 @@ class Faq extends React.Component {
                   <p>There are multiple ways to get a whitelist slot. There are 2 mini games on our discord which allow you to win daily whitelist slots. You can also take part in our Twitter giveaways or collabs where whitelist slots are given away to the community.</p>
                   <h2 className="faqTitle" id="whitelist2">6. What do I get when whitelisted?</h2>
                   <p>You get a 10% discount on the mint price and you get a 1% permanent experience boost on all of your whitelisted NFTs (max 3). The boost enables your characters to become smarter more quickly. For example, in the McStake kitchen your NFT earns 3 skill points per day instead of 2. Only characters that get minted through a whitelist spot will enjoy this advantage!<br/><br/>
-                  You can mint up to 3 NFTs when you are whitelisted.</p>
+                  You can mint up to 5 NFTs when you are whitelisted. Minting after the whitelist mint-sale is still possible, even if you miss the whitelist mint-sale. The discount will still be applicable.</p>
                   <h2 className="faqTitle" id="dox">7. Is the team doxed?</h2>
                   <p>Yes, the team is KYC’d through AssureDefi and all data is on file. You can access project page at <a target="_new" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.</p>
                   <h2 className="faqTitle" id="audit">8. Are your smart contracts audited?</h2>

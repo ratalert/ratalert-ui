@@ -1605,6 +1605,9 @@ class Main extends React.Component {
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       }
       else if ((whitelistCount > 0) && (freeMints === 0)) {
+        if (whitelistCount > 3) {
+          whitelistCount = 3;
+        }
         this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
       } else {
         this.setState({ mintAmountLocked: false, maxMintAmount: 3});
@@ -1791,14 +1794,14 @@ class Main extends React.Component {
     let mintPrice = this.getMintPrice();
     if (this.state.stats.freeMints > 0) {
       mintPrice = 0;
-    } else if ((this.state.stats.whitelistCount > 0) && (this.state.stats.freeMints === 0) && mintPrice > 0) {
+    } else if ((this.state.paywall.whitelistCount > 0) && (this.state.paywall.freeMints === 0) && mintPrice > 0) {
       mintPrice = Decimal(mintPrice).times(0.9).toString()
     }
     return (
       <div className="officeHeadline">
         <Row>
           <Col span={24}>
-            {this.getGreeting()} You can mint up to 3 characters a time.
+            {this.getGreeting()} You can mint up to 3 NFTs a time.
           </Col>
         </Row>
         <Row className="officeContent">
@@ -1896,6 +1899,7 @@ class Main extends React.Component {
           }
           if (type === null && json.name && r.staked == staked && r.stakingLocation == location) {
             const nftObj = {
+              whitelisted: hash['Boost'] === 1 ? true : false,
               name: parseInt(r.id, 16),
               image: json.image,
               description: json.name,
@@ -3637,6 +3641,9 @@ class Main extends React.Component {
         </div>
 
       }
+      { !this.props.userSigner ?
+        <div className="officeHeadline" style={{marginTop: 30}}>Please sign in with your Wallet to mint. If you still<br/>see this screen after signing in, try logging out<br/>and in again.</div>
+      : null}
       </div>
     );
   }
@@ -4050,7 +4057,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       ratEarnings = 2;
       chefFreak = 4;
       ratBodymass = 8;
-      earnings = 250;
+      earnings = 50;
       currency = '$FFOOD';
     }
     if (type === 'TheStakeHouse') {
@@ -4059,7 +4066,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       ratEarnings = 4;
       chefFreak = 6;
       ratBodymass = 6;
-      earnings = 250;
+      earnings = 25;
       currency = '$CFOOD';
     }
     if (type === 'LeStake') {
@@ -4068,7 +4075,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       ratEarnings = 6;
       chefFreak = 8;
       ratBodymass = 4;
-      earnings = 250;
+      earnings = 12.5;
       currency = '$GFOOD';
     }
 

@@ -36,7 +36,7 @@ deploy-app:
 deploy-landing:
 	@$(eval TAG := latest)
 	#yarn install --prod
-	REACT_APP_MODE=lite REACT_APP_API_URL=https://api.ratalert.com REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
+	REACT_APP_MODE=full REACT_APP_API_URL=https://api.ratalert.com REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn buildMatic
 	aws s3 sync ./build/ s3://ratalert.com/ --delete
 	#aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
 	#aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper
