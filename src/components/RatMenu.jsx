@@ -201,10 +201,10 @@ class RatMenu extends React.Component {
       opensea = (
           <Menu className="uniswap-links" theme="light">
             <Menu.Item key="os1">
-              <a className="topMenu" target="_new" href={`https://opensea.io/collection/ratalert-characters-v3`}>OpenSea: Characters</a>
+              <a className="topMenu" target="_new" href={`https://opensea.io/collection/ratalert-characters`}>OpenSea: Characters</a>
             </Menu.Item>
             <Menu.Item key="os">
-            <a className="topMenu" target="_new" href={`https://opensea.io/collection/ratalert-kitchens-v3`}>OpenSea: Kitchens</a>
+            <a className="topMenu" target="_new" href={`https://opensea.io/collection/ratalert-kitchens`}>OpenSea: Kitchens</a>
             </Menu.Item>
           </Menu>
       );

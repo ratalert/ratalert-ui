@@ -200,8 +200,8 @@ class Giveaway extends React.Component {
           <div>
             <h2>Giveaway Address submission</h2>
             { this.state.drawType === 'WL' ? <p>You've been added to the whitelist. A discord role has been assigned as well.</p> : null}
+            { this.state.drawType === 'mint' ? <p>You have been added to the free mint list. Your address still needs to be transferred to the smart contracts, this can take up to <strong>72 hours</strong>. Please be patient.</p> : null}
             { this.state.drawType === 'cash' ? <p>Your <strong>${this.state.amount} USDC</strong> on the Polygon MATIC network will be transferred your address within 48 hours.</p> : null}
-
             <p>To find out more about RatAlert, feel free to take a look at our Infographics below</p>
             <img src="../assets/infographic.png" width="100%"  />
             <p>You can also check out the <a href="/whitepaper">whitepaper</a> as well.</p>
@@ -223,6 +223,7 @@ class Giveaway extends React.Component {
         <p>Welcome @{this.state.twitterName}</p>
         { this.state.drawType === 'WL' ? <p>Congratulations on winning a <strong>whitelist</strong> spot! Please submit your data now to claim your prize.</p> : null }
         { this.state.drawType === 'cash' ? <p>Congratulations on winning <strong>${this.state.amount} USDC</strong> on the Polygon MATIC Network! Please submit your data now to claim your prize.</p> : null }
+        { this.state.drawType === 'mint' ? <p>Congratulations on winning a <strong>free mint</strong> for RatAlertNFT! Please submit your data now to claim your prize.</p> : null }
 
         <Form
             name="login"

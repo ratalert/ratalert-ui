@@ -82,6 +82,7 @@ class Main extends React.Component {
     this.mobileBreakpoint = 899;
     this.tableBreakpoint = 900;
     this.officeBreakpoint = 1160;
+    this.loadingStarted = false;
     this.ratHeight = 0;
     this.nfts = {};
     this.oldNfts = {};
@@ -264,6 +265,7 @@ class Main extends React.Component {
     let gourmetKitchensPrice = 0;
     let kitchenConfig;
     if (KitchenShopContract && this.props.address) {
+      this.setState({ loadingStarted: true });
       if (this.props.debug) console.log('DEBUG balance of 1');
       casualKitchenAmount = await KitchenShopContract.balanceOf(this.props.address, 1);
       casualKitchenAmount = parseInt(casualKitchenAmount);
@@ -1145,6 +1147,12 @@ class Main extends React.Component {
 
   async componentDidMount() {
 
+    setTimeout(() => {
+      if (!this.state.loadingStarted) {
+        this.fetchKitchenStatus();
+        this.getChainStats();
+      }
+    }, 500);
     window.addEventListener("dayTime", (e) => {
       this.setState({dayTime: e.detail.dayTime})
     });
@@ -2889,6 +2897,9 @@ class Main extends React.Component {
       }
       if (message.indexOf("while formatting outputs") !== -1) {
         message = "Error while submitting transaction";
+      }
+      if (message.indexOf('"transaction underpriced') !== -1) {
+        renderNotification("error", "Error", 'Transaction fee was too low, please try again with a higher transaction fee.');  
       }
       if (message.indexOf('transaction failed') !== -1) {
         renderNotification("error", "Error", 'Transaction failed, please try again.');

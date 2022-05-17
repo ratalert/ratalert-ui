@@ -150,7 +150,7 @@ export default config = {
     Claim: '0xc7e50625c2268308C57386D04C5A8f8ae8f6E136',
     Paywall: '0x4a0CA9aB63f4892DDBd2E2693c4DDba1B33afdFe',
     Config: '0xF7876C368AEe216f98b90Cf16c600926516c3337',
-    admin: ['0x2f7CdD90AB83405654eE10FC916a582a3cDe7E69', '0xf2886eeDD665b67D6D2dF64f422152081bE53292'],
+    admin: ['0xd470D5015689D2C4f7cB8EF13F6F75e662E0b53C', '0xf2886eeDD665b67D6D2dF64f422152081bE53292'],
     loggedIn: {
       gourmetKitchenClosed: true,
       fastFoodKitchenClosed: false,
