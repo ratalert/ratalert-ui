@@ -369,7 +369,7 @@ function App(props) {
             setAddress={setAddress}
             setInjectedProvider={setInjectedProvider}
             injectedProvider={injectedProvider}
-            active={1}
+            active={0}
             dayTime={dayTime}
             dayTimeSwitch={dayTimeSwitch}
             debug={DEBUG}
@@ -410,7 +410,7 @@ function App(props) {
             appMode={appMode}
             setInjectedProvider={setInjectedProvider}
             injectedProvider={injectedProvider}
-            active={2}
+            active={1}
             dayTime={dayTime}
             dayTimeSwitch={dayTimeSwitch}
             debug={DEBUG}
@@ -495,7 +495,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={5}
+              active={3}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -523,7 +523,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={6}
+              active={4}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -551,7 +551,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={7}
+              active={2}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -579,7 +579,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={8}
+              active={6}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -635,7 +635,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={9}
+              active={5}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}

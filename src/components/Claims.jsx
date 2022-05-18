@@ -488,7 +488,7 @@ class Claims extends React.Component {
       </div>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24}>
-        <div className="leaderboardHeader">
+        <div className={`leaderboardHeader ${this.getTextClass()}`}>
           CLAIMS HISTORY
         </div>
         </Col>
@@ -496,13 +496,18 @@ class Claims extends React.Component {
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24}>
         <div className="main" ref={this.tableRef}>
+          { claims.length > 0 ? <div>
           <span className={`claimText ${this.getTextClass()}`}>Enter the NFT ID you want to filter the events for: &nbsp;
           <InputNumber min={1} max={50000} controls={false} onChange={this.onChange.bind(this)} />
           </span>
           <p className={`claimText ${this.getTextClass()}`}>
             <Checkbox className={`claimText ${this.getTextClass()}`} onChange={this.toggleOnlyEvents.bind(this)}>Only include history with events</Checkbox>
           </p>
-          <Table className="claimsTable" rowKey={this.getRowKey} pagination={false} style={{width}} columns={columns} dataSource={claims} />
+          </div> : null }
+
+          { claims.length > 0 ? <Table className="claimsTable" rowKey={this.getRowKey} pagination={false} style={{width}} columns={columns} dataSource={claims} /> :
+            <p className={`claimText ${this.getTextClass()}`}>You have no claims yet. Please claim your characters first. You can claim a character by selecting one or more NFTs and clicking the Claim button</p>
+         }
         </div>
         </Col>
       </Row>

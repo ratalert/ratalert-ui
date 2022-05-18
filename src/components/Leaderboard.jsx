@@ -529,6 +529,21 @@ class Leaderboard extends React.Component {
     }
   }
 
+  getTextClass() {
+    if (this.state.dayTime === 'night') {
+      return 'white';
+    }
+    if (this.state.dayTime === 'day') {
+      return 'white';
+    }
+    if (this.state.dayTime === 'morning') {
+      return 'black';
+    }
+    if (this.state.dayTime === 'evening') {
+      return 'black';
+    }
+  }
+
   renderLeaderBoard() {
     let small = false;
     if (window.innerWidth < 1000) {
@@ -653,7 +668,7 @@ class Leaderboard extends React.Component {
       </div>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24}>
-        <div className="leaderboardHeader">
+        <div className={`leaderboardHeader ${this.getTextClass()}`}>
           LEADERBOARD
         </div>
         </Col>

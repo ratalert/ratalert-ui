@@ -37,6 +37,7 @@ import {
   MenuFoldOutlined,
   CaretLeftOutlined,
   CaretRightOutlined,
+  FilePdfOutlined,
 } from '@ant-design/icons';
 
 class Landing extends React.Component {
@@ -45,7 +46,7 @@ class Landing extends React.Component {
     this.state = {
       windowHeight: window.innerHeight - 235,
       dataLoaded: false,
-      dayTime: this.props.dayTime,
+      dayTime: 'night',
       header1Left: 0,
       header2Left: 0,
       seperatorLeft: 0,
@@ -65,10 +66,11 @@ class Landing extends React.Component {
   }
 
   async componentDidMount() {
+    /*
     window.addEventListener("dayTime", (e) => {
       this.setState({dayTime: e.detail.dayTime})
     });
-
+*/
     window.addEventListener("resize", (e) => {
       this.updateState();
       this.updateHeight();
@@ -146,21 +148,25 @@ class Landing extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (this.props.address && !prevProps.address) {
-      window.location.href = 'game';
+      //this.props.history.push('/game');
+      //window.location.href = 'game';
     }
   }
 
   renderDAOContent() {
       return (
         <div>
-        <Row align="middle" justify="center" style={{marginTop: 100}}>
+        <Row align="middle" justify="center" style={{marginTop: 20}}>
           <div className="daoLanding"/>
         </Row>
-        <Row align="middle" justify="center" style={{marginTop: 100}}>
-            <p style={{textAlign: 'center'}} className={`${this.getColorStyle(true)} landingText`}>
+        <Row align="middle" justify="center" style={{marginTop: 100, marginLeft: 50, marginRight: 50}}>
+            <p style={{textAlign: window.innerWidth < 900 ? 'left' : 'center'}} className={`${this.getColorStyle(true)} landingText`}>
               RatAlert is a community project.<br/>
               Join RatAlert’s governance process with $FFOOD tokens.<br/>
+              All contracts are owned by the <a target="_new" className="landingLink" href="https://gnosis-safe.io/app/matic:0xbEf526C8325C47817ceb435011bf1E6bc9ec691d/home">Gnosis 4of6 community multi signature wallet</a>.<br/>
+              All contract upgrades and configuration changes subject to a <a target="_new" className="landingLink" href="https://polygonscan.com/address/0x32dd207f1f16dd4ceea94833ab9fb5dd96bc0924">48 hour timelock delay</a>.<br/>
               Steer game decisions and future development by voting for proposals in the DAO.<br/>
+              All contracts have been open-sourced and are available on <a target="_new" className="landingLink" href="https://github.com/ratalert/ratalert-contracts">GitHub</a>
             </p>
         </Row>
         <Row align="middle" justify="center" style={{marginTop: 0, height: 50}}>
@@ -178,18 +184,21 @@ class Landing extends React.Component {
       return (
         <div>
         <Row align="middle" justify="center" style={{marginTop: 100}}>
-            <div style={{marginRight: 30}} className="assureDefiLanding"/>
-            <div className="certikLanding"/>
+            <div onClick={() => window.location.href='https://www.assuredefi.io/projects/ratalert/'} style={{cursor: 'pointer'}} className="assureDefiLanding"/>
+            <div onClick={() => window.location.href='https://www.certik.com/projects/rat-alert'} style={{cursor: 'pointer'}} className="certikLanding"/>
         </Row>
         <Row align="middle" justify="center" style={{marginTop: 50}}>
           <Col span={2}/>
           <Col span={18}>
-            <p className={`${this.getColorStyle(true)} landingText`}>
-              RatAlert’s team is fully KYC’d with AssureDefi.<br/>
-              Smart contracts open source & audited by CertiK.<br/>
-              All proceeds are secured by the 4of6 community multi signature wallet.<br/>
-              All contracts are owned by the DAO multi signature wallet.
-            </p>
+          <p className={`${this.getColorStyle(true)} landingText`}>
+          RatAlert’s team is fully KYC’d with <a target="_new" className="landingLink" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.<br/>
+          Smart contracts open source & audited by <a target="_new" className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK</a>.<br/>
+          <br/>
+          <a target="_new" href="https://www.certik.com/projects/rat-alert"><FilePdfOutlined style={{fontSize: 38, color: 'white'}}/></a> You can download the report at <a className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK's RatAlert project</a> page.
+          <br/><br/>
+          All proceeds are secured by the <a target="_new" className="landingLink" href="https://gnosis-safe.io/app/matic:0xbEf526C8325C47817ceb435011bf1E6bc9ec691d/home">Gnosis 4of6 DAO multi signature wallet</a>.<br/>
+          </p>
+
           </Col>
           <Col span={2}/>
         </Row>
@@ -202,18 +211,19 @@ class Landing extends React.Component {
       <Row align="middle" justify="center" style={{marginTop: 100}}>
         <Col span={1}></Col>
         <Col span={6}>
-          <div className="assureDefiLanding"/>
+          <div onClick={() => window.location.href='https://www.assuredefi.io/projects/ratalert/'} style={{cursor: 'pointer'}} className="assureDefiLanding"/>
         </Col>
         <Col span={6}>
-          <div className="certikLanding"/>
+          <div onClick={() => window.location.href='https://www.certik.com/projects/rat-alert'} style={{cursor: 'pointer'}} className="certikLanding"/>
         </Col>
         <Col span={8}>
-
           <p className={`${this.getColorStyle(true)} landingText`}>
-            RatAlert’s team is fully KYC’d with <a target="_new" className="landingLink" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.<br/>
-            Smart contracts open source & audited by <a target="_new" className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK</a>.<br/>
-            All proceeds are secured by a 4of6 community multi signature wallet.<br/>
-            All contracts are owned by the DAO multi signature wallet.
+          RatAlert’s team is fully KYC’d with <a target="_new" className="landingLink" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.<br/>
+          Smart contracts open source & audited by <a target="_new" className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK</a>.<br/>
+          <br/>
+          <a target="_new" href="https://www.certik.com/projects/rat-alert"><FilePdfOutlined style={{fontSize: 38, color: 'white'}}/></a> You can download the report at <a className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK's RatAlert project</a> page.
+          <br/><br/>
+          All proceeds are secured by the <a target="_new" className="landingLink" href="https://gnosis-safe.io/app/matic:0xbEf526C8325C47817ceb435011bf1E6bc9ec691d/home">Gnosis 4of6 DAO multi signature wallet</a>.<br/>
           </p>
         </Col>
         <Col span={2}/>
@@ -428,7 +438,6 @@ class Landing extends React.Component {
 
     return (
       <div>
-
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height - offset}}>
       </div>
       <div className="content">
@@ -484,15 +493,15 @@ class Landing extends React.Component {
           { this.renderTrainContent() }
       </Row>
 
-      <Row align="middle" justify="center" style={{marginTop: 150}}>
+      <Row align="middle" justify="center" style={{marginTop: window.innerWidth < 900 ? 100 : 150}}>
           <span className="landingHeadline">State of the Art Security</span>
           <Col span={24}>
             { this.renderSecurityContent() }
           </Col>
       </Row>
 
-      <Row  align="middle" justify="center" style={{marginTop: 150}}>
-        <div className="darkBackground" style={{height: 720, marginTop: 0}}></div>
+      <Row  align="middle" justify="center" style={{marginTop: 50}}>
+        <div className="darkBackground" style={{height: window.innerWidth < 900 ? 1020 : 720, marginTop: window.innerWidth < 900 ? 120 : -20}}></div>
         <div className="landingHeadline">RatAlert DAO</div>
         <Col span={24}>
             { this.renderDAOContent() }

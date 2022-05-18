@@ -2898,8 +2898,8 @@ class Main extends React.Component {
       if (message.indexOf("while formatting outputs") !== -1) {
         message = "Error while submitting transaction";
       }
-      if (message.indexOf('"transaction underpriced') !== -1) {
-        renderNotification("error", "Error", 'Transaction fee was too low, please try again with a higher transaction fee.');  
+      if (message.indexOf('transaction underpriced') !== -1) {
+        renderNotification("error", "Error", 'Transaction fee was too low, please try again with a higher transaction fee.');
       }
       if (message.indexOf('transaction failed') !== -1) {
         renderNotification("error", "Error", 'Transaction failed, please try again.');

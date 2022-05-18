@@ -2098,6 +2098,14 @@
   color: #FFFFFF !important;
 }
 
+.ant-menu-item-active {
+  color: #619cff !important;
+}
+
+.ant-dropdown-trigger {
+  color: #619cff !important;
+}
+
 .ratLight .ant-menu-item-selected a {
   color: #619cff !important;
 }
@@ -2163,8 +2171,6 @@
 .ant-menu-item-selected a {
   color: #619cff !important;
   border-bottom-width: 0 !important;
-  border: 0;
-  border-bottom: 0;
 }
 
 .ant-menu-submenu-selected {
@@ -2632,7 +2638,6 @@
 .leaderboardHeader {
   font-family: "Pixel";
   font-size: 25px;
-  color: #fff;
   z-index: 99;
   border: 0px;
   margin-bottom: 10px;

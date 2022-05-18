@@ -92,6 +92,16 @@ class RatMenu extends React.Component {
 
     const hints = await this.getHintStatus();
     this.setState({ hintsEnabled: hints });
+
+    const id = document.getElementById('navGame');
+
+    if (this.props.location.pathname === '/game') {
+      // Fix active route not being set in DropDown
+      if (id.className.indexOf('ant-menu-item-selected') === -1) {
+        id.className = id.className += ' ant-menu-item-selected';
+      }
+    }
+
   }
 
   componentWillUnmount() {
@@ -325,18 +335,36 @@ class RatMenu extends React.Component {
       console.log(`No network name, ${networkName}, chainId ${chainId}`);
     }
     if (window.innerWidth > 1332 || this.props.appMode === 'lite') {
+      const menu = (
+          <Menu mode="horizontal">
+            <Menu.Item>
+              <Link to="/game">Play the game!</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/leaderboard">Leaderboard</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/claims">Claims</Link>
+            </Menu.Item>
+          </Menu>
+      );
       return (
 
         <div className={this.getNavStyle()}>
           <Menu mode="horizontal" defaultSelectedKeys={[this.props.active.toString()]}>
-            <Menu.Item key={1}><Link to="/">Start</Link></Menu.Item>
-            { this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null}
-            { this.props.appMode === 'full' ? <Menu.Item key={3}><Link to="/leaderboard">Leaderboard</Link></Menu.Item> : null }
-            { this.props.appMode === 'full' ? <Menu.Item key={4}><Link to="/claims">Claims</Link></Menu.Item> : null }
-            <Menu.Item key={5}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
-            <Menu.Item key={6}><Link to="/roadmap">Roadmap</Link></Menu.Item>
-            <Menu.Item key={7}><Link to="/faq">FAQ</Link></Menu.Item>
-            <Menu.Item key={8}><Link to="/tos">ToS</Link></Menu.Item>
+            <Dropdown overlay={menu} style={{border: '1px solid red', color: 'red'}}>
+              <Menu.Item id="navGame" key={1}><Link to="/game">Game&nbsp;<DownOutlined /></Link></Menu.Item>
+            </Dropdown>
+            {
+              /*
+               this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null
+               */
+            }
+            <Menu.Item key={2}><Link to="/faq">FAQ</Link></Menu.Item>
+            <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
+            <Menu.Item key={4}><Link to="/roadmap">Roadmap</Link></Menu.Item>
+            <Menu.Item key={5}><Link to="/liquidity">Liquidity Program</Link></Menu.Item>
+            <Menu.Item key={6}><Link to="/tos">ToS</Link></Menu.Item>
           </Menu>
         </div>
       );
@@ -450,13 +478,18 @@ class RatMenu extends React.Component {
       </div>
     )
   }
+
+  goToLandingPage() {
+    this.props.history.push('/');
+  }
+
   renderTitle() {
     return (
       <div>
-        <span className={`${this.getNavStyle()} logoTextHeader`}>
+        <span onClick={this.goToLandingPage.bind(this)} style={{cursor: 'pointer'}} className={`${this.getNavStyle()} logoTextHeader`}>
           RATalert
         </span>
-        <div className={`${this.getNavStyle('bg')} logoLineHeader`}/>
+        <div style={{cursor: 'pointer'}} className={`${this.getNavStyle('bg')} logoLineHeader`}/>
       </div>
     )
 
@@ -483,8 +516,8 @@ class RatMenu extends React.Component {
 
 
   getSkyClass() {
-    if (this.props.active === 1) {
-      return 'sky skyNight';
+    if (this.props.location.pathname === '/') {
+        return 'sky skyNight';
     }
     if (this.state.dayTime === 'night') {
       return 'sky skyNight';
