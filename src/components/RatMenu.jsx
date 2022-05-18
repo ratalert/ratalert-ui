@@ -535,6 +535,9 @@ class RatMenu extends React.Component {
   }
 
   getMobileNavStyle(bg = false) {
+    if (this.props.location.pathname === '/') {
+        return 'ratMobileDark';
+    }
     if (this.state.dayTime === 'night') {
       return 'ratMobileLight';
     }
@@ -550,6 +553,10 @@ class RatMenu extends React.Component {
   }
 
   getNavStyle(bg = false) {
+    if (this.props.location.pathname === '/') {
+        return 'ratLight';
+    }
+
     if (!bg && this.props.active === 1) {
       return 'ratLight';
     }

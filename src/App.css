@@ -37,13 +37,7 @@
   height: 20px;
 }
 
-.levelUpDone {
-  font-family: Pixellari;
-  font-size: 16px;
-  color: #d2b5a7;
-  margin-top: 0px;
-  height: 20px;
-}
+
 
 
 
@@ -459,6 +453,18 @@
   }
   .fastfoodScene {
     width: 180px !important;
+  }
+  .levelUpDone {
+    font-family: "Pixellari";
+    font-size: 14px;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 0px;
+    height: 20px;
+    background: #ffae00;
+    width: 85px;
+    padding-left: 10px;
+    border-radius: 5px;
   }
 }
 
@@ -1106,6 +1112,20 @@
 }
 
 @media only screen and (max-width: 899px) {
+
+  .levelUpDone {
+    font-family: "Pixellari";
+    font-size: 11px;
+    font-weight: bold;
+    color: #000000;
+    margin-top: 0px;
+    height: 20px;
+    background: #ffae00;
+    width: 70px;
+    padding-left: 10px;
+    padding-top: 5px;
+    border-radius: 5px;
+  }
 
   .landingTitle {
     font-size: 35px;
@@ -2102,10 +2122,6 @@
   color: #619cff !important;
 }
 
-.ant-dropdown-trigger {
-  color: #619cff !important;
-}
-
 .ratLight .ant-menu-item-selected a {
   color: #619cff !important;
 }
@@ -2843,4 +2859,54 @@ a.landingLink {
 
 .topMenu {
   color: #C1C1C1 !important;
+}
+
+.filter {
+  margin-top: 20px;
+  height: 100px;
+  color: #fff;
+  font-family: Pixellari;
+  width: 190px;
+}
+
+.filterMobile {
+  padding-top: 20px;
+  height: 150px;
+  padding: 17px 38px 21px 20px;
+  border: solid 2px #5e5555;
+  background-color: #252525;
+  position: absolute;
+  top: 40px;
+  color: #fff;
+  font-family: Pixellari;
+  left: 100px;
+  width: 350px;
+  z-index: 10;
+  background: rgba(37, 37, 37, 0.5);
+}
+
+.filterItem {
+  margin-top: 5px;
+}
+
+.filterRow {
+  margin-top: 10px;
+}
+
+.rats {
+  background-image: url("img/rats.png");
+  width: 30px;
+  height: 26px;
+}
+
+.chefs {
+  background-image: url("img/chefs.png");
+  width: 28px;
+  height: 30px;
+}
+
+.ratchefs {
+  background-image: url("img/ratchefs.png");
+  width: 30px;
+  height: 20px;
 }

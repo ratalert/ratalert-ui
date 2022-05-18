@@ -21,6 +21,7 @@ import {
   Dropdown,
   Icon,
   Modal,
+  Checkbox,
 } from "antd";
 let lastBlockTime = 0;
 const { Header, Footer, Sider, Content } = Layout;
@@ -126,13 +127,39 @@ class Main extends React.Component {
         TheStakeHouse: 0,
         LeStake: 0,
       },
+      sort: {
+        McStake: 'nft',
+        TheStakeHouse: 'nft',
+        LeStake: 'nft',
+      },
+      filter: {
+        McStake: {
+          showTime: false,
+          separateNFTs: false,
+        },
+        TheStakeHouse: {
+          showTime: false,
+          separateNFTs: false,
+        },
+        LeStake: {
+          showTime: false,
+          separateNFTs: false,
+        },
+      },
+
       myNfts: {
         chefWaitingRoom: [],
         ratWaitingRoom: [],
         Gym: [],
         McStake: [],
+        McStakeChefs: [],
+        McStakeRats: [],
         TheStakeHouse: [],
+        TheStakeHouseChefs: [],
+        TheStakeHouseRats: [],
         LeStake: [],
+        LeStakeChefs: [],
+        LeStakeRats: [],
       },
       noBalance: false,
       localBalance: 0,
@@ -776,9 +803,9 @@ class Main extends React.Component {
       }
   }
 
-  async fetchGraph() {
+  async fetchGraph(refresh = true) {
     let address = "";
-    if (this.props.address === "undefined" || !this.props.address || this.props.address.length < 5) {
+    if (refresh && this.props.address === "undefined" || !this.props.address || this.props.address.length < 5) {
       setTimeout(async () => {
         this.fetchGraph();
       }, 250);
@@ -982,10 +1009,41 @@ class Main extends React.Component {
         nfts.Gym = this.parseNFTStruct(1, null, 'Gym', result2, result1);
         nftCount += nfts.Gym.length;
         nfts.McStake = this.parseNFTStruct(1, null, 'McStake', result2, result1);
+        nfts.McStake = this.sortNFTs(nfts.McStake, this.state.sort['McStake']);
+
+        nfts.McStakeChefs = this.parseNFTStruct(1, null, 'McStake', result2, result1, 'chef');
+        nfts.McStakeChefs = this.sortNFTs(nfts.McStakeChefs, this.state.sort['McStake']);
+
+        nfts.McStakeRats = this.parseNFTStruct(1, null, 'McStake', result2, result1, 'rat');
+        nfts.McStakeRats = this.sortNFTs(nfts.McStakeRats, this.state.sort['McStake']);
+
+        if (this.state.filter['McStake'].separateNFTs) {
+          nfts.McStake = nfts.McStakeRats.concat(nfts.McStakeChefs);
+        }
+
         nftCount += nfts.McStake.length;
         nfts.TheStakeHouse = this.parseNFTStruct(1, null, 'TheStakeHouse', result2, result1);
+        nfts.TheStakeHouse = this.sortNFTs(nfts.TheStakeHouse, this.state.sort['TheStakeHouse']);
+
+        nfts.TheStakeHouseChefs = this.parseNFTStruct(1, null, 'TheStakeHouse', result2, result1, 'chef');
+        nfts.TheStakeHouseChefs = this.sortNFTs(nfts.TheStakeHouseChefs, this.state.sort['TheStakeHouse']);
+
+        nfts.TheStakeHouseRats = this.parseNFTStruct(1, null, 'TheStakeHouse', result2, result1, 'rat');
+        nfts.TheStakeHouseRats = this.sortNFTs(nfts.TheStakeHouseRats, this.state.sort['TheStakeHouse']);
+
+        if (this.state.filter['TheStakeHouse'].separateNFTs) {
+          nfts.TheStakeHouse = nfts.TheStakeHouseRats.concat(nfts.TheStakeHouseChefs);
+        }
+
         nftCount += nfts.TheStakeHouse.length;
         nfts.LeStake = this.parseNFTStruct(1, null, 'LeStake', result2, result1);
+        nfts.LeStakeChefs = this.parseNFTStruct(1, null, 'LeStake', result2, result1, 'chef');
+        nfts.LeStakeRats = this.parseNFTStruct(1, null, 'LeStake', result2, result1, 'rat');
+
+        if (this.state.filter['LeStake'].separateNFTs) {
+          nfts.LeStake = nfts.LeStakeRats.concat(nfts.LeStakeChefs);
+        }
+
         nftCount += nfts.LeStake.length;
         this.setState({ myNfts: nfts, nftCount });
       }
@@ -1167,6 +1225,14 @@ class Main extends React.Component {
       this.storyHeight = 385;
     }
 
+    const sort = this.state.sort;
+    const filter = this.state.filter;
+    sort.McStake = await this.getLocalStorage('McStakeSort', 'nft');
+    sort.LeStake = await this.getLocalStorage('LeStakeSort', 'nft');
+    sort.TheStakeHouse = await this.getLocalStorage('TheStakeHouse', 'nft');
+    filter.McStake.showTime = await this.getLocalStorage('McStakeFiltershowTime', false);
+    filter.McStake.separateNFTs = await this.getLocalStorage('McStakeFilterseparateNFTs', false);
+    this.setState({ sort, filter });
   }
 
   componentWillUnmount() {
@@ -1353,6 +1419,29 @@ class Main extends React.Component {
       localStorage.setItem('hints', 'true');
       return true;
     }
+  }
+
+  async getLocalStorage(key, defaultValue) {
+    const entry = localStorage.getItem(key);
+    if (entry) {
+      if (entry === 'true') {
+        return true;
+      }
+      if (entry === 'true') {
+        return false;
+      }
+      return entry;
+    } else {
+      return defaultValue;
+    }
+  }
+
+  async setLocalStorage(key, value) {
+    if (value === false) {
+      localStorage.removeItem(key);
+      return;
+    }
+    localStorage.setItem(key, value);
   }
 
   async cacheLocalStorage(name, func, eth = false) {
@@ -1857,7 +1946,19 @@ class Main extends React.Component {
     );
   }
 
-  parseNFTStruct(staked, type, location, stakedGraph, nonStakedGraph) {
+  sortNFTs(data, sortType) {
+    if (sortType === 'nft') {
+      return data.sort((a, b) => parseInt(a.name) - parseInt(b.name));
+    }
+    if (sortType === 'claim') {
+      return data.sort((a, b) => parseInt(a.mcstakeLastClaimTimestamp) - parseInt(b.mcstakeLastClaimTimestamp));
+    }
+    if (sortType === 'stake') {
+      return data.sort((a, b) => parseInt(a.mcstakeStakedTimestamp) - parseInt(b.mcstakeStakedTimestamp));
+    }
+  }
+
+  parseNFTStruct(staked, type, location, stakedGraph, nonStakedGraph, filter = false) {
     let element;
     if (staked === 0) {
       element = nonStakedGraph;
@@ -1877,6 +1978,7 @@ class Main extends React.Component {
             hash[m.trait_type] = m.value;
           });
           if (type !== null && json.name && json.attributes[0].value === type && parseInt(r.staked) == parseInt(staked)) {
+
             const nftObj = {
               name: parseInt(r.id, 16),
               whitelisted: hash['Boost'] === 1 ? true : false,
@@ -1931,8 +2033,17 @@ class Main extends React.Component {
               freakName: hash['Freak'],
               skillName: hash['Skill'],
             }
-            this.nfts[nftObj.name] = nftObj;
-            nft.push(nftObj);
+            if (!filter) {
+              this.nfts[nftObj.name] = nftObj;
+              nft.push(nftObj);
+            } else {
+              if ((filter === 'chef') && (r.type === 'chef')) {
+                nft.push(nftObj);
+              }
+              if ((filter === 'rat') && (r.type === 'rat')) {
+                nft.push(nftObj);
+              }
+            }
           }
         }
       }
@@ -2484,7 +2595,7 @@ class Main extends React.Component {
             <img src={"/img/time.png"}/>
           </Col>
           <Col xs={16} span={17}>
-            <div>{ this.renderTimeLeftForLevelUp(c.mcstakeLastClaimTimestamp, c.mcstakeTimestamp) }</div>
+            <div>{ this.renderTimeLeftForLevelUp(c.mcstakeLastClaimTimestamp, c.mcstakeTimestamp, c.stakingLocation) }</div>
           </Col>
         </Row>
 
@@ -2566,7 +2677,19 @@ class Main extends React.Component {
     )
   }
 
-  renderTimeLeftForLevelUp(lastClaim, stakeTimestamp) {
+  renderTime(diff) {
+    const t = new Date();
+    t.setSeconds(t.getSeconds() + diff);
+    const leadingZero = (num) => `0${num}`.slice(-2);
+
+    const formatTime = (date) =>
+    [date.getHours(), date.getMinutes(), date.getSeconds()]
+    .map(leadingZero)
+    .join(':');
+    return `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+  }
+
+  renderTimeLeftForLevelUp(lastClaim, stakeTimestamp, stakingLocation) {
     const levelUpMsg = "Your next level upgrade is available. Unstake or claim to level up your NFT!";
     const levelUpSoon = "When the countdown ends, your next level upgrade will be available. Unstake or claim to level up your NFT!";
     if (lastClaim === 0) {
@@ -2588,11 +2711,12 @@ class Main extends React.Component {
       }
 
       if (numberOfDays > 1) {
-        return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
+        return <Popover content={levelUpMsg}><div className="levelUpDone">LEVEL UP!</div></Popover>;
       }
 
       return <Popover content={levelUpSoon}>
-        <div className="levelUpTime">{this.secondsToHms(diff)}
+        <div className="levelUpTime">
+        { this.state.filter[stakingLocation].showTime ? this.renderTime(diff) : this.secondsToHms(diff) }
         </div>
         </Popover>
     } else {
@@ -2617,7 +2741,8 @@ class Main extends React.Component {
       }
 
       return <Popover content={levelUpSoon}>
-        <div className="levelUpTime">{this.secondsToHms(diff)}
+        <div className="levelUpTime">
+        { this.state.filter[stakingLocation].showTime ? this.renderTime(diff) : this.secondsToHms(diff) }
         </div>
         </Popover>;
     }
@@ -4318,6 +4443,102 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     )
   }
 
+  setSort(venue, filter) {
+    if (filter && filter.key) {
+      const sort = this.state.sort;
+      sort[venue] = filter.key
+      this.setState({ sort });
+      this.setLocalStorage(`${venue}Sort`, filter.key);
+    }
+    this.fetchGraph(false);
+  }
+
+  setFilter(option, venue, data) {
+    const filter = this.state.filter;
+    filter[venue][option] = data.target.checked;
+    this.setLocalStorage(`${venue}Filter${option}`, data.target.checked);
+    this.fetchGraph(false);
+  }
+
+  renderFilters(venue) {
+    const filters = (
+      <Menu onClick={this.setSort.bind(this, venue)}>
+        <Menu.Item key="nft">NFT IDs</Menu.Item>
+        <Menu.Item key="claim">Claim Countdown</Menu.Item>
+        <Menu.Item key="stake">Stake date</Menu.Item>
+      </Menu>
+    );
+
+
+    return (
+      <div className={ window.innerWidth < 900 ? 'filterMobile' : 'filter'}>
+        <Row>
+          <Col span={window.innerWidth < 900 ? 16 : 24}>
+            <Row>
+              <Col span={24}>
+              Sort by...
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+              <Dropdown className="web3Button"
+                type={"default"}
+                overlay={filters}
+                className="web3Button"
+                style={{height: 30}}
+                onClick={this.setFilter.bind(this)}
+              >
+                <Button style={{color: '#fff'}} className="web3Button" type={"default"}>
+                  { this.state.sort[venue] === 'nft' ? 'NFT IDs' : null }
+                  { this.state.sort[venue] === 'claim' ? 'Claim Countdown' : null }
+                  { this.state.sort[venue] === 'stake' ? 'Stake date' : null }
+                  <DownOutlined/>
+                </Button>
+              </Dropdown>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+              <Checkbox checked={this.state.filter[venue].showTime} className={`whiteContent`} onChange={this.setFilter.bind(this, 'showTime', venue)}>Time instead of time left</Checkbox>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+              <Checkbox checked={this.state.filter[venue].separateNFTs} className={`whiteContent`} onChange={this.setFilter.bind(this, 'separateNFTs', venue)}>Separate Chefs and Rats</Checkbox>
+              </Col>
+            </Row>
+          </Col>
+          <Col span={window.innerWidth < 900 ? 8 : 24}>
+            <Row style={{marginTop: 10}}>
+              <Col span={10}>
+                <div className="rats"/>
+              </Col>
+              <Col span={14} className="filterItem">
+                { this.state.myNfts[`${venue}Rats`].length }
+              </Col>
+            </Row>
+            <Row className="filterRow">
+              <Col span={10}>
+                <div className="chefs"/>
+              </Col>
+              <Col span={14} className="filterItem">
+                { this.state.myNfts[`${venue}Chefs`].length }
+              </Col>
+            </Row>
+            <Row className="filterRow">
+              <Col span={10}>
+                <div className="ratchefs"/>
+              </Col>
+              <Col span={14} className="filterItem">
+                { this.state.myNfts[venue].length }
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </div>
+    );
+  }
+
   renderNfts() {
     const { networkName, chainId } = this.getNetworkName();
     this.nftProfit = 0;
@@ -4445,11 +4666,13 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 { this.renderRestaurantInfo('McStake') }
               </div>
             </div>
-
+            { this.state.myNfts.McStake.length > 4 ?
+              this.renderFilters('McStake') : null }
             <div className="restaurantSign">
               <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
             </div>
             </Col>
+
             <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? {marginLeft: '20px'} : { marginTop: 20}}>
               { !this.state.loading ? this.renderStakedAtMcStake() : <Skeleton /> }
             </Col>

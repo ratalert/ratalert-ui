@@ -156,7 +156,7 @@ class Landing extends React.Component {
   renderDAOContent() {
       return (
         <div>
-        <Row align="middle" justify="center" style={{marginTop: 20}}>
+        <Row align="middle" justify="center" style={{marginTop: 0}}>
           <div className="daoLanding"/>
         </Row>
         <Row align="middle" justify="center" style={{marginTop: 100, marginLeft: 50, marginRight: 50}}>
@@ -190,11 +190,11 @@ class Landing extends React.Component {
         <Row align="middle" justify="center" style={{marginTop: 50}}>
           <Col span={2}/>
           <Col span={18}>
-          <p className={`${this.getColorStyle(true)} landingText`}>
+          <p style={{textAlign: 'left'}} className={`${this.getColorStyle(true)} landingText`}>
           RatAlert’s team is fully KYC’d with <a target="_new" className="landingLink" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.<br/>
           Smart contracts open source & audited by <a target="_new" className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK</a>.<br/>
           <br/>
-          <a target="_new" href="https://www.certik.com/projects/rat-alert"><FilePdfOutlined style={{fontSize: 38, color: 'white'}}/></a> You can download the report at <a className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK's RatAlert project</a> page.
+          <a download target="_new" href="/files/RatAlertCertik.pdf"><FilePdfOutlined style={{fontSize: 38, color: 'white'}}/></a> Download the <a download className="landingLink" href="/files/RatAlertCertik.pdf">report</a>.
           <br/><br/>
           All proceeds are secured by the <a target="_new" className="landingLink" href="https://gnosis-safe.io/app/matic:0xbEf526C8325C47817ceb435011bf1E6bc9ec691d/home">Gnosis 4of6 DAO multi signature wallet</a>.<br/>
           </p>
@@ -208,7 +208,7 @@ class Landing extends React.Component {
 
     return (
       <div>
-      <Row align="middle" justify="center" style={{marginTop: 100}}>
+      <Row align="middle" justify="center" style={{marginTop: 0}}>
         <Col span={1}></Col>
         <Col span={6}>
           <div onClick={() => window.location.href='https://www.assuredefi.io/projects/ratalert/'} style={{cursor: 'pointer'}} className="assureDefiLanding"/>
@@ -217,11 +217,11 @@ class Landing extends React.Component {
           <div onClick={() => window.location.href='https://www.certik.com/projects/rat-alert'} style={{cursor: 'pointer'}} className="certikLanding"/>
         </Col>
         <Col span={8}>
-          <p className={`${this.getColorStyle(true)} landingText`}>
+          <p style={{textAlign: 'left'}} className={`${this.getColorStyle(true)} landingText`}>
           RatAlert’s team is fully KYC’d with <a target="_new" className="landingLink" href="https://www.assuredefi.io/projects/ratalert/">AssureDefi</a>.<br/>
           Smart contracts open source & audited by <a target="_new" className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK</a>.<br/>
           <br/>
-          <a target="_new" href="https://www.certik.com/projects/rat-alert"><FilePdfOutlined style={{fontSize: 38, color: 'white'}}/></a> You can download the report at <a className="landingLink" href="https://www.certik.com/projects/rat-alert">CertiK's RatAlert project</a> page.
+          <a download target="_new" href="/files/RatAlertCertik.pdf"><FilePdfOutlined style={{fontSize: 38, color: 'white'}}/></a> Download the <a download className="landingLink" href="/files/RatAlertCertik.pdf">report</a>.
           <br/><br/>
           All proceeds are secured by the <a target="_new" className="landingLink" href="https://gnosis-safe.io/app/matic:0xbEf526C8325C47817ceb435011bf1E6bc9ec691d/home">Gnosis 4of6 DAO multi signature wallet</a>.<br/>
           </p>
@@ -493,19 +493,23 @@ class Landing extends React.Component {
           { this.renderTrainContent() }
       </Row>
 
-      <Row align="middle" justify="center" style={{marginTop: window.innerWidth < 900 ? 100 : 150}}>
+      <Row align="middle" justify="center" style={{height: window.innerWidth < 900 ? 1200 : 700, marginTop: window.innerWidth < 900 ? 0 : 150}}>
+        <div style={{marginTop: window.innerWidth < 900 ? 150 : -150, textAlign: 'center'}}>
           <span className="landingHeadline">State of the Art Security</span>
           <Col span={24}>
             { this.renderSecurityContent() }
           </Col>
+        </div>
       </Row>
 
-      <Row  align="middle" justify="center" style={{marginTop: 50}}>
-        <div className="darkBackground" style={{height: window.innerWidth < 900 ? 1020 : 720, marginTop: window.innerWidth < 900 ? 120 : -20}}></div>
+      <Row  align="middle" justify="center" style={{marginTop: 0}}>
+        <div className="darkBackground" style={{height: window.innerWidth < 900 ? 1020 : 900, marginTop: window.innerWidth < 900 ? 120 : -20}}></div>
+        <div style={{paddingTop: 150}}>
         <div className="landingHeadline">RatAlert DAO</div>
         <Col span={24}>
             { this.renderDAOContent() }
         </Col>
+        </div>
       </Row>
 
       { window.innerWidth > 900 ?
