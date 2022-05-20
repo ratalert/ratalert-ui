@@ -31,8 +31,7 @@ import Decimal from 'decimal.js';
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { GraphQLClient, gql } from 'graphql-request'
-
-
+const superagent = require('superagent');
 
 import { contracts } from '../contracts/contracts.js';
 import config from '../config.js';
@@ -47,12 +46,15 @@ import {
 
 import { isMobile } from 'react-device-detect';
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
+const SECONDS_PER_YEAR = 365.25 * 24 * 60 * 60;
+const BLOCKS_IN_A_YEAR = SECONDS_PER_YEAR / 14;
+
 
 const graphQLClient = new GraphQLClient(APIURL, {
     mode: 'cors',
 });
 
-const uniswapGraph = 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3';
+const uniswapGraph = 'https://polygon.furadao.org/subgraphs/name/quickswap';
 const uniswapClient = new GraphQLClient(uniswapGraph, {
     mode: 'cors',
 });
@@ -445,33 +447,34 @@ class Main extends React.Component {
     // "1.00212"
   }
 
-  async fetchFromUniswap(pair1, pair2, contract1, contract2) {
-
-    const query = `{
-	pools(first:1, where:
-    {
-      token0:"${contract1}",
-      token1:"${contract2}"
-    }
-  )
-  {
-    id, sqrtPrice,
-    token0 { id, symbol, decimals },
-    token1 {id, symbol, decimals},
-    liquidity, tick
+  async fetchQuickswap(contract) {
+    const graph = await superagent.get(`https://api.ratalert.com/graph?token0=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&token1=${contract}`);
+    return graph.body.data;
   }
-}`;
 
-    const results = await uniswapClient.request(query);
-    const pools = results.pools;
+  aprToApy(interest, frequency = BLOCKS_IN_A_YEAR) {
+    return ((1 + (interest / 100) / frequency) ** frequency - 1) * 100;
+  }
 
 
-    const price = univ3prices([pools[0].token0.decimals, pools[0].token0.decimals], pools[0].sqrtPrice).toAuto();
-    const price2 = univ3prices.tickPrice([pools[0].token0.decimals, pools[0].token0.decimals], pools[0].tick).toAuto();
+  async fetchAPR(pair1, pair2, contract1, contract2) {
+    const maticPair = await this.fetchQuickswap('0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174');
+    const maticPrice = parseFloat(maticPair.pairs[0].token1Price);
 
-    const pairs = this.state.pairs;
-    pairs[`${pair1}/${pair2}`] = parseInt(price2).toFixed(8);
-    this.setState({pairs});
+    const results = await this.fetchQuickswap('0x2721d859EE8d03599F628522d30f14d516502944');
+    if (results && results.pairs) {
+      const pair = results.pairs[0]
+      const aumMATIC = pair.reserve0 * maticPrice;
+      const priceUSD = pair.token0Price * maticPrice;
+      const aumFFOOD = pair.reserve1 * priceUSD;
+      const aumUSD = pair.reserveUSD;
+      const rewards = 10000;
+      const dailyRewards = (rewards/7) * priceUSD;
+      const weeklyRewards = rewards * priceUSD;
+      const apr = ((dailyRewards)*365) / aumUSD;
+      this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
+    }
+
   }
 
   getNetworkName() {
@@ -1076,7 +1079,6 @@ class Main extends React.Component {
     setTimeout(async () => {
       this.fetchGraph();
 /*
-      this.fetchFromUniswap('WOOL', 'WETH', '0x8355dbe8b0e275abad27eb843f3eaf3fc855e525', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // WOOL-WETH
       this.fetchFromUniswap('GP', 'WETH','0x38ec27c6f05a169e7ed03132bca7d0cfee93c2c5', '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'); // GP-WETH
       */
     }, 3000);
@@ -2737,7 +2739,7 @@ class Main extends React.Component {
       }
 
       if (numberOfDays > 1) {
-        return <Popover content={levelUpMsg}><div className="levelUpDone">level up!</div></Popover>;
+        return <Popover content={levelUpMsg}><div className="levelUpDone">LEVEL UP!</div></Popover>;
       }
 
       return <Popover content={levelUpSoon}>
@@ -5486,6 +5488,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
     return (
           <Row style={{ height: "100%" }}>
+            { this.state.liquidityAPR }
             <div className={this.getGradientClass()} style={{top: rect.height, height: this.townhouseHeight - skyAttr.height - offset}}>
             </div>
             { this.state.graphError ? this.renderGraphError() : null }

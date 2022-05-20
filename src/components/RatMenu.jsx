@@ -16,6 +16,7 @@ import {
   Menu,
   Slider,
   Dropdown,
+  Alert,
 } from "antd";
 const { Header, Footer, Sider, Content } = Layout;
 import { useEventListener } from "eth-hooks/events/useEventListener";
@@ -57,6 +58,12 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 
+const uniswapGraph = 'https://polygon.furadao.org/subgraphs/name/quickswap';
+const uniswapClient = new GraphQLClient(uniswapGraph, {
+    mode: 'cors',
+});
+
+
 class RatMenu extends React.Component {
   constructor(props) {
     super(props);
@@ -66,7 +73,10 @@ class RatMenu extends React.Component {
       web3Loaded: false,
       dayTime: this.props.dayTime,
       buttonsDisabled: true,
-      hintsEnabled: false
+      hintsEnabled: false,
+      liquidityAPR: 0,
+      maticPrice: 0,
+      ffoodPrice: 0,
     };
 
     this.Account = null;
@@ -101,7 +111,7 @@ class RatMenu extends React.Component {
         id.className = id.className += ' ant-menu-item-selected';
       }
     }
-
+    this.fetchAPR();
   }
 
   componentWillUnmount() {
@@ -198,13 +208,13 @@ class RatMenu extends React.Component {
       uniswap = (
           <Menu className="uniswap-links" theme="light">
             <Menu.Item key="u1">
-              <a className="topMenu" target="_new" href={`https://app.uniswap.org/#/swap?chain=polygon&outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}&inputCurrency=ETH`}>Uniswap: FFOOD - MATIC</a>
+              <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/add/ETH/${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: MATIC - FFOOD</a>
             </Menu.Item>
             <Menu.Item key="u2">
-            <a className="topMenu" target="_new" href={`https://app.uniswap.org/#/swap?chain=polygon&outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}&inputCurrency=0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619`}>Uniswap: FFOOD - WETH</a>
+            <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/add/0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619/${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}&inputCurrency=`}>Quickswap: WETH - MATIC</a>
             </Menu.Item>
             <Menu.Item key="u3">
-            <Link to="/liquidity"><span style={{color: '#C1C1C1'}}>Earn $FFOOD by providing liquidity!</span></Link>
+            <Link to="/liquidity"><span style={{color: '#C1C1C1'}}>Earn {parseFloat(this.state.liquidityAPR).toFixed(0)}% APY in $FFOOD by providing liquidity!</span></Link>
             </Menu.Item>
           </Menu>
       );
@@ -230,7 +240,7 @@ class RatMenu extends React.Component {
         />
       </Dropdown>
       <Dropdown overlay={uniswap}>
-          <img width={30} src="/img/uniswap.svg" style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+          <img width={31} src="/img/quickswap.png" style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </Dropdown>
 
@@ -363,7 +373,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={2}><Link to="/faq">FAQ</Link></Menu.Item>
             <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
             <Menu.Item key={4}><Link to="/roadmap">Roadmap</Link></Menu.Item>
-            <Menu.Item key={5}><Link to="/liquidity">Liquidity Program</Link></Menu.Item>
+            <Menu.Item key={5}><Link to="https://lp.ratalert.com">Liquidity Program</Link></Menu.Item>
             <Menu.Item key={6}><Link to="/tos">ToS</Link></Menu.Item>
           </Menu>
         </div>
@@ -595,12 +605,74 @@ class RatMenu extends React.Component {
 
   }
 
+  async fetchQuickswap(contract) {
+    const query = `{
+  pairs(first: 1,
+  where:
+    {
+      token1: "${contract}"
+      token0:"0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
+    }
+  ) {
+    id
+    token0 {
+      id
+    },
+    token1 {
+      id
+    },
+    reserve0,
+    reserve1
+    reserveUSD,
+    token0Price,
+    token1Price,
+    createdAtTimestamp,
+  }
+}`;
+  console.log(query);
+    return uniswapClient.request(query);
+  }
+
+  aprToApy(interest, frequency = BLOCKS_IN_A_YEAR) {
+    return ((1 + (interest / 100) / frequency) ** frequency - 1) * 100;
+  }
+
+
+  async fetchAPR(pair1, pair2, contract1, contract2) {
+    const maticPair = await this.fetchQuickswap('0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174');
+    const maticPrice = parseFloat(maticPair.pairs[0].token1Price);
+
+    const results = await this.fetchQuickswap('0x2721d859EE8d03599F628522d30f14d516502944');
+    if (results && results.pairs) {
+      const pair = results.pairs[0]
+      const aumMATIC = pair.reserve0 * maticPrice;
+      const priceUSD = pair.token0Price * maticPrice;
+      const aumFFOOD = pair.reserve1 * priceUSD;
+      const aumUSD = pair.reserveUSD;
+      const rewards = 10000;
+      const dailyRewards = (rewards/7) * priceUSD;
+      const weeklyRewards = rewards * priceUSD;
+      const apr = ((dailyRewards)*365) / aumUSD;
+      this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
+    }
+
+  }
+
+  getLiquidityMessage() {
+      return (
+        <span>
+          Want to contribute to RatAlert? Become a <a href="https://lp.ratalert.com">liquidity provider</a> and earn up to <strong>{parseFloat(this.state.liquidityAPR).toFixed(0)}%</strong> APY in FFOOD on the FFOOD/MATIC pair!
+        </span>
+      )
+  }
 
   render() {
     const skyAttr = this.getWidth('sky', true, 1440, 1000);
     return (
 
           <div>
+
+          { this.state.liquidityAPR > 0 ? <Alert message={this.getLiquidityMessage()} type="info" showIcon closable /> : null }
           <div onClick={this.props.dayTimeSwitch} style={{width: skyAttr.width * 0.15, marginTop: skyAttr.height * 0.10, marginLeft: skyAttr.width * 0.82, cursor: 'pointer'}} className="daySwitcher">
           </div>
 
