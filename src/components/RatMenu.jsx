@@ -633,7 +633,7 @@ class RatMenu extends React.Component {
       const rewards = 25000;
       const dailyRewards = (rewards/7) * priceUSD;
       const weeklyRewards = rewards * priceUSD;
-      const apr = ((dailyRewards)*365) / aumUSD;
+      const apr = (((dailyRewards)*365) / aumUSD)*100;
       console.log('APR', apr);
       this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
     }

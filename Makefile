@@ -29,8 +29,8 @@ deploy-mumbai:
 
 deploy-app:
 	@$(eval TAG := latest)
-	yarn install --prod
-	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
+	npm install --prod
+	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn buildMatic
 	aws s3 sync ./build/ s3://${FULL_DOMAIN_NAME}/ --delete
 
 deploy-landing:

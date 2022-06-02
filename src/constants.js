@@ -77,13 +77,13 @@ export const NETWORKS = {
   mumbai: {
     name: "mumbai",
     color: "#92D9FA",
-    chainId: 137,
+    chainId: 80001,
     nativeCurrency: { name: 'MATIC', symbol: 'MATIC', decimals: 18 },
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://wispy-falling-breeze.matic.quiknode.pro/e96002d4b3d990989dd00299914b8064fd668aac/",
+    rpcUrl: "https://polygon-mumbai.g.alchemy.com/v2/EzxSKRpnt-mCJ8jfavhJsSlZNxrosF5R",
     faucet: "https://faucet.matic.network/",
-    blockExplorer: "https://explorer-mainnet.maticvigil.com//",
+    blockExplorer: "https://mumbai-explorer.matic.today/",
   },
   beta: {
     name: "mumbai",
