@@ -135,6 +135,10 @@ class Main extends React.Component {
         LeStake: 'nft',
       },
       filter: {
+        Gym: {
+          gym: false,
+          separateNFTs: false,
+        },
         McStake: {
           showTime: false,
           separateNFTs: false,
@@ -379,7 +383,7 @@ class Main extends React.Component {
       const { networkName, chainId } = this.getNetworkName();
       let kitchenConfig;
 
-      this.fetchKitchenStatus();
+
       this.setState({
         loading: false,
       });
@@ -388,12 +392,17 @@ class Main extends React.Component {
         this.getBalances();
         if (!this.state.chainStatsFetched) {
           console.log('Start get chain stats');
-          this.getChainStats();
-          this.checkClaimHook();
-          this.listenForMints();
+          try {
+            this.getChainStats();
+            this.checkClaimHook();
+            this.fetchKitchenStatus();
+            this.listenForMints();
+          } catch (e) {
+            console.error('Error getting chain stats:', e);
+          }
           this.setState({ chainStatsFetched: true });
         }
-      }, 500);
+      }, 1000);
 
       setTimeout(() => {
         this.fetchPaywallData()
@@ -472,7 +481,7 @@ class Main extends React.Component {
       const dailyRewards = (rewards/7) * priceUSD;
       const weeklyRewards = rewards * priceUSD;
       const apr = ((dailyRewards)*365) / aumUSD;
-      this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
+    //  this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
     }
 
   }
@@ -1209,7 +1218,7 @@ class Main extends React.Component {
 
     setTimeout(() => {
       if (!this.state.loadingStarted) {
-        this.fetchKitchenStatus();
+        //this.fetchKitchenStatus();
         this.getChainStats();
       }
     }, 500);
@@ -1556,7 +1565,7 @@ class Main extends React.Component {
     let mcStakePaused;
     let theStakeHousePaused;
     let gymPaused;
-    let leStakePaused;
+    let leStakePaused = false;
     try {
       minted = await CharacterContract.minted();
       totalSupply = await this.cacheLocalStorage('CharacterContract.maxTokens()', CharacterContract.maxTokens());
@@ -1565,7 +1574,9 @@ class Main extends React.Component {
       characterPaused = await CharacterContract.paused();
       mcStakePaused = await McStakeContract.paused();
       theStakeHousePaused = await TheStakeHouseContract.paused();
+      /*
       leStakePaused = await LeStakeContract.paused();
+      */
       gymPaused = await GymContract.paused();
     } catch (e) {
       console.log('ERROR', e);
@@ -3416,9 +3427,11 @@ class Main extends React.Component {
     if ((this.state.stats.theStakeHousePaused)) {
       paused = true;
     }
+    /*
     if ((this.state.stats.leStakePaused)) {
       paused = true;
     }
+    */
     if ((this.state.stats.mcStakePaused)) {
       paused = true;
     }
@@ -3438,7 +3451,7 @@ class Main extends React.Component {
       <Menu onClick={this.stakeAll.bind(this, type)}>
         <Menu.Item key="McStake">to McStake</Menu.Item>
         <Menu.Item key="TheStakeHouse" disabled={this.state.casualKitchenAmount > 0 ? false : true}>to TheStakeHouse</Menu.Item>
-        <Menu.Item key="LeStake" disabled={this.state.gourmetKitchenAmount > 0 ? false : true}>to LeStake</Menu.Item>
+        <Menu.Item key="LeStake" disabled={true}>to LeStake</Menu.Item>
         <Menu.Item key="Gym">to MuscleBox</Menu.Item>
       </Menu>
     );
@@ -4368,9 +4381,11 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     if ((type === 'TheStakeHouse') && (this.state.stats.theStakeHousePaused)) {
       paused = true;
     }
+    /*
     if ((type === 'LeStake') && (this.state.stats.leStakePaused)) {
       paused = true;
     }
+    */
     if ((type === 'McStake') && (this.state.stats.mcStakePaused)) {
       paused = true;
     }
@@ -5488,7 +5503,6 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
     return (
           <Row style={{ height: "100%" }}>
-            { this.state.liquidityAPR }
             <div className={this.getGradientClass()} style={{top: rect.height, height: this.townhouseHeight - skyAttr.height - offset}}>
             </div>
             { this.state.graphError ? this.renderGraphError() : null }

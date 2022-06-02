@@ -24,6 +24,7 @@ import { Link } from 'react-router-dom';
 import { contracts } from '../contracts/contracts.js';
 import config from '../config.js';
 import { GraphQLClient, gql } from 'graphql-request';
+const superagent = require('superagent');
 
 const APIURL = `${process.env.REACT_APP_GRAPH_URI}`;
 
@@ -208,10 +209,10 @@ class RatMenu extends React.Component {
       uniswap = (
           <Menu className="uniswap-links" theme="light">
             <Menu.Item key="u1">
-              <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/add/ETH/${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: MATIC - FFOOD</a>
+              <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: MATIC - FFOOD</a>
             </Menu.Item>
             <Menu.Item key="u2">
-            <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/add/0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619/${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}&inputCurrency=`}>Quickswap: WETH - MATIC</a>
+            <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/swap?exactField=input&exactAmount=10&inputCurrency=&0x7ceb23fd6bc0add59e62ac25578270cff1b9f619&outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: MATIC - WETH</a>
             </Menu.Item>
             <Menu.Item key="u3">
             <Link to="/liquidity"><span style={{color: '#C1C1C1'}}>Earn {parseFloat(this.state.liquidityAPR).toFixed(0)}% APY in $FFOOD by providing liquidity!</span></Link>
@@ -373,7 +374,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={2}><Link to="/faq">FAQ</Link></Menu.Item>
             <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
             <Menu.Item key={4}><Link to="/roadmap">Roadmap</Link></Menu.Item>
-            <Menu.Item key={5}><Link to="https://lp.ratalert.com">Liquidity Program</Link></Menu.Item>
+            <Menu.Item key={5}><a href="https://lp.ratalert.com">Liquidity Program</a></Menu.Item>
             <Menu.Item key={6}><Link to="/tos">ToS</Link></Menu.Item>
           </Menu>
         </div>
@@ -606,32 +607,10 @@ class RatMenu extends React.Component {
   }
 
   async fetchQuickswap(contract) {
-    const query = `{
-  pairs(first: 1,
-  where:
-    {
-      token1: "${contract}"
-      token0:"0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270",
-    }
-  ) {
-    id
-    token0 {
-      id
-    },
-    token1 {
-      id
-    },
-    reserve0,
-    reserve1
-    reserveUSD,
-    token0Price,
-    token1Price,
-    createdAtTimestamp,
+    const graph = await superagent.get(`https://api.ratalert.com/graph?token0=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&token1=${contract}`);
+    return graph.body.data;
   }
-}`;
-  console.log(query);
-    return uniswapClient.request(query);
-  }
+
 
   aprToApy(interest, frequency = BLOCKS_IN_A_YEAR) {
     return ((1 + (interest / 100) / frequency) ** frequency - 1) * 100;
@@ -639,20 +618,23 @@ class RatMenu extends React.Component {
 
 
   async fetchAPR(pair1, pair2, contract1, contract2) {
+    console.log('Fetching APR');
     const maticPair = await this.fetchQuickswap('0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174');
     const maticPrice = parseFloat(maticPair.pairs[0].token1Price);
-
+    console.log('MATIC PRICE', maticPrice);
     const results = await this.fetchQuickswap('0x2721d859EE8d03599F628522d30f14d516502944');
+    console.log(results);
     if (results && results.pairs) {
       const pair = results.pairs[0]
       const aumMATIC = pair.reserve0 * maticPrice;
       const priceUSD = pair.token0Price * maticPrice;
       const aumFFOOD = pair.reserve1 * priceUSD;
       const aumUSD = pair.reserveUSD;
-      const rewards = 10000;
+      const rewards = 25000;
       const dailyRewards = (rewards/7) * priceUSD;
       const weeklyRewards = rewards * priceUSD;
       const apr = ((dailyRewards)*365) / aumUSD;
+      console.log('APR', apr);
       this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
     }
 
@@ -661,7 +643,7 @@ class RatMenu extends React.Component {
   getLiquidityMessage() {
       return (
         <span>
-          Want to contribute to RatAlert? Become a <a href="https://lp.ratalert.com">liquidity provider</a> and earn up to <strong>{parseFloat(this.state.liquidityAPR).toFixed(0)}%</strong> APY in FFOOD on the FFOOD/MATIC pair!
+          Want to contribute to RatAlert? Become a <a href="https://lp.ratalert.com">liquidity provider</a> and earn up to <strong>{parseFloat(this.state.liquidityAPR).toFixed(0)}%</strong> APR in FFOOD on the FFOOD/MATIC pair!
         </span>
       )
   }
