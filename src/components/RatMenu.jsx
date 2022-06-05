@@ -376,6 +376,7 @@ class RatMenu extends React.Component {
             <Menu.Item key={4}><Link to="/roadmap">Roadmap</Link></Menu.Item>
             <Menu.Item key={5}><a href="https://lp.ratalert.com">Liquidity Program</a></Menu.Item>
             <Menu.Item key={6}><Link to="/tos">ToS</Link></Menu.Item>
+            <Menu.Item key={7}><Link to="/dao">DAO</Link></Menu.Item>
           </Menu>
         </div>
       );
@@ -394,7 +395,9 @@ class RatMenu extends React.Component {
             <Menu.Item>
               <Link to="/tos">ToS</Link>
             </Menu.Item>
-
+            <Menu.Item>
+              <Link to="/dao">DAO</Link>
+            </Menu.Item>
           </Menu>
       );
 
@@ -633,8 +636,7 @@ class RatMenu extends React.Component {
       const rewards = 25000;
       const dailyRewards = (rewards/7) * priceUSD;
       const weeklyRewards = rewards * priceUSD;
-      const apr = ((dailyRewards)*365) / aumUSD;
-      console.log('APR', apr);
+      const apr = (((dailyRewards)*365) / aumUSD)*100;
       this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
     }
 

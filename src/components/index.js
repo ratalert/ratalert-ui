@@ -24,3 +24,4 @@ export { default as Liquidity } from "./Liquidity";
 export { default as Infographics } from "./Infographics";
 export { default as Tos } from "./Tos";
 export { default as Contracts } from "./Contracts";
+export { default as Dao } from "./Dao";

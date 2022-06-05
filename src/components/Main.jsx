@@ -4620,6 +4620,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
             </div>
 
+            { this.state.myNfts.LeStake.length > 4 ?
+              this.renderFilters('LeStake') : null }
               <div className="restaurantSign">
                 <img width={this.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
               </div>
@@ -4651,7 +4653,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 { this.renderRestaurantInfo('TheStakeHouse') }
               </div>
             </div>
-
+            { this.state.myNfts.TheStakeHouse.length > 4 ?
+              this.renderFilters('TheStakeHouse') : null }
             <div className="restaurantSign">
               <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
             </div>

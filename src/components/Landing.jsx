@@ -161,8 +161,8 @@ class Landing extends React.Component {
         </Row>
         <Row align="middle" justify="center" style={{marginTop: 100, marginLeft: 50, marginRight: 50}}>
             <p style={{textAlign: window.innerWidth < 900 ? 'left' : 'center'}} className={`${this.getColorStyle(true)} landingText`}>
-              RatAlert is a community project.<br/>
-              Join RatAlert’s governance process with $FFOOD tokens.<br/>
+              RatAlert is a <a className="landingLink" href="/dao">DAO community project</a>.<br/>
+              Join RatAlert’s governance process with $GFOOD tokens.<br/>
               All contracts are owned by the <a target="_new" className="landingLink" href="https://gnosis-safe.io/app/matic:0xbEf526C8325C47817ceb435011bf1E6bc9ec691d/home">Gnosis 4of6 community multi signature wallet</a>.<br/>
               All contract upgrades and configuration changes subject to a <a target="_new" className="landingLink" href="https://polygonscan.com/address/0x32dd207f1f16dd4ceea94833ab9fb5dd96bc0924">48 hour timelock delay</a>.<br/>
               Steer game decisions and future development by voting for proposals in the DAO.<br/>
