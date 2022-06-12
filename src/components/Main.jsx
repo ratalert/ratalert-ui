@@ -1576,8 +1576,8 @@ class Main extends React.Component {
       paidTokens = await CharacterContract.getGen0Tokens();
       paidTokens = parseInt(paidTokens);
 
-      if (minted > paidTokens) {
-        tokenPrice = await PaywallContract.mintCost(minted, totalSupply, paidTokens);
+      if (minted >= paidTokens) {
+        tokenPrice = await PaywallContract.mintCost(minted+1, totalSupply, paidTokens);
         tokenPrice = parseFloat(ethers.utils.formatEther(tokenPrice)).toFixed(8),
         currency = 'FFOOD';
       }
@@ -1872,6 +1872,23 @@ class Main extends React.Component {
     )
   }
 
+  renderFFOODMintMessage() {
+    if (this.state.fFoodBalance === 0) {
+      return (
+        <span>You need FFOOD to mint. Buy it on <a target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap</a> with MATIC</span>
+      )
+    }
+    if (this.state.fFoodBalance < (this.state.stats.tokenPrice*this.state.mintAmount) ) {
+      return (
+        <span>You need {parseInt( (this.state.stats.tokenPrice*this.state.mintAmount) - this.state.fFoodBalance)+1 } more FFOOD to mint. Buy it on <a target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap</a> with MATIC</span>
+      )
+    }
+
+    return (
+      'All received FFOOD is burned.'
+    )
+  }
+
   renderMintContent() {
     const c = { type: 'Chef', skillLevel: this.state.loadingPercent };
     if (!this.state.dataLoaded || this.state.paywall.paywallEnabled === null) {
@@ -1969,7 +1986,7 @@ class Main extends React.Component {
         </Row>
         <Row  className="officeContent">
           <Col className="officeLine" xs={11} md={12}>
-          { this.state.stats.minted > this.state.stats.paidTokens ? <span style={{color: '#ffae00'}}>All received FFOOD is burned.</span> : null }
+          { this.state.stats.minted >= this.state.stats.paidTokens ? <span style={{color: '#ffae00'}}>{ this.renderFFOODMintMessage() }</span> : null }
           </Col>
           <Col className="officeLine" xs={11} md={12} style={{ textAlign: "left" }}>
             <b>Total price: { mintPrice > 0 ? Decimal(mintPrice).times(this.state.mintAmount).toString() : 0 } { this.state.currency }</b>
