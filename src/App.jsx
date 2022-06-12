@@ -60,9 +60,7 @@ else {
   chainId = 1337;
 }
 
-
 let appMode = process.env.REACT_APP_MODE || 'full';
-
 //targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
 
@@ -443,7 +441,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={3}
+              active={1}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -469,7 +467,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={4}
+              active={1}
               appMode={appMode}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
@@ -495,7 +493,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={3}
+              active={2}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -523,7 +521,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={4}
+              active={2}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -579,7 +577,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={6}
+              active={2}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -607,7 +605,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={7}
+              active={4}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}
@@ -663,7 +661,7 @@ function App(props) {
               writeContracts={writeContracts}
               address={address}
               provider={localProvider}
-              active={5}
+              active={3}
               injectedProvider={injectedProvider}
               setInjectedProvider={setInjectedProvider}
               dayTime={dayTime}

@@ -78,6 +78,8 @@ class RatMenu extends React.Component {
       liquidityAPR: 0,
       maticPrice: 0,
       ffoodPrice: 0,
+      cfoodPrice: 0,
+      gfoodPrice: 0,
     };
 
     this.Account = null;
@@ -105,6 +107,7 @@ class RatMenu extends React.Component {
     this.setState({ hintsEnabled: hints });
 
     const id = document.getElementById('navGame');
+    const navOther = document.getElementById('navOther');
 
     if (this.props.location.pathname === '/game') {
       // Fix active route not being set in DropDown
@@ -112,7 +115,46 @@ class RatMenu extends React.Component {
         id.className = id.className += ' ant-menu-item-selected';
       }
     }
+
+    const routes = ['/whitepaper', '/roadmap', '/faq', '/tos'];
+    if (routes.includes(this.props.location.pathname)) {
+      // Fix active route not being set in DropDown
+      if (navOther.className.indexOf('ant-menu-item-selected') === -1) {
+        navOther.className = id.className += ' ant-menu-item-selected';
+      }
+    }
+
+
+
     this.fetchAPR();
+  }
+
+  checkNav() {
+
+    const navOther = document.getElementById('navOther');
+    if (this.props.location.pathname === '/game') {
+      if (navOther && navOther.className.indexOf('ant-menu-item-selected') !== -1) {
+        let text = navOther.className;
+        text = text.replace('ant-menu-item-selected', '');
+        navOther.className = text;
+      }
+    }
+
+    const navGame = document.getElementById('navGame');
+    const routes = ['/whitepaper', '/roadmap', '/faq', '/tos'];
+    if (routes.includes(this.props.location.pathname)) {
+      if (navGame && navGame.className.indexOf('ant-menu-item-selected') !== -1) {
+        let text = navOther.className;
+        text = text.replace('ant-menu-item-selected', '');
+        navGame.className = text;
+      }
+      /*
+      if (navGame && navGame.className.indexOf('ant-menu-item-selected') === -1) {
+        navGame.className = navGame.className += ' ant-menu-item-selected';
+      }
+      */
+    }
+
   }
 
   componentWillUnmount() {
@@ -199,11 +241,42 @@ class RatMenu extends React.Component {
     this.setState({ windowHeight: window.innerHeight - 235 });
   };
 
+  async addToken(token, ticker) {
+    if (!this.props.readContracts[token]) {
+      return;
+    }
+    const tokenAddress = this.props.readContracts[token].address;
+    const tokenSymbol = ticker;
+    const tokenDecimals = 18;
+    const tokenImage = `https://ratalert.com/img/${ticker.toLowerCase()}.png`;
 
+    try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+      const wasAdded = await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+          options: {
+            address: tokenAddress, // The address that the token is at.
+            symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+            decimals: tokenDecimals, // The number of decimals in the token
+            image: tokenImage, // A string url of the token logo
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   renderIcons(show = false) {
     let uniswap;
     let opensea;
+
+    if (window.innerWidth > 0) {
+      <div className={`${this.getNavStyle()} icons`}>
+      </div>
+    }
 
     if (this.props.readContracts && this.props.readContracts.FastFood && this.props.readContracts.FastFood.address) {
       uniswap = (
@@ -212,10 +285,23 @@ class RatMenu extends React.Component {
               <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: MATIC - FFOOD</a>
             </Menu.Item>
             <Menu.Item key="u2">
-            <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/swap?exactField=input&exactAmount=10&inputCurrency=&0x7ceb23fd6bc0add59e62ac25578270cff1b9f619&outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: MATIC - WETH</a>
+              <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.CasualFood ? this.props.readContracts.CasualFood.address : null}`}>Quickswap: MATIC - CFOOD</a>
             </Menu.Item>
             <Menu.Item key="u3">
-            <Link to="/liquidity"><span style={{color: '#C1C1C1'}}>Earn {parseFloat(this.state.liquidityAPR).toFixed(0)}% APY in $FFOOD by providing liquidity!</span></Link>
+              <a className="topMenu" target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.GourmetFood ? this.props.readContracts.GourmetFood.address : null}`}>Quickswap: MATIC - GFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u4">
+              <a className="topMenu" target="_new" href={`https://dexscreener.com/polygon/0x8351e0d1373e56da6e45daa9eb44c0e634f28c68`}>DexScreener: FFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u5">
+              <a className="topMenu" target="_new" href={`https://dexscreener.com/polygon/0xb42d4b3080c83571ad1b2864a8c430972db41269`}>DexScreener: CFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u6">
+              <a className="topMenu" target="_new" href={`https://dexscreener.com/polygon/0xde60363e5f7f876c7ae383625e83ee64f43443a6`}>DexScreener: GFOOD</a>
+            </Menu.Item>
+
+            <Menu.Item key="u7">
+            <a href="https://lp.ratalert.com"><span style={{color: '#C1C1C1'}}>Earn {parseFloat(this.state.aprGFOOD).toFixed(0)}% APY in $GFOOD by providing liquidity!</span></a>
             </Menu.Item>
           </Menu>
       );
@@ -235,24 +321,46 @@ class RatMenu extends React.Component {
     }
     return (
       <div className={`${this.getNavStyle()} icons`}>
-      <Dropdown overlay={opensea}>
+
+      <span onClick={this.addToken.bind(this, 'FastFood', 'FFOOD')} className="foodToken">
+        <img style={{cursor: 'pointer', marginTop: '5px', marginRight: '10px', cursor: 'pointer'}} src="/img/ffood.png" width={32}/>
+        { this.state.ffoodPrice > 0 ? <span className={`${this.getTextStyle()}`} style={{fontSize: 11, position: 'absolute', marginTop: 38, marginLeft: -46}}>${this.state.ffoodPrice.toFixed(4)}</span> : null }
+      </span>
+      <span onClick={this.addToken.bind(this, 'CasualFood', 'CFOOD')} className="foodToken">
+        <img style={{cursor: 'pointer', marginTop: '5px', marginRight: '10px', cursor: 'pointer'}} src="/img/cfood.png" width={32}/>
+        { this.state.cfoodPrice > 0 ? <span className={`${this.getTextStyle()}`} style={{fontSize: 11, position: 'absolute', marginTop: 38, marginLeft: -46}}>${this.state.cfoodPrice.toFixed(4)}</span> : null }
+      </span>
+      <span onClick={this.addToken.bind(this, 'GourmetFood', 'GFOOD')} className="foodToken">
+        <img style={{cursor: 'pointer', marginTop: '5px', marginRight: '10px', cursor: 'pointer'}} src="/img/gfood.png" width={32}/>
+        { this.state.gfoodPrice > 0 ? <span className={`${this.getTextStyle()}`} style={{fontSize: 11, position: 'absolute', marginTop: 38, marginLeft: -46}}>${this.state.gfoodPrice.toFixed(4)}</span> : null }
+      </span>
+
+      { window.innerWidth < 800 ? <div style={{marginTop: 20}}/> : null}
+      { this.props.active === 1 && window.innerWidth > 1110? <span style={{marginRight: 70}}>
+      <span className="hintRectangle" onClick={this.toggleHints.bind(this)}>
+        { this.state.hintsEnabled ? <span className="hintOn">On</span> : <span className="hintOff">Off</span> }
+      </span>
+      <span className="hintText">Hints</span>
+      </span> : <span style={{marginRight: window.innerWidth > 1110 ? 30 : 0}}/>}
+
+      { window.innerWidth < 800 || window.innerWidth > 960 ? <Dropdown overlay={opensea}>
         <img  width={30} src="/img/opensea.svg"
-          style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
+          style={{marginTop: '5px', marginRight: '8px', cursor: 'pointer'}}
         />
-      </Dropdown>
-      <Dropdown overlay={uniswap}>
+      </Dropdown> : null }
+      { window.innerWidth < 800 || window.innerWidth > 960 ?  <Dropdown overlay={uniswap}>
           <img width={31} src="/img/quickswap.png" style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
-      </Dropdown>
+      </Dropdown> : null }
 
-      { show || window.innerWidth > 1150 ?
+      { show || window.innerWidth > 1039 ?
       <a href="https://discord.gg/RatAlert" target="_new">
         <img width={30} src="/img/discord.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
         />
       </a> : null }
 
-      { show || window.innerWidth > 1150 ?
+      { show || window.innerWidth > 1039 ?
       <a href="https://twitter.com/RatAlertNFT" target="_new">
         <img width={30} src="/img/twitter.svg"
           style={{marginTop: '5px', marginRight: '10px', cursor: 'pointer'}}
@@ -283,6 +391,28 @@ class RatMenu extends React.Component {
             <Menu.Item key={6}><Link onClick={this.toggle.bind(this)}  to="/roadmap">Roadmap</Link></Menu.Item>
             <Menu.Item key={7}><Link onClick={this.toggle.bind(this)}  to="/faq">FAQ</Link></Menu.Item>
             <Menu.Item key={8}><Link onClick={this.toggle.bind(this)}  to="/tos">ToS</Link></Menu.Item>
+            <Menu.Item key={9}><Link onClick={this.toggle.bind(this)} to="/dao">DAO</Link></Menu.Item>
+
+
+            <Menu.Item key="u1">
+              <a target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}`}>Quickswap: FFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u2">
+              <a target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.CasualFood ? this.props.readContracts.CasualFood.address : null}`}>Quickswap: CFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u3">
+              <a target="_new" href={`https://quickswap.exchange/#/swap?outputCurrency=${this.props.readContracts && this.props.readContracts.GourmetFood ? this.props.readContracts.GourmetFood.address : null}`}>Quickswap: GFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u4">
+              <a target="_new" href={`https://dexscreener.com/polygon/0x8351e0d1373e56da6e45daa9eb44c0e634f28c68`}>DexScreener: FFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u5">
+              <a target="_new" href={`https://dexscreener.com/polygon/0xb42d4b3080c83571ad1b2864a8c430972db41269`}>DexScreener: CFOOD</a>
+            </Menu.Item>
+            <Menu.Item key="u6">
+              <a target="_new" href={`https://dexscreener.com/polygon/0xde60363e5f7f876c7ae383625e83ee64f43443a6`}>DexScreener: GFOOD</a>
+            </Menu.Item>
+
           </Menu>
           { this.renderIcons(true) }
           </div>
@@ -327,6 +457,10 @@ class RatMenu extends React.Component {
 
 
   renderMenu() {
+    setTimeout(() => {
+      this.checkNav();
+    }, 100);
+
     if (window.innerWidth <= 930) {
       return (
         <div>
@@ -345,7 +479,7 @@ class RatMenu extends React.Component {
     } else {
       console.log(`No network name, ${networkName}, chainId ${chainId}`);
     }
-    if (window.innerWidth > 1332 || this.props.appMode === 'lite') {
+    if (window.innerWidth > 0 || this.props.appMode === 'lite') {
       const menu = (
           <Menu mode="horizontal">
             <Menu.Item>
@@ -359,6 +493,23 @@ class RatMenu extends React.Component {
             </Menu.Item>
           </Menu>
       );
+
+      const menuOther = (
+          <Menu mode="horizontal">
+            <Menu.Item>
+              <Link to="/whitepaper">Whitepaper</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/roadmap">Roadmap</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/faq">FAQ</Link>
+            </Menu.Item>
+            <Menu.Item>
+              <Link to="/tos">Terms of Service</Link>
+            </Menu.Item>
+          </Menu>
+      );
       return (
 
         <div className={this.getNavStyle()}>
@@ -366,17 +517,11 @@ class RatMenu extends React.Component {
             <Dropdown overlay={menu} style={{border: '1px solid red', color: 'red'}}>
               <Menu.Item id="navGame" key={1}><Link to="/game">Game&nbsp;<DownOutlined /></Link></Menu.Item>
             </Dropdown>
-            {
-              /*
-               this.props.appMode === 'full' ? <Menu.Item key={2}><Link to="/game">Game</Link></Menu.Item> : null
-               */
-            }
-            <Menu.Item key={2}><Link to="/faq">FAQ</Link></Menu.Item>
-            <Menu.Item key={3}><Link to="/whitepaper">Whitepaper</Link></Menu.Item>
-            <Menu.Item key={4}><Link to="/roadmap">Roadmap</Link></Menu.Item>
-            <Menu.Item key={5}><a href="https://lp.ratalert.com">Liquidity Program</a></Menu.Item>
-            <Menu.Item key={6}><Link to="/tos">ToS</Link></Menu.Item>
-            <Menu.Item key={7}><Link to="/dao">DAO</Link></Menu.Item>
+            <Dropdown overlay={menuOther}>
+              <Menu.Item id="navOther" key={2}><Link to={this.getLink()}>{this.getLinkName()}&nbsp;<DownOutlined /></Link></Menu.Item>
+            </Dropdown>
+            <Menu.Item key={3}><a href="https://lp.ratalert.com">Liquidity</a></Menu.Item>
+            <Menu.Item key={4}><Link to="/dao">DAO</Link></Menu.Item>
           </Menu>
         </div>
       );
@@ -453,12 +598,6 @@ class RatMenu extends React.Component {
       <div className="account"><Row><Col>
         </Col>
         <Col>
-        { this.props.active === 2 ? <div>
-        <div className="hintText">Hints</div>
-        <div className="hintRectangle" onClick={this.toggleHints.bind(this)}>
-          { this.state.hintsEnabled ? <span className="hintOn">On</span> : <span className="hintOff">Off</span> }
-        </div>
-        </div> : null}
         <Suspense fallback={<div>Loading...</div>}>
         <Account
           address={this.props.address}
@@ -485,7 +624,7 @@ class RatMenu extends React.Component {
   renderExtra() {
     return (
       <div>
-        { window.innerWidth > 1092 ? this.renderIcons() : null }
+        { window.innerWidth > 800 ? this.renderIcons() : null }
         { this.state.collapsed ?
           this.getAccountData()
           : null}
@@ -572,7 +711,12 @@ class RatMenu extends React.Component {
     }
 
     if (!bg && this.props.active === 1) {
-      return 'ratLight';
+      if (this.state.dayTime === 'night') {
+        return 'ratLight';
+      }
+      if (this.state.dayTime === 'dark') {
+        return 'ratDark';
+      }
     }
     if (bg && this.props.active === 1) {
       return 'ratLightBg';
@@ -609,6 +753,38 @@ class RatMenu extends React.Component {
 
   }
 
+  getTextStyle(bg = false) {
+    if (window.innerWidth < 900) {
+      if (!bg) {
+        if (this.state.dayTime === 'night') {
+          return 'ratDark';
+        }
+        if (this.state.dayTime === 'day') {
+          return 'ratDark';
+        }
+        if (this.state.dayTime === 'morning') {
+          return 'ratLight';
+        }
+        if (this.state.dayTime === 'evening') {
+          return 'ratLight';
+        }
+      } else {
+        if (this.state.dayTime === 'night') {
+          return 'ratLightBg';
+        }
+        if (this.state.dayTime === 'day') {
+          return 'ratLightBg';
+        }
+        if (this.state.dayTime === 'morning') {
+          return 'ratDarkBg';
+        }
+        if (this.state.dayTime === 'evening') {
+          return 'ratDarkBg';
+        }
+      }
+    }
+  }
+
   async fetchQuickswap(contract) {
     const graph = await superagent.get(`https://api.ratalert.com/graph?token0=0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270&token1=${contract}`);
     return graph.body.data;
@@ -621,6 +797,7 @@ class RatMenu extends React.Component {
 
 
   async fetchAPR(pair1, pair2, contract1, contract2) {
+    /*
     console.log('Fetching APR');
     const maticPair = await this.fetchQuickswap('0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174');
     const maticPrice = parseFloat(maticPair.pairs[0].token1Price);
@@ -639,13 +816,29 @@ class RatMenu extends React.Component {
       const apr = (((dailyRewards)*365) / aumUSD)*100;
       this.setState({ liquidityAPR: apr, maticPrice, ffoodPrice: priceUSD });
     }
+    */
+    let token = await superagent.get(`https://api.ratalert.com/token?token=FFOOD`);
+    if (token && token.body) {
+      this.setState({ aprFFOOD: token.body.apr, ffoodPrice: token.body.price });
+    }
+    token = await superagent.get(`https://api.ratalert.com/token?token=CFOOD`);
+    if (token && token.body) {
+      this.setState({ aprCFOOD: token.body.apr, cfoodPrice: token.body.price });
+    }
+    token = await superagent.get(`https://api.ratalert.com/token?token=GFOOD`);
+    if (token && token.body) {
+      this.setState({ aprGFOOD: token.body.apr, gfoodPrice: token.body.price });
+    }
 
   }
 
   getLiquidityMessage() {
       return (
         <span>
-          Want to contribute to RatAlert? Become a <a href="https://lp.ratalert.com">liquidity provider</a> and earn up to <strong>{parseFloat(this.state.liquidityAPR).toFixed(0)}%</strong> APR in FFOOD on the FFOOD/MATIC pair!
+          Want to contribute to RatAlert? Become a <a href="https://lp.ratalert.com">liquidity provider</a> and earn up to:
+          &nbsp;  <strong>{parseFloat(this.state.aprFFOOD).toFixed(0)}%</strong> APR on FFOOD/MATIC,
+          &nbsp;<strong>{parseFloat(this.state.aprCFOOD).toFixed(0)}%</strong> APR on CFOOD/MATIC,
+          &nbsp;<strong>{parseFloat(this.state.aprGFOOD).toFixed(0)}%</strong> APR on GFOOD/MATIC
         </span>
       )
   }
@@ -656,7 +849,7 @@ class RatMenu extends React.Component {
 
           <div>
 
-          { this.state.liquidityAPR > 0 ? <Alert message={this.getLiquidityMessage()} type="info" showIcon closable /> : null }
+          { this.state.aprFFOOD > 0 && this.state.aprCFOOD && this.state.aprGFOOD > 0? <Alert message={this.getLiquidityMessage()} type="info" showIcon closable /> : null }
           <div onClick={this.props.dayTimeSwitch} style={{width: skyAttr.width * 0.15, marginTop: skyAttr.height * 0.10, marginLeft: skyAttr.width * 0.82, cursor: 'pointer'}} className="daySwitcher">
           </div>
 

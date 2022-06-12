@@ -237,6 +237,17 @@ class Claims extends React.Component {
   }
 
   renderResult(data) {
+    let filename = '';
+    if (data.kitchen === 'McStake') {
+        filename = 'ffood.png';
+    }
+    if (data.kitchen === 'TheStakeHouse') {
+        filename = 'cfood.png';
+    }
+    if (data.kitchen === 'LeStake') {
+        filename = 'gfood.png';
+    }
+
     if (data.type === 'Chef') {
       return (
         <div>
@@ -263,8 +274,7 @@ class Claims extends React.Component {
             Earned:
           </Col>
           <Col span={24}>
-            <img src="/img/ffood.png"/>&nbsp;
-            {data.earned}
+            { data.earned > 0 && filename ? <div><img width={12} src={`/img/${filename}`}/>&nbsp;{data.earned}</div> : 0 }
           </Col>
         </Row>
         </div>
@@ -297,7 +307,7 @@ class Claims extends React.Component {
             Earned:
           </Col>
           <Col span={24}>
-            <img src="/img/ffood.png"/>&nbsp;
+            <img width={20} src="/img/ffood.png"/>&nbsp;
             {data.earned}
           </Col>
         </Row>
@@ -348,6 +358,9 @@ class Claims extends React.Component {
   }
 
   renderKitchen(text) {
+    if (text === 'Gym') {
+      return text;
+    }
     if (text === 'McStake') {
       return <div style={{width: 50, height: 50}} className="mcStake"/>
     }

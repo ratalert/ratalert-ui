@@ -17,11 +17,21 @@
 
 .foodToken {
   width: 20px;
-  height: 12px;
-  background-image: url("img/food-token.png");
+  height: 18px;
   margin-left: 5px;
   cursor: pointer;
 }
+
+.ffood {
+  width: 20px;
+  height: 20px;
+  background-image: url("img/ffood.png");
+  margin-left: 5px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+
 
 .foodTokenName {
   margin: 7px 0 0;
@@ -839,15 +849,12 @@
 }
 
 @media only screen and (min-width: 769px) {
-
-
-
   .loggedInButtons {
-    padding-left: 60px;
+    padding-left: 90px;
   }
 
   .loggedOutButtons {
-    padding-left: 120px;
+    padding-left: 80px;
   }
 
   .house .ant-card-body {
@@ -1202,7 +1209,8 @@
   }
 
   .loggedInButtons {
-    padding-left: 60px;
+    padding-left: 0px;
+    width: 100px;
   }
 
   .ant-page-header-heading-left {
@@ -1670,24 +1678,45 @@
 
 .account {
   float: left;
-  width: 260px;
+  width: 160px;
 }
 
-@media only screen and (min-width: 1092px) {
+
+@media only screen and (min-width: 900px) {
   .icons {
-    width: 70px;
+    width: 100px !important;
+  }
+}
+
+
+@media only screen and (min-width: 960px) {
+  .icons {
+    width: 140px !important;
+  }
+}
+
+
+@media only screen and (min-width: 1040px) {
+  .icons {
+    width: 220px !important;
+  }
+}
+
+@media only screen and (min-width: 1111px) {
+  .icons {
+    width: 290px !important;
   }
 }
 
 @media only screen and (min-width: 1150px) {
   .icons {
-    width: 115px;
+    width: 290px !important;
   }
 }
 
 @media only screen and (min-width: 1200px) {
   .icons {
-    width: 160px;
+    width: 330px !important;
   }
 }
 
@@ -2556,6 +2585,7 @@
   position: absolute;
   color: #519bff;
   padding-left: 13px;
+  margin-top: 37px;
   font-size: 12px;
 }
 .hintRectangle {
@@ -2568,7 +2598,7 @@
  border: solid 1px #519bff;
  position: absolute;
  cursor: pointer;
- margin-top: 20px;
+ margin-top: 10px;
 }
 
 .hintOn {

@@ -63,8 +63,6 @@ export default function Address(props) {
       <span style={{ verticalAlign: "middle" }}>
         <a
           style={{ color: "#222222" }}
-          target="_blank"
-          href={etherscanLink}
           rel="noopener noreferrer"
         >
           <Blockies seed={address.toLowerCase()} size={8} scale={2} />
@@ -79,8 +77,6 @@ export default function Address(props) {
       <Text editable={{ onChange: props.onChange }} copyable={{ text: address }}>
         <a
           style={{ color: "#619cff" }}
-          target="_blank"
-          href={etherscanLink}
           rel="noopener noreferrer"
         >
           {displayAddress}
@@ -92,8 +88,6 @@ export default function Address(props) {
       <Text>
         <a
           style={{ color: "#619cff" }}
-          target="_blank"
-          href={etherscanLink}
           rel="noopener noreferrer"
         >
           {displayAddress}
