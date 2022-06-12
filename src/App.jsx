@@ -28,7 +28,6 @@ let targetNetwork;
 let chainId = 0;
 let lastBlockTime = 0;
 let networkName;
-process.env.REACT_APP_ETH_ENV = 'matic';
 if (process.env.REACT_APP_ETH_ENV === 'local') {
   targetNetwork = NETWORKS.localhost;
   networkName = 'localhost';
