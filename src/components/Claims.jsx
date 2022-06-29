@@ -74,7 +74,7 @@ class Claims extends React.Component {
     let address = "";
 
     const query = `{
-       claims(orderBy: timestamp, orderDirection: desc, where: {
+       claims(first: 999, orderBy: timestamp, orderDirection: desc, where: {
          owner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
         id,owner, tokenId, tolerance,
@@ -509,7 +509,7 @@ class Claims extends React.Component {
       <Row style={{ height: "100%", 'text-align': 'center' }}>
         <Col span={24}>
         <div className="main" ref={this.tableRef}>
-          { claims.length > 0 ? <div>
+          { claims.length >= 0 ? <div>
           <span className={`claimText ${this.getTextClass()}`}>Enter the NFT ID you want to filter the events for: &nbsp;
           <InputNumber min={1} max={50000} controls={false} onChange={this.onChange.bind(this)} />
           </span>

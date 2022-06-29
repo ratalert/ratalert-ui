@@ -64,6 +64,8 @@ let appMode = process.env.REACT_APP_MODE || 'full';
 //targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
 
+
+
 const DEBUG = true;
 const NETWORKCHECK = true;
 

@@ -2689,6 +2689,22 @@
   margin-bottom: 10px;
 }
 
+.leaderboardSubHeader {
+  font-family: Pixellari;
+  font-size: 20px;
+  z-index: 99;
+  border: 0px;
+  margin-bottom: 10px;
+}
+
+.leaderboardText {
+  font-family: Pixellari;
+  font-size: 14px;
+  z-index: 99;
+  border: 0px;
+  margin-bottom: 10px;
+}
+
 .leaderboardSelect {
   margin-bottom: 30px;
 }
@@ -2884,7 +2900,20 @@ a.landingLink {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 2px;
   position: absolute;
+}
 
+.club555bg {
+  text-align: center !important;
+  width: 30px;
+  border-top: 3px solid #443a31;
+  border-left: 3px solid #443a31;
+  border-right: 3px solid #443a31;
+  font-weight: bold;
+  background-image: linear-gradient(to bottom, #d1a5a5, #ff0000);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 2px;
+  position: absolute;
 }
 
 .topMenu {
@@ -2939,4 +2968,28 @@ a.landingLink {
   background-image: url("img/ratchefs.png");
   width: 30px;
   height: 20px;
+}
+
+.club555 {
+  width: 14px;
+  height: 23px;
+  padding-left: 1px;
+  padding-top: 2px;
+  font-family: Pixellari;
+  font-size: 11px;
+  line-height: 0.96;
+  text-align: center;
+  color: #fff;
+}
+
+.club555Boosted {
+  width: 14px;
+  height: 23px;
+  padding-left: 1px;
+  padding-top: 2px;
+  font-family: Pixellari;
+  font-size: 11px;
+  line-height: 0.96;
+  text-align: center;
+  color: #ffb6b6;
 }

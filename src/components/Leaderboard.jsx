@@ -56,9 +56,27 @@ class Leaderboard extends React.Component {
       selectedKitchen: 'McStake',
       height: 0,
       dayTime: this.props.dayTime,
+      week: 0,
     };
+
     this.nftProfit = 0;
     this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
+  }
+
+  getSelectedWeek() {
+    const week0 = this.getWeekData(0);
+    const week1 = this.getWeekData(1);
+    const week2 = this.getWeekData(2);
+
+    if (this.state.week === 0) {
+      return <span>Current Week: {this.getWeek(0)}</span>
+    }
+    if (this.state.week === 1) {
+      return <span>Last Week: {this.getWeek(1)}</span>
+    }
+    if (this.state.week === 2) {
+      return <span>Week {this.getWeek(2)}</span>
+    }
   }
 
   getSelectedKitchen() {
@@ -73,9 +91,17 @@ class Leaderboard extends React.Component {
   }
 
   async selectKitchen(kitchen) {
-    this.setState({ selectedKitchen: kitchen.key} );
-    this.fetchGraph(`earned${kitchen.key}`);
+    this.setState({ loading: true, selectedKitchen: kitchen.key} );
+    //this.fetchGraph(`earned${kitchen.key}`);
+    await this.fetchClaims(kitchen.key, this.state.week);
   }
+
+  async weekSelect(week) {
+    this.setState({ week: parseInt(week.key), loading: true } );
+    //this.fetchGraph(`earned${kitchen.key}`);
+    await this.fetchClaims(this.state.selectedKitchen, parseInt(week.key));
+  }
+
 
   componentDidMount() {
     window.addEventListener("dayTime", (e) => {
@@ -92,7 +118,6 @@ class Leaderboard extends React.Component {
   }
 
   async fetchGraph(type) {
-    console.log(`Fetching ${type}`);
     let address = "";
 
     const query = `{
@@ -131,9 +156,149 @@ class Leaderboard extends React.Component {
         }
       }
     });
-    console.log(chefRats, chefRats.length);
     const state = { loading: false, dataLoaded: true, results: chefRats };
     state['results'] = chefRats;
+    this.setState(state);
+  }
+
+  getWeekData(weeksBack) {
+    var lastMonday = new Date();
+    lastMonday.setDate(lastMonday.getDate() - weeksBack * 7);
+    lastMonday.setDate(lastMonday.getDate() - (lastMonday.getDay() + 6) % 7);
+    lastMonday.setUTCHours(0);
+    lastMonday.setUTCMinutes(0);
+    lastMonday.setUTCSeconds(0);
+    const start = lastMonday.toISOString().substr(0,10);
+
+    var nextMonday = new Date();
+    nextMonday.setDate(lastMonday.getDate() + 6 );
+    nextMonday.setUTCHours(23);
+    nextMonday.setUTCMinutes(59);
+    nextMonday.setUTCSeconds(59);
+    const end = nextMonday.toISOString().substr(0,10)
+    return { start, end };
+  }
+
+  getWeek(d = false) {
+    if (d === 0) {
+        d = new Date();
+    }
+    if (d === 1) {
+        d = new Date();
+        d.setDate(d.getDate() - 1 * 7);
+    }
+    if (d === 2) {
+        d = new Date();
+        d.setDate(d.getDate() - 2 * 7);
+    }
+
+    const date = new Date(d.getTime());
+
+    // Find Thursday of this week starting on Monday
+    date.setDate(date.getDate() + 4 - (date.getDay() || 7));
+    const thursday = date.getTime();
+
+    // Find January 1st
+    date.setMonth(0); // January
+    date.setDate(1);  // 1st
+    const jan1st = date.getTime();
+
+    // Round the amount of days to compensate for daylight saving time
+    const days = Math.round((thursday - jan1st) / 86400000); // 1 day = 86400000 ms
+    return Math.floor(days / 7) + 1;
+  }
+
+  async fetchClaims(type, weeksBack = 0) {
+    console.log('Fetching', type);
+    var lastMonday = new Date();
+    lastMonday.setDate(lastMonday.getDate() - weeksBack * 7);
+    lastMonday.setDate(lastMonday.getDate() - (lastMonday.getDay() + 6) % 7);
+    lastMonday.setUTCHours(0);
+    lastMonday.setUTCMinutes(0);
+    lastMonday.setUTCSeconds(0);
+    const startTimestamp = parseInt(lastMonday.getTime() / 1000);
+    var nextMonday = new Date();
+    nextMonday.setDate(lastMonday.getDate() + 6 );
+    nextMonday.setUTCHours(0);
+    nextMonday.setUTCMinutes(0);
+    nextMonday.setUTCSeconds(0);
+    const endTimestamp = parseInt(nextMonday.getTime() / 1000);
+
+    const week = await this.getWeek(lastMonday);
+    let address = "";
+
+    const query = `{
+      claims
+      (first: 1000, where: { kitchen: "${type}" })
+      {
+        id, earned, kitchen, type, timestamp, owner, URI, tokenId, efficiency, tolerance,
+      }
+    }`;
+    const result = await graphQLClient.request(query);
+    let chefRats = [];
+    let nfts = {};
+    if (result && result.claims) {
+      result.claims.map(r => {
+        if (r.timestamp >= startTimestamp && r.timestamp <= endTimestamp) {
+          const base64 = r.URI.split(",");
+          const decoded = atob(base64[1]);
+          const json = JSON.parse(decoded);
+          r.id = parseInt(r.id, 16);
+          r.attributes = json.attributes;
+
+          if (!nfts[r.tokenId]) {
+            nfts[r.tokenId] = {};
+            //nfts[r.tokenId].id = 0;
+            nfts[r.tokenId].freak = 0;
+            nfts[r.tokenId].type = r.type;
+            nfts[r.tokenId].skill = 0;
+            nfts[r.tokenId].intelligence = 0;
+            nfts[r.tokenId].bodymass = 0;
+            nfts[r.tokenId].profit = 0;
+            nfts[r.tokenId]['img'] = json.image;
+          }
+
+          if (r.type === 'Chef') {
+            r.skill = r.efficiency;
+            r.freak = r.tolerance;
+          }
+          if (r.type === 'Rat') {
+            r.intelligence = r.efficiency;
+            r.bodymass = r.tolerance;
+          }
+
+          nfts[r.tokenId]['profit'] += parseInt(r.earned);
+          nfts[r.tokenId]['name'] = json.name;
+          nfts[r.tokenId]['owner'] = r.owner;
+          if (r.freak > nfts[r.tokenId].freak) {
+            nfts[r.tokenId]['freak'] = parseInt(r.freak);
+            nfts[r.tokenId]['img'] = json.image;
+
+          }
+          if (r.skill > nfts[r.tokenId].skill) {
+            nfts[r.tokenId]['skill'] = parseInt(r.skill);
+            nfts[r.tokenId]['img'] = json.image;
+
+          }
+          if (r.intelligence > nfts[r.tokenId].intelligence) {
+            nfts[r.tokenId]['intelligence'] = parseInt(r.intelligence);
+            nfts[r.tokenId]['img'] = json.image;
+
+          }
+          if (r.bodymass > nfts[r.tokenId].bodymass) {
+            nfts[r.tokenId]['bodymass'] = parseInt(r.bodymass);
+            nfts[r.tokenId]['img'] = json.image;
+          }
+        }
+
+      });
+    }
+    let characters = [];
+    await Object.keys(nfts).map((n) => {
+      characters.push(nfts[n]);
+    });
+    characters.sort((a,b) => b.profit - a.profit);
+    const state = { loading: false, dataLoaded: true, results: characters };
     this.setState(state);
   }
 
@@ -151,7 +316,8 @@ class Leaderboard extends React.Component {
       }
     }, 2800);
 
-    await this.fetchGraph(`earned${this.state.selectedKitchen}`);
+    //await this.fetchGraph(`earned${this.state.selectedKitchen}`);
+    await this.fetchClaims(this.state.selectedKitchen, this.state.week);
   }
 
   componentWillUnmount() {
@@ -402,15 +568,20 @@ class Leaderboard extends React.Component {
 
   renderNFTStats(c, staked, type = 'app', classNameStats, location = false) {
     let token;
-    if (location === 'McStake') {
+    let tokenImage;
+    if (this.state.selectedKitchen === 'McStake') {
       token = 'Fast Food ($FFOOD)';
+      tokenImage = 'ffood.png';
     }
-    else if (location === 'TheStakeHouse') {
+    else if (this.state.selectedKitchen === 'TheStakeHouse') {
       token = 'Casual Food ($CFOOD)';
+      tokenImage = 'cfood.png';
     }
-    else if (location === 'LeStake') {
+    else if (this.state.selectedKitchen === 'LeStake') {
       token = 'Gourmet Food ($GFOOD)';
+      tokenImage = 'gfood.png';
     }
+
     return (
       <div
       style={{height: 75}}
@@ -452,7 +623,7 @@ class Leaderboard extends React.Component {
         <Row>
           <Col style={{marginRight: '5px', marginLeft: 0}} xs={3} span={3}>
             { c.stakingLocation !== 'Gym' ? <Popover content={`Your NFT earns ${token} tokens when staked into a kitchen.`}>
-            <img src="/img/ffood.png"/>
+            <img width={16} src={`/img/${tokenImage}`}/>
             </Popover> : null }
           </Col>
           <Col span={7} className="funds" style={{color: '#fee017'}}>
@@ -542,6 +713,45 @@ class Leaderboard extends React.Component {
     if (this.state.dayTime === 'evening') {
       return 'black';
     }
+  }
+
+  getCompetitionProfit(place) {
+    switch (this.state.selectedKitchen) {
+      case 'McStake':
+      if (place === 1) {
+        return '1000 FFOOD';
+      }
+      if (place === 2) {
+        return '500 FFOOD';
+      }
+      if (place === 3) {
+        return '250 FFOOD';
+      }
+      break;
+      case 'TheStakeHouse':
+      if (place === 1) {
+        return '400 CFOOD';
+      }
+      if (place === 2) {
+        return '200 CFOOD';
+      }
+      if (place === 3) {
+        return '100 CFOOD';
+      }
+      break;
+      case 'LeStake':
+      if (place === 1) {
+        return '40 CFOOD';
+      }
+      if (place === 2) {
+        return '20 GFOOD';
+      }
+      if (place === 3) {
+        return '10 GFOOD';
+      }
+      break;
+    }
+    return 0;
   }
 
   renderLeaderBoard() {
@@ -661,6 +871,18 @@ class Leaderboard extends React.Component {
       </Menu>
     );
 
+    const week0 = this.getWeekData(0);
+    const week1 = this.getWeekData(1);
+    const week2 = this.getWeekData(2);
+
+    const weekSelect = (
+      <Menu onClick={this.weekSelect.bind(this)}>
+        <Menu.Item key="0">Current Week {this.getWeek(0)}: {week0.start} - {week0.end}</Menu.Item>
+        <Menu.Item key="1">Last week {this.getWeek(1)}: {week1.start} - {week1.end}</Menu.Item>
+        <Menu.Item key="2">Week {this.getWeek(2)}: {week2.start} - {week2.end}</Menu.Item>
+      </Menu>
+    );
+
 
     return (
       <div>
@@ -674,7 +896,8 @@ class Leaderboard extends React.Component {
         </Col>
       </Row>
       <Row style={{ height: "100%", 'text-align': 'center' }}>
-        <Col span={24}>
+        <Col xs={4} lg={8}/>
+        <Col xs={8} lg={4}>
         <div className="leaderboardSelect">
         <Dropdown className="web3ButtonBlack" type={"default"} overlay={kitchenSelect}>
           <Button>
@@ -682,6 +905,39 @@ class Leaderboard extends React.Component {
           </Button>
         </Dropdown>
         </div>
+        </Col>
+        <Col xs={8} lg={4}>
+        <div className="leaderboardSelect">
+        <Dropdown className="web3ButtonBlack" type={"default"} overlay={weekSelect}>
+          <Button>
+            {this.getSelectedWeek()} <DownOutlined/>
+          </Button>
+        </Dropdown>
+        </div>
+        </Col>
+      </Row>
+      <Row style={{ height: "100%", 'text-align': 'left' }}>
+        <Col xs={1} lg={7}/>
+        <Col xs={20} lg={10}>
+          <div className={`leaderboardSubHeader ${this.getTextClass()}`}>
+            {this.state.selectedKitchen} Leaderboard Competition Rules:
+          </div>
+          <p className={`leaderboardText ${this.getTextClass()}`}>
+          <ul>
+            <li>Each week, a new leaderboard competition starts, for each kitchen. Each week starts on Monday 00:00 UTC to Sunday 23:59:59 UTC.</li>
+            <li>To participate, just regularly claim profit from your NFT. Accumulated Profit for each NFT in the leaderboard is automatically summed up.</li>
+            <li>The NFTs that are on Place #1, #2, #3 on Sunday at 23:59:59 win these prizes:
+              <ul>
+                <li>Top #1: {this.getCompetitionProfit(1)}</li>
+                <li>Top #2: {this.getCompetitionProfit(2)}</li>
+                <li>Top #3: {this.getCompetitionProfit(3)}</li>
+              </ul>
+            </li>
+          <li>You can participate in all kitchens you have NFTs in!</li>
+          <li>Winners are announced on the following Monday in our Discord server.</li>
+          <li>Winnings are air-dropped once a month, announcement in our Discord server will be made.</li>
+          </ul>
+          </p>
         </Col>
       </Row>
       <Row style={{ height: "100%", 'text-align': 'center' }}>

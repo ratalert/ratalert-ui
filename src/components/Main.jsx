@@ -831,7 +831,7 @@ class Main extends React.Component {
         }
       }`;
 
-    const query2 = `{ characters(where: {
+    const query2 = `{ characters(first: 1000, where: {
           mcstakeStakingOwner: "${this.props.address || "0x2f7CdD90AB83405654eE10FC916a582a3cDe7E6F"}"
         }) {
           id, staked, owner, mcstakeStakedTimestamp, mcstakeLastClaimTimestamp, URI,
@@ -1710,7 +1710,7 @@ class Main extends React.Component {
       let paywallEnabled = await PaywallContract.onlyWhitelist();
       let whitelistCount = 0;
       let freeMints = 0;
-      whitelistCount = await PaywallContract.whitelist(this.props.address);
+      //whitelistCount = await PaywallContract.whitelist(this.props.address);
       freeMints = await PaywallContract.freeMints(this.props.address);
       console.log(`Paywall fetch ${this.props.address} WL ${whitelistCount} MINT ${freeMints}`);
       if ((freeMints > 0) && (whitelistCount > 0)) {
@@ -2028,10 +2028,11 @@ class Main extends React.Component {
             hash[m.trait_type] = m.value;
           });
           if (type !== null && json.name && json.attributes[0].value === type && parseInt(r.staked) == parseInt(staked)) {
-
             const nftObj = {
               name: parseInt(r.id, 16),
-              whitelisted: hash['Boost'] === 1 ? true : false,
+              whitelisted: false,
+              club555Boosted: hash['Generation'] === 'Gen 0' && hash['Boost'] === 2 ? true : false,
+              club555NotBoosted: hash['Generation'] === 'Gen 0' && hash['Boost'] !== 2 ? true : false,
               description: json.name,
               mcstakeTimestamp: parseInt(r.mcstakeStakedTimestamp),
               mcstakeLastClaimTimestamp: parseInt(r.mcstakeLastClaimTimestamp),
@@ -2059,7 +2060,9 @@ class Main extends React.Component {
           }
           if (type === null && json.name && r.staked == staked && r.stakingLocation == location) {
             const nftObj = {
-              whitelisted: hash['Boost'] === 1 ? true : false,
+              whitelisted: false,
+              club555Boosted: hash['Generation'] === 'Gen 0' && hash['Boost'] === 2 ? true : false,
+              club555NotBoosted: hash['Generation'] === 'Gen 0' && hash['Boost'] !== 2 ? true : false,
               name: parseInt(r.id, 16),
               image: json.image,
               description: json.name,
@@ -2704,7 +2707,15 @@ class Main extends React.Component {
     return (
       <div className="nftCardFlipInner">
       <span >
-        { c.whitelisted ? <Popover content={'This NFT is whitedlisted, it enjoys a permanent 1% boost experience upgrade. You will earn an extra 1% skill on every claim or unstake.'}><div className="whitelist"><img src="/img/boost.png"/></div></Popover> : null}
+        { c.club555NotBoosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features.'}>
+        <div className="whitelist"><div className="club555">555 Club</div></div>
+        </Popover> : null}
+
+        { c.club555Boosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features. The 2% permanant boost is already applied.'}>
+        <div className="club555bg"><div className="club555Boosted">555 Club</div></div>
+        </Popover> : null}
+
+
         { type === 'app' ? <div className="nftId"><span style={{color: '#000000'}}>#</span>
 
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
