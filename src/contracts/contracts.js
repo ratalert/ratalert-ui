@@ -60,6 +60,7 @@ const TheStakeHouseMatic = require('./abis/matic/TheStakeHouse.json');
 const PaywallMatic = require('./abis/matic/Paywall.json');
 const KitchenUsageMatic = require('./abis/matic/KitchenUsage.json');
 const ConfigMatic = require('./abis/matic/Config.json');
+const TripleFiveClubMatic = require('./abis/matic/TripleFiveClub.json');
 
 
 export const contracts = {
@@ -315,6 +316,10 @@ export const contracts = {
         "Config": {
           "address": config.matic.Config,
           "abi": ConfigMatic,
+        },
+        "TripleFiveClub": {
+          "address": config.matic.TripleFiveClub,
+          "abi": TripleFiveClubMatic,
         }
       }
     },

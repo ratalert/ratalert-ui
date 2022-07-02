@@ -63,6 +63,39 @@
   height: 300px;
 }
 
+
+.tripleFiveClubScene {
+  background-image: url("img/triple_five_scene.png");
+  height: 300px;
+}
+
+.tripleFiveClubSceneMobile {
+  background-image: url("img/triple_five_scene_mobile.png");
+  height: 300px;
+
+}
+
+
+
+.tripleFiveSeparator {
+  position: absolute;
+  width: 1px;
+  border: 1px solid #fff;
+  height: 37px;
+  left: 39px;
+  top: 38px;
+}
+.tripleFiveSignContent {
+  padding-left: 8px;
+  padding-right: 2px;
+  padding-top: 10px;
+  font-family: Pixellari;
+  font-size: 11px;
+  color: #FFFFFF;
+
+}
+
+
 .gourmetSceneNight {
   background-image: url("img/gourmet_scene.gif");
   height: 300px;
@@ -455,6 +488,15 @@
 
 
 @media only screen and (min-width: 900px) {
+  .tripleFiveSign {
+    background-image: url("img/tripleFiveClubSign.png");
+    width: 80px;
+    height: 143px;
+    position: absolute;
+    left: 50px;
+    top: 130px;
+  }
+
   .casualScene {
     width: 180px !important;
   }
@@ -1120,6 +1162,15 @@
 
 @media only screen and (max-width: 899px) {
 
+  .tripleFiveSign {
+    background-image: url("img/tripleFiveClubSign.png");
+    width: 80px;
+    height: 143px;
+    position: absolute;
+    left: 220px;
+    top: 160px;
+  }
+
   .levelUpDone {
     font-family: "Pixellari";
     font-size: 11px;
@@ -1238,6 +1289,8 @@
     font-size: 14px;
     color: #a09595;
   }
+
+
 
   .time {
     margin-left: 4px;
@@ -2006,6 +2059,12 @@
   background-image: url("img/gym.png");
   height: 300px;
 }
+
+.tripleFiveClub {
+  background-image: url("img/tripleFiveClub.png");
+  height: 300px;
+}
+
 
 .fastFoodKitchen {
   background-image: url("img/ffood_kitchen.png");
@@ -2992,4 +3051,22 @@ a.landingLink {
   line-height: 0.96;
   text-align: center;
   color: #ffb6b6;
+}
+
+.greenContent {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #13e969;
+}
+
+.freakContent {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #fc24ff;
+}
+
+.bodyMassContent {
+  font-family: Pixellari;
+  font-size: 14px;
+  color: #ffae00;
 }

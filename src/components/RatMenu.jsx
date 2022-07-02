@@ -111,16 +111,20 @@ class RatMenu extends React.Component {
 
     if (this.props.location.pathname === '/game') {
       // Fix active route not being set in DropDown
-      if (id.className.indexOf('ant-menu-item-selected') === -1) {
-        id.className = id.className += ' ant-menu-item-selected';
+      if (id) {
+        if (id.className.indexOf('ant-menu-item-selected') === -1) {
+          id.className = id.className += ' ant-menu-item-selected';
+        }
       }
     }
 
     const routes = ['/whitepaper', '/roadmap', '/faq', '/tos'];
     if (routes.includes(this.props.location.pathname)) {
       // Fix active route not being set in DropDown
-      if (navOther.className.indexOf('ant-menu-item-selected') === -1) {
-        navOther.className = id.className += ' ant-menu-item-selected';
+      if (navOther) {
+        if (navOther.className.indexOf('ant-menu-item-selected') === -1) {
+          navOther.className = id.className += ' ant-menu-item-selected';
+        }
       }
     }
 

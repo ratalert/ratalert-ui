@@ -73,6 +73,7 @@ import {
   DownOutlined,
   PlusSquareOutlined,
   MinusSquareOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 
 
@@ -85,6 +86,8 @@ class Main extends React.Component {
     this.mobileBreakpoint = 899;
     this.tableBreakpoint = 900;
     this.officeBreakpoint = 1160;
+    this.openDoor = 0;
+
     this.loadingStarted = false;
     this.ratHeight = 0;
     this.nfts = {};
@@ -104,7 +107,7 @@ class Main extends React.Component {
       kitchenConfig = config[networkName].loggedOut;
     }
     console.log(`Network name: ${networkName}, kitchenConfig: ${kitchenConfig}, chainId ${chainId}`);
-    this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym'];
+    this.stakingLocations = ['McStake', 'TheStakeHouse', 'LeStake', 'Gym', 'TripleFiveClub'];
     this.maxSelectedNFTs = 6;
     this.firstGraphLoad = true;
     this.state = {
@@ -151,6 +154,10 @@ class Main extends React.Component {
           showTime: false,
           separateNFTs: false,
         },
+        TripleFiveClub: {
+          showTime: false,
+          separateNFTs: false,
+        },
       },
 
       myNfts: {
@@ -166,6 +173,10 @@ class Main extends React.Component {
         LeStake: [],
         LeStakeChefs: [],
         LeStakeRats: [],
+        TripleFiveClub: [],
+        TripleFiveClubChefs: [],
+        TripleFiveClubRats: [],
+
       },
       noBalance: false,
       localBalance: 0,
@@ -250,6 +261,12 @@ class Main extends React.Component {
         ratTax: 0,
         maxSupply: 0,
         mintPrice: 0,
+        tripleFiveClubStakedGen1: 0,
+        maxTripleFiveGen1: 0,
+        tripleFiveClubBoostLevel: 0,
+        tripleFiveClubDailyFreakRate: 0,
+        tripleFiveClubDailyBodyMassRate: 0,
+        tripleFiveVestingTime: 0,
       },
     };
     this.nftProfit = 0;
@@ -650,6 +667,16 @@ class Main extends React.Component {
       LeStakeContract.on("ChefClaimed", this.chefClaimed.bind(this, 'GFOOD'));
       LeStakeContract.on("RatClaimed", this.ratClaimed.bind(this, 'GFOOD'));
 
+
+      const GymContract = new ethers.Contract(config[networkName].Gym,
+        contracts[chainId][networkName].contracts.Gym.abi, this.props.provider);
+      GymContract.on("ChefClaimed", this.chefClaimed.bind(this, false));
+      GymContract.on("RatClaimed", this.ratClaimed.bind(this, false));
+
+      const TripleFiveClubContract = new ethers.Contract(config[networkName].TripleFiveClub,
+        contracts[chainId][networkName].contracts.TripleFiveClub.abi, this.props.provider);
+      TripleFiveClubContract.on("ChefClaimed", this.chefClaimed.bind(this, false));
+      TripleFiveClubContract.on("RatClaimed", this.ratClaimed.bind(this, false));
 
   }
 
@@ -1055,6 +1082,19 @@ class Main extends React.Component {
         }
 
         nftCount += nfts.LeStake.length;
+
+
+        nfts.TripleFiveClub = this.parseNFTStruct(1, null, 'TripleFiveClub', result2, result1);
+        nfts.TripleFiveClubChefs = this.parseNFTStruct(1, null, 'TripleFiveClub', result2, result1, 'chef');
+        nfts.TripleFiveClubRats = this.parseNFTStruct(1, null, 'TripleFiveClub', result2, result1, 'rat');
+
+        if (this.state.filter['TripleFiveClub'].separateNFTs) {
+          nfts.TripleFiveClub = nfts.TripleFiveClubRats.concat(nfts.TripleFiveClubChefs);
+        }
+
+        nftCount += nfts.TripleFiveClub.length;
+
+
         this.setState({ myNfts: nfts, nftCount });
       }
     }, 150);
@@ -1280,6 +1320,11 @@ class Main extends React.Component {
     return this.renderNFT(null, 1, "LeStake");
   }
 
+  renderStakedAtTripleFiveClub() {
+    return this.renderNFT(null, 1, "TripleFiveClub");
+  }
+
+
   async updateMintTimer() {
     console.log('Updating mint timer..');
     const mintActiveTimer = this.state.mintActiveTimer;
@@ -1366,6 +1411,7 @@ class Main extends React.Component {
     let gymApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.Gym.address);
     let theStakeHouseApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.TheStakeHouse.address);
     let leStakeApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.LeStake.address);
+    let tripleFiveClubApproved = await contract.isApprovedForAll(this.props.address, this.props.readContracts.TripleFiveClub.address);
 
     const KitchenShopContract = new ethers.Contract(config[networkName].KitchenShop,
       contracts[chainId][networkName].contracts.KitchenShop.abi, this.props.provider);
@@ -1377,6 +1423,7 @@ class Main extends React.Component {
       'TheStakeHouse': theStakeHouseApproved,
       'LeStake': leStakeApproved,
       'KitchenShop': kitchenShopApproved,
+      'TripleFiveClub': tripleFiveClubApproved,
     }
     console.log('KITCHEN', isApprovedForAll);
     this.setState({isApprovedForAll});
@@ -1555,6 +1602,10 @@ class Main extends React.Component {
           contracts[chainId][networkName].contracts.Config.abi, this.props.provider);
 
 
+    const TripleFiveClubContract = new ethers.Contract(config[networkName].TripleFiveClub,
+                contracts[chainId][networkName].contracts.TripleFiveClub.abi, this.props.provider);
+
+
 
     // if (this.props.debug) console.log('DEBUG Init Contracts', CharacterContract.address, JSON.stringify(contracts[chainId][networkName].contracts.Character.abi));
     let totalSupply;
@@ -1567,8 +1618,12 @@ class Main extends React.Component {
     let gymPaused;
     let leStakePaused = false;
     let tokenPrice;
+    let tripleFiveClubStakedGen1;
     let currency = 'MATIC';
     try {
+
+      tripleFiveClubStakedGen1 = await TripleFiveClubContract.getStakedGen1();
+      tripleFiveClubStakedGen1 = parseFloat(ethers.utils.formatEther(tripleFiveClubStakedGen1)).toFixed(0),
       minted = await CharacterContract.minted();
       totalSupply = await CharacterContract.maxTokens();
       totalSupply = parseInt(totalSupply);
@@ -1635,6 +1690,9 @@ class Main extends React.Component {
     let ratEfficiencyMultiplier = parseInt(json.McStake.Kitchen.ratEfficiencyMultiplier);
     let ratEfficiencyOffset = parseInt(json.McStake.Kitchen.ratEfficiencyOffset);
     let claimFee = parseFloat(ethers.utils.formatEther(json.McStake.Venue.claimFee)).toFixed(8);
+    const tripleFiveClubGen0Price = parseFloat(ethers.utils.formatEther(json.TripleFiveClub.entranceFees.gen0)).toFixed(2);
+    const tripleFiveClubGen1Price = parseFloat(ethers.utils.formatEther(json.TripleFiveClub.entranceFees.gen1)).toFixed(2);
+
     const TheStakeHouseMinEfficiency = parseInt(json.TheStakehouse.EntrepreneurialKitchen.minEfficiency );
     const LeStakeMinEfficiency = parseInt(json.LeStake.EntrepreneurialKitchen.minEfficiency);
     // let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
@@ -1690,8 +1748,20 @@ class Main extends React.Component {
       gymPaused,
       claimFee,
       tokenPrice,
+      tripleFiveClubStakedGen1,
+      tripleFiveClubGen0Price,
+      tripleFiveClubGen1Price,
+      maxTripleFiveGen1: json.TripleFiveClub.maxConcurrentGen1,
+      tripleFiveClubBoostLevel: json.TripleFiveClub.boostLevel,
+      tripleFiveClubDailyFreakRate: json.TripleFiveClub.Venue.dailyFreakRate,
+      tripleFiveClubDailyBodyMassRate: json.TripleFiveClub.Venue.dailyBodyMassRate,
+      tripleFiveVestingTime: json.TripleFiveClub.Venue.vestingPeriod / 60 / 60,
+      tripleFiveWeekModuluStart: json.TripleFiveClub.weekModulo.start,
+      tripleFiveWeekModuluEnd: json.TripleFiveClub.weekModulo.end,
     };
     console.log('STATS', stats);
+//    const ts = new Date().getTime() / 1000;
+//    console.log(ts % 604800);
     this.setState({ stats, currency });
 
     if (this.state.paywall.paywallEnabled === null) {
@@ -2032,6 +2102,7 @@ class Main extends React.Component {
               name: parseInt(r.id, 16),
               whitelisted: false,
               club555Boosted: hash['Generation'] === 'Gen 0' && hash['Boost'] === 2 ? true : false,
+              generation: hash['Generation'] === 'Gen 0' ? 0 : 1,
               club555NotBoosted: hash['Generation'] === 'Gen 0' && hash['Boost'] !== 2 ? true : false,
               description: json.name,
               mcstakeTimestamp: parseInt(r.mcstakeStakedTimestamp),
@@ -2063,6 +2134,7 @@ class Main extends React.Component {
               whitelisted: false,
               club555Boosted: hash['Generation'] === 'Gen 0' && hash['Boost'] === 2 ? true : false,
               club555NotBoosted: hash['Generation'] === 'Gen 0' && hash['Boost'] !== 2 ? true : false,
+              generation: hash['Generation'] === 'Gen 0' ? 0 : 1,
               name: parseInt(r.id, 16),
               image: json.image,
               description: json.name,
@@ -2132,6 +2204,9 @@ class Main extends React.Component {
     }
     if (type === null && staked === 1 && location === 'LeStake') {
       nft = Object.assign([], this.state.myNfts.LeStake);
+    }
+    if (type === null && staked === 1 && location === 'TripleFiveClub') {
+      nft = Object.assign([], this.state.myNfts.TripleFiveClub);
     }
 
     let nftsPerRow = 0;
@@ -2264,6 +2339,13 @@ class Main extends React.Component {
       className = "parallax gym";
       widthType = 'kitchen';
     }
+
+    if (staked === 1 && location === 'TripleFiveClub') {
+      className = "parallax tripleFiveClub";
+      widthType = 'kitchen';
+    }
+
+
 
     if (type === 'Chef') {
       className = "parallax chefWaitingRoom"
@@ -2636,12 +2718,12 @@ class Main extends React.Component {
 
         <Row>
           <Col style={{marginRight: '5px', marginLeft: '0px'}} xs={3} span={2}>
-            { c.stakingLocation !== 'Gym' ? <Popover content={`Your NFT earns ${token} tokens when staked into a kitchen.`}>
+            { c.stakingLocation !== 'Gym' && c.stakingLocation !== 'TripleFiveClub' ? <Popover content={`Your NFT earns ${token} tokens when staked into a kitchen.`}>
             <img width={20} src={`/img/${tokenImage}`}/>
             </Popover> : null }
           </Col>
           <Col span={7} className="funds" style={{color: '#fee017'}}>
-            { c.stakingLocation !== 'Gym' ?
+            { c.stakingLocation !== 'Gym' && c.stakingLocation !== 'TripleFiveClub' ?
             <Popover content={`Amount of ${token} your NFTs have accumulated. Claim or unstake the NFT to retrieve the profit.`}>
               {this.renderNftProfit(c.type, c.mcstakeTimestamp, c.mcstakeLastClaimTimestamp, c.type == 'Chef' ? c.skillLevel : c.intelligenceLevel, c.type == 'Chef' ? c.freakLevel : c.bodymassLevel, c.name, c.owed, c.stakingLocation)}
             </Popover> : null }
@@ -2707,13 +2789,22 @@ class Main extends React.Component {
     return (
       <div className="nftCardFlipInner">
       <span >
-        { c.club555NotBoosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features.'}>
-        <div className="whitelist"><div className="club555">555 Club</div></div>
-        </Popover> : null}
 
-        { c.club555Boosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features. The 2% permanant boost is already applied.'}>
-        <div className="club555bg"><div className="club555Boosted">555 Club</div></div>
-        </Popover> : null}
+        { type === 'app' ?
+        <div>
+          { c.club555NotBoosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features. The 2% permanent boost has not yet been applied. Stake it into the 555 Club to enable the boost.'}>
+          <div className="whitelist"><div className="club555">555 Club</div></div>
+          </Popover> : null}
+
+          { c.club555Boosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features. The 2% permanant boost is already applied.'}>
+          <div className="club555bg"><div className="club555Boosted">555 Club</div></div>
+          </Popover> : null}
+        </div> :
+        <div>
+        <span style={{marginTop: -33, fontSize: '10px'}} className={"club555bg"}>
+          <span className={c.club555NotBoosted ? 'whitelist' : 'club555Boosted'}>Club 555</span>
+        </span>
+        </div> }
 
 
         { type === 'app' ? <div className="nftId"><span style={{color: '#000000'}}>#</span>
@@ -2981,6 +3072,8 @@ class Main extends React.Component {
       break;
       case 'KitchenShop':
           contract = 'KitchenShop';
+      case 'TripleFiveClub':
+          contract = 'TripleFiveClub';
     }
     return contract;
   }
@@ -3122,6 +3215,10 @@ class Main extends React.Component {
     if (type === 'LeStake') {
       nft = Object.assign([], this.state.myNfts.LeStake.map((i) => i.name));
     }
+    if (type === 'TripleFiveClub') {
+      nft = Object.assign([], this.state.myNfts.TripleFiveClub.map((i) => i.name));
+    }
+
     const error = this.prepareUnstakeErrors(nft);
     if (error) {
       return false;
@@ -3218,11 +3315,14 @@ class Main extends React.Component {
   prepareStakeErrors(selectedToStakeNfts, location) {
     let errors = [];
     let error = false;
+    const dayOfWeek = new Date().getDay();
+    let totalCost = 0;
     selectedToStakeNfts.map((m) => {
       const nft = this.nfts[m];
       let minEfficiency = 0;
       let limit;
       let limitReached = false;
+
       if (location === 'TheStakeHouse') {
         minEfficiency = this.state.stats.TheStakeHouseMinEfficiency;
       }
@@ -3242,6 +3342,25 @@ class Main extends React.Component {
           limitReached = true;
         }
       }
+
+      if (location === 'TripleFiveClub') {
+        if ((nft.generation === 1) && (this.openDoor !== dayOfWeek)) {
+          errors.push({
+            text: `${nft.description} cannot be staked into ${location} because Generation1 can only enter 555 Club on Sundays.`,
+            id: nft.name,
+          });
+        }
+
+        if (nft.generation === 0) {
+          totalCost += this.state.stats.tripleFiveClubGen0Price;
+        }
+        if (nft.generation === 1) {
+          totalCost += this.state.stats.tripleFiveClubGen0Price;
+        }
+
+      }
+
+
       if (limitReached) {
         errors.push({
           text: `${nft.description} cannot be staked into ${location} because your kitchen is full. Click on Buy kitchen Space to buy more kitchen space.`,
@@ -3262,6 +3381,14 @@ class Main extends React.Component {
         });
       }
     });
+
+    if (totalCost > 0 && this.state.gFoodBalance < totalCost) {
+      errors.push({
+        text: `Insufficient balance to enter 555 Club. You need to have at least ${totalCost} GFOOD in total to enter the club with your selected NFTs.`,
+        id: 0,
+      });
+    }
+
     if (errors.length > 0) {
       this.setState({ isErrorModalVisible: true, errors });
       error = true;
@@ -3514,6 +3641,8 @@ class Main extends React.Component {
         <Menu.Item key="TheStakeHouse" disabled={this.state.casualKitchenAmount > 0 ? false : true}>to TheStakeHouse</Menu.Item>
         <Menu.Item key="LeStake" disabled={this.state.gourmetKitchenAmount > 0 ? false : true}>to LeStake</Menu.Item>
         <Menu.Item key="Gym">to MuscleBox</Menu.Item>
+        <Menu.Item key="TripleFiveClub">to Club 555</Menu.Item>
+
       </Menu>
     );
     const menuStake = (
@@ -3522,6 +3651,7 @@ class Main extends React.Component {
         <Menu.Item key="TheStakeHouse" disabled={this.state.casualKitchenAmount > 0 ? false : true}>to TheStakeHouse</Menu.Item>
         <Menu.Item key="LeStake" disabled={this.state.gourmetKitchenAmount > 0 ? false : true}>to LeStake</Menu.Item>
         <Menu.Item key="Gym">to MuscleBox</Menu.Item>
+        <Menu.Item key="TripleFiveClub">to 555 Club</Menu.Item>
       </Menu>
     );
 
@@ -3591,6 +3721,9 @@ class Main extends React.Component {
     }
     else if (location === 'LeStake') {
       nft = Object.assign([], this.state.myNfts.LeStake.map((i) => i.name));
+    }
+    else if (location === 'TripleFiveClub') {
+      nft = Object.assign([], this.state.myNfts.TripleFiveClub.map((i) => i.name));
     }
     return nft;
   }
@@ -3703,7 +3836,7 @@ class Main extends React.Component {
 
     const height = this.getButtonHeight();
     let activeText;
-    if (type !== 'Gym') {
+    if (type !== 'Gym' && type !== 'TripleFiveClub') {
       activeText = <span>Level up & Claim <img style={{paddingLeft: '1px', paddingRight: '1px', marginTop: '-5px'}} width={20} src={`/img/${image}`}/></span>
     } else {
       activeText = <span>Level up!</span>
@@ -4301,6 +4434,105 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       currency = '$GFOOD';
     }
 
+    if (type === 'TripleFiveClub') {
+      return (
+        <div style={{height: 300, width: '100%', paddingLeft: 20, paddingTop: 0 }} className={'buttonShade'}>
+          <div className="kitchenInfoContent">
+          <Row>
+          <Col span={24}>
+            <span style={{textDecoration: 'underline'}}>Requirements to enter:</span>
+          </Col>
+          </Row>
+          <Row style={{marginTop: 10}}>
+          </Row>
+          <Row>
+            <Col span={24}>
+              Generation 0 only
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={24}>
+              Except on Sundays:
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              max. {this.state.stats.maxTripleFiveGen1} Gen1 every 10h
+            </Col>
+          </Row>
+
+          <Row style={{marginTop: 10}}>
+          <Col span={24}>
+            <span style={{textDecoration: 'underline'}}>Rewards:</span>
+          </Col>
+          </Row>
+
+          <Row>
+            <Col span={24}>
+              Generation 0:
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <span className="greenContent">{this.state.stats.tripleFiveClubBoostLevel}% permanent boost</span>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={24}>
+              at first unstake
+            </Col>
+          </Row>
+
+          <Row style={{marginTop: 10}}>
+            <Col span={24}>
+              All generations:
+            </Col>
+          </Row>
+          <Row>
+            <Col span={6}>
+              Chefs
+            </Col>
+            <Col span={5}>
+              <span className="freakContent">{this.state.stats.tripleFiveClubDailyFreakRate}%</span>
+            </Col>
+            <Col span={12}>
+              <img src="/img/insanity.png"/>
+              Freak
+            </Col>
+          </Row>
+          <Row>
+            <Col span={6}>
+              Rats
+            </Col>
+            <Col span={5}>
+              <span className="bodyMassContent">{this.state.stats.tripleFiveClubDailyBodyMassRate}%</span>
+            </Col>
+            <Col span={12}>
+              <img src="/img/fatness.png"/>
+              Bodymass
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={24}>
+              Vesting time: <span className="greenContent">{parseFloat(this.state.stats.tripleFiveVestingTime).toFixed(2)} hours</span>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={24}>
+              <span style={{textDecoration: 'underline'}}>2x as effective as Gym!</span>
+            </Col>
+          </Row>
+
+
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div style={{height: 300, width: '100%', paddingLeft: 20, paddingTop: 0 }} className={'buttonShade'}>
         { minimum > 0 ? <div className="kitchenInfoContent">
@@ -4411,7 +4643,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
   renderRestaurantCallToActions(type) {
     if (this.state.myNfts[type].length === 0) {
-      if ((type === 'TheStakeHouse') || (type === 'LeStake')) {
+      if ((type === 'TheStakeHouse') || (type === 'LeStake') || (type === 'TripleFiveClub')) {
         let show = false;
         if ((type === 'TheStakeHouse') && (this.state.casualKitchenAmount > 0)) {
           show = true;
@@ -4446,6 +4678,9 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       marginTop = 205;
     } else if (type === 'Gym') {
       height = 30;
+    } else if (type === 'TripleFiveClub') {
+      height = 30;
+      marginTop = 30;
     }
 
     let paused = false;
@@ -4647,6 +4882,8 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     if (this.nfts && this.nfts[3]) {
       c = this.nfts[3];
     }
+
+    const dayOfWeek = new Date().getDay();
     return (
 
       <div className="stakeHouse" style={this.getWidth('townhouse')}>
@@ -4668,6 +4905,86 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 </div>
               </div>
             </Col>
+          </Row>
+        </Card>
+        <div className="floor"/>
+
+        <Card className="house kitchenMargin" size="small">
+          <Row >
+            <Col span={this.innerWidth < 900 ? 24 : null} style={{width: '180px'}}>
+
+
+            <div className={`card ${this.state.kitchenFlipState['TripleFiveClub']}`}>
+              <div style={{ marginTop: 0, width: kitchenWidth.width }}  className={`card__face card__face--front parallax casualScene ${this.innerWidth < 900 ? 'tripleFiveClubSceneMobile' : 'tripleFiveClubScene'}`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'TripleFiveClub') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                <div className="tripleFiveSign">
+                  <div className="tripleFiveSeparator"/>
+                  <div className="tripleFiveSignContent">
+                  <Row>
+                    <Col span={24}>Entry fee:</Col>
+                  </Row>
+                  <Row style={{marginTop: 10}}>
+                    <Col span={12}>Gen0</Col>
+                    <Col span={12}>Gen1</Col>
+                  </Row>
+                  <Row>
+                    <Col span={12}>0.1 <img style={{marginLeft: -4}} width={12} src={'/img/gfood.png'}/></Col>
+                    <Col span={12}>
+
+                    {
+                      dayOfWeek === this.openDoor ?
+                      <div style={{paddingLeft: 5}}>1 <img style={{marginLeft: -4}} width={12} src={'/img/gfood.png'}/></div> :
+                      <div><CloseOutlined style={{color: '#ec6e6e', paddingLeft: 8}}/></div>
+                    }
+
+
+                    </Col>
+                  </Row>
+                  { dayOfWeek === this.openDoor ? <div>
+                  <Row style={{marginTop: 10}}>
+                    <Col span={24}>Gen1 entry:</Col>
+                  </Row>
+                  <Row>
+                    <Col span={24}><u>{ this.state.stats.maxTripleFiveGen1 - this.state.stats.tripleFiveClubStakedGen1 }</u> slots left</Col>
+                  </Row>
+                  </div> :
+
+                  <div>
+                    <Row style={{marginTop: 5}}>
+                      <Col span={24}>555Club open</Col>
+                    </Row>
+                    <Row>
+                      <Col span={24}>to Gen1 on</Col>
+                    </Row>
+                    <Row>
+                      <Col span={24}>Sundays only</Col>
+                    </Row>
+                  </div>
+                }
+                  </div>
+                </div>
+                { this.renderRestaurantCallToActions('TripleFiveClub') }
+              </div>
+              <div style={{ marginTop: 0, width: '100%' }}  className={`card__face card__face--back parallax casualScene tripleFiveClubScene`}>
+                <div className="info" onClick={ this.flipKitchen.bind(this, 'TripleFiveClub') } style={{position: 'absolute', cursor: 'pointer', left: this.innerWidth > 900 ? 160 : kitchenWidth.width + 100, top: -15}}>
+                  <img style={{marginTop: -17, marginLeft: -2}} src="/img/i.png"/>
+                </div>
+                { this.renderRestaurantInfo('TripleFiveClub') }
+              </div>
+            </div>
+
+            { this.state.myNfts.TripleFiveClub.length > 4 ?
+              this.renderFilters('TripleFiveClub') : null }
+              <div className="restaurantSign">
+                <img width={this.innerWidth < 1080 ? 73 : 146} src={'img/555-club.png'}/>
+              </div>
+            </Col>
+            <Col span={this.innerWidth < 900 ? 24 : null} style={this.innerWidth > 900 ? { marginLeft: 20 } : { marginTop: 20}}>
+              { !this.state.loading ? this.renderStakedAtTripleFiveClub() : <Skeleton />}
+            </Col>
+
           </Row>
         </Card>
         <div className="floor"/>
@@ -5355,7 +5672,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
         <Col className="whiteContent" span={24}>
             { e.amount > 0 ?
               <span>{e.nft} has earned <u>{e.amount.toFixed(2)}</u> ${e.currency} <img width={20} src={image}/></span>
-              : <span>{e.nft} has earned <u>no new</u> ${e.currency} tokens.</span> }
+              : <span>{e.nft} has earned <u>no new</u> {e.currency ? `$${e.currency}` : null} tokens.</span> }
         </Col>
       </Row>
       </div>

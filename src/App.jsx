@@ -59,7 +59,12 @@ else {
   targetNetwork = NETWORKS.localhost;
   chainId = 1337;
 }
-
+/*
+process.env.REACT_APP_ETH_ENV = 'matic';
+targetNetwork = NETWORKS.matic;
+networkName = 'matic';
+chainId = 137;
+*/
 let appMode = process.env.REACT_APP_MODE || 'full';
 //targetNetwork = NETWORKS.rinkeby;
 // chainId = 1337;
