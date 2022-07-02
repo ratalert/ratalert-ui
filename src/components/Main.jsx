@@ -2854,8 +2854,8 @@ class Main extends React.Component {
           </Popover> : null}
         </div> :
         <div>
-        <span style={{marginTop: -33, fontSize: '10px'}} className={"club555bg"}>
-          <span className={c.club555NotBoosted ? 'whitelist' : 'club555Boosted'}>Club 555</span>
+        <span style={{marginTop: -33, fontSize: '10px'}} className={c.club555NotBoosted ? 'whitelist' : 'club555bg'}>
+          <span className={c.club555NotBoosted ? 'club555' : 'club555Boosted'}>Club 555</span>
         </span>
         </div> }
 
@@ -3405,10 +3405,10 @@ class Main extends React.Component {
         }
 
         if (nft.generation === 0) {
-          totalCost += this.state.stats.tripleFiveClubGen0Price;
+          totalCost += parseFloat(this.state.stats.tripleFiveClubGen0Price);
         }
         if (nft.generation === 1) {
-          totalCost += this.state.stats.tripleFiveClubGen0Price;
+          totalCost += parseFloat(this.state.stats.tripleFiveClubGen0Price);
         }
 
       }
@@ -5028,7 +5028,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
             </div>
 
-            { this.state.myNfts.TripleFiveClub.length > 4 ?
+            { this.state.myNfts.TripleFiveClub.length > 4 && this.state.kitchenFlipState['TripleFiveClub'] !== 'is-flipped' ?
               this.renderFilters('TripleFiveClub') : null }
               <div className="restaurantSign">
                 <img width={this.innerWidth < 1080 ? 73 : 146} src={'img/555-club.png'}/>
@@ -5061,7 +5061,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
               </div>
             </div>
 
-            { this.state.myNfts.LeStake.length > 4 ?
+            { this.state.myNfts.LeStake.length > 4 && this.state.kitchenFlipState['LeStake'] !== 'is-flipped' ?
               this.renderFilters('LeStake') : null }
               <div className="restaurantSign">
                 <img width={this.innerWidth < 1080 ? 75 : 150} src={`${this.state.kitchenConfig.gourmetKitchenClosed ? 'img/le-stake-closed.png': 'img/le-stake.png'}`}/>
@@ -5094,7 +5094,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 { this.renderRestaurantInfo('TheStakeHouse') }
               </div>
             </div>
-            { this.state.myNfts.TheStakeHouse.length > 4 ?
+            { this.state.myNfts.TheStakeHouse.length > 4 && this.state.kitchenFlipState['TheStakeHouse'] !== 'is-flipped'?
               this.renderFilters('TheStakeHouse') : null }
             <div className="restaurantSign">
               <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.casualKitchenClosed ? 'img/stake-house-closed.png': 'img/stake-house.png'}`}/>
@@ -5127,7 +5127,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                 { this.renderRestaurantInfo('McStake') }
               </div>
             </div>
-            { this.state.myNfts.McStake.length > 4 ?
+            { this.state.myNfts.McStake.length > 4 && this.state.kitchenFlipState['McStake'] !== 'is-flipped' ?
               this.renderFilters('McStake') : null }
             <div className="restaurantSign">
               <img width={this.innerWidth < 1080 ? 50 : 150} src={`${this.state.kitchenConfig.fastFoodKitchenClosed ? 'img/mc-stake-closed.png': 'img/mc-stake.png'}`}/>
