@@ -86,7 +86,6 @@ class Main extends React.Component {
     this.mobileBreakpoint = 899;
     this.tableBreakpoint = 900;
     this.officeBreakpoint = 1160;
-    this.openDoor = 0;
 
     this.loadingStarted = false;
     this.ratHeight = 0;
@@ -267,6 +266,8 @@ class Main extends React.Component {
         tripleFiveClubDailyFreakRate: 0,
         tripleFiveClubDailyBodyMassRate: 0,
         tripleFiveVestingTime: 0,
+        openDoor: 0,
+        openDoorName: 'Sunday',
       },
     };
     this.nftProfit = 0;
@@ -1758,7 +1759,59 @@ class Main extends React.Component {
       tripleFiveVestingTime: json.TripleFiveClub.Venue.vestingPeriod / 60 / 60,
       tripleFiveWeekModuluStart: json.TripleFiveClub.weekModulo.start,
       tripleFiveWeekModuluEnd: json.TripleFiveClub.weekModulo.end,
+      weekDays: [
+        {
+          name: 'Monday',
+          start: 342000,
+          end: 428399,
+          id: 1,
+        },
+        {
+          name: 'Tuesday',
+          start: 428400,
+          end: 514799,
+          id: 2,
+        },
+        {
+          name: 'Wednesday',
+          start: 514800,
+          end: 601199,
+          id: 3,
+        },
+
+        { // Thursday
+          name: 'Thursday',
+          start: 601200,
+          end: 82799,
+          id: 4,
+        },
+        { // Friday
+          name: 'Friday',
+          start: 82800,
+          end: 169199,
+          id: 5,
+        },
+        { // Saturday
+          name: 'Saturday',
+          start: 169200,
+          end: 255599,
+          id: 6,
+        },
+        { // Sunday
+          name: 'Sunday',
+          start: 259200,
+          end: 345600,
+          id: 0,
+        }
+        ]
     };
+    stats.weekDays.map((w) => {
+      if ((stats.tripleFiveWeekModuluStart === w.start) && (stats.tripleFiveWeekModuluEnd === w.end)) {
+        stats.openDoor = w.id;
+        stats.openDoorName = w.name;
+      }
+
+    })
     console.log('STATS', stats);
 //    const ts = new Date().getTime() / 1000;
 //    console.log(ts % 604800);
@@ -3344,9 +3397,9 @@ class Main extends React.Component {
       }
 
       if (location === 'TripleFiveClub') {
-        if ((nft.generation === 1) && (this.openDoor !== dayOfWeek)) {
+        if ((nft.generation === 1) && (this.state.stats.openDoor !== dayOfWeek)) {
           errors.push({
-            text: `${nft.description} cannot be staked into ${location} because Generation1 can only enter 555 Club on Sundays.`,
+            text: `${nft.description} cannot be staked into ${location} because Generation1 can only enter 555 Club on ${this.state.stats.openDoorName}s.`,
             id: nft.name,
           });
         }
@@ -4453,7 +4506,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
           <Row>
             <Col span={24}>
-              Except on Sundays:
+              Except on {this.state.stats.openDoorName}s:
             </Col>
           </Row>
           <Row>
@@ -4934,7 +4987,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                     <Col span={12}>
 
                     {
-                      dayOfWeek === this.openDoor ?
+                      dayOfWeek === this.state.stats.openDoor ?
                       <div style={{paddingLeft: 5}}>1 <img style={{marginLeft: -4}} width={12} src={'/img/gfood.png'}/></div> :
                       <div><CloseOutlined style={{color: '#ec6e6e', paddingLeft: 8}}/></div>
                     }
@@ -4942,7 +4995,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
 
                     </Col>
                   </Row>
-                  { dayOfWeek === this.openDoor ? <div>
+                  { dayOfWeek === this.state.stats.openDoor ? <div>
                   <Row style={{marginTop: 10}}>
                     <Col span={24}>Gen1 entry:</Col>
                   </Row>
@@ -4959,7 +5012,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                       <Col span={24}>to Gen1 on</Col>
                     </Row>
                     <Row>
-                      <Col span={24}>Sundays only</Col>
+                      <Col span={24}>{this.state.stats.openDoorName}s only</Col>
                     </Row>
                   </div>
                 }
