@@ -1762,8 +1762,8 @@ class Main extends React.Component {
       weekDays: [
         {
           name: 'Monday',
-          start: 342000,
-          end: 428399,
+          start: 345600,
+          end: 432000,
           id: 1,
         },
         {
