@@ -1691,9 +1691,12 @@ class Main extends React.Component {
     let ratEfficiencyMultiplier = parseInt(json.McStake.Kitchen.ratEfficiencyMultiplier);
     let ratEfficiencyOffset = parseInt(json.McStake.Kitchen.ratEfficiencyOffset);
     let claimFee = parseFloat(ethers.utils.formatEther(json.McStake.Venue.claimFee)).toFixed(8);
+    /*
     const tripleFiveClubGen0Price = parseFloat(ethers.utils.formatEther(json.TripleFiveClub.entranceFees.gen0)).toFixed(2);
     const tripleFiveClubGen1Price = parseFloat(ethers.utils.formatEther(json.TripleFiveClub.entranceFees.gen1)).toFixed(2);
-
+*/
+    const tripleFiveClubGen0Price = 0.1;
+    const tripleFiveClubGen1Price = 1;
     const TheStakeHouseMinEfficiency = parseInt(json.TheStakehouse.EntrepreneurialKitchen.minEfficiency );
     const LeStakeMinEfficiency = parseInt(json.LeStake.EntrepreneurialKitchen.minEfficiency);
     // let ratEfficiencyOffset = await this.cacheLocalStorage('McStakeContract.ratEfficiencyOffset()', McStakeContract.ratEfficiencyOffset());
@@ -1752,6 +1755,15 @@ class Main extends React.Component {
       tripleFiveClubStakedGen1,
       tripleFiveClubGen0Price,
       tripleFiveClubGen1Price,
+      maxTripleFiveGen1: 25,
+      tripleFiveClubBoostLevel: 2,
+      tripleFiveClubDailyFreakRate: -12,
+      tripleFiveClubDailyBodyMassRate: -8,
+      tripleFiveVestingTime: 36000 / 60 / 60,
+      tripleFiveWeekModuluStart: 259200,
+      tripleFiveWeekModuluEnd: 345600,
+
+/*
       maxTripleFiveGen1: json.TripleFiveClub.maxConcurrentGen1,
       tripleFiveClubBoostLevel: json.TripleFiveClub.boostLevel,
       tripleFiveClubDailyFreakRate: json.TripleFiveClub.Venue.dailyFreakRate,
@@ -1759,6 +1771,7 @@ class Main extends React.Component {
       tripleFiveVestingTime: json.TripleFiveClub.Venue.vestingPeriod / 60 / 60,
       tripleFiveWeekModuluStart: json.TripleFiveClub.weekModulo.start,
       tripleFiveWeekModuluEnd: json.TripleFiveClub.weekModulo.end,
+      */
       weekDays: [
         {
           name: 'Monday',
@@ -2910,13 +2923,16 @@ class Main extends React.Component {
         return <div className="levelUpTime">loading</div>;
       }
       let diff = now - stakeDate;
-
-      if ((diff > this.state.stats.levelUpThreshold) && (numberOfDays > 1)) {
-        diff = (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold));
+      let levelUpThreshold = this.state.stats.levelUpThreshold;
+      if (stakingLocation === 'TripleFiveClub') {
+        levelUpThreshold = 10 * 60 * 60;
+      }
+      if ((diff > levelUpThreshold) && (numberOfDays > 1)) {
+        diff = (diff-(Math.floor(numberOfDays) * levelUpThreshold));
       }
 
-      if (diff < this.state.stats.levelUpThreshold) {
-        diff = this.state.stats.levelUpThreshold - diff;
+      if (diff < levelUpThreshold) {
+        diff = levelUpThreshold - diff;
       }
 
       if (numberOfDays > 1) {
@@ -2938,11 +2954,15 @@ class Main extends React.Component {
         return <div className="levelUpTime">loading</div>;
       }
       let diff = now - stakeDate;
-      if ((diff > this.state.stats.levelUpThreshold) && (numberOfDays > 1)) {
-        diff = this.state.stats.levelUpThreshold - (this.state.stats.levelUpThreshold - (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold)));
+      let levelUpThreshold = this.state.stats.levelUpThreshold;
+      if (stakingLocation === 'TripleFiveClub') {
+        levelUpThreshold = 10 * 60 * 60;
       }
-      if (diff < this.state.stats.levelUpThreshold) {
-        diff = this.state.stats.levelUpThreshold - diff;
+      if ((diff > levelUpThreshold) && (numberOfDays > 1)) {
+        diff = levelUpThreshold - (levelUpThreshold - (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold)));
+      }
+      if (diff < levelUpThreshold) {
+        diff = levelUpThreshold - diff;
       }
 
       if (numberOfDays > 1) {
