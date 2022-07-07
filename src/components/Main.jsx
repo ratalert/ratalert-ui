@@ -2918,15 +2918,15 @@ class Main extends React.Component {
       const now = Math.floor(Date.now() / 1000);
       const d = new Date(stakeTimestamp * 1000);
       let stakeDate = d.getTime() / 1000;
-      const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
-      if (isNaN(numberOfDays)) {
-        return <div className="levelUpTime">loading</div>;
-      }
-      let diff = now - stakeDate;
       let levelUpThreshold = this.state.stats.levelUpThreshold;
       if (stakingLocation === 'TripleFiveClub') {
         levelUpThreshold = 10 * 60 * 60;
       }
+      const numberOfDays = (now - stakeDate) / levelUpThreshold;
+      if (isNaN(numberOfDays)) {
+        return <div className="levelUpTime">loading</div>;
+      }
+      let diff = now - stakeDate;
       if ((diff > levelUpThreshold) && (numberOfDays > 1)) {
         diff = (diff-(Math.floor(numberOfDays) * levelUpThreshold));
       }
@@ -2949,15 +2949,15 @@ class Main extends React.Component {
       let now = Math.floor(Date.now() / 1000);
       const d = new Date(lastClaim * 1000);
       let stakeDate = d.getTime() / 1000;
-      const numberOfDays = (now - stakeDate) / this.state.stats.levelUpThreshold;
-      if (isNaN(numberOfDays)) {
-        return <div className="levelUpTime">loading</div>;
-      }
-      let diff = now - stakeDate;
       let levelUpThreshold = this.state.stats.levelUpThreshold;
       if (stakingLocation === 'TripleFiveClub') {
         levelUpThreshold = 10 * 60 * 60;
       }
+      const numberOfDays = (now - stakeDate) / levelUpThreshold;
+      if (isNaN(numberOfDays)) {
+        return <div className="levelUpTime">loading</div>;
+      }
+      let diff = now - stakeDate;
       if ((diff > levelUpThreshold) && (numberOfDays > 1)) {
         diff = levelUpThreshold - (levelUpThreshold - (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold)));
       }
