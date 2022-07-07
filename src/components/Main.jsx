@@ -267,7 +267,7 @@ class Main extends React.Component {
         tripleFiveClubDailyBodyMassRate: 0,
         tripleFiveVestingTime: 0,
         openDoor: 0,
-        openDoorName: 'Sunday',
+        openDoorName: 'loading',
       },
     };
     this.nftProfit = 0;
@@ -1624,7 +1624,7 @@ class Main extends React.Component {
     try {
 
       tripleFiveClubStakedGen1 = await TripleFiveClubContract.getStakedGen1();
-      tripleFiveClubStakedGen1 = parseFloat(ethers.utils.formatEther(tripleFiveClubStakedGen1)).toFixed(0),
+      tripleFiveClubStakedGen1 = parseInt(tripleFiveClubStakedGen1);
       minted = await CharacterContract.minted();
       totalSupply = await CharacterContract.maxTokens();
       totalSupply = parseInt(totalSupply);
@@ -4915,6 +4915,64 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     );
   }
 
+  render555Price(dayOfWeek) {
+    if (this.state.stats.openDoorName === 'loading') {
+      return <div></div>;
+    }
+    return (
+      <div>
+      <Row>
+        <Col span={12}>
+        {
+          parseFloat(this.state.stats.tripleFiveClubGen0Price).toFixed(1)}
+          <img style={{marginLeft: 0}} width={12} src={'/img/gfood.png'}/>
+        </Col>
+        <Col span={12}>
+        {
+          dayOfWeek === this.state.stats.openDoor ?
+          <div style={{paddingLeft: 5}}>{parseFloat(this.state.stats.tripleFiveClubGen1Price).toFixed(0)} <img style={{marginLeft: -4}} width={12} src={'/img/gfood.png'}/></div> :
+          <div><CloseOutlined style={{color: '#ec6e6e', paddingLeft: 8}}/></div>
+        }
+        </Col>
+
+      </Row>
+
+      </div>
+    );
+  }
+
+  render555Text(dayOfWeek) {
+    if (this.state.stats.openDoorName === 'loading') {
+      return <div><Spin/></div>;
+    }
+    return (
+      <div>
+      { dayOfWeek === this.state.stats.openDoor ? <div>
+      <Row style={{marginTop: 10}}>
+        <Col span={24}>Gen1 entry:</Col>
+      </Row>
+      <Row>
+        <Col span={24}><u>{ this.state.stats.maxTripleFiveGen1 - this.state.stats.tripleFiveClubStakedGen1 }</u> slots left</Col>
+      </Row>
+      </div> :
+
+
+      <div>
+        <Row style={{marginTop: 5}}>
+          <Col span={24}>555Club open</Col>
+        </Row>
+        <Row>
+          <Col span={24}>to Gen1 on</Col>
+        </Row>
+        <Row>
+          <Col span={24}>{this.state.stats.openDoorName}s only</Col>
+        </Row>
+      </div>
+      }
+      </div>
+    );
+  }
+
   renderNfts() {
     const { networkName, chainId } = this.getNetworkName();
     this.nftProfit = 0;
@@ -4982,40 +5040,10 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
                     <Col span={12}>Gen0</Col>
                     <Col span={12}>Gen1</Col>
                   </Row>
-                  <Row>
-                    <Col span={12}>0.1 <img style={{marginLeft: -4}} width={12} src={'/img/gfood.png'}/></Col>
-                    <Col span={12}>
 
-                    {
-                      dayOfWeek === this.state.stats.openDoor ?
-                      <div style={{paddingLeft: 5}}>1 <img style={{marginLeft: -4}} width={12} src={'/img/gfood.png'}/></div> :
-                      <div><CloseOutlined style={{color: '#ec6e6e', paddingLeft: 8}}/></div>
-                    }
+                  { this.render555Price(dayOfWeek) }
+                  { this.render555Text(dayOfWeek) }
 
-
-                    </Col>
-                  </Row>
-                  { dayOfWeek === this.state.stats.openDoor ? <div>
-                  <Row style={{marginTop: 10}}>
-                    <Col span={24}>Gen1 entry:</Col>
-                  </Row>
-                  <Row>
-                    <Col span={24}><u>{ this.state.stats.maxTripleFiveGen1 - this.state.stats.tripleFiveClubStakedGen1 }</u> slots left</Col>
-                  </Row>
-                  </div> :
-
-                  <div>
-                    <Row style={{marginTop: 5}}>
-                      <Col span={24}>555Club open</Col>
-                    </Row>
-                    <Row>
-                      <Col span={24}>to Gen1 on</Col>
-                    </Row>
-                    <Row>
-                      <Col span={24}>{this.state.stats.openDoorName}s only</Col>
-                    </Row>
-                  </div>
-                }
                   </div>
                 </div>
                 { this.renderRestaurantCallToActions('TripleFiveClub') }

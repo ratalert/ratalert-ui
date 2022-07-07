@@ -1319,6 +1319,13 @@ class Whitepaper extends React.Component {
 
                               </td>
                           </tr>
+                          <tr>
+                              <td><a href="#gfood">TripleFiveClub</a></td>
+                              <td>
+                              { this.props.readContracts.TripleFiveClub ? this.props.readContracts.TripleFiveClub.address : null}
+
+                              </td>
+                          </tr>
                       </table> : <p>TBD</p>}
                   </main>
               </div>

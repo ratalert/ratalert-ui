@@ -29,8 +29,8 @@ deploy-mumbai:
 
 deploy-app:
 	@$(eval TAG := latest)
-	yarn install --prod
-	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
+#	REACT_APP_GRAPH_URI=//api.thegraph.com/subgraphs/name/george-prime/ratalert-dao npm run buildMainTest2
+#	REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn build
 	aws s3 sync ./build/ s3://${FULL_DOMAIN_NAME}/ --delete
 
 deploy-landing:
