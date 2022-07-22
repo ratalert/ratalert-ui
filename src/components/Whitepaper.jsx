@@ -118,18 +118,21 @@ class Whitepaper extends React.Component {
                       <h2 id="toc">Table Of Contents</h2>
                       <ul id="tableofcontents">
                           <li><a href="#story">The Story</a></li>
-                          <li><a href="#mechanics">The Mechanics</a></li>
+                          <li><a href="#mechanics">Mechanics</a></li>
                           <li>
-                              <a href="#venues">The Venues</a>
+                              <a href="#venues">Venues</a>
                               <ul className="whitepaper-ul">
+                                  <li><a href="#breakroom">Chefs Break Room</a></li>
+                                  <li><a href="#sewer">Rats Sewer</a></li>
                                   <li><a href="#mcstake">FastFood Kitchen McStake©</a></li>
                                   <li><a href="#thestakehouse">CasualFood Kitchen TheStakeHouse©</a></li>
                                   <li><a href="#lestake">GourmetFood Kitchen LeStake©</a></li>
-                                  <li><a href="#gym">Gym</a></li>
+                                  <li><a href="#gym">Muscle Box Gym</a></li>
+                                  <li><a href="#555club">The 555 Club</a></li>
                               </ul>
                           </li>
                           <li>
-                              <a href="#tokens">The Tokens</a>
+                              <a href="#tokens">Tokens</a>
                               <ul className="whitepaper-ul">
                                   <li><a href="#ffood">FastFood ($FFOOD)</a></li>
                                   <li><a href="#cfood">CasualFood ($CFOOD)</a></li>
@@ -137,8 +140,9 @@ class Whitepaper extends React.Component {
                               </ul>
                           </li>
                           <li>
-                              <a href="#cast">The Cast</a>
+                              <a href="#cast">Cast</a>
                               <ul className="whitepaper-ul">
+                                  <li><a href="#555members">555 Club members aka OG collection</a></li>
                                   <li><a href="#chefs">Chefs</a></li>
                                   <li><a href="#rats">Rats</a></li>
                                   <li><a href="#cats">Cats</a></li>
@@ -148,7 +152,7 @@ class Whitepaper extends React.Component {
                       </ul>
 
                       <h2 id="story">The Story</h2>
-                      <img style={{width: 500}} src="../assets/images/image23.png" width="100%" alt="alt_text" title="image_tooltip" />
+                      <img style={{width: '100%'}} src="../assets/images/story.png" alt="alt_text" title="image_tooltip" />
 
                       <p>
                           Paris - it’s the city where aspiring entrepreneurial <a href="#chefs">chefs</a> make their way to the top. Only the crème de la crème will get to <del>open</del> mint their own GourmetFood kitchen such as
@@ -168,7 +172,7 @@ class Whitepaper extends React.Component {
                           &nbsp;<a href="#cats">cats</a> are all over the place. Don’t let your rats get caught, or suffer the consequences!
                       </p>
 
-                      <h2 id="mechanics">The Mechanics</h2>
+                      <h2 id="mechanics">Mechanics</h2>
 
                       <ul className="whitepaper-ul">
                           <li>Play to earn different ERC20 tokens by staking your ERC721 characters in one of three available <del>kitchens</del> contracts</li>
@@ -178,11 +182,49 @@ class Whitepaper extends React.Component {
                           <li>The Game is implemented on Polygon (MATIC) for 2 obvious reasons: Gas costs & OpenSea support</li>
                       </ul>
 
-                      <h2 id="venues">The Venues</h2>
+                      <h2 id="venues">Venues</h2>
+                      <p><img style={{width: '100%'}} src="../assets/images/stakinghub.png" alt="Staking Hub" title="Staking Hub" /></p>
+
+                      <p>
+                          The RatAlert metaverse takes place in the "Staking Hub", a virtual city house in the center of Paris.
+                          It’s what you interact with on the <a href="/game">main game screen</a> and it not only features a day
+                          &amp; night mode, but also a sunrise & sunset mode! Every venue sits on its own floor in the Staking Hub.
+                          Staking your <a href="#cast">character</a> in one of the <a href="#venues">venues</a> from either the
+                          <a href="#breakroom">Chefs Break Room</a> or the <a href="#sewer">Rats Sewer</a> will basically lock it
+                          there for a staking period, usually 24 hours. After that period, you get to decide whether to just claim
+                          <a href="#tokens">food tokens</a> and level upgrades accrued during the staking period or additionally
+                          unstake them back to your wallet. Whatever you do, be aware that both food tokens and training levels
+                          <strong>only accrue within the staking period!</strong> Constant earnings require regular work.
+                      </p>
+                      <p>
+                          Technically, venues are smart contracts that hold your NFTs for a while and send them back with upgrades!
+                          The two exceptions are the <a href="#breakroom">Chefs Break Room</a> and the <a href="#sewer">Rats Sewer</a>
+                          which are just visual representations of your wallet.
+                      </p>
+
+                      <h3 id="breakroom">Chefs Break Room</h3>
+                      <p><img style={{width: '100%'}} src="../assets/images/venue_breakroom.png" alt="Chefs Break Room" title="Chefs Break Room" /></p>
+
+                      <p>
+                          The place where your <a href="#chefs">chefs</a> love to hang out while they are not staked working.
+                          Unlike the other <a href="#venues">venues</a>, the break room is just a visual representation of your
+                          wallet. From here, you can either stake your chefs in any of the venues that you have access to or
+                          trade them on NFT marketplaces.
+                      </p>
+
+                      <h3 id="sewer">Rats Sewer</h3>
+                      <p><img style={{width: '100%'}} src="../assets/images/venue_sewer.png" alt="Chefs Break Room" title="Chefs Break Room" /></p>
+
+                      <p>
+                          The underground lair where your <a href="#rats">rats</a> plan their next heist while they are not
+                          staked stealing. Unlike the other <a href="#venues">venues</a>, the sewer is just a visual
+                          representation of your wallet. From here, you can either stake your rats in any of the venues
+                          that you have access to or trade them on NFT marketplaces.
+                      </p>
 
                       <h3 id="mcstake">FastFood Kitchen McStake©</h3>
 
-                      <p><img style={{width: 500}} src="../assets/images/image16.png" width="100%" alt="alt_text" title="image_tooltip" /></p>
+                      <p><img style={{width: '100%'}} src="../assets/images/venue_mcstake.png" alt="McStake Kitchen" title="McStake Kitchen" /></p>
                       <p>
                           <em>Michael McSaylor’s</em> <em>McStake©</em> is “virtually” all over town. Here, <a href="#chefs">chefs</a> start their career as an employee producing <a href="#ffood">$FFOOD</a> which <a href="#rats">rats</a> love
                           for its “simplicity”.
@@ -244,7 +286,7 @@ class Whitepaper extends React.Component {
                       <h3 id="thestakehouse">CasualFood Kitchen TheStakeHouse©</h3>
 
                       <p>
-                          <img style={{width: 500}} src="../assets/images/image19.png" width="100%" alt="alt_text" title="image_tooltip" />
+                          <img style={{width: '100%'}} src="../assets/images/venue_thestakehouse.png" alt="TheStakehouse Kitchen" title="TheStakehouse Kitchen" />
                       </p>
                       <p>
                           A wise man once said: “There is no second best”. He was of course talking about the steaks at <em>TheStakeHouse©</em>. These CasualFood kitchens allow your <a href="#chefs">chefs</a> to produce
@@ -331,7 +373,7 @@ class Whitepaper extends React.Component {
                       <h3 id="lestake">GourmetFood Kitchen LeStake©</h3>
 
                       <p>
-                          <img style={{width: 500}} src="../assets/images/image33.png" width="100%" alt="alt_text" title="image_tooltip" />
+                          <img style={{width: '100%'}} src="../assets/images/venue_lestake.png" alt="LeStake Kitchen" title="LeStake Kitchen" />
                       </p>
                       <p>
                           <em>LeStake©</em>. No other restaurant in the metaverse can hold the candle to this famous 3-star kitchen, and it can only be purchased with <a href="#cfood">$CFOOD</a>. These GourmetFood kitchens are where the fine
@@ -419,21 +461,20 @@ class Whitepaper extends React.Component {
                           </tr>
                       </table>
 
-                      <h3 id="gym">Gym</h3>
+                      <h3 id="gym">Muscle Box Gym</h3>
 
                       <p>
-                          <img style={{width: 500}} src="../assets/images/venue_gym.png" width="100%" alt="Gym" title="Gym" />
+                          <img style={{width: '100%'}} src="../assets/images/venue_gym.png" alt="Muscle Box Gym" title="Muscle Box Gym" />
                       </p>
                       <p>
                           There are only a few jobs more stressful than that of a <a href="#chefs">chef</a>. Time is key, language is rough, stakes are high and so is the risk of burnout. <a href="#rats">Rats</a> on the other hand face the
-                          risk of getting overweight and becoming easy prey for <a href="#cats">cats</a>, especially in <a href="#mcstake">FastFood kitchens</a>.
+                          risk of getting overweight and becoming easy prey for <a href="#cats">cats</a>.
                       </p>
                       <p>
                           Do not let that happen, be sure to send your characters to the gym where they can blow off steam, relax and lose weight.
                       </p>
 
                       <h4>Events</h4>
-
                       <table>
                           <tr>
                               <th><strong>Event</strong></th>
@@ -456,9 +497,18 @@ class Whitepaper extends React.Component {
                               </td>
                           </tr>
                           <tr>
+                              <td rowSpan="2">Upgrade levels (claim)</td>
+                              <td>Cannot claim within 24h</td>
+                              <td>Cannot claim within 24h</td>
+                          </tr>
+                          <tr>
+                              <td>No risk</td>
+                              <td>No risk</td>
+                          </tr>
+                          <tr>
                               <td rowspan="2">Leave gym (unstake)</td>
-                              <td>Cannot unstake within 2h</td>
-                              <td>Cannot unstake within 2h</td>
+                              <td>Cannot unstake within 24h</td>
+                              <td>Cannot unstake within 24h</td>
                           </tr>
                           <tr>
                               <td>No risk</td>
@@ -466,7 +516,85 @@ class Whitepaper extends React.Component {
                           </tr>
                       </table>
 
-                      <h2 id="tokens">The Tokens</h2>
+                      <h3 id="555club">The 555 Club</h3>
+                      <p>
+                          <img style={{width: '100%'}} src="../assets/images/venue_555club.png" alt="The 555 Club" title="The 555 Club" />
+                      </p>
+                      <p>
+                          The illustrious 555 Club opens its doors only after the 555 Gen0 NFTs are minted out. These
+                          <a href="#555members">OG characters</a> have 24/7 access to the club. The first visit has an
+                          inspiring effect on them and they leave with a permanent 2% skill / intelligence boost: Every
+                          time you claim or unstake your Gen0 <a href="#chefs">chef</a> from a kitchen, he will receive
+                          an additional 2% on the skill level. <a href="#chefs">Rats</a> get an additional 2% intelligence.
+                          That’s
+                      </p>
+                      <ul>
+                          <li>4% instead of 2% at <a href="#mcstake">McStake©</a></li>
+                          <li>6% instead of 4% at <a href="#thestakehouse">TheStakehouse©</a></li>
+                          <li>8% instead of 6% at <a href="#lestake">LeStake©</a></li>
+                      </ul>
+                      <p>
+                          The quality time that they get in those 10 hours cools down their “tolerance” level significantly:
+                          Chefs lose 12% of their freak level while <a href="#rats">rats</a> lose 8% of their body weight.
+                          They get the same effect in the <a href="#gym">Muscle Box</a> but the 555 Club allows them to do
+                          this twice a day! The entrance fee per Gen0 character is 0.1 <a href="#gfood">$GFOOD</a> which
+                          is burned right away.
+                      </p>
+                      <p>
+                          The 555 Club is open to Gen1 characters on Sundays (00:00 to 23.59 UTC) for a maximum of 25
+                          characters every 10 hours after which they will be pushed out gently by other Gen1 characters
+                          entering the Club. Token holders will then find them again in their wallet.
+                      </p>
+                      <p>
+                          While Gen1 characters will not receive the 2% boost, they still profit from the same tolerance
+                          level cool-down: <a href="#chefs">Chefs</a> lose 12% of their freak level while
+                          <a href="#rats">rats</a> lose 8% of their body weight. The entrance fee per Gen1 character is
+                          1 <a href="#gfood">$GFOOD</a> which is burned right away.
+                      </p>
+
+                      <h4>Events</h4>
+                      <table>
+                          <tr>
+                              <th><strong>Event</strong></th>
+                              <th><strong>Chefs</strong></th>
+                              <th><strong>Rats</strong></th>
+                          </tr>
+                          <tr>
+                              <td rowSpan="2">Enter club (stake)</td>
+                              <td>No requirements</td>
+                              <td>No requirements</td>
+                          </tr>
+                          <tr>
+                              <td>
+                                  Achievement: -12% freak per day<br/>
+                                  (prorated to the second)
+                              </td>
+                              <td>
+                                  Achievement: -8% body mass per day<br/>
+                                  (prorated to the second)
+                              </td>
+                          </tr>
+                          <tr>
+                              <td rowSpan="2">Upgrade levels (claim)</td>
+                              <td>Cannot claim within 10h</td>
+                              <td>Cannot claim within 10h</td>
+                          </tr>
+                          <tr>
+                              <td>No risk</td>
+                              <td>No risk</td>
+                          </tr>
+                          <tr>
+                              <td rowSpan="2">Leave club (unstake)</td>
+                              <td>Cannot unstake within 10h</td>
+                              <td>Cannot unstake within 10h</td>
+                          </tr>
+                          <tr>
+                              <td>No risk</td>
+                              <td>No risk</td>
+                          </tr>
+                      </table>
+
+                      <h2 id="tokens">Tokens</h2>
 
                       <p>
                           The Game introduces 3 different “food” tokens with decreasing total supply. Together, they are referred to as $xFOOD. During your progress through the game, you will produce these tokens and need them to purchase
@@ -578,7 +706,7 @@ class Whitepaper extends React.Component {
                           </tr>
                       </table>
 
-                      <h2 id="cast">The Cast</h2>
+                      <h2 id="cast">Cast</h2>
 
                       <h3 id="cast_general">General</h3>
 
@@ -587,30 +715,53 @@ class Whitepaper extends React.Component {
                           Every minted character is unique and has the ability to be trained by the player. Each NFT has 2 attributes that change upon unstaking or claiming. Attributes affect the appearance (image) of the NFT, visible both in
                           the game and on OpenSea. The pixel size is 100x100, 3 times the size of other Play2Earn games, like Wolf Game.
                       </p>
-                      <p>The mining cost for one Generation 0 NFT is <strong>90 MATIC</strong>.</p>
+                      <p>The minting cost for one of the 555 Generation 0 (Gen0) NFTs is <strong>90 MATIC</strong>.</p>
                       <p>Users that are eligible for the whitelist are able to mint their NFTs up to <strong>24 hours</strong> before the official launch, and receive a discount of 10%, resulting in a price of <strong>81 MATIC</strong>.</p>
                       <p>
-                          After 10,000 Generation 0 NFTs have sold out, another 10,000 Generation 1 NFTs can be purchased with the first of RatAlert's game tokens, $FFOOD (FastFood):
+                          After the 555 Gen0 NFTs have minted out, another 10,000 Gen1 NFTs can be purchased with the first of RatAlert's game tokens, $FFOOD (FastFood):
                       </p>
 
                       <table>
                           <tr>
-                              <td class="right">10,001 - 12,500</td>
+                              <td class="right">556 - 3,055</td>
                               <td>2,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">12,501 - 15,000</td>
+                              <td class="right">3,056 - 5,555</td>
                               <td>3,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">15,001 - 17,500</td>
+                              <td class="right">5,556 - 8,055</td>
                               <td>5,000 $FFOOD</td>
                           </tr>
                           <tr>
-                              <td class="right">17,501 - 20,000</td>
+                              <td class="right">8,056 - 10,555</td>
                               <td>8,000 $FFOOD</td>
                           </tr>
                       </table>
+
+                      <h3 id="555members">555 Club members aka OG collection</h3>
+                      <p>
+                          The 555 Gen0 NFTs are held by the early believers, the RatAlert OGs. They shall be rewarded
+                          for their dedication and their courage. Not only will their Gen0 characters become members of
+                          the illustrious <a href="#555club">555 Club</a>, but they will also receive a lot more utility
+                          than holders of the 10,000 Gen1 NFTs:
+                      </p>
+                      <ol>
+                          <li>A permanent 2% skill / intelligence boost. Every time you claim or unstake your Gen0 chef
+                              from a kitchen, it will receive an additional 2% on the skill level. Rats get an additional
+                              2% intelligence. That’s
+                              <ul>
+                                  <li>4% instead of 2% at <a href="#mcstake">McStake©</a></li>
+                                  <li>6% instead of 4% at <a href="#thestakehouse">TheStakehouse©</a></li>
+                                  <li>8% instead of 6% at <a href="#lestake">LeStake©</a></li>
+                              </ul>
+                          </li>
+                          <li>The honorable “555 Club” premium Discord role that expresses their OG status</li>
+                          <li>Priority access and discounts for all future drops which will be announced soon</li>
+                      </ol>
+
+
 
                       <h3 id="chefs">Chefs</h3>
 
@@ -618,7 +769,7 @@ class Whitepaper extends React.Component {
                       <ul className="whitepaper-ul">
                           <li>Eyes: includes sunglasses or laser eyes</li>
 
-                          <li>Hat: includes various hats, like the famous red cap from <em>McStake©</em></li>
+                          <li>Hat: includes various hats, like the famous red cap from <a href="#mcstake">McStake©</a></li>
 
                           <li>Neck: various neck items, like butterfly ties</li>
 
@@ -627,7 +778,9 @@ class Whitepaper extends React.Component {
                           <li>Hand: includes different accessories, like pastry rollers or knives</li>
                       </ul>
                       <p><strong>90%</strong> of all mints are chefs.</p>
-                      <p>Chefs come with two attributes: <strong>skill</strong> and <strong>freak</strong>.</p>
+                      <p>
+                          Chefs come with two attributes: <strong>skill</strong> and <strong>freak</strong>. They earn
+                          food tokens depending on what kitchen they are staked into.</p>
                       <p>
                           <strong>Skill</strong> is an exclusively positive attribute and describes your chef’s ability to learn new things and gain experience. The <strong>skill</strong> level also affects the amount of
                           &nbsp;<a href="#tokens">$xFOOD</a> your chef can produce per day. The smarter your chef gets, the more he will cook.
@@ -664,37 +817,37 @@ class Whitepaper extends React.Component {
                               <th>Numeric Value</th>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image31.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_bored.png" width="" alt="Bored Chef" title="Bored Chef" /></td>
                               <td>bored</td>
                               <td>0%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image30.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_unconventional.png" width="" alt="Unconventional Chef" title="Unconventional Chef" /></td>
                               <td>unconventional</td>
                               <td>15%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image20.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_fancy.png" width="" alt="Fancy Chef" title="Fancy Chef" /></td>
                               <td>fancy</td>
                               <td>28%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image13.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_brilliant.png" width="" alt="Brilliant Chef" title="Brilliant Chef" /></td>
                               <td>brilliant</td>
                               <td>42%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image27.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_creative_genius.png" width="" alt="Creative Genius Chef" title="Creative Genius Chef" /></td>
                               <td>creative genius</td>
                               <td>58%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image10.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_guru.png" width="" alt="Guru Chef" title="Guru Chef" /></td>
                               <td>guru</td>
                               <td>72%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image17.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_insane.png" width="" alt="Insane Chef" title="Insane Chef" /></td>
                               <td>insane</td>
                               <td>86%</td>
                           </tr>
@@ -712,43 +865,43 @@ class Whitepaper extends React.Component {
                               <th>$xFOOD Earnings</th>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image21.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_kitchen_scullion.png" width="50" alt="Kitchen Scullion" title="Kitchen Scullion" /></td>
                               <td>Kitchen Scullion</td>
                               <td>0%</td>
                               <td>100%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image8.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_vegetable_slicer.png" width="50" alt="Vegetable Slicer" title="Vegetable Slicer" /></td>
                               <td>Vegetable Slicer</td>
                               <td>15%</td>
                               <td>125%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image28.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_ingredient_taster.png" width="50" alt="Ingredient Taster" title="Ingredient Taster" /></td>
                               <td>Ingredient Taster</td>
                               <td>28%</td>
                               <td>150%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image7.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_pastry_chef.png" width="50" alt="Pastry chef" title="Pastry chef" /></td>
                               <td>Pastry chef</td>
                               <td>42%</td>
                               <td>175%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image14.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_chef_de_partie.png" width="50" alt="Chef de Partie" title="Chef de Partie" /></td>
                               <td>Chef de Partie</td>
                               <td>58%</td>
                               <td>200%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image9.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_sous_chef.png" width="50" alt="Sous Chef" title="Sous Chef" /></td>
                               <td>Sous Chef</td>
                               <td>72%</td>
                               <td>225%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image12.png" width="50" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/chef_three_star_chef.png" width="50" alt="Three star chef" title="Three star chef" /></td>
                               <td>Three star chef</td>
                               <td>86%</td>
                               <td>250%</td>
@@ -849,7 +1002,7 @@ class Whitepaper extends React.Component {
                           significantly more likely to avoid burnout.
                       </p>
                       <p>Letting your chef work too long while he’s <strong>insane</strong> bears the risk of him quitting his workplace and re-starting with<strong> 0 skill points</strong> as well as <strong>0 freak</strong> points.</p>
-                      <p>Do not let that happen, be sure to send your Chefs to the <a href="#gym">Gym</a> to blow off steam and relax.</p>
+                      <p>Do not let that happen, be sure to send your Chefs to the <a href="#gym">Muscle Box</a> to blow off steam and relax.</p>
                       <p>Events occur when you claim or unstake your chefs.</p>
 
                       <table>
@@ -883,10 +1036,6 @@ class Whitepaper extends React.Component {
                           <tr>
                               <th>Skill level</th>
                               <th>Risk of suffering from burnout</th>
-                          </tr>
-                          <tr>
-                              <th>Intelligence level</th>
-                              <th>Risk of being caught by a cat</th>
                           </tr>
                           <tr>
                               <td>0%</td>
@@ -930,7 +1079,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>100%</td>
-                              <td>5%</td>
+                              <td>5.0%</td>
                           </tr>
                       </table>
 
@@ -947,10 +1096,10 @@ class Whitepaper extends React.Component {
                       <p><strong>10%</strong> of all mints are rats.</p>
                       <p>Rats eat and steal <strong>20%</strong> of the <a href="#chefs">Chefs</a> <a href="#tokens">$xFOOD</a> for their rat pack.</p>
                       <p>Rats come with two attributes, <strong>intelligence</strong> and <strong>body mass</strong>.</p>
-                      <p><strong>Intelligence</strong> is an exclusively positive attribute, and describes your rats' ability to avoid rat traps from the <a href="#chefs">chef</a> with more confidence.</p>
+                      <p><strong>Intelligence</strong> is an exclusively positive attribute, and describes your rats' ability to avoid rat traps from <a href="#chefs">chefs</a> with more confidence.</p>
                       <p>
                           Similar to the <a href="#chefs">chef</a>’s freak, <strong>body mass </strong>can either be a good or bad attribute: Rats start as <strong>anorexic </strong>and need to gain <strong>body mass</strong> in order to
-                          eat and steal more <a href="#tokens">$xFOOD</a> for their pack. After some time, they’ll become <strong>athletic, </strong>which is the most perfect state for a rat. Athletic rats can steal the optimum of
+                          eat and steal more <a href="#tokens">$xFOOD</a> for their pack. After some training, they’ll become <strong>athletic, </strong>which is the most perfect state for a rat. Athletic rats can steal the optimum of
                           <a href="#tokens">$xFOOD</a> per day from the <a href="#chefs">Chefs</a>. Rats that are thinner or heavier than <strong>athletic, </strong>are not as efficient when it comes to stealing from the
                           <a href="#chefs">chefs</a>.
                       </p>
@@ -979,37 +1128,37 @@ class Whitepaper extends React.Component {
                               <th>Numeric Value</th>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image3.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_braindead.png" width="" alt="Braindead Rat" title="Braindead Rat" /></td>
                               <td>braindead</td>
                               <td>0%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image1.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_stupid.png" width="" alt="Stupid Rat" title="Stupid Rat" /></td>
                               <td>stupid</td>
                               <td>15%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image18.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_foolish.png" width="" alt="Foolish Rat" title="Foolish Rat" /></td>
                               <td>foolish</td>
                               <td>28%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image26.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_average.png" width="" alt="Average Rat" title="Average Rat" /></td>
                               <td>average</td>
                               <td>42%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image6.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_bright.png" width="" alt="Bright Rat" title="Bright Rat" /></td>
                               <td>bright</td>
                               <td>58%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image5.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_smart.png" width="" alt="Smart Rat" title="Smart Rat" /></td>
                               <td>smart</td>
                               <td>72%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image15.png" width="" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_genius.png" width="" alt="Genius Rat" title="Genius Rat" /></td>
                               <td>genius</td>
                               <td>86%</td>
                           </tr>
@@ -1027,46 +1176,46 @@ class Whitepaper extends React.Component {
                               <th>$xFOOD earnings</th>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image22.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_anorexic.png" width="100" alt="Anorexic Rat" title="Anorexic Rat" /></td>
                               <td>anorexic</td>
                               <td>0%</td>
                               <td>55%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image25.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_skinny.png" width="100" alt="Skinny Rat" title="Skinny Rat" /></td>
                               <td>skinny</td>
                               <td>15%</td>
                               <td>98.5%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image11.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_lean.png" width="100" alt="Lean Rat" title="Lean Rat" /></td>
                               <td>lean</td>
                               <td>28%</td>
                               <td>136.2%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image32.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_athletic.png" width="100" alt="Athletic Rat" title="Athletic Rat" /></td>
                               <td>athletic</td>
                               <td>50%</td>
                               <td>200%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image24.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_chubby.png" width="100" alt="Chubby Rat" title="Chubby Rat" /></td>
                               <td>chubby</td>
                               <td>58%</td>
                               <td>176.8%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image29.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_fat.png" width="100" alt="Fat Rat" title="Fat Rat" /></td>
                               <td>fat</td>
                               <td>72%</td>
                               <td>136.2%</td>
                           </tr>
                           <tr>
-                              <td><img src="../assets/images/image2.png" width="100" alt="alt_text" title="image_tooltip" /></td>
+                              <td><img src="../assets/images/rat_obese.png" width="100" alt="Obese Rat" title="Obese Rat" /></td>
                               <td>obese</td>
                               <td>86%</td>
-                              <td>95.6%</td>
+                              <td>95.5%</td>
                           </tr>
                       </table>
 
@@ -1164,7 +1313,7 @@ class Whitepaper extends React.Component {
                           target. Smarter rats have a lower chance of getting spotted by cats.
                       </p>
                       <p>An obese rat caught by a cat suffers from total loss of <strong>intelligence</strong> and <strong>body mass</strong>.</p>
-                      <p>Do not let that happen, be sure to send your rats to the <a href="#gym">Gym</a> where they can lose some fat!</p>
+                      <p>Do not let that happen, be sure to send your rats to the <a href="#gym">Muscle Box</a> where they can lose some fat!</p>
                       <p>Events occur when you claim or unstake your rats.</p>
 
                       <table>
@@ -1174,7 +1323,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>Probability of occurrence</td>
-                              <td>27-2% every unstake or claim, depending on skill level</td>
+                              <td>27-2% every unstake or claim, depending on intelligence level</td>
                           </tr>
                           <tr>
                               <td>Formula of occurrence:</td>
@@ -1239,7 +1388,7 @@ class Whitepaper extends React.Component {
                           </tr>
                           <tr>
                               <td>100%</td>
-                              <td>5%</td>
+                              <td>5.0%</td>
                           </tr>
                       </table>
 
@@ -1262,71 +1411,68 @@ class Whitepaper extends React.Component {
                       }
                       <h2 id="contracts">Contract Addresses</h2>
 
-                      { this.props.readContracts && this.props.readContracts.Character ? <table>
+                      <table>
                           <tr>
-                              <td><a href="#chefs">Chefs</a> / <a href="#rats">Rats</a> (Characters)</td>
+                              <td><a href="#chefs">Chefs</a> / <a href="#rats">Rats</a> (<a href="#cast">Characters</a>)</td>
                               <td>
-                              { this.props.readContracts.Character ? this.props.readContracts.Character.address : null}
+                                  <a href={ this.props.readContracts.Character ? `https://polygonscan.com/address/${this.props.readContracts.Character.address}` : ''} target="_blank">{ this.props.readContracts.Character ? this.props.readContracts.Character.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#mcstake">McStake</a></td>
                               <td>
-                                { this.props.readContracts.McStake ? this.props.readContracts.McStake.address : null}
+                                  <a href={ this.props.readContracts.McStake ? `https://polygonscan.com/address/${this.props.readContracts.McStake.address}` : ''} target="_blank">{ this.props.readContracts.McStake ? this.props.readContracts.McStake.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#thestakehouse">TheStakeHouse</a></td>
                               <td>
-                                { this.props.readContracts.TheStakeHouse ? this.props.readContracts.TheStakeHouse.address : null}
+                                  <a href={ this.props.readContracts.TheStakeHouse ? `https://polygonscan.com/address/${this.props.readContracts.TheStakeHouse.address}` : ''} target="_blank">{ this.props.readContracts.TheStakeHouse ? this.props.readContracts.TheStakeHouse.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#lestake">LeStake</a></td>
                               <td>
-                              { this.props.readContracts.LeStake ? this.props.readContracts.LeStake.address : null}
+                                  <a href={ this.props.readContracts.LeStake ? `https://polygonscan.com/address/${this.props.readContracts.LeStake.address}` : ''} target="_blank">{ this.props.readContracts.LeStake ? this.props.readContracts.LeStake.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#gym">Gym</a></td>
                               <td>
-                                { this.props.readContracts.Gym ? this.props.readContracts.Gym.address : null}
+                                  <a href={ this.props.readContracts.Gym ? `https://polygonscan.com/address/${this.props.readContracts.Gym.address}` : ''} target="_blank">{ this.props.readContracts.Gym ? this.props.readContracts.Gym.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#ffood">$FFOOD</a></td>
                               <td>
-                                { this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}
+                                  <a href={ this.props.readContracts.FastFood ? `https://polygonscan.com/address/${this.props.readContracts.FastFood.address}` : ''} target="_blank">{ this.props.readContracts.FastFood ? this.props.readContracts.FastFood.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#cfood">$CFOOD</a></td>
                               <td>
-                              { this.props.readContracts.CasualFood ? this.props.readContracts.CasualFood.address : null}
+                                  <a href={ this.props.readContracts.CasualFood ? `https://polygonscan.com/address/${this.props.readContracts.CasualFood.address}` : ''} target="_blank">{ this.props.readContracts.CasualFood ? this.props.readContracts.CasualFood.address : null}</a>
                               </td>
                           </tr>
                           <tr>
                               <td><a href="#gfood">$GFOOD</a></td>
                               <td>
-                              { this.props.readContracts.GourmetFood ? this.props.readContracts.GourmetFood.address : null}
-
+                                  <a href={ this.props.readContracts.GourmetFood ? `https://polygonscan.com/address/${this.props.readContracts.GourmetFood.address}` : ''} target="_blank">{ this.props.readContracts.GourmetFood ? this.props.readContracts.GourmetFood.address : null}</a>
                               </td>
                           </tr>
                           <tr>
-                              <td><a href="#gfood">KitchenShop</a></td>
+                              <td><a href="#venues">KitchenShop</a></td>
                               <td>
-                              { this.props.readContracts.KitchenShop ? this.props.readContracts.KitchenShop.address : null}
-
+                                  <a href={ this.props.readContracts.KitchenShop ? `https://polygonscan.com/address/${this.props.readContracts.KitchenShop.address}` : ''} target="_blank">{ this.props.readContracts.KitchenShop ? this.props.readContracts.KitchenShop.address : null}</a>
                               </td>
                           </tr>
                           <tr>
-                              <td><a href="#gfood">TripleFiveClub</a></td>
+                              <td><a href="#555club">TripleFiveClub</a></td>
                               <td>
-                              { this.props.readContracts.TripleFiveClub ? this.props.readContracts.TripleFiveClub.address : null}
-
+                                  <a href={ this.props.readContracts.TripleFiveClub ? `https://polygonscan.com/address/${this.props.readContracts.TripleFiveClub.address}` : ''} target="_blank">{ this.props.readContracts.TripleFiveClub ? this.props.readContracts.TripleFiveClub.address : null}</a>
                               </td>
                           </tr>
-                      </table> : <p>TBD</p>}
+                      </table>
                   </main>
               </div>
           </div>
