@@ -397,8 +397,8 @@
             {
               "ErrorCachingMinTTL": 30,
               "ErrorCode": 404,
-              "ResponseCode": 404,
-              "ResponsePagePath": "/error.html"
+              "ResponseCode": 200,
+              "ResponsePagePath": "/index.html"
             }
           ],
           "DefaultCacheBehavior": {
