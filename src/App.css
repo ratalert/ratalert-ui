@@ -1848,6 +1848,19 @@
   z-index: 5;
 }
 
+.web3Button555 {
+  height: 30px;
+  padding-top: 6px;
+  margin-bottom: 10px;
+  textAlign: center;
+  background: transparent;
+  color: #FFFFFF;
+  font-weight: bold;
+  width: 160px;
+  font-family: Pixellari;
+  z-index: 5;
+}
+
 .landingWeb3Button {
   height: 40px;
   padding-top: 8px;
@@ -2994,11 +3007,27 @@ a.landingLink {
   border: solid 2px #5e5555;
   background-color: #252525;
   position: absolute;
-  top: 40px;
+  top: 10px;
   color: #fff;
   font-family: Pixellari;
   left: 100px;
   width: 350px;
+  z-index: 10;
+  background: rgba(37, 37, 37, 0.5);
+}
+
+.filter555 {
+  padding-top: 20px;
+  height: 150px;
+  padding: 17px 38px 21px 20px;
+  border: solid 2px #5e5555;
+  background-color: #252525;
+  position: absolute;
+  top: 140px;
+  color: #fff;
+  font-family: Pixellari;
+  left: 10px;
+  width: 200px;
   z-index: 10;
   background: rgba(37, 37, 37, 0.5);
 }

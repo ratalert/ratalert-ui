@@ -136,6 +136,7 @@ class Main extends React.Component {
         McStake: 'nft',
         TheStakeHouse: 'nft',
         LeStake: 'nft',
+        TripleFiveClub: 'nft',
       },
       filter: {
         Gym: {
@@ -1122,8 +1123,11 @@ class Main extends React.Component {
 
         nftCount += nfts.TheStakeHouse.length;
         nfts.LeStake = this.parseNFTStruct(1, null, 'LeStake', result2, result1);
+        nfts.LeStake = this.sortNFTs(nfts.LeStake, this.state.sort['LeStake']);
         nfts.LeStakeChefs = this.parseNFTStruct(1, null, 'LeStake', result2, result1, 'chef');
+        nfts.LeStakeChefs = this.sortNFTs(nfts.LeStakeChefs, this.state.sort['LeStake']);
         nfts.LeStakeRats = this.parseNFTStruct(1, null, 'LeStake', result2, result1, 'rat');
+        nfts.LeStakeRats = this.sortNFTs(nfts.LeStakeRats, this.state.sort['LeStake']);
 
         if (this.state.filter['LeStake'].separateNFTs) {
           nfts.LeStake = nfts.LeStakeRats.concat(nfts.LeStakeChefs);
@@ -1133,8 +1137,13 @@ class Main extends React.Component {
 
 
         nfts.TripleFiveClub = this.parseNFTStruct(1, null, 'TripleFiveClub', result2, result1);
+        nfts.TripleFiveClub = this.sortNFTs(nfts.TripleFiveClub, this.state.sort['TripleFiveClub']);
+
         nfts.TripleFiveClubChefs = this.parseNFTStruct(1, null, 'TripleFiveClub', result2, result1, 'chef');
+        nfts.TripleFiveClubChefs = this.sortNFTs(nfts.TripleFiveClubChefs, this.state.sort['TripleFiveClub']);
+
         nfts.TripleFiveClubRats = this.parseNFTStruct(1, null, 'TripleFiveClub', result2, result1, 'rat');
+        nfts.TripleFiveClubRats = this.sortNFTs(nfts.TripleFiveClubRats, this.state.sort['TripleFiveClub']);
 
         if (this.state.filter['TripleFiveClub'].separateNFTs) {
           nfts.TripleFiveClub = nfts.TripleFiveClubRats.concat(nfts.TripleFiveClubChefs);
@@ -1203,14 +1212,13 @@ class Main extends React.Component {
 
       const mintedNfts =  this.state.mintedNfts;
       if (!mintedNfts[parseInt(tokenId)]) {
-        if (!this.state.gleamCompleted) {
+        if (!this.state.gleamCompleted && this.state.gleamMode === 'mint') {
           this.setState({ gleamCompleted: true });
           window.Gleam.push(['mint', tokenId]);
         }
         const mintedThisSession = parseInt(this.state.mintedThisSession);
         this.setState({ mintedThisSession: mintedThisSession + 1 });
-
-        if (mintedThisSession === 1) {
+        if (mintedThisSession === 1 && this.state.gleamMode === 'mint2') {
           if (!this.state.gleamCompleted) {
             this.setState({ gleamCompleted: true });
             window.Gleam.push(['mint2', tokenId]);
@@ -1341,8 +1349,19 @@ class Main extends React.Component {
     sort.McStake = await this.getLocalStorage('McStakeSort', 'nft');
     sort.LeStake = await this.getLocalStorage('LeStakeSort', 'nft');
     sort.TheStakeHouse = await this.getLocalStorage('TheStakeHouse', 'nft');
+    sort.TripleFiveClub = await this.getLocalStorage('TripleFiveClub', 'nft');
+
     filter.McStake.showTime = await this.getLocalStorage('McStakeFiltershowTime', false);
     filter.McStake.separateNFTs = await this.getLocalStorage('McStakeFilterseparateNFTs', false);
+    filter.LeStake.showTime = await this.getLocalStorage('LeStakeFiltershowTime', false);
+    filter.LeStake.separateNFTs = await this.getLocalStorage('LeStakeFilterseparateNFTs', false);
+    filter.TheStakeHouse.showTime = await this.getLocalStorage('TheStakeHouseFiltershowTime', false);
+    filter.TheStakeHouse.separateNFTs = await this.getLocalStorage('TheStakeHouseFilterseparateNFTs', false);
+
+    filter.TripleFiveClub.showTime = await this.getLocalStorage('TripleFiveClubFiltershowTime', false);
+    filter.TripleFiveClub.separateNFTs = await this.getLocalStorage('TripleFiveClubFilterseparateNFTs', false);
+
+
     this.setState({ sort, filter });
 
     if (this.props.location.search === '?gleam=mint') {
@@ -4942,6 +4961,73 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       </Menu>
     );
 
+
+    if ((venue === 'TripleFiveClub') && (window.innerWidth < 900)) {
+      return (
+        <div className={ window.innerWidth < 900 ? 'filter555' : 'filter'}>
+        <Col span={window.innerWidth < 900 ? 16 : 24}>
+          <Row>
+            <Col span={24}>
+            Sort by...
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+            <Dropdown className="web3Button"
+              type={"default"}
+              overlay={filters}
+              className="web3Button555"
+              style={{height: 30, width: '120px !important'}}
+              onClick={this.setFilter.bind(this)}
+            >
+              <Button style={{color: '#fff'}} className="web3Button" type={"default"}>
+                { this.state.sort[venue] === 'nft' ? 'NFT IDs' : null }
+                { this.state.sort[venue] === 'claim' ? 'Claim Countdown' : null }
+                { this.state.sort[venue] === 'stake' ? 'Stake date' : null }
+                <DownOutlined/>
+              </Button>
+            </Dropdown>
+            </Col>
+          </Row>
+          <Row style={{marginTop: 10, width: 180}}>
+                <Col span={8}>
+                  <div className="rats"/>
+                </Col>
+                <Col span={8}>
+                  <div className="chefs"/>
+                </Col>
+                <Col span={8}>
+                  <div className="ratchefs"/>
+                </Col>
+          </Row>
+          <Row style={{marginTop: 10, width: 180}}>
+              <Col span={8}>
+                { this.state.myNfts[`${venue}Rats`].length }
+              </Col>
+              <Col span={8}>
+                { this.state.myNfts[`${venue}Chefs`].length }
+              </Col>
+              <Col span={8}>
+                { this.state.myNfts[venue].length }
+              </Col>
+          </Row>
+        </Col>
+
+          <div style={{position: 'absolute', left: 300, top: 0, width: 180}} className="filter555">
+            <Row>
+              <Col span={24}>
+                <Checkbox checked={this.state.filter[venue].showTime} className={`whiteContent`} onChange={this.setFilter.bind(this, 'showTime', venue)}>Time instead of time left</Checkbox>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+              <Checkbox checked={this.state.filter[venue].separateNFTs} className={`whiteContent`} onChange={this.setFilter.bind(this, 'separateNFTs', venue)}>Separate Chefs and Rats</Checkbox>
+              </Col>
+            </Row>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className={ window.innerWidth < 900 ? 'filterMobile' : 'filter'}>
