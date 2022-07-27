@@ -1,5 +1,7 @@
 import React from "react";
+import { withRouter } from 'react-router-dom';
 import {
+  Alert,
   Table,
   Tag,
   Space,
@@ -12,6 +14,7 @@ import {
   Form,
   Input,
 } from "antd";
+import { Helmet } from 'react-helmet';
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
@@ -58,6 +61,10 @@ class Giveaway extends React.Component {
       addressValidationFailed: false,
       discordValidationFailed: false,
       submissionComplete: false,
+      clicked: false,
+      url: false,
+      mode: false,
+      loading: true,
     };
     this.whitepaperRef = React.createRef();
   }
@@ -86,6 +93,28 @@ class Giveaway extends React.Component {
           this.setState({ url: link.text });
         }
       }
+    }
+    window.focus()
+    window.addEventListener("blur", () => {
+      setTimeout(() => {
+        if (document.activeElement.tagName === "IFRAME") {
+          this.setState({ clicked: true })
+          console.log('Token:', this.state.token);
+          window.Gleam.push([this.state.token, '1']);
+        }
+      });
+    }, { once: true });
+
+    if (this.props.location.search === '?action=dexscreener&token=cfood') {
+      this.setState({loading: false, token: 'cfood', url: 'https://dexscreener.com/polygon/0xb42d4b3080c83571ad1b2864a8c430972db41269'});
+    }
+    else if (this.props.location.search === '?action=dexscreener&token=ffood') {
+      this.setState({loading: false, token: 'ffood', url: 'https://dexscreener.com/polygon/0x8351e0d1373e56da6e45daa9eb44c0e634f28c68'});
+    }
+    else if (this.props.location.search === '?action=dexscreener&token=gfood') {
+      this.setState({loading: false, token: 'gfood', url: 'https://dexscreener.com/polygon/0xde60363e5f7f876c7ae383625e83ee64f43443a6'});
+    } else {
+      this.setState({loading: false, url: 'https://gleam.io/YtE9H/embed?amp', mode: 'gleam'});
     }
 
   }
@@ -138,11 +167,11 @@ class Giveaway extends React.Component {
 
   updateHeight() {
     let height = this.state.height;
-    const node = document.getElementsByClassName('roadmap')[0];
+    const node = document.getElementsByClassName('iframe')[0];
     if (node) {
       const rect = node.getBoundingClientRect();
       if (rect && rect.height) {
-        height = rect.height + 100;
+        height = rect.height + 200;
       }
       this.setState({ height });
     }
@@ -296,9 +325,112 @@ class Giveaway extends React.Component {
     );
   }
 
+  renderGleam() {
+    const skyAttr = this.getWidth('sky', true, 1440, 1000);
+    const node = this.whitepaperRef.current;
+    let height = this.state.height;
+    setTimeout(() => {
+      this.updateHeight();
+    }, 100);
+
+    let iframeHeight = 0;
+    let iframeWidth = 0;
+    let top=0;
+    let left = 0;
+    let headerLeft;
+    if (this.state.mode === 'gleam') {
+      iframeHeight = 1100;
+      if (window.innerWidth < 900) {
+        top = 670;
+        iframeWidth = window.innerWidth * 0.70;
+        headerLeft = window.innerWidth * 0.20;
+      } else {
+        top = 170;
+        if (window.innerWidth > 1200) {
+          iframeWidth = 450;
+        }
+        else if (window.innerWidth > 1100) {
+          iframeWidth = 400;
+        } else {
+          iframeWidth = 350;
+        }
+
+        headerLeft = window.innerWidth * 0.20;
+      }
+      if (window.innerWidth < 900) {
+        left = window.innerWidth * 0.20;
+      } else {
+        left = window.innerWidth * 0.25 + iframeWidth;
+      }
+    } else {
+      iframeHeight = window.innerHeight * 0.7;
+      iframeWidth = window.innerWidth * 0.50
+      top = 270;
+      left = window.innerWidth * 0.25;
+    }
+
+
+    return (
+      <>
+      <Helmet>
+        <title>RatAlert 1000 NFT Giveaway</title>
+      </Helmet>
+      <div className="giveaway" ref={this.whitepaperRef} style={{paddingLeft: window.innerWidth / 2 - 200 }}>
+      <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
+      </div>
+      { this.state.mode !== 'gleam' ?
+      <Alert
+        message="Gleam Task"
+        style={{position: 'absolute', left: window.innerWidth * 0.25, top: 150, width: window.innerWidth * 0.5}}
+        description={
+          !this.state.clicked ?
+          <div>
+            Click on the <strong>🚀 Icon</strong> in the <strong>window below</strong> to complete your task!
+          </div> :
+          <div>
+            Task completed. Please return to Gleam.
+          </div>
+
+        }
+        type="info"
+        closable={false}
+        /> :
+        <Alert
+          message={<div><h3>Welcome to RatAlert Giveaway!</h3></div>}
+          style={{position: 'absolute', left: headerLeft, top: 170, width: iframeWidth}}
+          description={
+            <div>
+              RatAlert has just minted 1000 NFTs. We're celebrating it with an NFT giveaway.<br/><br/>
+              <strong>Prizes</strong>:
+              <ul>
+                <li>1 Gen0 Club555 NFT</li>
+                <li>$20 in MATIC</li>
+                <li>$10 in MATIC</li>
+              </ul>
+              In addition, you can earn <strong>free Gen1 mints</strong> by taking part in the <strong>Mint 2, get one free</strong> action!<br/>
+              <img width={iframeWidth * 0.9} src="/img/mint2_getonefree.png"/>
+            </div>
+
+          }
+          type="info"
+          closable={false}
+          />
+       }
+
+      <iframe style={{position: 'absolute', top, left, margin: '0 auto', border: '5px solid #E5E5E5', width: iframeWidth, height: iframeHeight}} id="iframe" className="iframe" scrolling="auto" layout=""
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation"
+        src={this.state.url} resizable
+        >
+      </iframe>
+      </div>
+      </>
+    );
+  }
+
   render() {
     if (this.state.loading) {
       return (
+
         <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
           <Col span={24}>
           <Spin size="large"/>
@@ -306,9 +438,8 @@ class Giveaway extends React.Component {
         </Row>
       );
     } else {
-      return this.renderGiveaway();
+      return this.renderGleam();
     }
   }
 }
-
-export default Giveaway;
+export default withRouter(Giveaway);

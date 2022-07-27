@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import Loadable from "react-loadable";
+import { hydrate, render } from "react-dom";
 //const App = process.env.REACT_APP_MODE === 'full' && import('./App.jsx')
 
 
@@ -41,14 +42,15 @@ const themes = {
 
 const prevTheme = window.localStorage.getItem("theme");
 
-if (process.env.REACT_APP_MODE === 'lite') {
-  ReactDOM.render(
-    <Lite/>,
-    document.getElementById("root"),
-  );
+const rootElement = document.getElementById("root");
+if (rootElement.hasChildNodes()) {
+  hydrate(<App />, rootElement);
 } else {
-  ReactDOM.render(
-    <App/>,
-    document.getElementById("root"),
-  );
+  render(<App />, rootElement);
 }
+/*
+ReactDOM.render(
+  <App/>,
+  document.getElementById("root"),
+);
+*/

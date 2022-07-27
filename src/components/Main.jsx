@@ -118,6 +118,7 @@ class Main extends React.Component {
       mintedNfts: {},
       contractsPaused: false,
       nftCount: 0,
+      mintedThisSession: 0,
       mintDisabled: false,
       mintActive: false,
       claimActive: false,
@@ -268,6 +269,8 @@ class Main extends React.Component {
         tripleFiveVestingTime: 0,
         openDoor: 0,
         openDoorName: 'loading',
+        gleamMode: null,
+        gleamCompleted: false,
       },
     };
     this.nftProfit = 0;
@@ -511,6 +514,13 @@ class Main extends React.Component {
   async chefClaimed(currency, tokenId, earned, unstaked, skill, freak, eventName, foodTokensPerRat) {
       const { networkName, chainId } = this.getNetworkName();
       tokenId = parseInt(tokenId);
+
+      if (!this.state.gleamCompleted) {
+        this.setState({ gleamCompleted: true });
+        window.Gleam.push(['claim', tokenId]);
+      }
+
+
       if (!this.nfts[tokenId]) {
         return;
       }
@@ -575,6 +585,12 @@ class Main extends React.Component {
       if (oldNft) {
         console.log('Old NFT found');
       }
+
+      if (!this.state.gleamCompleted) {
+        this.setState({ gleamCompleted: true });
+        window.Gleam.push(['claim', tokenId]);
+      }
+
        // console.log(`Got event for ${tokenId}, earned ${earned / 1000000000000000000}, event ${eventName}`);
 //          eventName = 'burnout';
       const claimInfo = {
@@ -679,6 +695,37 @@ class Main extends React.Component {
       TripleFiveClubContract.on("ChefClaimed", this.chefClaimed.bind(this, false));
       TripleFiveClubContract.on("RatClaimed", this.ratClaimed.bind(this, false));
 
+  }
+
+  renderGleam() {
+    return (
+      <div style={{ zIndex: 2, position: "absolute", right: 0, top: 100, padding: 16 }}>
+      <Alert
+        message="Gleam Giveaway"
+        description={
+          <div>
+            { this.state.gleamCompleted ? <p>Your {this.state.gleamMode} action has completed, you can return to gleam.</p>
+            :
+            this.state.gleamMode === 'mint' ?
+            <p>Please mint your NFT below and wait until it shows up in your break room to complete your action.</p>
+            : null
+            }
+            { this.state.gleamMode === 'claim' ?
+            <p>Please claim from at least one NFT and wait until the claim results screen shows to complete your action.</p>
+            : null
+            }
+            { this.state.gleamMode === 'mint2' ?
+            <p>Please mint 2 NFTs and wait until they shows up in your break room to complete your action. Your free mints will be applied after the giveaway ends.</p>
+            : null
+            }
+
+          </div>
+        }
+        type="info"
+        closable={false}
+        />
+      </div>
+    );
   }
 
   renderGraphError() {
@@ -1156,6 +1203,20 @@ class Main extends React.Component {
 
       const mintedNfts =  this.state.mintedNfts;
       if (!mintedNfts[parseInt(tokenId)]) {
+        if (!this.state.gleamCompleted) {
+          this.setState({ gleamCompleted: true });
+          window.Gleam.push(['mint', tokenId]);
+        }
+        const mintedThisSession = parseInt(this.state.mintedThisSession);
+        this.setState({ mintedThisSession: mintedThisSession + 1 });
+
+        if (mintedThisSession === 1) {
+          if (!this.state.gleamCompleted) {
+            this.setState({ gleamCompleted: true });
+            window.Gleam.push(['mint2', tokenId]);
+          }
+        }
+
         mintedNfts[parseInt(tokenId)] = 1;
         this.setState({ mintedNfts, mintDisabled: false, mintActive: false, mintActiveTimer: 0 });
         renderNotification(
@@ -1283,6 +1344,17 @@ class Main extends React.Component {
     filter.McStake.showTime = await this.getLocalStorage('McStakeFiltershowTime', false);
     filter.McStake.separateNFTs = await this.getLocalStorage('McStakeFilterseparateNFTs', false);
     this.setState({ sort, filter });
+
+    if (this.props.location.search === '?gleam=mint') {
+      this.setState({ gleamMode: 'mint'})
+    }
+    if (this.props.location.search === '?gleam=mint2') {
+      this.setState({ gleamMode: 'mint2'})
+    }
+
+    if (this.props.location.search === '?gleam=claim') {
+      this.setState({ gleamMode: 'claim'})
+    }
   }
 
   componentWillUnmount() {
@@ -2867,9 +2939,10 @@ class Main extends React.Component {
           </Popover> : null}
         </div> :
         <div>
+        { c.generation === 0 ?
         <span style={{marginTop: -33, fontSize: '10px'}} className={c.club555NotBoosted ? 'whitelist' : 'club555bg'}>
           <span className={c.club555NotBoosted ? 'club555' : 'club555Boosted'}>Club 555</span>
-        </span>
+        </span> : null }
         </div> }
 
 
@@ -3292,7 +3365,7 @@ class Main extends React.Component {
       nft = Object.assign([], this.state.myNfts.TripleFiveClub.map((i) => i.name));
     }
 
-    const error = this.prepareUnstakeErrors(nft);
+    const error = this.prepareUnstakeErrors(nft, 'unstake', type);
     if (error) {
       return false;
     }
@@ -3331,7 +3404,7 @@ class Main extends React.Component {
 
   async claimFunds(selectedToUnStakeNfts, type) {
     console.log('Claiming', type, selectedToUnStakeNfts);
-    const error = this.prepareUnstakeErrors(selectedToUnStakeNfts, 'claim profits');
+    const error = this.prepareUnstakeErrors(selectedToUnStakeNfts, 'claim profits', type);
     if (error) {
       return false;
     }
@@ -3517,7 +3590,7 @@ class Main extends React.Component {
     }
   }
 
-  prepareUnstakeErrors(selectedToUnStakeNfts, wording = `unstake`) {
+  prepareUnstakeErrors(selectedToUnStakeNfts, wording = `unstake`, location = false) {
     let errors = [];
     let error = false;
     selectedToUnStakeNfts.map((m) => {
@@ -3528,8 +3601,12 @@ class Main extends React.Component {
       }
       const now = Math.floor(Date.now() / 1000);
       const stakedFor = now - ts;
-      if (stakedFor <= this.state.stats.minimumToExit) {
-        const diff = this.secondsToHms(this.state.stats.minimumToExit - stakedFor, true);
+      let minimumToExit = this.state.stats.minimumToExit;
+      if (location === 'TripleFiveClub') {
+        minimumToExit = 10 * 60 * 60;
+      }
+      if (stakedFor <= minimumToExit) {
+        const diff = this.secondsToHms(minimumToExit - stakedFor, true);
         errors.push({
           text: `${nft.description} needs to to be staked for another ${diff} before you can ${wording}.`,
           id: nft.name,
@@ -3544,7 +3621,7 @@ class Main extends React.Component {
   }
 
   async unstake(selectedToUnStakeNfts, type) {
-    const error = this.prepareUnstakeErrors(selectedToUnStakeNfts);
+    const error = this.prepareUnstakeErrors(selectedToUnStakeNfts, 'unstake', type);
     if (error) {
       return false;
     }
@@ -5014,7 +5091,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
       c = this.nfts[3];
     }
 
-    const dayOfWeek = new Date().getDay();
+    const dayOfWeek = new Date().getUTCDay();
     return (
 
       <div className="stakeHouse" style={this.getWidth('townhouse')}>
@@ -6014,6 +6091,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
           <Row style={{ height: "100%" }}>
             <div className={this.getGradientClass()} style={{top: rect.height, height: this.townhouseHeight - skyAttr.height - offset}}>
             </div>
+            { this.state.gleamMode ? this.renderGleam() : null }
             { this.state.graphError ? this.renderGraphError() : null }
             { this.state.contractsPaused ? this.renderContractsPaused() : null }
             { this.state.noBalance ? this.renderNoBalance() : null }

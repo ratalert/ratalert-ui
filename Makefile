@@ -37,7 +37,12 @@ deploy-landing:
 	@$(eval TAG := latest)
 	#yarn install --prod
 	REACT_APP_MODE=full REACT_APP_API_URL=https://api.ratalert.com REACT_APP_GRAPH_ETH_ENV=${BLOCKCHAIN_ENV} yarn buildMatic
+
+
 	aws s3 sync ./build/ s3://ratalert.com/ --delete
+	sed 's/\<\/title\>/<\/title><meta name="twitter:card" content="summary_large_image"\/><meta name="twitter:site" content="@RatAlertNFT"\/><meta name="twitter:title" content="RatAlert 1000 NFT Giveaway"\/><meta name="twitter:image" content="https:\/\/user-assets.out.sh\/user-assets\/1995673\/AabjiErdemxw29Yv\/ratalert_1000_nfts.png"\/>/g' build/index.html >build/giveaway
+	aws s3 cp --content-type "text/html" --metadata-directive REPLACE build/giveaway s3://ratalert.com/giveaway
+
 	#aws s3 mv s3://ratalert.com/whitepaper/en.html s3://ratalert.com/whitepaper
 	#aws s3 mv s3://ratalert.com/whitepaper/fr.html s3://ratalert.com/fr/whitepaper
 	#aws s3 mv s3://ratalert.com/roadmap/en.html s3://ratalert.com/roadmap

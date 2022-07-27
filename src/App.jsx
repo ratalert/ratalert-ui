@@ -662,6 +662,34 @@ function App(props) {
                 />}
               />
           </Route>
+          <Route path="/nftgiveaway">
+            <RatMenu
+              tx={tx}
+              readContracts={readContracts}
+              writeContracts={writeContracts}
+              address={address}
+              provider={localProvider}
+              active={9}
+              injectedProvider={injectedProvider}
+              setInjectedProvider={setInjectedProvider}
+              dayTime={dayTime}
+              chainId={chainId}
+              appMode={appMode}
+              dayTimeSwitch={dayTimeSwitch}
+              networkName={networkName}
+              content={<Giveaway
+                tx={tx}
+                readContracts={readContracts}
+                writeContracts={writeContracts}
+                address={address}
+                provider={localProvider}
+                dayTime={dayTime}
+                appMode={appMode}
+                setInjectedProvider={setInjectedProvider}
+                networkName={networkName}
+                />}
+              />
+          </Route>
           <Route path="/liquidity">
             <RatMenu
               tx={tx}
