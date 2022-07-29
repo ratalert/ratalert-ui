@@ -15,6 +15,7 @@ export default config = {
     Claim: '0x61b9BC212ad93365dc3C198f350f9d66da79D023',
     Paywall: '0x282ee709621cE43e2F2Ec019700F51F089f30fF0',
     Config: '0xC6aE929bCA4c8914738E3675eEd998be8fB2b4aF',
+    TripleFiveClub: '0x0eA723f65b279a85754fc3b1C1dfb8b025A23E8c',
     admin: ['0x2f7CdD90AB83405654eE10FC916a582a3cDe7E69', '0xf2886eeDD665b67D6D2dF64f422152081bE53292'],
     loggedIn: {
       gourmetKitchenClosed: true,

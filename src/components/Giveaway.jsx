@@ -115,7 +115,12 @@ class Giveaway extends React.Component {
       this.setState({loading: false, token: 'gfood', url: 'https://dexscreener.com/polygon/0xde60363e5f7f876c7ae383625e83ee64f43443a6'});
     } else {
       this.setState({loading: false, url: 'https://gleam.io/YtE9H/embed?amp', mode: 'gleam'});
+      if (window.innerWidth < 900) {
+        window.location.href = 'https://gleam.io/YtE9H/ratalert-1000-nft-minted-giveaway';
+      }
     }
+
+    console.log(this.props.location);
 
   }
 
@@ -341,7 +346,7 @@ class Giveaway extends React.Component {
     if (this.state.mode === 'gleam') {
       iframeHeight = 1100;
       if (window.innerWidth < 900) {
-        top = 670;
+        top = 180;
         iframeWidth = window.innerWidth * 0.70;
         headerLeft = window.innerWidth * 0.20;
       } else {
@@ -373,7 +378,7 @@ class Giveaway extends React.Component {
     return (
       <>
       <Helmet>
-        <title>RatAlert 1000 NFT Giveaway</title>
+        <title>{this.props.location && this.props.location.pathname === '/herrcooles' ? '0xHerrCooles ' : null}RatAlert 1000 NFT Giveaway</title>
       </Helmet>
       <div className="giveaway" ref={this.whitepaperRef} style={{paddingLeft: window.innerWidth / 2 - 200 }}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
@@ -394,7 +399,7 @@ class Giveaway extends React.Component {
         }
         type="info"
         closable={false}
-        /> :
+        /> : window.innerWidth > 900 ?
         <Alert
           message={<div><h3>Welcome to RatAlert Giveaway!</h3></div>}
           style={{position: 'absolute', left: headerLeft, top: 170, width: iframeWidth}}
@@ -414,7 +419,7 @@ class Giveaway extends React.Component {
           }
           type="info"
           closable={false}
-          />
+          /> : null
        }
 
       <iframe style={{position: 'absolute', top, left, margin: '0 auto', border: '5px solid #E5E5E5', width: iframeWidth, height: iframeHeight}} id="iframe" className="iframe" scrolling="auto" layout=""

@@ -12,6 +12,7 @@ import {
   Button,
   Dropdown,
 } from "antd";
+import { Helmet } from 'react-helmet';
 import { useEventListener } from "eth-hooks/events/useEventListener";
 
 import {
@@ -814,11 +815,16 @@ class Leaderboard extends React.Component {
 
     if (!this.state.dataLoaded) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert Leaderboard</title>
+        </Helmet>
         <Row style={{ height: "100%", 'text-align': 'center' }}>
           <Col span={24}>
             <Spin/>
           </Col>
         </Row>
+        </>
       );
     }
     let chefRats = this.state.results;
@@ -885,6 +891,10 @@ class Leaderboard extends React.Component {
 
 
     return (
+      <>
+      <Helmet>
+        <title>RatAlert Leaderboard</title>
+      </Helmet>
       <div>
       <div className={this.getGradientClass()} style={{top: rect.height, height: height - skyAttr.height + 300}}>
       </div>
@@ -948,17 +958,23 @@ class Leaderboard extends React.Component {
         </Col>
       </Row>
       </div>
+      </>
     );
   }
 
   render() {
     if (this.state.loading) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert Leaderboard</title>
+        </Helmet>
         <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
           <Col span={24}>
           <Spin size="large"/>
           </Col>
         </Row>
+        </>
       );
     } else {
       return this.renderLeaderBoard();

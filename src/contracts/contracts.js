@@ -14,6 +14,8 @@ const TheStakeHouseLocalhost = require('./abis/localhost/TheStakeHouse.json');
 const PaywallLocalhost = require('./abis/localhost/Paywall.json');
 const KitchenUsageLocalhost = require('./abis/localhost/KitchenUsage.json');
 const ConfigLocalhost = require('./abis/localhost/Config.json');
+const TripleFiveClubLocalhost = require('./abis/matic/TripleFiveClub.json');
+
 
 const CasualFoodMumbai = require('./abis/mumbai/CasualFood.json');
 const CharacterMumbai = require('./abis/mumbai/Character.json');
@@ -124,6 +126,10 @@ export const contracts = {
         "Config": {
           "address": config.localhost.Config,
           "abi": ConfigLocalhost,
+        },
+        "TripleFiveClub": {
+          "address": config.localhost.TripleFiveClub,
+          "abi": TripleFiveClubLocalhost,
         }
       }
     }

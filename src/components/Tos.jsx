@@ -13,6 +13,7 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
 import Address from "./Address";
+import { Helmet } from 'react-helmet';
 import {
   useBalance,
   useContractLoader,
@@ -151,6 +152,10 @@ class Whitepaper extends React.Component {
     }
 
     return (
+      <>
+      <Helmet>
+        <title>RatAlert ToS</title>
+      </Helmet>
       <div className="main whitepaper" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
@@ -194,17 +199,23 @@ class Whitepaper extends React.Component {
         <p>Some jurisdictions do not allow the exclusion of implied warranties in contracts with consumers, so the above exclusion may not apply to <em>you</em>.</p>
       </div>
       </div>
+      </>
     );
   }
 
   render() {
     if (this.state.loading) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert ToS</title>
+        </Helmet>
         <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
           <Col span={24}>
           <Spin size="large"/>
           </Col>
         </Row>
+        </>
       );
     } else {
       return this.renderTos();

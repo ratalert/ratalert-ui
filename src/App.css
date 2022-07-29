@@ -1502,7 +1502,6 @@
   border-top-right-radius: 2px;
 
 
-
   background: linear-gradient(rgba(225, 191, 176, 0.7), rgba(116, 100, 89, 0.7));
   -webkit-backface-visibility: hidden; /* Safari */
   backface-visibility: hidden;
@@ -3102,4 +3101,13 @@ a.landingLink {
 
 .iframe {
     overflow: scroll;
+}
+
+.nftPending {
+  background-color: black;
+  z-index: 999;
+}
+
+.nftPendingImage {
+  filter: brightness(50%);
 }

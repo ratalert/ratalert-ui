@@ -13,6 +13,7 @@ import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
 import { request, gql } from "graphql-request";
 import Address from "./Address";
+import { Helmet } from 'react-helmet';
 import {
   useBalance,
   useContractLoader,
@@ -136,6 +137,10 @@ class Dao extends React.Component {
     }
 
     return (
+      <>
+      <Helmet>
+        <title>RatAlert DAO</title>
+      </Helmet>
       <div className="main whitepaper" ref={this.whitepaperRef} style={{borderRadius: 30, border: '1px solid #CCCCCC', background: '#F5F5F5', marginLeft: 20, marginRight: 20, marginBottom: 20}}>
       <div className={this.getGradientClass()} style={{top: skyAttr.height, height: height - skyAttr.height}}>
       </div>
@@ -150,17 +155,23 @@ class Dao extends React.Component {
 
         <p>Discussions happen at the <strong>#dao-proposals</strong> discord channel at <a target="_new" href="https://discord.gg/RatAlert">Discord server</a></p>
       </div>
+      </>
     );
   }
 
   render() {
     if (this.state.loading) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert DAO</title>
+        </Helmet>
         <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
           <Col span={24}>
           <Spin size="large"/>
           </Col>
         </Row>
+        </>
       );
     } else {
       return this.renderDAO();

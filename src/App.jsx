@@ -60,7 +60,6 @@ else {
   chainId = 1337;
 }
 let appMode = process.env.REACT_APP_MODE || 'full';
-
 /*
 process.env.REACT_APP_ETH_ENV = 'matic';
 targetNetwork = NETWORKS.matic;
@@ -662,7 +661,7 @@ function App(props) {
                 />}
               />
           </Route>
-          <Route path="/nftgiveaway">
+          <Route path="/herrcooles">
             <RatMenu
               tx={tx}
               readContracts={readContracts}

@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { request, gql } from "graphql-request";
 import Address from "./Address";
 import {
@@ -110,6 +111,10 @@ class Roadmap extends React.Component {
 
   getRoadmap() {
     return (
+      <>
+      <Helmet>
+        <title>RatAlert Roadmap</title>
+      </Helmet>
       <div id="container">
           <div id="bottom">
               <div id="content">
@@ -151,6 +156,7 @@ class Roadmap extends React.Component {
               </div>
           </div>
       </div>
+      </>
     )
   }
 
@@ -186,11 +192,16 @@ class Roadmap extends React.Component {
   render() {
     if (this.state.loading) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert Roadmap</title>
+        </Helmet>
         <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
           <Col span={24}>
           <Spin size="large"/>
           </Col>
         </Row>
+        </>
       );
     } else {
       return this.renderRoadmap();

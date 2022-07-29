@@ -10,6 +10,7 @@ import {
   Popover,
   Checkbox,
 } from "antd";
+import { Helmet } from 'react-helmet';
 import { useEventListener } from "eth-hooks/events/useEventListener";
 
 import {
@@ -496,6 +497,10 @@ class Claims extends React.Component {
       width = 800;
     }
     return (
+      <>
+      <Helmet>
+        <title>RatAlert Claims</title>
+      </Helmet>
       <div>
       <div className={this.getGradientClass()} style={{top: rect.height, height: height - skyAttr.height + 500}}>
       </div>
@@ -525,6 +530,7 @@ class Claims extends React.Component {
         </Col>
       </Row>
       </div>
+      </>
     );
   }
 
@@ -535,11 +541,16 @@ class Claims extends React.Component {
   render() {
     if (this.state.loading) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert Claims</title>
+        </Helmet>
         <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
           <Col span={24}>
           <Spin size="large"/>
           </Col>
         </Row>
+        </>
       );
     } else {
       return this.renderLeaderBoard();

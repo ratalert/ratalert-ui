@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from 'react-dom'
+import { Helmet } from 'react-helmet';
 import { withRouter } from 'react-router-dom';
 import {
   Alert,
@@ -115,6 +116,9 @@ class Main extends React.Component {
       lastBlockTime: 0,
       loadingPercent: 0,
       graphError: false,
+      nftPendingTimeout: 300,
+      nftPending: {
+      },
       mintedNfts: {},
       contractsPaused: false,
       nftCount: 0,
@@ -520,8 +524,14 @@ class Main extends React.Component {
         this.setState({ gleamCompleted: true });
         window.Gleam.push(['claim', tokenId]);
       }
-
-
+      if (unstaked) {
+        const nftPending = this.state.nftPending;
+        if (nftPending[tokenId]) {
+          delete nftPending[tokenId];
+        }
+        this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+        this.setState({ nftPending });
+      }
       if (!this.nfts[tokenId]) {
         return;
       }
@@ -585,6 +595,14 @@ class Main extends React.Component {
       const oldNft = this.oldNfts[tokenId];
       if (oldNft) {
         console.log('Old NFT found');
+      }
+      if (unstaked) {
+        const nftPending = this.state.nftPending;
+        if (nftPending[tokenId]) {
+          nftPending[tokenId] = 0;
+        }
+        this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+        this.setState({ nftPending });
       }
 
       if (!this.state.gleamCompleted) {
@@ -1374,6 +1392,10 @@ class Main extends React.Component {
     if (this.props.location.search === '?gleam=claim') {
       this.setState({ gleamMode: 'claim'})
     }
+
+    const nftPending = await this.getLocalStorage('nftPending', '{}');
+    this.setState({ nftPending: JSON.parse(nftPending)});
+    console.log('PENDING', nftPending);
   }
 
   componentWillUnmount() {
@@ -1587,10 +1609,12 @@ class Main extends React.Component {
   }
 
   async setLocalStorage(key, value) {
+    console.log('PENDING Setting ', key, value);
     if (value === false) {
       localStorage.removeItem(key);
       return;
     }
+
     localStorage.setItem(key, value);
   }
 
@@ -2228,7 +2252,7 @@ class Main extends React.Component {
       return data.sort((a, b) => parseInt(a.name) - parseInt(b.name));
     }
     if (sortType === 'claim') {
-      return data.sort((a, b) => parseInt(a.mcstakeLastClaimTimestamp) - parseInt(b.mcstakeLastClaimTimestamp));
+      return data.sort((a, b) => parseInt(a.timeleft) - parseInt(b.timeleft));
     }
     if (sortType === 'stake') {
       return data.sort((a, b) => parseInt(a.mcstakeStakedTimestamp) - parseInt(b.mcstakeStakedTimestamp));
@@ -2255,8 +2279,21 @@ class Main extends React.Component {
             hash[m.trait_type] = m.value;
           });
           if (type !== null && json.name && json.attributes[0].value === type && parseInt(r.staked) == parseInt(staked)) {
+
+            const id = parseInt(r.id, 16);
+            /*
+            const nftPending = this.state.nftPending;
+            const timeleft = this.getTimeLeft(r.mcstakeLastClaimTimestamp, r.mcstakeStakedTimestamp, r.stakingLocation)
+            if ((nftPending[id] > 1) && (timeleft > 1)) {
+              // Still pending but counter has already reset, remove pending state
+              delete nftPending[id];
+              this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+              this.setState({ nftPending });
+            }
+            */
             const nftObj = {
-              name: parseInt(r.id, 16),
+              name: id,
+              timeleft: 0,
               whitelisted: false,
               club555Boosted: hash['Generation'] === 'Gen 0' && hash['Boost'] === 2 ? true : false,
               generation: hash['Generation'] === 'Gen 0' ? 0 : 1,
@@ -2287,12 +2324,22 @@ class Main extends React.Component {
             nft.push(nftObj);
           }
           if (type === null && json.name && r.staked == staked && r.stakingLocation == location) {
+            const timeleft = this.getTimeLeft(r.mcstakeLastClaimTimestamp, r.mcstakeStakedTimestamp, r.stakingLocation)
+            const nftPending = this.state.nftPending;
+            const id = parseInt(r.id, 16);
+            if ((nftPending[id] > 1) && (timeleft > 1))  {
+              // Still pending but counter has already reset, remove pending state
+              delete nftPending[id];
+              this.setState({ nftPending });
+              this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+            }
             const nftObj = {
               whitelisted: false,
+              timeleft: timeleft,
               club555Boosted: hash['Generation'] === 'Gen 0' && hash['Boost'] === 2 ? true : false,
               club555NotBoosted: hash['Generation'] === 'Gen 0' && hash['Boost'] !== 2 ? true : false,
               generation: hash['Generation'] === 'Gen 0' ? 0 : 1,
-              name: parseInt(r.id, 16),
+              name: id,
               image: json.image,
               description: json.name,
               stakingLocation: r.stakingLocation,
@@ -2943,10 +2990,13 @@ class Main extends React.Component {
       classNameImg = 'nftModal'
       classNameStats = 'nftStatsModal'
     }
+    let pendingImg;
+    if (this.state.nftPending[c.name] > 1 && parseInt(this.state.nftPending[c.name]) > parseInt(new Date().getTime() / 1000) && type == 'app') {
+      pendingImg = 'nftPendingImage';
+    }
     return (
       <div className="nftCardFlipInner">
       <span >
-
         { type === 'app' ?
         <div>
           { c.club555NotBoosted ? <Popover content={'This is a generation 0 NFT, so it is part of the exclusive 555 Club. It has access to the exclusive 555 Club with extra perks and features. The 2% permanent boost has not yet been applied. Stake it into the 555 Club to enable the boost.'}>
@@ -2969,6 +3019,12 @@ class Main extends React.Component {
 
         <span style={{color: '#d1c0b6'}}>{c.name}</span>
         </div> : null }
+
+        {
+         this.state.nftPending[c.name] > 1 && parseInt(this.state.nftPending[c.name]) > parseInt(new Date().getTime() / 1000) && type == 'app'
+         ? <Spin style={{zIndex: 999, position: 'absolute', top: 90, left: window.innerWidth < 900 ? 50 : 70}} size="large"/>
+         : null
+        }
         <div
           onClick={() => this.selectNFT(this, c.name, staked, c.type, type, location)}
           style={{height: 170}}
@@ -2976,11 +3032,12 @@ class Main extends React.Component {
             this.state.selectedNfts &&
             this.state.selectedNfts[c.name] &&
             this.state.selectedNfts[c.name]["status"] === true
-              ? `nftSelected ${classNameImg}`
-              : `nftNotSelected ${classNameImg}`
+              ? `nftSelected ${classNameImg} ${pendingImg}`
+              : `nftNotSelected ${classNameImg} ${pendingImg}`
           }
         >
-        <img  className={c.type === 'Chef' ? "nftImage nftChef" : "nftImage nftRat"} src={c.image}/>
+
+        <img  className={c.type === 'Chef' ? `${pendingImg} nftImage nftChef` : `${pendingImg} nftImage nftRat`} src={c.image}/>
         { type === 'app' && location !== 'Gym' && location !== false && this.state.toggleHint ? <div>
         <div className="nftHintBox">{hint}</div>
         </div> : null }
@@ -3001,6 +3058,61 @@ class Main extends React.Component {
     .map(leadingZero)
     .join(':');
     return `${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+  }
+
+  getTimeLeft(lastClaim, stakeTimestamp, stakingLocation) {
+    if (parseInt(lastClaim) === 0) {
+      const now = Math.floor(Date.now() / 1000);
+      const d = new Date(stakeTimestamp * 1000);
+      let stakeDate = d.getTime() / 1000;
+      let levelUpThreshold = this.state.stats.levelUpThreshold;
+      if (stakingLocation === 'TripleFiveClub') {
+        levelUpThreshold = 10 * 60 * 60;
+      }
+      const numberOfDays = (now - stakeDate) / levelUpThreshold;
+      if (isNaN(numberOfDays)) {
+        return 0;
+      }
+      let diff = now - stakeDate;
+      if ((diff > levelUpThreshold) && (numberOfDays > 1)) {
+        diff = (diff-(Math.floor(numberOfDays) * levelUpThreshold));
+      }
+
+      if (diff < levelUpThreshold) {
+        diff = levelUpThreshold - diff;
+      }
+
+      if (numberOfDays > 1) {
+        return 0;
+      }
+      return diff;
+    } else {
+      // Already claimed at least once
+      let now = Math.floor(Date.now() / 1000);
+      const d = new Date(lastClaim * 1000);
+      let stakeDate = d.getTime() / 1000;
+      let levelUpThreshold = this.state.stats.levelUpThreshold;
+      if (stakingLocation === 'TripleFiveClub') {
+        levelUpThreshold = 10 * 60 * 60;
+      }
+      const numberOfDays = (now - stakeDate) / levelUpThreshold;
+      if (isNaN(numberOfDays)) {
+        return 0;
+      }
+      let diff = now - stakeDate;
+      if ((diff > levelUpThreshold) && (numberOfDays > 1)) {
+        diff = levelUpThreshold - (levelUpThreshold - (diff-(Math.floor(numberOfDays) * this.state.stats.levelUpThreshold)));
+      }
+      if (diff < levelUpThreshold) {
+        diff = levelUpThreshold - diff;
+      }
+
+      if (numberOfDays > 1) {
+        return 0;
+      }
+
+      return diff;
+    }
   }
 
   renderTimeLeftForLevelUp(lastClaim, stakeTimestamp, stakingLocation) {
@@ -3328,6 +3440,12 @@ class Main extends React.Component {
       nfts = this.state.unstakedChefs;
     }
 
+    const nftPending = this.state.nftPending;
+    nfts.map((s) => {
+      nftPending[s] = new Date().getTime() / 1000 + this.state.nftPendingTimeout;
+    });
+
+
     if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stakeAll', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
@@ -3344,7 +3462,8 @@ class Main extends React.Component {
           gasLimit: parseInt(nfts.length * 450000),
         }),
       );
-      this.setState({ selectedNfts: {}, isApprovalModalVisible: false });
+      this.setState({ nftPending, selectedNfts: {}, isApprovalModalVisible: false });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
       renderNotification("info", `All your NFTs have been staked.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -3352,6 +3471,15 @@ class Main extends React.Component {
       if (e.data && e.data.message) {
         message = e.data.message;
       }
+
+      const nftPending = this.state.nftPending;
+      nfts.map((s) => {
+        delete nftPending[s];
+      });
+      this.setState({ nftPending });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+
+
       if (message.indexOf("while formatting outputs") !== -1) {
         message = "Error while submitting transaction";
       }
@@ -3389,8 +3517,11 @@ class Main extends React.Component {
       return false;
     }
     this.setState({ claimDisabled : true })
+    const nftPending = this.state.nftPending;
+
     nft.map((s) => {
       this.oldNfts[s] = this.nfts[s];
+      nftPending[s] = new Date().getTime() / 1000 + this.state.nftPendingTimeout;
     });
     const contract = this.getRestaurantContract(type);
     try {
@@ -3403,7 +3534,8 @@ class Main extends React.Component {
         }),
       );
 
-      this.setState({ selectedNfts: {}, isApprovalModalVisible: false, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      this.setState({ nftPending, selectedNfts: {}, isApprovalModalVisible: false, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
       renderNotification("info", `Your unstaking request was received.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -3413,6 +3545,14 @@ class Main extends React.Component {
       }
       this.setState({ claimDisabled : false })
       console.log(e);
+
+      const nftPending = this.state.nftPending;
+      selectedToUnStakeNfts.map((s) => {
+        delete nftPending[s];
+      });
+      this.setState({ nftPending });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+
       if (message.indexOf('transaction failed') !== -1) {
         renderNotification("error", "Error", 'Transaction failed, please try again.');
       } else {
@@ -3432,9 +3572,12 @@ class Main extends React.Component {
 
     try {
       this.setState({ selectedNfts: {}, currentStatsNFT: 0 });
+      const nftPending = this.state.nftPending;
       selectedToUnStakeNfts.map((s) => {
         this.oldNfts[s] = this.nfts[s];
+        nftPending[s] = new Date().getTime() / 1000 + this.state.nftPendingTimeout;
       });
+      this.setLocalStorage('nftPending', JSON.stringify(nftPending));
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, false, {
           from: this.props.address,
@@ -3442,8 +3585,9 @@ class Main extends React.Component {
           value: ethers.utils.parseEther(this.state.stats.claimFee),
         }),
       );
-      this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
       renderNotification("info", `Your claim request was successful.`, "");
+      this.setState({ nftPending, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+
       setTimeout(() => {
         this.getBalances();
       }, 1000);
@@ -3454,6 +3598,14 @@ class Main extends React.Component {
         message = e.data.message;
       }
       this.setState({ claimDisabled: false});
+
+      const nftPending = this.state.nftPending;
+      selectedToUnStakeNfts.map((s) => {
+        delete nftPending[s];
+      });
+      this.setState({ nftPending });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+
       if (message.indexOf('transaction failed') !== -1) {
         renderNotification("error", "Error", 'Transaction failed, please try again.');
       } else {
@@ -3580,6 +3732,11 @@ class Main extends React.Component {
       return false;
     }
 
+    const nftPending = this.state.nftPending;
+    selectedToStakeNfts.map((s) => {
+      nftPending[s] = new Date().getTime() / 1000 + this.state.nftPendingTimeout;
+    });
+
     if (!this.state.isApprovedForAll[contract]) {
         this.setState({ isApprovalModalVisible: true, stakeType: type, stakeAction: 'stake', nftsToStake: selectedToStakeNfts, approvalType: contract });
         return;
@@ -3592,7 +3749,8 @@ class Main extends React.Component {
           gasLimit: parseInt(selectedToStakeNfts.length * 450000),
         }),
       );
-      this.setState({ selectedNfts: {}, isApprovalModalVisible: false });
+      this.setState({ nftPending, selectedNfts: {}, isApprovalModalVisible: false });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
       renderNotification("info", `All your NFTs have been staked.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -3600,6 +3758,13 @@ class Main extends React.Component {
       if (e.data && e.data.message) {
         message = e.data.message;
       }
+      const nftPending = this.state.nftPending;
+      selectedToStakeNfts.map((s) => {
+        delete nftPending[s];
+      });
+      this.setState({ nftPending });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+
       console.error(e);
       if (message.indexOf('transaction failed') !== -1) {
         renderNotification("error", "Error", 'Transaction failed, please try again.');
@@ -3650,8 +3815,10 @@ class Main extends React.Component {
     try {
       this.setState({ selectedNfts: {} });
       console.log('SELECTED:', selectedToUnStakeNfts);
+      const nftPending = this.state.nftPending;
       selectedToUnStakeNfts.map((s) => {
         this.oldNfts[s] = this.nfts[s];
+        nftPending[s] = new Date().getTime() / 1000 + this.state.nftPendingTimeout;
       });
       const result = await this.props.tx(
         this.props.writeContracts[type].claimMany(selectedToUnStakeNfts, true, {
@@ -3660,7 +3827,8 @@ class Main extends React.Component {
           value: ethers.utils.parseEther(this.state.stats.claimFee),
         }),
       );
-      this.setState({ claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      this.setState({ nftPending, claimActive: true, claimActiveTimer: Math.floor(Date.now() / 1000) });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
       renderNotification("info", `Your unstaking request has been received.`, "");
     } catch (e) {
       this.setState({ selectedNfts: {} });
@@ -3670,6 +3838,14 @@ class Main extends React.Component {
       }
       this.setState({ claimDisabled : false })
       console.log(e);
+
+      const nftPending = this.state.nftPending;
+      selectedToUnStakeNfts.map((s) => {
+        delete nftPending[s];
+      });
+      this.setState({ nftPending });
+      this.setLocalStorage(`nftPending`, JSON.stringify(nftPending));
+
       if (message.indexOf('transaction failed') !== -1) {
         renderNotification("error", "Error", 'Transaction failed, please try again.');
       } else {
@@ -6174,6 +6350,10 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
     const rect = sky.getBoundingClientRect();
 
     return (
+      <>
+      <Helmet>
+        <title>RatAlert Game</title>
+      </Helmet>
           <Row style={{ height: "100%" }}>
             <div className={this.getGradientClass()} style={{top: rect.height, height: this.townhouseHeight - skyAttr.height - offset}}>
             </div>
@@ -6254,6 +6434,7 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
             </Modal>
 
           </Row>
+        </>
     );
   }
 
@@ -6527,11 +6708,16 @@ Learn more about the rules in the <Link to="/whitepaper/">Whitepaper</Link>.
   render() {
     if (this.state.loading) {
       return (
+        <>
+        <Helmet>
+          <title>RatAlert Game</title>
+        </Helmet>
             <Row style={{ height: window.innerHeight-140, textAlign: 'center' }}>
               <Col span={24}>
               <Spin size="large"/>
               </Col>
             </Row>
+        </>
       );
     } else {
         return this.renderGame();
