@@ -91,14 +91,14 @@ h1, h2, h3, h4, h5 {
 h1 {
     text-align: center;
     font-size: 24px;
-    padding: 4px 5px 4px 5px;
+    padding: 4px 5px 4px 0;
     text-transform: uppercase;
 }
 h2 {
     margin-top: 10px;
     color: #000;
     font-size: 20px;
-    padding: 4px 5px 4px 5px;
+    padding: 4px 5px 4px 0;
 }
 h3 {
     font-size: 20px;
@@ -164,6 +164,10 @@ th {
 th.right, td.right {
     text-align: right;
 }
+td ul {
+    padding-left: 13px;
+    margin-bottom: 0;
+}
 
 del {
     text-decoration: line-through;
@@ -189,4 +193,43 @@ ul#tableofcontents li {
 ul#tableofcontents li li {
     list-style: none;
     margin-left: 20px;
+}
+
+div.team div.member {
+    position: relative;
+    display:block;
+    min-height: 250px;
+}
+div.team div.member img {
+    position: absolute;
+    width: 200px;
+}
+div.team div.member div {
+    padding-left: 220px;
+}
+div.team div.member h5 {
+    margin-bottom: 5px;
+}
+div.team a.social {
+    display: inline-block;
+    margin-right: 20px;
+}
+div.team a.social::before {
+    content: "▸";
+    padding-right: 3px;
+}
+div.team p {
+    margin: 5px 0 5px 0;
+}
+
+div.partners a.partnerLogo {
+    position: absolute;
+    left: 10px;
+}
+div.partners a.partnerLogo img {
+    width: 40px;
+    height: 40px;
+}
+div.partners p {
+    margin-left: 50px;
 }
