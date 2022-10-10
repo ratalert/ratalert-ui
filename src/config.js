@@ -137,6 +137,7 @@ export default config = {
     }
   },
   matic: {
+    /*
     Character: '0x3242CCF5d7f35BaB5A560e7ae2Fa64EfDCa9Cd1c',
     McStake: '0x6B9a151dE8E5EE719dC2fD307535EFBf3074aa89',
     FastFood: '0x2721d859EE8d03599F628522d30f14d516502944',
@@ -152,8 +153,9 @@ export default config = {
     Paywall: '0x4a0CA9aB63f4892DDBd2E2693c4DDba1B33afdFe',
     Config: '0xF7876C368AEe216f98b90Cf16c600926516c3337',
     TripleFiveClub: '0x3d06651Adb58bE764e91745f93C366748f4eB7a0',
-/*
-MainTest2
+    */
+
+//MainTest2
     Character: '0xC6B66a9832271DE623CA73bf883469120A9208d2',
     McStake: '0x39e9F168B3c5d14b252d54d580F9D827C5417D97',
     FastFood: '0xd7dD896bE2DB99Db8665425f6815827d8fA53F02',
@@ -169,7 +171,7 @@ MainTest2
     Paywall: '0xEA700a72b8FeAA0D49A73Daee789fFE86a510DC3',
     Config: '0xeA9759C546DfFBFb86F7B0bF0c50c29D9Be540ca',
     TripleFiveClub: '0xaEA62F0DE7Df2836A70195A88c46Ebf84cB1c234',
-*/
+
     admin: ['0xd470D5015689D2C4f7cB8EF13F6F75e662E0b53C', '0xf2886eeDD665b67D6D2dF64f422152081bE53292'],
     loggedIn: {
       gourmetKitchenClosed: true,

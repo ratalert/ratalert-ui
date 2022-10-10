@@ -230,7 +230,7 @@ class Leaderboard extends React.Component {
 
     const query = `{
       claims
-      (first: 1000, where: { kitchen: "${type}" })
+      (first: 1000, orderBy: timestamp, orderDirection: desc, where: { kitchen: "${type}" })
       {
         id, earned, kitchen, type, timestamp, owner, URI, tokenId, efficiency, tolerance,
       }

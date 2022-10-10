@@ -243,7 +243,6 @@ class Whitepaper extends React.Component {
                                       finally came up with the idea of RatAlert in November 2021.”</p>
                                   <p className="links">
                                       <a href="https://twitter.com/kwizzn" target="_blank" className="social">Twitter</a>
-                                      <a href="https://www.linkedin.com/in/kwizzn/" target="_blank" className="social">LinkedIn</a>
                                   </p>
                               </div>
                           </div>
@@ -258,7 +257,6 @@ class Whitepaper extends React.Component {
                                       than to combine UX work with our own projects in the area of crypto and Web3."</p>
                                   <p className="links">
                                       <a href="https://twitter.com/leoglomann" target="_blank" className="social">Twitter</a>
-                                      <a href="https://www.linkedin.com/in/leoglomann/" target="_blank" className="social">LinkedIn</a>
                                   </p>
                               </div>
                           </div>
@@ -272,7 +270,6 @@ class Whitepaper extends React.Component {
                                       YouTube channel KryptoDreamz.”</p>
                                   <p className="links">
                                       <a href="https://twitter.com/DreamzKrypto" target="_blank" className="social">Twitter</a>
-                                      <a href="https://www.linkedin.com/in/jonfromusic/" target="_blank" className="social">LinkedIn</a>
                                   </p>
                               </div>
                           </div>
@@ -632,7 +629,7 @@ class Whitepaper extends React.Component {
                       <h2 id="dao">RatAlert DAO</h2>
                       <p>
                           From the moment the game’s smart contracts were deployed, RatAlert became a community
-                          effort. The code was <strong>open sourced</strong> & all contracts surrendered their ownership to the
+                          effort. The code was <strong>open sourced</strong> & all contracts surrendered their ownership to the&nbsp;
                           <a href="https://www.tally.xyz/governance/eip155:137:0xb85F643F9bb94a30c1B95e9dC3bADff771B749A6" target="_blank">RatAlert DAO</a> (via
                           a timelock controller). What this means is that <strong>everyone</strong> is
                           not only able but entitled to <strong>make changes</strong> to the game through
