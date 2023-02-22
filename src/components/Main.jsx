@@ -1969,8 +1969,8 @@ class Main extends React.Component {
         if (freeMints > 10) {
           //freeMints = 10;
         }
-        if (max > 3) {
-          max = 3;
+        if (max > 2) {
+          max = 2;
         }
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       } else if ((freeMints > 0) && (whitelistCount === 0)) {
@@ -1979,17 +1979,17 @@ class Main extends React.Component {
           freeMints = 10;
         }
         if (max > 3) {
-          max = 3;
+          max = 2;
         }
         this.setState({ mintAmountLocked: false, mintAmount: 1, maxMintAmount: max });
       }
       else if ((whitelistCount > 0) && (freeMints === 0)) {
         if (whitelistCount > 3) {
-          whitelistCount = 3;
+          whitelistCount = 2;
         }
         this.setState({ maxMintAmount: whitelistCount, mintAmountLocked: false, mintAmount: 1 });
       } else {
-        this.setState({ mintAmountLocked: false, maxMintAmount: 3});
+        this.setState({ mintAmountLocked: false, maxMintAmount: 2});
       }
 
 
@@ -2197,7 +2197,7 @@ class Main extends React.Component {
       <div className="officeHeadline">
         <Row>
           <Col span={24}>
-            {this.getGreeting()} You can mint up to 3 NFTs a time.
+            {this.getGreeting()} You can mint up to 2 NFTs a time.
           </Col>
         </Row>
         <Row className="officeContent">

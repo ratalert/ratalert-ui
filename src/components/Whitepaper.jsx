@@ -243,7 +243,6 @@ class Whitepaper extends React.Component {
                                       finally came up with the idea of RatAlert in November 2021.”</p>
                                   <p className="links">
                                       <a href="https://twitter.com/kwizzn" target="_blank" className="social">Twitter</a>
-                                      <a href="https://www.linkedin.com/in/kwizzn/" target="_blank" className="social">LinkedIn</a>
                                   </p>
                               </div>
                           </div>
@@ -258,7 +257,6 @@ class Whitepaper extends React.Component {
                                       than to combine UX work with our own projects in the area of crypto and Web3."</p>
                                   <p className="links">
                                       <a href="https://twitter.com/leoglomann" target="_blank" className="social">Twitter</a>
-                                      <a href="https://www.linkedin.com/in/leoglomann/" target="_blank" className="social">LinkedIn</a>
                                   </p>
                               </div>
                           </div>
@@ -272,7 +270,6 @@ class Whitepaper extends React.Component {
                                       YouTube channel KryptoDreamz.”</p>
                                   <p className="links">
                                       <a href="https://twitter.com/DreamzKrypto" target="_blank" className="social">Twitter</a>
-                                      <a href="https://www.linkedin.com/in/jonfromusic/" target="_blank" className="social">LinkedIn</a>
                                   </p>
                               </div>
                           </div>
